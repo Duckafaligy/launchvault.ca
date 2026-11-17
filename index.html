@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LaunchVault: how real apps got their first customers</title>
+<meta name="description" content="Real startup stories, broken down from public numbers. Every number is labelled, so you know what's checked.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-stripe" viewBox="0 0 24 24"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+  <symbol id="i-wayback" viewBox="0 0 24 24"><path d="M22.667 22.884V24H1.333v-1.116zm-.842-1.675v1.396H2.175v-1.396zM4.233 6.14l.234.118.118 1.882.117 3.058v2.941l-.117 3.666-.02 2.47-.332.098H3.062l-.352-.098-.136-2.47-.118-3.646v-2.941l.118-3.078.107-1.892.244-.107zm16.842 0l.235.118.117 1.882.117 3.058v2.941l-.117 3.666-.02 2.47-.332.098h-1.171l-.352-.098-.137-2.470-.117-3.646v-2.941l.117-3.078.108-1.892.244-.107zm-11.79 0l.235.118.117 1.882.117 3.058v2.941l-.117 3.666-.02 2.47-.331.098H8.114l-.352-.098-.136-2.47-.117-3.646v-2.941l.117-3.078.107-1.892.244-.107zm6.457 0l.234.118.117 1.882.118 3.058v2.941l-.118 3.666-.019 2.47-.332.098H14.57l-.351-.098-.137-2.47-.117-3.646v-2.941l.117-3.078.108-1.892.244-.107zm6.083-2.511V5.58H2.175V3.628zM11.798 0l10.307 2.347-.413.723H1.951l-.618-.587Z"/></symbol>
+  <symbol id="i-youtube" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></symbol>
+  <symbol id="i-ph" viewBox="0 0 24 24"><path d="M13.604 8.4h-3.405V12h3.405c.995 0 1.801-.806 1.801-1.801 0-.993-.805-1.799-1.801-1.799zM12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm1.604 14.4h-3.405V18H7.801V6h5.804c2.319 0 4.2 1.88 4.2 4.199 0 2.321-1.881 4.201-4.201 4.201z"/></symbol>
+  <symbol id="i-hn" viewBox="0 0 24 24"><path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></symbol>
+  <symbol id="i-reddit" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12c0 3.314 1.343 6.314 3.515 8.485l-2.286 2.286C.775 23.225 1.097 24 1.738 24H12c6.627 0 12-5.373 12-12S18.627 0 12 0Zm4.388 3.199c1.104 0 1.999.895 1.999 1.999 0 1.105-.895 2-1.999 2-.946 0-1.739-.657-1.947-1.539v.002c-1.147.162-2.032 1.15-2.032 2.341v.007c1.776.067 3.4.567 4.686 1.363.473-.363 1.064-.58 1.707-.58 1.547 0 2.802 1.254 2.802 2.802 0 1.117-.655 2.081-1.601 2.531-.088 3.256-3.637 5.876-7.997 5.876-4.361 0-7.905-2.617-7.998-5.87-.954-.447-1.614-1.415-1.614-2.538 0-1.548 1.255-2.802 2.803-2.802.645 0 1.239.218 1.712.585 1.275-.79 2.881-1.291 4.64-1.365v-.01c0-1.663 1.263-3.034 2.88-3.207.188-.911.993-1.595 1.959-1.595Zm-8.085 8.376c-.784 0-1.459.78-1.506 1.797-.047 1.016.64 1.429 1.426 1.429.786 0 1.371-.369 1.418-1.385.047-1.017-.553-1.841-1.338-1.841Zm7.406 0c-.786 0-1.385.824-1.338 1.841.047 1.017.634 1.385 1.418 1.385.785 0 1.473-.413 1.426-1.429-.046-1.017-.721-1.797-1.506-1.797Zm-3.703 4.013c-.974 0-1.907.048-2.77.135-.147.015-.241.168-.183.305.483 1.154 1.622 1.964 2.953 1.964 1.33 0 2.47-.81 2.953-1.964.057-.137-.037-.29-.184-.305-.863-.087-1.795-.135-2.769-.135Z"/></symbol>
+  <symbol id="i-tiktok" viewBox="0 0 24 24"><path d="M16.6 2h-3.3v13.4a2.9 2.9 0 1 1-2.1-2.8V9.2a6.3 6.3 0 1 0 5.4 6.2V8.6a8 8 0 0 0 4.4 1.3V6.6a4.5 4.5 0 0 1-4.4-4.6z"/></symbol>
+  <symbol id="i-insta" viewBox="0 0 24 24"><path d="M12 7.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2zM17 5.8a1.1 1.1 0 1 0 0 2.3 1.1 1.1 0 0 0 0-2.3zM12 2c-2.7 0-3 0-4.1.1C4.5 2.3 2.3 4.4 2.1 7.9 2 9 2 9.3 2 12s0 3 .1 4.1c.2 3.4 2.3 5.6 5.8 5.8 1.1.1 1.4.1 4.1.1s3 0 4.1-.1c3.4-.2 5.6-2.3 5.8-5.8.1-1.1.1-1.4.1-4.1s0-3-.1-4.1c-.2-3.4-2.3-5.6-5.8-5.8C15 2 14.7 2 12 2zm0 1.8c2.7 0 3 0 4 .1 2.5.1 3.9 1.4 4 4 .1 1 .1 1.3.1 4s0 3-.1 4c-.1 2.5-1.4 3.9-4 4-1 .1-1.3.1-4 .1s-3 0-4-.1c-2.6-.1-3.9-1.5-4-4-.1-1-.1-1.3-.1-4s0-3 .1-4c.1-2.6 1.4-3.9 4-4 1-.1 1.3-.1 4-.1z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.5l2.6 6.2 6.7.5-5.1 4.4 1.6 6.5L12 16.6l-5.8 3.5 1.6-6.5-5.1-4.4 6.7-.5z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-lv" viewBox="0 0 24 24"><g fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19.99 14.91A8.5 8.5 0 1 1 10.52 3.63"/><path d="M6.8 15.6l3.7-3.7 2.6 2.6 6.7-6.7"/><path d="M16 7.8h3.8v3.8"/></g></symbol>
+</svg>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="nav" id="nav" aria-label="Main">
+  <a class="logo" href="/" aria-label="LaunchVault home"><svg width="24" height="24" aria-hidden="true"><use href="#i-lv"/></svg>LaunchVault</a>
+  <div class="links"><a href="/breakdowns/">Breakdowns</a><a href="/how-we-check/">How we check</a><a href="/#quiz">Quiz</a><a href="/pricing/">Pricing</a><a href="/blog/">Blog</a></div>
+  <div class="right">
+    <a class="btn btn-s signin" href="/signin/">Sign in</a>
+    <a class="btn btn-p cta" href="/signup/"><span class="long">Get the weekly breakdown</span><span class="short">Get it free</span></a>
+    <button class="btn btn-s menu" id="menubtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menuc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+  <div class="menuc" id="menuc">
+    <a class="ml" href="/breakdowns/">Breakdowns</a><a class="ml" href="/how-we-check/">How we check</a><a class="ml" href="/#quiz">Quiz <small>about a minute</small></a><a class="ml" href="/pricing/">Pricing</a><a class="ml" href="/blog/">Blog</a>
+    <div class="acts"><a class="btn btn-s" href="/signin/">Sign in</a><a class="btn btn-p" href="/signup/">Get the weekly breakdown</a></div>
+  </div>
+</nav>
+<main id="main">
+<!-- ================= 2. HERO ================= -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <h1>How real apps got their first customers.<br> <span class="mute">In 10 minutes, not 100 videos.</span></h1>
+    <p class="lede">Real startup stories, broken down from public numbers. Every number is labelled, so you know what's checked.</p>
+    <form class="form pv">
+      <input type="email" required placeholder="you@email.com" aria-label="Email address">
+      <button class="btn btn-p btn-lg" type="submit">Get the free breakdown</button>
+    </form>
+    <div class="sub"><span>Free. One email a week. Unsubscribe anytime.</span><a class="tlink" href="/breakdowns/">Check out our breakdowns <span aria-hidden="true">→</span></a></div>
+
+    <div class="win" id="win">
+      <div class="chrome"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="url"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>/breakdowns/postiz</span><span class="sp"></span></div>
+      <div class="app">
+        <aside class="side" aria-label="App sidebar">
+          <div class="ws"><i><svg width="12" height="12" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault</div>
+          <div class="search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Search<kbd>Ctrl K</kbd></div>
+          <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9H4z"/></svg>Home</span>
+          <span class="on"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v16h16"/><path d="M7 15l4-4 3 3 5-6"/></svg>Breakdowns</span>
+          <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>My checklists</span>
+          <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h8l4 4v13H6z"/><path d="M9 12h6M9 16h6"/></svg>Sources</span>
+          <div class="grp">This week</div>
+          <span class="co on"><i>P</i>Postiz</span>
+          <div class="grp">Coming soon</div>
+          <span class="co"><i>D</i>DM Champ</span>
+          <span class="co"><i>S</i>Stencil AI</span>
+          <span class="co"><i>W</i>Windmill Growth</span>
+          <span class="co"><i>G</i>Gojiberry</span>
+          <div class="splan"><span>Free plan</span><b>Go Full</b></div>
+        </aside>
+        <div class="main">
+          <div class="mtop"><span>Breakdowns</span><span aria-hidden="true">/</span><b>Postiz</b>
+            <span class="acts"><a class="btn btn-s btn-sm" href="/breakdowns/postiz/#sources">Sources · 7</a><a class="btn btn-p btn-sm" href="/breakdowns/postiz/">Open breakdown</a></span></div>
+          <div class="phead"><div class="tile">P</div><div><b>Postiz</b><span>Social media scheduler · SaaS, open source · 10 min read</span></div></div>
+          <div class="kpis">
+            <div class="kpi"><span class="k">Monthly recurring revenue</span><span class="kv">$430,896</span><span class="m"><span class="lb v">Verified</span>Nov 17 2026</span></div>
+            <div class="kpi"><span class="k">Revenue, all-time</span><span class="kv">$1.95M</span><span class="m"><span class="lb v">Verified</span>Nov 17 2026</span></div>
+            <div class="kpi"><span class="k">Active subscriptions</span><span class="kv">12,674</span><span class="m"><span class="lb v">Verified</span>Nov 17 2026</span></div>
+            <div class="kpi"><span class="k">GitHub stars</span><span class="kv">41,810</span><span class="m"><span class="lb l">Live</span>Nov 17 2026</span></div>
+          </div>
+          <div class="body2">
+            <div class="panel">
+              <div class="ch-h">
+                <div><div class="t">Monthly revenue</div><div class="big">$430,896<small>up from about $700 in Sep 2024</small></div></div>
+                <div class="ctl"><span class="sel">Jan 2024 to Nov 2026 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span></div>
+              </div>
+              <div class="legend"><span><i style="background:var(--verified-dot)"></i>Verified</span><span><i style="border:1.5px solid var(--brand);background:#fff"></i>Claimed</span><span><i style="background:var(--coral);border-radius:1px;transform:rotate(45deg);width:7px;height:7px"></i>Sources differ</span><span><i style="border:1px solid #D1D5DB;border-radius:3px"></i>Founder's moves</span></div>
+              <div class="plot" id="plot"><svg id="chart" role="img" aria-label="Postiz monthly revenue, Sep 2024 to Nov 2026: under $15K for over a year, then rising to $430,896 verified on Nov 17 2026."></svg><div class="tip" id="tip" role="status"></div></div>
+            </div>
+            <div class="panel moves"><div class="hd"><b>Why the line moved</b><span>8 moves</span></div><ol id="moves"></ol></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="prov"><svg class="ok" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.8 2.8L16 10"/></svg>
+      <span>Revenue verified with <b><svg width="13" height="13" fill="#635BFF" aria-hidden="true"><use href="#i-stripe"/></svg> Stripe</b> via <b>TrustMRR</b> · Earlier points are Claimed · Last read Nov 17 2026<sup>1</sup></span></p>
+    <div class="srow" aria-label="Sourced from"><span>Sourced from</span>
+      <a href="#sources"><svg aria-hidden="true"><use href="#i-star"/></svg>TrustMRR</a>
+      <a href="#sources"><svg aria-hidden="true"><use href="#i-stripe"/></svg>Stripe</a>
+      <a href="#sources"><svg aria-hidden="true"><use href="#i-github"/></svg>GitHub</a>
+      <a href="#sources"><svg aria-hidden="true"><use href="#i-wayback"/></svg>Wayback Machine</a>
+      <a href="#sources"><svg aria-hidden="true"><use href="#i-youtube"/></svg>YouTube</a>
+      <a href="#sources"><svg aria-hidden="true"><use href="#i-ph"/></svg>Product Hunt</a>
+      <a href="#sources"><svg aria-hidden="true"><use href="#i-hn"/></svg>Hacker News</a>
+      <a href="#sources"><svg aria-hidden="true"><use href="#i-x"/></svg>Founder posts</a>
+    </div>
+  </div>
+  <div class="hero-end"></div>
+</header>
+
+<!-- ================= 3. SOURCES ================= -->
+<section class="sec-alt" id="sources">
+  <div class="wrap">
+    <div class="shead"><div><h2>Every number has a source. <span class="mute">And a date.</span></h2>
+      <p class="lede">We read these, write down when, and label each number by how sure we are. Hover or tap a source to see what we take from it.</p></div>
+      <a class="tlink" href="/how-we-check/">How we check numbers <span aria-hidden="true">→</span></a></div>
+    <div class="sgrid" id="sgrid">
+      <button class="scell" type="button" aria-expanded="false"><span class="lg wm"><svg aria-hidden="true"><use href="#i-star"/></svg>TrustMRR</span>
+        <p>Revenue read straight from Stripe or RevenueCat, with the date it was read.</p><span class="gv">Gives <span class="lb v">Verified</span>revenue, subscriptions<span class="pl" aria-hidden="true">+</span></span>
+        <span class="pop" role="tooltip"><b>What we take</b>Monthly revenue, all-time revenue, subscriptions and start date. If a listing hasn't refreshed, we show its last date, like Gojiberry's Aug 14 2026.<span class="pf"><span>Postiz $430,896/mo · Nov 17 2026</span></span></span></button>
+      <button class="scell" type="button" aria-expanded="false" style="--h:#635BFF"><span class="lg"><svg aria-hidden="true"><use href="#i-stripe"/></svg>Stripe</span>
+        <p>Where the payments happen. We use Stripe revenue only as TrustMRR reads it, never a screenshot.</p><span class="gv">Gives <span class="lb v">Verified</span>via TrustMRR<span class="pl" aria-hidden="true">+</span></span>
+        <span class="pop" role="tooltip"><b>What we take</b>Nothing directly. A founder's own Stripe chart, like Postiz's $186,713 for Sep 2026, stays Claimed until TrustMRR reads it.<span class="pf"><span>Screenshots are Claimed</span><span class="lb c">Claimed</span></span></span></button>
+      <button class="scell" type="button" aria-expanded="false" style="--h:#181717"><span class="lg"><svg aria-hidden="true"><use href="#i-github"/></svg>GitHub</span>
+        <p>Star history, forks and release dates for open-source products.</p><span class="gv">Gives <span class="lb l">Live</span>stars, forks<span class="pl" aria-hidden="true">+</span></span>
+        <span class="pop" role="tooltip"><b>What we take</b>Stars, forks and when each release shipped, so we can line a launch up with the revenue chart.<span class="pf"><span>Postiz 41,810 stars · Nov 17 2026</span></span></span></button>
+      <button class="scell" type="button" aria-expanded="false" style="--h:#666666"><span class="lg"><svg aria-hidden="true"><use href="#i-wayback"/></svg>Wayback Machine</span>
+        <p>Old homepages and pricing pages from the Internet Archive, so you can see then vs now.</p><span class="gv">Gives dated snapshots<span class="pl" aria-hidden="true">+</span></span>
+        <span class="pop" role="tooltip"><b>What we take</b>What the product said and charged on a past date.<span class="pf"><span>Postiz: from $29/mo in 2024 and now</span></span></span></button>
+      <button class="scell" type="button" aria-expanded="false" style="--h:#FF0000"><span class="lg"><svg aria-hidden="true"><use href="#i-youtube"/></svg>YouTube</span>
+        <p>Founder interviews and talks. We quote them with the timestamp.</p><span class="gv">Gives <span class="lb c">Claimed</span>quotes, timestamped<span class="pl" aria-hidden="true">+</span></span>
+        <span class="pop" role="tooltip"><b>What we take</b>The founder's own words about what they did and when, linked to the minute.<span class="pf"><span>Context, never the only source</span></span></span></button>
+      <button class="scell" type="button" aria-expanded="false" style="--h:#DA552F"><span class="lg"><svg aria-hidden="true"><use href="#i-ph"/></svg>Product Hunt</span>
+        <p>Launch dates and how a launch went.</p><span class="gv">Gives <span class="lb l">Live</span>launch day<span class="pl" aria-hidden="true">+</span></span>
+        <span class="pop" role="tooltip"><b>What we take</b>The launch date and the launch page, to place it on the timeline.<span class="pf"><span>Postiz launch week, Sep 2024</span></span></span></button>
+      <button class="scell" type="button" aria-expanded="false" style="--h:#F0652F"><span class="lg"><svg aria-hidden="true"><use href="#i-hn"/></svg>Hacker News</span>
+        <p>Launch threads and their dates, to see where early users came from.</p><span class="gv">Gives <span class="lb l">Live</span>threads, dates<span class="pl" aria-hidden="true">+</span></span>
+        <span class="pop" role="tooltip"><b>What we take</b>Launch threads and dates, next to GitHub stars from the same week.<span class="pf"><span>Postiz open-sourced, Sep 2024</span></span></span></button>
+      <button class="scell" type="button" aria-expanded="false" style="--h:#0B1220"><span class="lg"><svg aria-hidden="true"><use href="#i-x"/></svg><svg aria-hidden="true" style="--h:#FF4500"><use href="#i-reddit"/></svg>Founder posts</span>
+        <p>What founders said on X, Reddit or Indie Hackers, with a link. Claimed until another source checks it.</p><span class="gv">Gives <span class="lb c">Claimed</span>linked posts<span class="pl" aria-hidden="true">+</span></span>
+        <span class="pop" role="tooltip"><b>What we take</b>Revenue they posted, with the date and a link. If it disagrees with another source, both go on the page.<span class="pf"><span>Postiz Mar 2026: $21K or $45K</span><span class="lb x">Sources differ</span></span></span></button>
+    </div>
+    <div class="sgfoot"><span><span class="lb x">Sources differ</span>When two sources disagree, we show both numbers and say which one we used.</span><span>Also read: Google Trends, Starter Story, Mixergy</span></div><!-- end sources -->
+  </div>
+</section>
+
+<!-- ================= 4. LABELS (dark) ================= -->
+<section class="dk" id="check">
+  <div class="wrap">
+    <div class="shead"><div><h2>An interview said $10K a month. <span class="mute">Stripe shows $75,746.</span></h2>
+      <p class="lede">This is DM Champ, an AI tool. Same company, two numbers eight months apart. That's why every number here carries a label and a date.</p></div></div>
+    <div class="vs">
+      <div class="vcard"><div class="who"><span>An interview said</span><span class="lb c">Claimed</span></div>
+        <div class="amt">~$10,000 <small>a month</small></div>
+        <div class="track"><i style="width:13.2%;background:#94A3B8"></i></div>
+        <span class="dt">Starter Story · Mar 2026</span></div>
+      <div class="vcard"><div class="who"><span>Stripe shows</span><span class="lb v">Verified</span></div>
+        <div class="amt">$75,746 <small>a month</small></div>
+        <div class="track"><i style="width:100%;background:#34D399"></i></div>
+        <span class="dt">TrustMRR, read from Stripe · Nov 16 2026</span></div>
+    </div>
+    <p class="why"><b>Their lesson, and it's Claimed:</b> a cheap AppSumo deal brought in testers, not buyers. Price for the people who will stay.</p>
+    <div class="cols4">
+      <div><span class="lb v">Verified</span><p>Read from a live source, like Stripe through TrustMRR, on the date shown.</p><p class="ex"><b>$430,896</b> a month · Postiz · Nov 17 2026</p></div>
+      <div><span class="lb c">Claimed</span><p>Said by the founder or in an interview. We link where they said it.</p><p class="ex"><b>$250</b> to start · Windmill Growth, he says</p></div>
+      <div><span class="lb x">Sources differ</span><p>Two sources disagree. We show both and say which one we used.</p><p class="ex"><b>$21K</b> or <b>$45K</b> · Postiz, Mar 2026</p></div>
+      <div><span class="lb l">Live</span><p>Refreshed from the source itself, like GitHub, with the time we read it.</p><p class="ex"><b>41,810</b> stars · Postiz · Nov 17 2026</p></div>
+    </div>
+    <div class="fc" role="table" aria-label="Fact check, Postiz">
+      <div class="hd"><b>Fact check · Postiz</b><span>Read Nov 17 2026 · 4 claims</span></div>
+      <div class="fr th" role="row"><span>Claim</span><span>What we found</span><span>Label</span></div>
+      <div class="fr" role="row"><span class="c1">Monthly recurring revenue</span><span>TrustMRR reads it straight from Stripe: <span class="num">$430,896</span>, updated Nov 17 2026.</span><span><span class="lb v">Verified</span></span></div>
+      <div class="fr" role="row"><span class="c1">Revenue in March 2026</span><span>A case study says <span class="num">$21K</span>. The founder said <span class="num">$45,000</span> a month in a Mixergy interview published Mar 11 2026. The chart uses $21K and shows $45K as a second point.</span><span><span class="lb x">Sources differ</span></span></div>
+      <div class="fr" role="row"><span class="c1">When Postiz started</span><span>TrustMRR says July 2024, the founder says September 2024, a case study says January 2024. Most likely built from early 2024 and open-sourced in September.</span><span><span class="lb x">Sources differ</span></span></div>
+      <div class="fr" role="row"><span class="c1">"A single developer"</span><span>From the founder's 2025 article title. Team size today isn't public.</span><span><span class="lb c">Claimed</span></span></div>
+      <div class="ft"><span>If we get a number wrong, we fix it and log the change on the breakdown.</span><a class="tlink" href="/how-we-check/#corrections">Corrections log <span aria-hidden="true">→</span></a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5. STORIES ================= -->
+<section id="lib">
+  <div class="wrap">
+    <div class="shead"><div><h2>Real stories, checked.</h2><p class="lede">Solo founders and small teams a teenager can learn from: what it cost to start, where the first customers came from, and how big it is now. When a fact isn't public, we say so.</p></div></div>
+    <article class="feat">
+      <div class="txt">
+        <h3>Postiz reached $430,896 a month in under three years by giving the app away free.</h3>
+        <p class="sub2">Two flat years under $15K a month. Then AI agents started posting through it.</p>
+        <dl class="facts">
+          <div><dt>Cost to start</dt><dd class="np">Not public</dd><small>He later spent about $12K on SEO that brought little traffic. <span class="lb c">Claimed</span></small></div>
+          <div><dt>First revenue on record</dt><dd>~$700/mo</dd><small>Sep 2024, about 8 months in. <span class="lb c">Claimed</span></small></div>
+          <div><dt>First customers from</dt><dd class="fd">Open-source launch weeks</dd><small>Hacker News, Reddit, Dev.to, Product Hunt. <span class="lb c">Claimed</span></small></div>
+        </dl>
+        <p class="copy"><b>Copy this:</b> post every time you ship, even small updates, in the places your users already hang out.</p>
+        <div class="ft"><span><span class="lb v">Verified</span> $430,896 a month · TrustMRR · Nov 17 2026<sup>1</sup></span><a class="tlink" href="/breakdowns/postiz/">Read the breakdown <span aria-hidden="true">→</span></a></div>
+      </div>
+      <div class="vis">
+        <p class="cap">Same price. A different customer. <span>postiz.com, then and now</span></p>
+        <div class="snap"><div class="sb"><span>postiz.com · Jul 2024</span><span class="wb"><svg aria-hidden="true"><use href="#i-wayback"/></svg>Wayback</span></div>
+          <div class="sc"><p class="hl">"Your ultimate social media scheduling tool"</p><p class="sp">For creators, businesses and agencies.</p><div class="pr"><span>$29 Standard</span><span>$39 Team</span><span>$49 Pro</span><span>$99 Ultimate</span></div></div></div>
+        <div class="arrow">2 years, 8 moves</div>
+        <div class="snap"><div class="sb"><span>postiz.com · Nov 2026</span><span class="lb l">Live</span></div>
+          <div class="sc"><p class="hl">"Run your social media on autopilot with AI agents"</p><p class="sp">Lists ChatGPT, Claude, Cursor and OpenClaw up front, plus an MCP server and a command-line tool.</p><div class="pr"><span>From $29/mo</span><span>7-day $0 trial</span></div></div></div>
+      </div>
+    </article>
+
+    <div class="filters" role="group" aria-label="Filter stories"><button class="chip" type="button" aria-pressed="true" data-f="all">All 5</button><button class="chip" type="button" aria-pressed="false" data-f="saas">SaaS</button><button class="chip" type="button" aria-pressed="false" data-f="ai">AI tools</button><button class="chip" type="button" aria-pressed="false" data-f="mobile">Mobile apps</button><button class="chip" type="button" aria-pressed="false" data-f="services">Services</button></div>
+    <div class="tbl" role="table" aria-label="Breakdowns">
+      <div class="tr th" role="row"><span>Product</span><span class="what">The story</span><span>Revenue</span><span class="cost">Cost to start</span><span class="chan">First customers from</span><span style="justify-self:end">Breakdown</span></div>
+      <div class="tr has-read" role="row" data-cat="saas"><span class="pn"><span class="tile">P</span><span><b>Postiz</b><small>Social media scheduler</small></span></span>
+        <span class="what"><b>$430,896 a month in under three years by giving the app away free.</b><span>Open-sourced it and posted every release on Hacker News, Reddit and Dev.to.</span></span>
+        <span class="rev"><span class="top"><span class="amt">$430,896<small>/mo</small></span><span class="lb v">Verified</span><span class="meta">Nov 17 2026</span></span><span class="bar"><i style="--v:430896"></i></span></span>
+        <span class="cost dim">Not public</span><span class="chan">Hacker News, Reddit, Dev.to</span><a class="read" href="/breakdowns/postiz/">Read →</a></div>
+      <div class="tr" role="row" data-cat="ai"><span class="pn"><span class="tile">G</span><span><b>Gojiberry</b><small>AI tool</small></span></span>
+        <span class="what"><b>2,000 sign-ups and $0 paid, so they rebuilt the product within weeks.</b><span>Relaunched the AI sales assistant as a lead-finding tool.</span></span>
+        <span class="rev"><span class="top"><span class="amt">$424,368<small>/mo</small></span><span class="lb v">Verified</span><span class="meta">Aug 14 2026<sup>2</sup></span></span><span class="bar"><i style="--v:424368"></i></span></span>
+        <span class="cost dim">Not public</span><span class="chan">A waitlist, then a rebuild <span class="lb c">Claimed</span></span><span class="soonb">Coming soon</span></div>
+      <div class="tr" role="row" data-cat="services"><span class="pn"><span class="tile">W</span><span><b>Windmill Growth</b><small>Agency</small></span></span>
+        <span class="what"><b>$118,347 a month from a $250 start, by selling a service instead of building an app.</b><span>A LinkedIn agency for founders: 74 clients at about $1,600 a month.</span></span>
+        <span class="rev"><span class="top"><span class="amt">$118,347<small>/mo</small></span><span class="lb v">Verified</span><span class="meta">Nov 16 2026</span></span><span class="bar"><i style="--v:118347"></i></span></span>
+        <span class="cost">$250 <span class="lb c">Claimed</span></span><span class="chan">LinkedIn</span><span class="soonb">Coming soon</span></div>
+      <div class="tr" role="row" data-cat="ai"><span class="pn"><span class="tile">D</span><span><b>DM Champ</b><small>AI tool</small></span></span>
+        <span class="what"><b>From about $10K to $75,746 a month in eight months, by pricing for buyers.</b><span>A cheap AppSumo deal brought testers, not buyers.</span></span>
+        <span class="rev"><span class="top"><span class="amt">$75,746<small>/mo</small></span><span class="lb v">Verified</span><span class="meta">Nov 16 2026</span></span><span class="bar"><i style="--v:75746"></i></span></span>
+        <span class="cost dim">Not public</span><span class="chan">An AppSumo deal <span class="lb c">Claimed</span></span><span class="soonb">Coming soon</span></div>
+      <div class="tr" role="row" data-cat="mobile"><span class="pn"><span class="tile">S</span><span><b>Stencil AI</b><small>Mobile app</small></span></span>
+        <span class="what"><b>$483,794 in sales with 16 followers on X, by fixing one brother's tattoo-shop problem.</b><span>One brother had the problem, the other could code.</span></span>
+        <span class="rev"><span class="top"><span class="amt">$483,794<small> all-time</small></span><span class="lb v">Verified</span><span class="meta">Nov 16 2026<sup>3</sup></span></span><span class="meta">All-time, so not on the monthly scale</span></span>
+        <span class="cost dim">Not public</span><span class="chan">A family member's problem</span><span class="soonb">Coming soon</span></div>
+      <div class="empty" role="status">No stories in this group yet.</div><div class="tfoot"><span>Revenue read from Stripe by TrustMRR. Each row keeps the date it was read.</span><span>Bars share one scale: $0 to $450K a month</span></div>
+    </div>
+    <div class="libcta"><a class="btn btn-s btn-lg" href="/breakdowns/">Check out our breakdowns <span aria-hidden="true">→</span></a></div>
+  </div>
+</section>
+
+<!-- ================= 6. FIRST FOUR MOVES + QUIZ (violet only here) ================= -->
+<section class="sec-alt" id="moves-sec">
+  <div class="wrap">
+    <div class="shead"><div><h2>Your first four moves, <span class="mute">copied from these founders.</span></h2>
+      <p class="lede">In the order we'd try them with school, little money and no audience. Each one comes from a story above, so you can check it.</p></div></div>
+    <div class="steps">
+      <div class="step"><span class="no">01</span><div><h3>Start with a problem someone close to you has.</h3><p class="who">Stencil AI · one brother ran into it, the other could code</p></div>
+        <div class="ev"><span class="n">16 followers on X</span>and <b>$483,794</b> all-time <span class="lb v">Verified</span></div>
+        <div class="try"><b>This week</b>Ask three people in your family what wastes their time at work. Write the answers down.</div></div>
+      <div class="step"><span class="no">02</span><div><h3>Sell a service before you build an app.</h3><p class="who">Windmill Growth · a LinkedIn agency for founders</p></div>
+        <div class="ev"><span class="n">$250 to start</span>he says <span class="lb c">Claimed</span> now 74 clients</div>
+        <div class="try"><b>This week</b>Offer to run a local shop's Instagram for a month, for a small fee.</div></div>
+      <div class="step"><span class="no">03</span><div><h3>Ask for money early.</h3><p class="who">Gojiberry · the waitlist that never paid</p></div>
+        <div class="ev"><span class="n">2,000 sign-ups, 0 paid</span><span class="lb c">Claimed</span></div>
+        <div class="try"><b>This week</b>Put a real price on your sign-up page, even a small one. See who still signs up.</div></div>
+      <div class="step"><span class="no">04</span><div><h3>Post every time you ship.</h3><p class="who">Postiz · every release was a reason to post</p></div>
+        <div class="ev"><span class="n">3K to 14K stars</span>in three months after going open source <span class="lb c">Claimed</span></div>
+        <div class="try"><b>This week</b>Ship one small thing, then post it where your users already are.</div></div>
+      <div class="step nocopy"><span class="no">✕</span><div><h3>Don't copy: paying for SEO on a brand-new site.</h3><p class="who">Postiz · the move that didn't work</p></div>
+        <div class="ev"><span class="n">~$12,000 spent</span>little traffic <span class="lb c">Claimed</span></div>
+        <div class="try"><b>Instead</b>Write a few useful posts yourself and spend the money elsewhere.</div></div>
+    </div>
+
+    <div class="quiz" id="quiz">
+      <div><h2>Stories <span class="you">like you</span>.</h2>
+        <p class="lede">Five quick questions about your time, your money and what you can already do. You get three stories to read, in order.</p>
+        <div class="qfacts"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>About a minute. No sign-up to see your path.</span>
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Every story on your path is from the table above.</span></div></div>
+      <div class="qcard">
+        <div class="qtop"><span>Question 2 of 5</span><span>Your answers stay on this device</span></div>
+        <div class="qbar"><i></i></div>
+        <div class="qbody"><h3>How much can you spend to start?</h3>
+          <div class="opts" id="opts"><button class="opt" type="button" aria-pressed="false">Nothing, just my time</button><button class="opt" type="button" aria-pressed="true">Under $100</button><button class="opt" type="button" aria-pressed="false">A few hundred dollars</button></div></div>
+        <div class="path"><div class="ph2"><span>Your path so far</span><b id="pathfor">Under $100</b></div><ol id="pathlist" aria-live="polite"></ol></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7. INSIDE A BREAKDOWN (dark) ================= -->
+<section class="dk" id="inside">
+  <div class="wrap split">
+    <div>
+      <h2>Inside a breakdown. <span class="mute">Ten minutes, four parts.</span></h2>
+      <p class="lede">The real Postiz breakdown, cropped. Each one ends with a checklist, so you finish with something to do, not just something you watched.</p>
+      <div class="parts" role="tablist" aria-label="Parts of a breakdown">
+        <button class="part" type="button" role="tab" aria-selected="false"><span class="i">01</span><span><b>Why the line moved</b><span>The revenue chart with a marker for every move the founder made.</span></span></button>
+        <button class="part" type="button" role="tab" aria-selected="true"><span class="i">02</span><span><b>The story, phase by phase</b><span>Each phase ends with one lesson you can use.</span></span></button>
+        <button class="part" type="button" role="tab" aria-selected="false"><span class="i">03</span><span><b>Fact check</b><span>Every claim next to what we found.</span></span></button>
+        <button class="part" type="button" role="tab" aria-selected="false"><span class="i">04</span><span><b>What you could do at 15 to 20</b><span>Things that cost little money and fit around school.</span></span></button>
+      </div>
+    </div>
+    <div class="crop">
+      <div class="cwin">
+        <div class="bar2"><span>Postiz</span><span aria-hidden="true">/</span><b>The story, phase by phase</b></div>
+        <div class="ph"><div class="w"><b>Open source</b>Sep 2024 to 2025</div><div><p>He open-sourced it and ran launch weeks on Hacker News, Reddit, Dev.to and Product Hunt. Reddit users asked for a Docker setup, so he built one.</p>
+          <div class="dl">Stars about 3K to 14K in three months <span class="lb c">Claimed</span></div><div class="ls">Free gets attention, but attention is not revenue.</div></div></div>
+        <div class="ph"><div class="w"><b>The turning point</b>Early 2026</div><div><p>OpenClaw went viral. Postiz was ready with an MCP server, a command-line tool and an OpenClaw skill.</p>
+          <div class="dl"><span class="num">$21K</span> in Mar to <span class="num">$118K</span> in Jun 2026 <span class="lb c">Claimed</span></div><div class="ls">You can't plan a viral moment, but you can be the tool that's ready.</div></div></div>
+        <div class="ph"><div class="w"><b>Scaling the content</b>Sep 2026 to now</div><div><p>A weekly system on X: one useful video, clips of it all week, then a long article.</p>
+          <div class="dl"><span class="num">$430,896</span> a month on Nov 17 2026 <span class="lb v">Verified</span></div><div class="ls">One idea, repackaged several times, beats new content every day.</div></div></div>
+      </div>
+      <div class="cwin ckl">
+        <div class="hd"><b>What you could do at 15 to 20</b><span class="prog" id="prog">2 of 4 ticked</span></div>
+        <button class="ck" type="button" aria-pressed="true"><span class="bx"></span><span>Pick one place your users already hang out and post there every time you ship.</span></button>
+        <button class="ck" type="button" aria-pressed="true"><span class="bx"></span><span>Give something away free and charge for the easy version.</span></button>
+        <button class="ck" type="button" aria-pressed="false"><span class="bx"></span><span>Build a plug-in for a tool that's growing fast right now, like AI agents or n8n.</span></button>
+        <button class="ck" type="button" aria-pressed="false"><span class="bx"></span><span>Plan for a long flat stretch. Pace yourself around school.</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 8. PRICING + COMPARISON ================= -->
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <h2>Start free. <span class="mute">Go Full when you want more.</span></h2>
+    <p class="lede">Pay only if you want every breakdown and a path made for you.</p>
+    <div class="bill"><div class="seg" role="group" aria-label="Billing"><button type="button" aria-pressed="true" data-b="m">Monthly</button><button type="button" aria-pressed="false" data-b="y">Yearly <small>Save $12</small></button></div></div>
+    <div class="plans">
+      <div class="plan"><h3>Free</h3><div class="pr">$0<small> forever</small></div><span class="meta" style="font-size:13px">No card needed.</span>
+        <ul><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>A few full breakdowns</li><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>One new story by email every week</li><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>The quiz and your matches</li><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Every source, with the date</li></ul>
+        <a class="btn btn-s btn-lg" href="/signup/">Start free</a></div>
+      <div class="plan full"><div style="display:flex;justify-content:space-between;align-items:center"><h3>Full</h3><span class="tg">Recommended</span></div><div class="pr" id="fullpr">$5<small>/month</small></div><span class="meta" style="font-size:13px;color:#94A3B8" id="fullsub">Billed monthly. Cancel anytime.</span>
+        <ul><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Every breakdown, old and new</li><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>A new breakdown every week</li><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Your personal path from the quiz</li><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Saved checklists and breakdown requests</li></ul>
+        <a class="btn btn-p btn-lg" href="/signup/?plan=full">Get Full access</a></div>
+    </div>
+    <div class="parent"><div><b>Under 18? A parent pays.</b><p>Send them this page. It shows the price, what's included and that payments go through Stripe. Nothing here is financial advice.</p></div>
+      <a class="btn btn-s parentmail" href="/pricing/">Send this to a parent</a></div>
+    <div class="trust"><span><svg width="13" height="13" fill="#6B7280" aria-hidden="true"><use href="#i-stripe"/></svg>Payments by Stripe</span><span>Cancel anytime</span><span>Not financial advice</span></div>
+
+    <div class="cmp"><h3>An honest comparison</h3><p class="lede">Typical, not every video or course. Videos and courses are good at stories. We're built for checked numbers.</p>
+      <div class="ctab" role="table" aria-label="LaunchVault compared with free videos and paid courses">
+        <div class="cr" role="row"><div class="rl"></div><div>LaunchVault</div><div>Free videos</div><div>Paid courses</div></div>
+        <div class="cr" role="row"><div class="rl">Time to learn one story</div><div>About 10 minutes</div><div>Often hours, across several videos</div><div>Usually weeks of lessons</div></div>
+        <div class="cr" role="row"><div class="rl">Numbers checked</div><div>Every number labelled</div><div>Rarely</div><div>Rarely</div></div>
+        <div class="cr" role="row"><div class="rl">Sources linked</div><div>Every source, with the date</div><div>Sometimes</div><div>Sometimes</div></div>
+        <div class="cr" role="row"><div class="rl">Depth</div><div>One company, start to now</div><div>Usually one angle</div><div>Broad advice, few real numbers</div></div>
+        <div class="cr" role="row"><div class="rl">Cost</div><div>Free, or $5 a month</div><div>Free</div><div>Often hundreds of dollars</div></div>
+      </div></div>
+  <!-- end pricing --></div>
+</section>
+
+<!-- ================= 9. FAQ ================= -->
+<section class="sec-alt faq" id="faq">
+  <div class="wrap faqg"><div class="faqg-in" style="display:contents">
+    <div><h2>Questions</h2><p class="lede">The things students and parents ask before signing up.</p></div>
+    <div>
+      <details open><summary>Where do the numbers come from?</summary><p>Revenue comes from TrustMRR, which reads it straight from Stripe or RevenueCat. We add GitHub, the Wayback Machine, interviews and the founder's own posts, and link every source with a date.</p></details>
+      <details><summary>What does Verified mean?</summary><p>Read from a live source, like Stripe through TrustMRR, on the date shown. Claimed means the founder or an interview said it. Sources differ means two sources disagree, and we show both.</p></details>
+      <details><summary>Why do some numbers have old dates?</summary><p>We show the date a number was read, not today's date. Gojiberry's revenue was last updated on TrustMRR on Aug 14 2026, so that's the date you see.</p></details>
+      <details><summary>Do I need money or an audience to use this?</summary><p>No. The stories are picked so you can copy a move with little money and no followers. Each breakdown ends with a checklist that fits around school.</p></details>
+      <details><summary>I'm under 18. Can I use it?</summary><p>Yes, it's made for 15 to 20. Free needs only an email. If you're under 18, a parent pays for Full.</p></details>
+      <details><summary>What does Full include?</summary><p>Every breakdown, old and new, a new breakdown every week, your personal path from the quiz, saved checklists and breakdown requests. It's $5 a month, or $4 a month billed yearly.</p></details>
+      <details><summary>How is it different from YouTube?</summary><p>Videos are great for stories, but the numbers are rarely checked. Each breakdown labels every number, links the source with a date, and takes about 10 minutes to read.</p></details>
+      <details><summary>Is this financial advice?</summary><p>No. LaunchVault explains what real founders did, using public sources. Nothing here is financial or investment advice.</p></details>
+    </div>
+  </div><!-- end faq --></div>
+</section>
+
+<!-- ================= 10. BLOG ================= -->
+<section id="blog">
+  <div class="wrap">
+    <div class="shead"><div><h2>From the blog.</h2><p class="lede">Short guides on reading the numbers, and what founders did first.</p></div><a class="tlink" href="/blog/">Read the blog <span aria-hidden="true">→</span></a></div>
+    <div class="posts">
+      <a class="post" href="/blog/what-verified-means/"><div class="cv"><div class="mini"><div class="r"><b>DM Champ</b><span class="lb v">Verified</span></div><div class="n">$75,746<span class="meta"> /mo</span></div><div class="meta">TrustMRR · Nov 16 2026</div></div></div>
+        <div class="bd"><span class="cat">Explainers</span><h3>What 'Verified' means on LaunchVault</h3><p>Where our revenue numbers come from, why some are labelled Claimed, and why every number has a date.</p><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 6 min read</span></div></a>
+      <a class="post" href="/blog/how-to-read-a-revenue-chart/"><div class="cv"><div class="mini"><div class="r"><b>Postiz</b><span class="meta">Monthly revenue</span></div><svg viewBox="0 0 240 60" style="width:100%;height:60px;margin-top:8px" aria-hidden="true"><path d="M0 59 L60 58 L90 57 L130 55 L160 47 L190 42 L215 36 L240 6" fill="none" stroke="#2563EB" stroke-width="2"/><circle cx="236" cy="8" r="3.5" fill="#10B981"/></svg><div class="meta">$430,896 · Nov 17 2026</div></div></div>
+        <div class="bd"><span class="cat">Guides</span><h3>How to read a revenue chart</h3><p>MRR, all-time revenue, and what a sudden jump on the line actually means.</p><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 5 min read</span></div></a>
+      <a class="post" href="/blog/three-ways-to-start-small/"><div class="cv"><div class="mini"><div class="r"><b>Stencil AI</b><span class="meta">a family problem</span></div><div class="r" style="margin-top:8px"><b>Windmill Growth</b><span class="meta">a service</span></div><div class="r" style="margin-top:8px"><b>Postiz</b><span class="meta">a free version</span></div></div></div>
+        <div class="bd"><span class="cat">Lists</span><h3>Three ways to start small</h3><p>A family member's problem, a service you can sell now, or a free version people can try. A real example of each.</p><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 7 min read</span></div></a>
+    </div><!-- end posts -->
+  </div>
+</section>
+
+
+</main>
+<footer>
+  <div class="wrap">
+    <ol class="fnotes">
+      <li>Revenue figures are read from Stripe by TrustMRR. Postiz was read on Nov 17 2026; DM Champ, Windmill Growth and Stencil AI on Nov 16 2026. Numbers change daily, so each one keeps its date.</li>
+      <li>Gojiberry's TrustMRR listing was last updated on Aug 14 2026.</li>
+      <li>Stencil AI reports all-time revenue, not monthly, so it isn't on the monthly scale.</li>
+    </ol>
+    <div class="ftop">
+      <div class="fbrand"><a class="logo" href="/"><svg width="24" height="24" aria-hidden="true"><use href="#i-lv"/></svg>LaunchVault</a>
+        <p class="tl">Real startup stories, checked and cut down to the part you can use.</p>
+        <form class="nl pv"><input type="email" required placeholder="you@email.com" aria-label="Email for the weekly breakdown"><button class="btn btn-p" type="submit">Subscribe</button></form></div>
+      <div class="fcol"><h4>Breakdowns</h4><a href="/breakdowns/">All breakdowns</a><a href="/breakdowns/postiz/">Postiz</a><a href="/breakdowns/?f=saas">SaaS</a><a href="/breakdowns/?f=ai">AI tools</a><a href="/breakdowns/?f=mobile">Mobile apps</a></div>
+      <div class="fcol"><h4>Learn</h4><a href="/blog/">Blog</a><a href="/blog/how-to-read-a-revenue-chart/">Reading a revenue chart</a><a href="/blog/three-ways-to-start-small/">Three ways to start small</a><a href="/#quiz">Quiz</a><a href="/signup/">Weekly email</a></div>
+      <div class="fcol"><h4>Trust</h4><a href="/how-we-check/">How we check numbers</a><a href="/how-we-check/#sources">Sources</a><a href="/how-we-check/#corrections">Corrections log</a><a href="/how-we-check/#parents">For parents</a></div>
+      <div class="fcol"><h4>Company</h4><a href="/pricing/">Pricing</a><a href="/pricing/#faq">FAQ</a><a href="/signin/">Sign in</a><a href="/signup/">Create an account</a></div>
+      <div class="fcol"><h4>Legal</h4><a href="/legal/privacy/">Privacy (draft)</a><a href="/legal/terms/">Terms (draft)</a></div>
+    </div>
+    <div class="fbot"><span>© 2026 LaunchVault · Not financial advice</span><span class="lgl"><a href="/legal/privacy/">Privacy</a><a href="/legal/terms/">Terms</a></span>
+      <span class="own">Logos belong to their owners and show where data was read, not a partnership.</span></div>
+  </div>
+</footer>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

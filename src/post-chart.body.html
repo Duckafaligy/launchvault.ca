@@ -1,0 +1,62 @@
+<article class="wrap article">
+  <header class="phero">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Guides</span></nav>
+    <h1>How to read a revenue chart</h1>
+    <p class="lede">MRR, all-time revenue, and what a sudden jump on the line actually means. One real chart, three questions to ask.</p>
+    <div class="pmeta"><span class="by"><i><svg width="12" height="12" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault</span><span>5 min read</span><span>Nov 17 2026</span></div>
+  </header>
+  <div class="prose">
+    <div class="tk"><b>In short</b><ul>
+      <li>Check what the line measures: one month of subscriptions (MRR), or everything ever earned (all-time).</li>
+      <li>Check which points are verified. On most charts, only some are.</li>
+      <li>When the line jumps, look for what the founder did just before.</li></ul></div>
+
+    <h2>The chart we'll use</h2>
+    <p>This is Postiz, a social media scheduler. Hover or tap the line, or a move in the list, to see each point and where it came from.</p>
+  </div>
+  <div class="chartcard" style="grid-template-columns:1fr;margin-top:0">
+    <div class="panel">
+      <div class="ch-h"><div><div class="t">Postiz · monthly revenue</div><div class="big">$430,896<small>Nov 17 2026</small></div></div></div>
+      <div class="legend"><span><i style="background:var(--verified-dot)"></i>Verified</span><span><i style="border:1.5px solid var(--brand);background:#fff"></i>Claimed</span><span><i style="background:var(--coral);border-radius:1px;transform:rotate(45deg);width:7px;height:7px"></i>Sources differ</span><span><i style="border:1px solid #D1D5DB;border-radius:3px"></i>Founder's moves</span></div>
+      <div class="plot" id="plot"><svg id="chart" role="img" aria-label="Postiz monthly revenue, Sep 2024 to Nov 2026: under $15K for over a year, then rising to $430,896 verified on Nov 17 2026."></svg><div class="tip" id="tip" role="status"></div></div>
+    </div>
+    <div class="panel moves"><div class="hd"><b>The founder's moves</b><span>8 moves</span></div><ol id="moves"></ol></div>
+  </div>
+  <div class="prose" style="margin-top:8px">
+    <h2>1. What does the line measure?</h2>
+    <p>Monthly recurring revenue (MRR) is what subscriptions bring in each month. Postiz's MRR was <b>$430,896</b> on November 17, 2026 <span class="lb v">Verified</span>. All-time revenue adds up everything that ever came in: <b>$1,946,080</b> for Postiz <span class="lb v">Verified</span>.</p>
+    <p>The two aren't comparable. Stencil AI reports all-time revenue ($483,794), so putting it on a monthly chart next to Postiz would make no sense. Always check the label on the axis.</p>
+
+    <h2>2. Which points are checked?</h2>
+    <p>On the Postiz chart, only the last point is verified, read from Stripe by TrustMRR. The earlier points come from the founder's posts and a case study, so they're claimed.</p>
+    <p>One month has two numbers. For March 2026, a case study says <b>$21K</b>, but the founder said <b>$45,000</b> a month in an interview <span class="lb x">Sources differ</span>. The chart uses $21K and shows $45K as a second point, so you can see both.</p>
+
+    <h2>3. What happened just before the jump?</h2>
+    <p>The flat part matters as much as the jump. After going open source in September 2024, Postiz went from about $700 a month to $14K by November 2025 <span class="lb c">Claimed</span>: over a year of slow growth.</p>
+    <p>Then the line jumps: $21K in March 2026, $80K in April, $118K in June <span class="lb c">Claimed</span>. Move 6 on the timeline explains it. OpenClaw, an AI agent project, went viral, and Postiz was already plugged into it. The work from 2025 is what let it catch the 2026 wave.</p>
+    <p>Not every jump has an answer. Revenue went from $186,713 in September 2026 <span class="lb c">Claimed</span> to $430,896 in November <span class="lb v">Verified</span>, and we couldn't find a public explanation yet. When we can't explain a jump, we say so.</p>
+
+    <h2>Three questions for any revenue chart</h2>
+    <ul>
+      <li>Is it monthly or all-time?</li>
+      <li>Which points are verified, and on what date were they read?</li>
+      <li>What did the founder do just before the line moved?</li>
+    </ul>
+
+    <div class="srcbox"><h2>Sources</h2><div class="srcs-list">
+      <div class="sl-row"><b>TrustMRR: Postiz</b><span class="d">MRR and all-time revenue, read from Stripe. Read Nov 17 2026.</span><span class="lb v">Verified</span></div>
+      <div class="sl-row"><b>The founder on Dev.to, Nov 2025</b><span class="d">Revenue up to $14K a month.</span><span class="lb c">Claimed</span></div>
+      <div class="sl-row"><b>Superframeworks case study, Jul 2026</b><span class="d">Monthly revenue through July 2026.</span><span class="lb c">Claimed</span></div>
+      <div class="sl-row"><b>Mixergy interview, Mar 2026</b><span class="d">"$45,000 per month".</span><span class="lb c">Claimed</span></div>
+      <div class="sl-row"><b>TrustMRR: Stencil AI</b><span class="d">All-time revenue. Read Nov 16 2026.</span><span class="lb v">Verified</span></div>
+    </div></div>
+    <p style="margin-top:28px"><a href="/breakdowns/postiz/">Read the full Postiz breakdown →</a></p>
+  </div>
+</article>
+
+<section class="sec-alt" style="margin-top:72px">
+  <div class="wrap">
+    <div class="shead"><div><h2>From the blog.</h2></div><a class="tlink" href="/blog/">All posts <span aria-hidden="true">→</span></a></div>
+    {{POSTS}}
+  </div>
+</section>
