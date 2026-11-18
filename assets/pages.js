@@ -37,10 +37,10 @@
       const X = i => L + i / N * (W - L - R), Y = v => T + (1 - v / MAX) * (H - T - B), YG = v => GT + (1 - (v - GMIN) / (GMAX - GMIN)) * GH;
       svg.setAttribute("viewBox", `0 0 ${W} ${HT}`); svg.setAttribute("height", HT); svg.innerHTML = "";
       const defs = el("defs", {}, svg), gr = el("linearGradient", {id: "rcg", x1: 0, x2: 0, y1: 0, y2: 1}, defs);
-      el("stop", {offset: 0, "stop-color": "#34D399", "stop-opacity": .16}, gr); el("stop", {offset: 1, "stop-color": "#34D399", "stop-opacity": 0}, gr);
-      // scrub mask: full strength left of the cursor, ~25% to the right, with a soft edge that follows the cursor
+      el("stop", {offset: 0, "stop-color": "#34D399", "stop-opacity": .32}, gr); el("stop", {offset: 1, "stop-color": "#34D399", "stop-opacity": 0}, gr);
+      // scrub mask: full strength left of the cursor, ~60% to the right, with a soft edge that follows the cursor
       const mg = el("linearGradient", {id: "rcmg", gradientUnits: "userSpaceOnUse", x1: 0, x2: W, y1: 0, y2: 0}, defs);
-      const m1 = el("stop", {offset: 1, "stop-color": "#fff", "stop-opacity": 1}, mg), m2 = el("stop", {offset: 1, "stop-color": "#fff", "stop-opacity": .25}, mg);
+      const m1 = el("stop", {offset: 1, "stop-color": "#fff", "stop-opacity": 1}, mg), m2 = el("stop", {offset: 1, "stop-color": "#fff", "stop-opacity": .6}, mg);
       const mk = el("mask", {id: "rcm", maskUnits: "userSpaceOnUse", x: 0, y: 0, width: W, height: HT}, defs); el("rect", {x: 0, y: 0, width: W, height: HT, fill: "url(#rcmg)"}, mk);
       [0, 10000, 20000, 30000].forEach(v => { el("line", {x1: L, x2: W - R, y1: Y(v), y2: Y(v), class: "gl"}, svg);
         el("text", {x: L - 8, y: Y(v) + 4, "text-anchor": "end", class: "ax"}, svg).textContent = v ? "$" + v / 1000 + "K" : "$0"; });

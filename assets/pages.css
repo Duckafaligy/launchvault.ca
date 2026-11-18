@@ -423,12 +423,12 @@ main .tlink{min-height:44px}
 .rc-lead.c{background:var(--pop);color:#fff}
 .rc-lead.v{background:rgba(16,185,129,.2);color:#6EE7B7}
 .race.over .rc-p.v{border-color:rgba(52,211,153,.45);background:rgba(16,185,129,.07)}
-.rc-plot{position:relative;margin-top:18px;padding:14px 8px 4px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0) 70%)}
+.rc-plot{position:relative;margin-top:18px;padding:14px 8px 4px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0) 75%)}
 .rc-plot svg{display:block;width:100%;overflow:visible;touch-action:pan-y}
 .rc-plot .gl{stroke:rgba(255,255,255,.07)}
 .rc-plot .ax{font:500 12px var(--fn);fill:#8494AB}
 .rc-plot .vl{fill:none;stroke:#34D399;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
-.rc-plot .cl{fill:none;stroke:var(--pop);stroke-opacity:.5;stroke-width:1.5;stroke-dasharray:6 5;stroke-linecap:round}
+.rc-plot .cl{fill:none;stroke:var(--pop);stroke-opacity:.85;stroke-width:1.75;stroke-dasharray:6 5;stroke-linecap:round}
 .rc-plot .gz{stroke:rgba(255,255,255,.32);stroke-dasharray:3 3}
 .rc-plot .gpl{fill:none;stroke:var(--pop);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
 .rc-plot .gd{fill:#0B1020;stroke:var(--pop);stroke-width:1.5;opacity:0;transition:opacity .3s}.rc-plot .gd.on{opacity:1}
@@ -437,7 +437,7 @@ main .tlink{min-height:44px}
 .rc-plot .pv.v{fill:#6EE7B7}.rc-plot .pv.g{fill:#FF8FA3}
 .rc-plot .lab.g{fill:#FF8FA3}
 .rc-plot .cx{transition:none}
-.rc-plot .gp{fill:var(--pop);opacity:.1}
+.rc-plot .gp{fill:var(--pop);opacity:.24}
 .rc-plot .vd{fill:#0B1020;stroke:#34D399;stroke-width:1.5;opacity:0;transition:opacity .3s}
 .rc-plot .vd.on{opacity:1}
 .rc-plot .hv circle{fill:#34D399;stroke:#0B1020;stroke-width:3}
