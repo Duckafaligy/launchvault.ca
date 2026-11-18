@@ -9,7 +9,7 @@
 
 <section style="padding-top:0">
   <div class="wrap legal">
-    <nav class="ltoc" aria-label="Contents"><b>Contents</b><a href="#who">Who we are</a><a href="#collect">What we collect</a><a href="#payments">Payments</a><a href="#dont">What we don't do</a><a href="#rights">Your rights</a><a href="#changes">Changes</a><a href="#contact">Contact</a></nav>
+    <nav class="ltoc" aria-label="Contents"><b>Contents</b><span class="ind" aria-hidden="true"></span><a href="#who">Who we are</a><a href="#collect">What we collect</a><a href="#payments">Payments</a><a href="#dont">What we don't do</a><a href="#rights">Your rights</a><a href="#changes">Changes</a><a href="#contact">Contact</a></nav>
     <div class="prose">
       <div class="lsum"><b>The short version</b><ul>
         <li>We collect your email, and an account only if you choose to make one.</li>
@@ -39,3 +39,14 @@
     </div>
   </div>
 </section>
+
+<script>
+/* contents: highlights the section you're reading */
+(() => { const links = [...document.querySelectorAll(".ltoc a")], secs = links.map(a => document.getElementById(a.hash.slice(1))), ind = document.querySelector(".ltoc .ind");
+  let cur = -2;
+  const f = () => { let i = 0; secs.forEach((s, k) => { if (s && s.getBoundingClientRect().top < innerHeight * .3) i = k; });
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) i = links.length - 1;
+    if (i === cur) return; cur = i; links.forEach((a, k) => a.toggleAttribute("aria-current", k === i));
+    if (ind) { ind.style.transform = `translateY(${links[i].offsetTop}px)`; ind.style.height = links[i].offsetHeight + "px"; } };
+  addEventListener("scroll", f, {passive: true}); addEventListener("resize", () => { cur = -2; f(); }); f(); })();
+</script>

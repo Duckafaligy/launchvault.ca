@@ -1,0 +1,62 @@
+<section class="auth welcome">
+  <div class="wl">
+    <div class="wl-copy">
+      <a class="wl-back" href="/"><span aria-hidden="true">←</span> Back to the homepage</a>
+      <h1>Welcome to LaunchVault. <em class="em">Glad you're here.</em></h1>
+      <p class="lede">Real startup stories, checked and cut down to the part you can use. One a week, free.</p>
+      <ul class="aget"><li>The weekly breakdown, free</li><li>Checklists saved to your account</li><li>Every number labelled and dated</li></ul>
+    </div>
+
+    <div class="acard">
+      <div class="seg wtabs" data-tabs role="tablist" aria-label="Sign in or sign up">
+        <button type="button" role="tab" id="signin" aria-selected="true" aria-controls="p-signin">Sign in</button>
+        <button type="button" role="tab" id="signup" aria-selected="false" aria-controls="p-signup">Sign up</button>
+      </div>
+
+      <div class="wpanel" id="p-signin" role="tabpanel" aria-labelledby="signin">
+        <h2>Welcome back</h2>
+        <p class="sub">Sign in to see your checklists and your path.</p>
+        <form class="pv" novalidate>
+          <div class="fld"><label for="si-email">Email</label><input id="si-email" type="email" autocomplete="email" placeholder="you@email.com" required></div>
+          <div class="fld"><label for="si-pass">Password</label><span class="pw"><input id="si-pass" type="password" autocomplete="current-password" required><button class="pwt" type="button" aria-label="Show password" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></span></div>
+          <button class="btn btn-p btn-lg" type="submit">Sign in <span class="arr" aria-hidden="true">→</span></button>
+        </form>
+        <p class="alt">New here? <a href="#signup">Make a free account</a></p>
+      </div>
+
+      <div class="wpanel" id="p-signup" role="tabpanel" aria-labelledby="signup" hidden>
+        <h2>Make your free account</h2>
+        <p class="sub">One breakdown a week, the quiz and your saved checklists.</p>
+        <p class="draft" id="plannote" hidden style="margin-top:16px"><span><b>You picked Full.</b> $5 a month, or $4 a month billed yearly, through Stripe. Start with a free account; you can upgrade from there.</span></p>
+        <form class="pv" novalidate>
+          <div class="fld"><label for="su-email">Email</label><input id="su-email" type="email" autocomplete="email" placeholder="you@email.com" required></div>
+          <div class="fld"><label for="su-pass">Password</label><span class="pw"><input id="su-pass" type="password" autocomplete="new-password" required aria-describedby="su-hint"><button class="pwt" type="button" aria-label="Show password" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></span>
+            <span class="hint" id="su-hint"><span class="pwm" aria-hidden="true"><i></i></span><span class="pwl">At least 10 characters.</span></span></div>
+          <label class="chk"><input type="checkbox" required> <span>I'm 13 or older. If I'm under 18, a parent will pay for Full.</span></label>
+          <button class="btn btn-p btn-lg" type="submit">Create free account <span class="arr" aria-hidden="true">→</span></button>
+        </form>
+        <p class="note">By signing up you agree to the <a href="/legal/terms/">terms</a> and <a href="/legal/privacy/">privacy policy</a> (drafts).</p>
+        <p class="alt">Already have an account? <a href="#signin">Sign in</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+/* Welcome: #signup (or ?plan=full) opens the sign-up tab. This runs before site.js, which wires the tabs and slides the indicator. */
+(() => {
+  const want = () => location.hash === "#signup" || new URLSearchParams(location.search).get("plan") === "full" ? "signup" : location.hash === "#signin" ? "signin" : null;
+  const set = id => ["signin", "signup"].forEach(k => { const on = k === id; document.getElementById(k).setAttribute("aria-selected", on); document.getElementById("p-" + k).hidden = !on; });
+  const w = want(); if (w) set(w);
+  addEventListener("hashchange", () => { const w = want(); if (w) document.getElementById(w).click(); });
+  document.querySelectorAll(".wtabs [role=tab]").forEach(t => t.addEventListener("click", () => history.replaceState(null, "", "#" + t.id)));
+  // links to the other tab switch in place and keep the page where it is
+  document.querySelectorAll('.wpanel .alt a[href^="#"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); const t = document.getElementById(a.hash.slice(1)); t.click(); t.focus(); }));
+  // show / hide the password
+  document.querySelectorAll(".pwt").forEach(b => b.addEventListener("click", () => { const i = b.previousElementSibling, show = i.type === "password";
+    i.type = show ? "text" : "password"; b.setAttribute("aria-pressed", show); b.setAttribute("aria-label", show ? "Hide password" : "Show password"); }));
+  // the bar fills toward the 10-character minimum
+  const i = document.getElementById("su-pass"), m = document.querySelector(".pwm"), l = document.querySelector(".pwl");
+  i.addEventListener("input", () => { const n = i.value.length; m.style.setProperty("--p", Math.min(1, n / 10)); m.classList.toggle("ok", n >= 10);
+    l.textContent = n >= 10 ? "Long enough." : n ? (10 - n) + " more character" + (10 - n === 1 ? "" : "s") + "." : "At least 10 characters."; });
+})();
+</script>

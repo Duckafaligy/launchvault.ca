@@ -23,5 +23,67 @@
     }
    ]
   }
+ ],
+ "redirects": [
+  {
+   "source": "/signin",
+   "destination": "/welcome/",
+   "permanent": true
+  },
+  {
+   "source": "/signin/",
+   "destination": "/welcome/",
+   "permanent": true
+  },
+  {
+   "source": "/signup",
+   "destination": "/welcome/",
+   "permanent": true
+  },
+  {
+   "source": "/signup/",
+   "destination": "/welcome/",
+   "permanent": true
+  },
+  {
+   "source": "/pricing",
+   "destination": "/#pricing",
+   "permanent": true
+  },
+  {
+   "source": "/pricing/",
+   "destination": "/#pricing",
+   "permanent": true
+  },
+  {
+   "source": "/how-we-check",
+   "destination": "/#sources",
+   "permanent": true
+  },
+  {
+   "source": "/how-we-check/",
+   "destination": "/#sources",
+   "permanent": true
+  },
+  {
+   "source": "/breakdowns/postiz",
+   "destination": "/blog/postiz/",
+   "permanent": true
+  },
+  {
+   "source": "/breakdowns/postiz/",
+   "destination": "/blog/postiz/",
+   "permanent": true
+  },
+  {
+   "source": "/breakdowns",
+   "destination": "/#stories",
+   "permanent": true
+  },
+  {
+   "source": "/breakdowns/",
+   "destination": "/#stories",
+   "permanent": true
+  }
  ]
 }

@@ -239,7 +239,6 @@ footer .fmsg,.dk .fmsg{color:#E2E8F0;justify-content:flex-start}
   .crumbs a{min-height:44px}
   .tlink,.read{min-height:44px}
   .bk-toc a{min-height:44px}
-  .srow a{min-height:44px}
 }
 .chip{height:44px;padding:0 14px}
 .draft[hidden]{display:none}

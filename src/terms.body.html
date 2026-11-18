@@ -9,7 +9,7 @@
 
 <section style="padding-top:0">
   <div class="wrap legal">
-    <nav class="ltoc" aria-label="Contents"><b>Contents</b><a href="#using">Using LaunchVault</a><a href="#advice">Not financial advice</a><a href="#full">Full plan and payments</a><a href="#content">Our content</a><a href="#accuracy">Accuracy</a><a href="#contact">Contact</a></nav>
+    <nav class="ltoc" aria-label="Contents"><b>Contents</b><span class="ind" aria-hidden="true"></span><a href="#using">Using LaunchVault</a><a href="#advice">Not financial advice</a><a href="#full">Full plan and payments</a><a href="#content">Our content</a><a href="#accuracy">Accuracy</a><a href="#contact">Contact</a></nav>
     <div class="prose">
       <div class="lsum"><b>The short version</b><ul>
         <li>Breakdowns are for learning. They are not financial advice.</li>
@@ -25,10 +25,21 @@
       <h2 id="content">Our content</h2>
       <p>Breakdowns, charts and text are ours. You can share links and short quotes with credit. Please don't copy whole breakdowns. Company names and logos belong to their owners and show where data was read, not a partnership.</p>
       <h2 id="accuracy">Accuracy</h2>
-      <p>We label every number and show where it came from. If you think one is wrong, tell us. If it is, we fix it and log the change in the <a href="/how-we-check/#corrections">corrections log</a>.</p>
+      <p>We label every number and show where it came from. If you think one is wrong, tell us. If it is, we fix it and note the change on the page. See <a href="/#sources">how we check numbers</a>.</p>
       <h2 id="contact">Contact</h2>
       <p>Contact details coming before launch.</p>
       <p style="margin-top:28px"><a href="/legal/privacy/">Read the privacy policy (draft) →</a></p>
     </div>
   </div>
 </section>
+
+<script>
+/* contents: highlights the section you're reading */
+(() => { const links = [...document.querySelectorAll(".ltoc a")], secs = links.map(a => document.getElementById(a.hash.slice(1))), ind = document.querySelector(".ltoc .ind");
+  let cur = -2;
+  const f = () => { let i = 0; secs.forEach((s, k) => { if (s && s.getBoundingClientRect().top < innerHeight * .3) i = k; });
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) i = links.length - 1;
+    if (i === cur) return; cur = i; links.forEach((a, k) => a.toggleAttribute("aria-current", k === i));
+    if (ind) { ind.style.transform = `translateY(${links[i].offsetTop}px)`; ind.style.height = links[i].offsetHeight + "px"; } };
+  addEventListener("scroll", f, {passive: true}); addEventListener("resize", () => { cur = -2; f(); }); f(); })();
+</script>

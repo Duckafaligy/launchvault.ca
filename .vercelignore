@@ -1,2 +1,4 @@
 src
 build.py
+_review/
+COMPONENTS.md
