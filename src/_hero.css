@@ -1,0 +1,129 @@
+
+/* =====================================================================
+   Hero dashboard: every control is real; three ghost cursors demo it.
+   ===================================================================== */
+.side .search{position:relative;cursor:text;padding:0 8px;transition:border-color .2s,box-shadow .2s}
+.side .search input{flex:1;min-width:0;height:100%;padding:0;border:0;background:none;outline:none;font:500 13px var(--fd);color:var(--ink)}
+.side .search input::placeholder{color:var(--faint)}
+.side .search:focus-within,.side .search.gh-focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.side .si{display:flex;align-items:center;gap:8px;width:100%;height:28px;padding:0 8px;border:0;border-radius:6px;background:none;color:#374151;font:500 13px var(--fd);text-align:left;cursor:pointer;flex:none;transition:background-color .15s,color .15s}
+.side .si svg{color:var(--faint);flex:none}
+.side .si:hover,.side .si.gh-hover{background:#F1F3F6;color:var(--ink)}
+.side .si.on{background:#EAF0FF;color:var(--brand-ink)}
+.side .si.on svg{color:var(--brand)}
+.side .si.co.on i{background:var(--brand)}
+.side .si[hidden],.side .grp[hidden]{display:none}
+.snone{padding:6px 8px;font-size:12px;color:var(--muted)}
+.splan a{color:var(--brand);font-weight:600;border-radius:4px}
+.splan a:hover{text-decoration:underline;text-underline-offset:2px}
+.crumb{border:0;background:none;padding:2px 5px;margin:0 -5px;border-radius:5px;font:inherit;color:var(--muted);cursor:pointer;transition:background-color .15s,color .15s}
+.crumb:hover,.crumb.gh-hover{color:var(--ink);background:#F1F3F6}
+#wurl{transition:opacity .2s}
+
+/* KPI cards: hover, click shows the source in place */
+.kpis .kpi{appearance:none;border:0;background:#fff;text-align:left;font:inherit;color:inherit;cursor:pointer;position:relative;transition:background-color .2s,box-shadow .2s}
+.kpis .kpi:first-child{border-radius:7px 0 0 7px}.kpis .kpi:last-child{border-radius:0 7px 7px 0}
+.kpis .kpi:hover,.kpis .kpi.gh-hover{background:#F8FAFF;box-shadow:inset 0 0 0 1px #C7D5FE}
+.kpis .kpi[aria-pressed=true]{background:#F3F7FF;box-shadow:inset 0 0 0 1px #93B4FF}
+.kpi .ksrc{display:none;font-size:11.5px;line-height:20px;color:var(--brand-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi[aria-pressed=true] .m{display:none}
+.kpi[aria-pressed=true] .ksrc{display:block;animation:rise .35s var(--out)}
+.btn-s.gh-hover{background:var(--brand);color:#fff;box-shadow:inset 0 0 0 1px var(--brand)}
+#srcbtn[aria-expanded=true]{background:var(--ink);color:#fff;box-shadow:inset 0 0 0 1px var(--ink)}
+.dtabs.seg > button.gh-hover{color:var(--ink);background:rgba(255,255,255,.6)}
+.mv.gh-hover{background:#F3F4F6}
+.mv.on{background:#EEF3FF}
+.mv.on .n{border-color:var(--brand)}
+.plot .tag{cursor:pointer}
+.plot .tag rect{transition:fill .2s,stroke .2s}
+
+/* views inside the window: same box, so the window never changes height */
+.main{position:relative}
+.vpost.under{visibility:hidden}
+.vx{position:absolute;inset:0;z-index:2;overflow:auto;padding:14px 16px;background:#fff;animation:tin .35s var(--out)}
+.vx[hidden]{display:none}
+.vh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--line2)}
+.vh b{font:700 18px/1.2 var(--fd);color:var(--ink);letter-spacing:-.02em}
+.vh span{font-size:12px;color:var(--muted)}
+.vsub{font:500 12px var(--fd);color:var(--muted);margin:14px 0 6px}
+.hcard{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;padding:14px;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:left;font:inherit;color:inherit;cursor:pointer;transition:background-color .2s,border-color .2s}
+.hcard:hover,.hcard.gh-hover{border-color:#C7D5FE;background:#F8FAFF}
+.hc-t b{display:block;color:var(--ink);font-size:15px}.hc-t small{display:block;color:var(--muted);font-size:12px}
+.hc-n{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.hc-n b{font:600 20px/1 var(--fn);color:var(--ink);letter-spacing:-.02em}
+.hc-n small,.vrow .num small,.so-n small{font:500 12px var(--fd);color:var(--muted);letter-spacing:0}
+.vlist{display:grid;gap:4px}
+.vrow{display:grid;grid-template-columns:26px minmax(0,1fr) auto auto 84px;gap:10px;align-items:center;width:100%;min-height:44px;padding:6px 10px;border:1px solid var(--line2);border-radius:8px;background:#fff;text-align:left;font:inherit;font-size:13px;color:inherit;cursor:pointer;transition:background-color .15s,border-color .15s}
+.vrow:hover,.vrow.gh-hover{background:#F8FAFC;border-color:var(--line)}
+.vrow .tile{width:26px;height:26px;font-size:12px;border-radius:6px}
+.vr-n{display:flex;align-items:center;gap:8px;min-width:0}
+.vr-n b{color:var(--ink);font-weight:600;white-space:nowrap}
+.vrow .num{font:600 14px var(--fn);color:var(--ink);white-space:nowrap}
+.dt{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.st{font:500 11px/1 var(--fd);color:#475569;background:#F1F5F9;border-radius:5px;padding:4px 6px;white-space:nowrap}
+.st.ok{color:var(--verified);background:rgba(16,185,129,.1)}
+.vfoot{margin-top:12px;font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.wck{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.vh .prog{font:500 12px var(--fn);color:var(--brand)}
+.vsrc{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.vsrc li{display:flex;align-items:center;gap:8px;min-height:40px;padding:0 10px;border:1px solid var(--line2);border-radius:8px;font:600 13px var(--fd);color:var(--ink);transition:background-color .15s}
+.vsrc li:hover{background:#F8FAFC}
+.vsrc li .lb{margin-left:auto}
+.vsrc .wmk,.sr-n .wmk{font-size:14px}
+.si-ic{width:16px;height:16px;flex:none}
+.soon-b{display:grid;grid-template-columns:48px minmax(0,1fr);gap:16px;padding:18px;border:1px dashed #CBD5E1;border-radius:10px;background:var(--alt)}
+.soon-b .tile{width:48px;height:48px;font-size:20px;background:#334155}
+.so-n{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.so-n b{font:600 26px/1.1 var(--fn);color:var(--ink);letter-spacing:-.02em}
+.so-n .lb{align-self:center}
+.so-t{font-size:14px;margin-top:8px;max-width:52ch}
+.so-t b{color:var(--ink)}
+.so-a{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+
+/* "Sources · 7" drawer, inside the window */
+.sdrawer{position:absolute;top:0;right:0;bottom:0;z-index:4;width:min(340px,100%);display:flex;flex-direction:column;background:#fff;border-left:1px solid var(--line);box-shadow:-16px 0 32px -18px rgba(15,23,42,.3);transform:translateX(102%);visibility:hidden;transition:transform .45s var(--out),visibility 0s linear .45s}
+.sdrawer.open{transform:none;visibility:visible;transition:transform .45s var(--out)}
+.sd-h{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;padding:14px 14px 10px;border-bottom:1px solid var(--line2)}
+.sd-h b{color:var(--ink);font-size:15px}
+.sd-h span{grid-row:2;font-size:12px;color:var(--muted)}
+.sd-x{grid-row:1/3;grid-column:2;align-self:center;width:30px;height:30px;border:1px solid var(--line);border-radius:7px;background:#fff;display:grid;place-items:center;color:var(--muted);cursor:pointer;position:relative;transition:background-color .15s,color .15s,border-color .15s}
+.sd-x::after{content:"";position:absolute;inset:-7px}
+.sd-x:hover,.sd-x.gh-hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.sd-l{list-style:none;margin:0;padding:4px 8px;overflow:auto;flex:1}
+.sd-l li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;align-items:center;padding:7px 6px;border-top:1px solid var(--line2);border-radius:6px;transition:background-color .15s}
+.sd-l li:first-child{border-top:0}
+.sd-l li:hover{background:#F8FAFC}
+.sr-n{display:flex;align-items:center;gap:7px;font:600 13px var(--fd);color:var(--ink)}
+.sr-d{grid-row:2;font-size:11.5px;line-height:1.35;color:var(--muted)}
+.sd-l .lb{grid-row:1/3;grid-column:2}
+.sdrawer.open .sd-l li{animation:rise .4s var(--out) both}
+.sdrawer.open .sd-l li:nth-child(2){animation-delay:.03s}.sdrawer.open .sd-l li:nth-child(3){animation-delay:.06s}.sdrawer.open .sd-l li:nth-child(4){animation-delay:.09s}
+.sdrawer.open .sd-l li:nth-child(5){animation-delay:.12s}.sdrawer.open .sd-l li:nth-child(6){animation-delay:.15s}.sdrawer.open .sd-l li:nth-child(7){animation-delay:.18s}
+.sd-f{display:flex;align-items:center;gap:6px;padding:10px 14px;border-top:1px solid var(--line2);font:600 13px var(--fd);color:var(--brand);transition:background-color .15s}
+.sd-f:hover{background:#F8FAFF}
+
+/* ghost cursors: classic arrows with an action tag; transforms only */
+.ghosts{position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0;transition:opacity .35s}
+.ghosts.on{opacity:1}
+.gc{position:absolute;left:0;top:0;will-change:transform}
+.gc svg{display:block;filter:drop-shadow(0 2px 3px rgba(15,23,42,.28));transform-origin:2px 2px;transition:transform .14s var(--out)}
+.gc.down svg{transform:scale(.84)}
+.gt{position:absolute;left:15px;top:19px;padding:4px 8px;border-radius:6px;font:600 12px/1.2 var(--fd);color:#fff;white-space:nowrap;opacity:0;transform:translateY(4px);transition:opacity .25s,transform .35s var(--out)}
+.gc.talk .gt{opacity:1;transform:none}
+.gc.flip .gt{left:auto;right:6px}
+.gc-r{color:#E5484D}.gc-g{color:#10B981}.gc-b{color:#2563EB}
+.gc-r .gt{background:#E5484D}.gc-g .gt{background:#059669}.gc-b .gt{background:#2563EB}
+.rp{position:absolute;left:-10px;top:-10px;width:22px;height:22px;border-radius:50%;border:2px solid currentColor;opacity:0;pointer-events:none}
+.gc.click .rp{animation:ripple .6s var(--out)}
+@keyframes ripple{from{opacity:.9;transform:scale(.3)}to{opacity:0;transform:scale(1.7)}}
+@media (max-width:759px){.ghosts{display:none}}
+@media (max-width:720px){
+  .vrow{grid-template-columns:26px minmax(0,1fr) auto;row-gap:2px}.vrow .lb,.vrow .dt{display:none}
+  .vsrc{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){.ghosts{display:none}}
+
+/* Postiz's own logo (its brand colour, not ours) */
+.tile.plg{background:#fff;box-shadow:inset 0 0 0 1px var(--line)}
+.tile.plg img,.side .si i.plg img{display:block}
+.side .si.co i.plg,.side .si.co.on i.plg{background:none;display:grid;place-items:center}
