@@ -57,6 +57,11 @@ main > section .shead .lede{max-width:58ch}
 .quiz .qtop{font-size:12.5px;color:var(--text)}
 .bgrid .fyr{position:absolute;top:-11px;right:14px;z-index:1;font:600 12px/1 var(--fd);padding:5px 8px;border-radius:6px;background:var(--violet);color:#fff;white-space:nowrap}
 @media (min-width:1101px){.bgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.bc-num{row-gap:6px}
+.bc-sub{flex-basis:100%;font:500 12.5px/1.3 var(--fn);color:var(--text)}
+.bc-num .nv small{font:500 13px var(--fd);color:var(--text)}
+#check .rc-note{margin-top:14px;font-size:14px;color:#CBD5E1}
+.hero h1 .nw{white-space:nowrap}
 .bfoot{display:flex;justify-content:space-between;align-items:center;gap:8px 24px;flex-wrap:wrap;margin-top:12px}
 .bfoot .bnote{margin:0}
 .bcard.fy{border-color:#DDD6FE}
@@ -126,6 +131,14 @@ footer .fbot .lgl a{display:inline-flex;align-items:center;min-height:44px}
 /* ---------- responsive ---------- */
 @media (max-width:1180px){#sources .sgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (max-width:720px){#sources .sgrid{grid-template-columns:repeat(2,minmax(0,1fr))}#sources .scell{height:92px}}
+@media (max-width:520px){
+  #sources .sgrid{grid-template-columns:1fr;gap:8px}
+  #sources .scell{height:64px;flex-direction:row;align-items:center;gap:12px;padding:0 14px}
+  #sources .scell .lg{flex:1;min-width:0}
+  #sources .scell .gv{margin:0;flex:none}
+  #sources .more-in{padding:8px 14px;gap:2px}
+  #sources .more-in .mr{line-height:1.3}
+}
 @media (max-width:720px){
   main > section{padding:64px 0}
   #check{padding:64px 0 56px}

@@ -1213,7 +1213,7 @@ html{scroll-padding-top:78px}
   .win .phead{margin:0 0 10px;gap:10px}
   .win .phead .tile{width:30px;height:30px}
   .win .phead b{font-size:17px}
-  .win .phead span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12.5px}
+  .win .phead span{display:block;font-size:12.5px;line-height:1.35}
   .win .kpis{grid-template-columns:1fr 1fr}
   .win .kpi{padding:8px 10px;gap:2px}
   .win .kpi .k{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
