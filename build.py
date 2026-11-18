@@ -45,13 +45,12 @@ def nav(active):
   <a class="logo" href="/" aria-label="LaunchVault home">{LV}LaunchVault</a>
   <div class="links">{links}</div>
   <div class="right">
-    <a class="btn btn-s signin" href="/welcome/">Sign in</a>
-    <a class="btn btn-p cta" href="/welcome/#signup"><span class="long">Get the weekly breakdown</span><span class="short">Get it free</span></a>
+    <a class="btn btn-p cta" href="/welcome/"><span class="long">Get the weekly breakdown</span><span class="short">Get it free</span></a>
     <button class="btn btn-s menu" id="menubtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menuc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   </div>
   <div class="menuc" id="menuc">
     {mlinks}
-    <div class="acts"><a class="btn btn-s" href="/welcome/">Sign in</a><a class="btn btn-p" href="/welcome/#signup">Get the weekly breakdown</a></div>
+    <div class="acts"><a class="btn btn-p" href="/welcome/">Get the weekly breakdown</a></div>
   </div>
 </nav>'''
 
@@ -65,7 +64,7 @@ SOCIAL_HTML = "".join(f'<a class="soc" role="link" tabindex="0" aria-disabled="t
 FCOLS = [("Explore", [("/#stories", "Stories"), ("/#sources", "How we check"), ("/#pricing", "Pricing"), ("/#faq", "FAQ")]),
          ("From the blog", [("/blog/", "All posts"), ("/blog/postiz/", "The Postiz breakdown"), ("/blog/what-verified-means/", "What Verified means"),
                             ("/blog/how-to-read-a-revenue-chart/", "Reading a revenue chart"), ("/blog/three-ways-to-start-small/", "Three ways to start small")]),
-         ("Account", [("/welcome/", "Sign in"), ("/welcome/#signup", "Create a free account")]),
+         ("Account", [("/welcome/", "Get the weekly breakdown")]),
          ("Legal", [("/legal/privacy/", "Privacy (draft)"), ("/legal/terms/", "Terms (draft)")])]
 FCOLS_HTML = "".join(f'<nav class="fcol" aria-label="{h}"><h4>{h}</h4>' + "".join(f'<a href="{u}"><span>{t}</span></a>' for u, t in ls) + "</nav>" for h, ls in FCOLS)
 FOOTER = '''<footer class="foot">

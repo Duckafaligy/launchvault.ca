@@ -244,3 +244,8 @@ footer .fmsg,.dk .fmsg{color:#E2E8F0;justify-content:flex-start}
 .draft[hidden]{display:none}
 .bkt{display:flex;gap:16px;align-items:flex-start}.bkh h1{max-width:24ch}
 @media (max-width:720px){.bkt{flex-direction:column;gap:14px}}
+
+/* nav: links centred between logo and CTA (equal flex sides, so they can never overlap) */
+.nav .logo{flex:1 1 0;min-width:max-content}
+.nav .links{margin-left:0}
+.nav .right{flex:1 1 0;justify-content:flex-end;margin-left:0;min-width:max-content}
