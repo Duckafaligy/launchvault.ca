@@ -248,3 +248,8 @@ footer .fmsg,.dk .fmsg{color:#E2E8F0;justify-content:flex-start}
 .nav .logo{flex:1 1 0;min-width:max-content}
 .nav .links{margin-left:0}
 .nav .right{flex:1 1 0;justify-content:flex-end;margin-left:0;min-width:max-content}
+
+/* demo window: real traffic-light dots */
+.chrome .dots i:nth-child(1){background:#FF5F57}
+.chrome .dots i:nth-child(2){background:#FEBC2E}
+.chrome .dots i:nth-child(3){background:#28C840}
