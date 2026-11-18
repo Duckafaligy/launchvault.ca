@@ -74,7 +74,7 @@
       const gap = v - c, close = c && Math.abs(gap) / c < .05;
       lead.className = "rc-lead " + (!c ? "none" : close ? "tie" : gap > 0 ? "v" : "c");
       lead.textContent = !c ? "No claim yet" : close ? "Within " + Math.round(Math.abs(gap) / c * 100) + "%: neck and neck" : gap > 0 ? "Stripe ahead by " + money(gap) : "Claim ahead by " + money(-gap);
-      cap.textContent = CAPS(i);
+      if (cap) cap.textContent = CAPS(i);
       race.classList.toggle("over", i === N);
     };
     const run = () => { if (reduce) { set(N); return; } cancelAnimationFrame(anim); const t0 = performance.now(), DUR = 5200; race.classList.add("running");

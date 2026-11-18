@@ -28,7 +28,7 @@
 
   // ---------- homepage scroll-spy: the nav tab for the section you're reading is highlighted ----------
   if (IO && location.pathname === "/" && nav) {
-    const links = $$('#nav a[href^="/#"]'), map = {stories: "stories", "moves-sec": "stories", inside: "stories", sources: "sources", sourced: "sources", check: "sources", pricing: "pricing", faq: "faq"};
+    const links = $$('#nav a[href^="/#"]'), map = {stories: "stories", inside: "stories", sources: "sources", check: "sources", pricing: "pricing", faq: "faq"};
     const vis = new Map();
     const paint = () => { let best = null, bh = 0; vis.forEach((h, id) => { if (h > bh) { bh = h; best = id; } });
       const key = best && map[best]; links.forEach(a => { if (key && a.getAttribute("href") === "/#" + key) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); }); };
@@ -98,7 +98,7 @@
 
   // ---------- story filters: the container right after .filters; ?f=saas preselects where data-url="1" ----------
   $$(".filters").forEach(g => {
-    const chips = $$(".chip", g), box = g.nextElementSibling; if (!box) return;
+    const chips = $$(".chip", g), box = g.dataset.for ? document.getElementById(g.dataset.for) : g.nextElementSibling; if (!box) return;
     const items = $$("[data-cat]", box), empty = box.querySelector(".empty");
     const apply = c => { chips.forEach(x => x.setAttribute("aria-pressed", x === c)); const f = c.dataset.f || "all"; let n = 0;
       items.forEach(r => { const on = f === "all" || r.dataset.cat.split(" ").includes(f); r.hidden = !on; if (on) { n++; if (!reduce && r.animate) r.animate([{opacity: 0, transform: "translateY(8px)"}, {opacity: 1, transform: "none"}], {duration: 380, easing: "cubic-bezier(.16,1,.3,1)", delay: n * 40, fill: "backwards"}); } });
@@ -268,11 +268,13 @@
     const URLS = { postiz: "/breakdowns/postiz", home: "/home", breakdowns: "/breakdowns", checklists: "/checklists", sources: "/sources" };
     let view = "postiz", co = null;
     const setDrawer = (open, byUser) => {
-      if (!drawer) return; drawer.classList.toggle("open", open); drawer.setAttribute("aria-hidden", !open); drawer.inert = !open;
+      if (!drawer) return; const was = drawer.classList.contains("open"); drawer.classList.toggle("open", open); drawer.setAttribute("aria-hidden", !open); drawer.inert = !open;
+      if (was !== open) win.dispatchEvent(new CustomEvent("lv:view", {detail: {view, drawer: open}}));
       if (srcbtn) srcbtn.setAttribute("aria-expanded", open);
       if (byUser) (open ? drawer.querySelector(".sd-x") : srcbtn).focus({preventScroll: true});
     };
     const show = (v, c) => {
+      const changed = v !== view || (v === "soon" && c !== co);
       view = v; co = v === "soon" ? c : null;
       post.classList.toggle("under", v !== "postiz");
       views.forEach(x => { x.hidden = x.dataset.view !== v; });
@@ -282,12 +284,20 @@
       if (url) url.textContent = v === "soon" ? "/breakdowns/" + c : URLS[v] || "/";
       setDrawer(false);
       if (v === "postiz" && redraw) redraw();
+      requestAnimationFrame(() => $$(".seg", win).forEach(placeInd));
+      // tells anyone watching (the ghost cursors) that the dashboard now shows something else
+      if (changed) win.dispatchEvent(new CustomEvent("lv:view", {detail: {view: v, co: co, drawer: false}}));
     };
     win.addEventListener("click", e => {
       const g = e.target.closest("[data-go]"); if (g) { e.preventDefault(); if (dash) dash.userView = e.isTrusted && g.dataset.go !== "postiz"; show(g.dataset.go, g.dataset.co); return; }
       const k = e.target.closest(".kpi"); if (k) { const on = k.getAttribute("aria-pressed") !== "true"; k.setAttribute("aria-pressed", on); k.dataset.u = e.isTrusted && on ? "1" : ""; return; }
       if (e.target.closest("#srcbtn")) { const o = !drawer.classList.contains("open"); if (dash) dash.userDrawer = e.isTrusted && o; setDrawer(o, e.isTrusted); return; }
-      if (e.target.closest(".sd-x")) { if (dash) dash.userDrawer = false; setDrawer(false, e.isTrusted); }
+      if (e.target.closest(".sd-x")) { if (dash) dash.userDrawer = false; setDrawer(false, e.isTrusted); return; }
+      const f = e.target.closest("[data-vf]");        // Breakdowns filter
+      if (f) { $$("[data-vf]", win).forEach(x => x.setAttribute("aria-pressed", x === f)); $$("#bdlist .vrow", win).forEach(r => r.hidden = f.dataset.vf !== "all" && r.dataset.st !== f.dataset.vf); return; }
+      const vb = e.target.closest(".vs-b");           // Sources: a row expands in place
+      if (vb) { const li = vb.parentElement, o = !li.classList.contains("open"); li.classList.toggle("open", o); vb.setAttribute("aria-expanded", o); return; }
+      const ck = e.target.closest(".ck"); if (ck && e.isTrusted) ck.dataset.u = "1";
     });
     win.addEventListener("keydown", e => { if (e.key === "Escape" && drawer && drawer.classList.contains("open")) { e.stopPropagation(); setDrawer(false, true); } });
     // search filters the sidebar; Ctrl/Cmd K focuses it while the pointer is over the window
@@ -307,9 +317,10 @@
   }
 
   // ---------- ghost cursors: three "people" browsing alongside you (red quick, green careful, blue wandery) ----------
-  // Human motion: Fitts-timed aimed moves on lopsided arcs with a skewed speed profile, over/undershoot + 1-2 corrections,
-  // smoothed hand tremor, idle drift, hesitation, changes of mind. They share the dashboard with the real user:
-  // never pause for you, never touch what you're using, and never switch the view while you're active.
+  // Context-aware: each dashboard view has its own pool of actions built from its real controls. When the view changes
+  // (you or a ghost), every ghost drops what it was doing, looks around the new content, then works from the new pool.
+  // Human motion: Fitts-timed aimed moves, lopsided arcs, skewed speed, overshoot + corrections, tremor, idle drift.
+  // Shared with the real user: never paused by you, never on the control you're using, never switching views while you're active.
   const wf = $("#winfit");
   if (dash && wf && !reduce && IO) {
     const layer = document.createElement("div"); layer.className = "ghosts"; layer.setAttribute("aria-hidden", "true"); wf.append(layer);
@@ -320,10 +331,10 @@
       { speed: 1.02, over: [3, 8], corr: [1, 2], hes: [180, 480], dwell: 1.05, skip: .22, mind: .28, drift: 9, typ: [90, 200], wander: .4 } ];
     const mk = (k, col, P) => { const el = document.createElement("div"); el.className = "gc gc-" + k;
       el.innerHTML = `<svg width="20" height="24" viewBox="0 0 20 24"><path d="M2 2v17.5l4.6-4.4 3.2 7.2 3-1.3-3.2-7.1 6.6-.3z" fill="${col}" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><span class="gt"></span><i class="rp"></i>`;
-      layer.append(el); return { el, tag: el.querySelector(".gt"), x: 0, y: 0, seg: null, P, hov: new Set(),
-        tr: { a: rnd(.6, 1.3), f1: rnd(3.5, 7), f2: rnd(9, 14), p1: rnd(0, 6.3), p2: rnd(0, 6.3) }, stats: { moves: 0, corrections: 0, overshoots: 0, changes: 0, skips: 0, typos: 0, sig: [] } }; };
+      layer.append(el); return { el, tag: el.querySelector(".gt"), x: 0, y: 0, seg: null, P, hov: new Set(), ep: 0, tgt: null,
+        tr: { a: rnd(.6, 1.3), f1: rnd(3.5, 7), f2: rnd(9, 14), p1: rnd(0, 6.3), p2: rnd(0, 6.3) }, stats: { moves: 0, corrections: 0, overshoots: 0, changes: 0, skips: 0, typos: 0, looks: 0, sig: [] } }; };
     const ALL = [mk("r", "#E5484D", PERS[0]), mk("g", "#10B981", PERS[1]), mk("b", "#2563EB", PERS[2])];
-    const STOP = {}, CANCEL = {}; let gen = 0, active = false, raf = 0, S = null;
+    const STOP = {}, CANCEL = {}, ABORT = {}; let gen = 0, epoch = 0, active = false, raf = 0, S = null;
     const box = () => wf.getBoundingClientRect();
     const place = (c, x, y) => { c.el.style.transform = `translate3d(${(x - 2).toFixed(1)}px,${(y - 2).toFixed(1)}px,0)`; c.el.classList.toggle("flip", x > wf.clientWidth - 200); };
     // one rAF loop: segments (Kumaraswamy time warp = quick start, long tail; optional mid-move pause) + smoothed tremor
@@ -337,11 +348,11 @@
         const T = c.tr, jx = T.a * (.65 * Math.sin(ts * T.f1 + T.p1) + .35 * Math.sin(ts * T.f2 + T.p2)), jy = T.a * (.65 * Math.cos(ts * T.f1 * .87 + T.p2) + .35 * Math.sin(ts * T.f2 * 1.13 + T.p1));
         place(c, c.x + jx, c.y + jy); });
       raf = requestAnimationFrame(tick); };
-    const ok = g => { if (g !== gen) throw STOP; };
-    const wait = (ms, g) => new Promise((res, rej) => setTimeout(() => g === gen ? res() : rej(STOP), ms));
+    // a token per action: STOP when the ghosts are switched off, ABORT when the view changed under it
+    const ok = t => { if (t.g !== gen) throw STOP; if (t.e !== epoch) throw ABORT; };
+    const wait = (ms, t) => new Promise((res, rej) => setTimeout(() => { try { ok(t); res(); } catch (e) { rej(e); } }, ms));
     const seg = (c, to, d, o = {}) => new Promise(res => { if (c.seg) { const p = c.seg.done; c.seg = null; p(); }
       c.seg = { a: [c.x, c.y], b: to, c: o.c || [(c.x + to[0]) / 2, (c.y + to[1]) / 2], t0: performance.now(), d: Math.max(16, d), ka: o.ka || 1.5, kb: o.kb || 2.4, pz: o.pz || null, on: o.on || null, done: res }; });
-    // an aimed move: ballistic arc to just past/short of the target, then small corrections onto it
     async function aim(c, x, y, g, w = 24, o = {}) {
       const P = c.P, dx = x - c.x, dy = y - c.y, D = Math.hypot(dx, dy); if (D < 1.5) return;
       const ux = dx / D, uy = dy / D, MT = (150 + 135 * Math.log2(D / Math.max(8, w) + 1)) * P.speed * rnd(.82, 1.28) * (o.slow || 1);
@@ -358,30 +369,29 @@
         if (!last) await wait(rnd(25, 90), g); }
     }
     const at = (el, fx, fy) => { const r = el.getBoundingClientRect(), b = box(); return [r.left - b.left + r.width * fx, r.top - b.top + r.height * fy, Math.min(r.width, r.height)]; };
-    const vis = el => !!el && el.getClientRects().length > 0 && !el.closest("[hidden], .under, [inert]") && el.getBoundingClientRect().width > 0;
-    // slow idle drift while "reading": never frozen, never fast
+    const vis = el => !!el && el.isConnected && el.getClientRects().length > 0 && !el.closest("[hidden], .under, [inert]") && el.getBoundingClientRect().width > 0;
     async function idle(c, ms, g) { const end = performance.now() + ms * c.P.dwell;
       while (end - performance.now() > 40) { const r = c.P.drift; await seg(c, [c.x + rnd(-r, r), c.y + rnd(-r * .7, r * .7)], Math.min(end - performance.now(), rnd(500, 1300)), { ka: rnd(1.3, 1.8), kb: rnd(1.6, 2.4) }); ok(g); } }
-    const DECOYS = () => qa(".kpi, .side .si, .mv, .dtabs button, .phead, .vrow, .ck, .vsrc li, .sd-l li, .mtop .btn");
+    const crowded = (c, x, y) => ALL.some(o => o !== c && (Math.hypot(o.x - x, o.y - y) < 26 || (o.tgt && Math.hypot(o.tgt[0] - x, o.tgt[1] - y) < 26)));
     async function go(c, el, g, fx = rnd(.3, .7), fy = rnd(.38, .66)) {
-      if (chance(c.P.mind)) { const d = any(DECOYS().filter(x => x !== el)); if (d) { c.stats.changes++; const [x, y] = at(d, .5, .5), k = rnd(.35, .7);
+      if (chance(c.P.mind)) { const d = any(CONTENT().filter(x => x !== el)); if (d) { c.stats.changes++; const [x, y] = at(d, .5, .5), k = rnd(.35, .7);
         await aim(c, c.x + (x - c.x) * k, c.y + (y - c.y) * k, g, 40, { noFix: true }); await wait(rnd(120, 380), g); } }
       if (!vis(el)) throw CANCEL; let [x, y, w] = at(el, fx, fy);
       for (let t = 0; t < 6 && crowded(c, x, y); t++) [x, y, w] = at(el, rnd(.12, .88), rnd(.25, .8));
       if (crowded(c, x, y)) throw CANCEL; c.tgt = [x, y]; await aim(c, x, y, g, w); }
-    const crowded = (c, x, y) => ALL.some(o => o !== c && (Math.hypot(o.x - x, o.y - y) < 26 || (o.tgt && Math.hypot(o.tgt[0] - x, o.tgt[1] - y) < 26)));
     const say = (c, t) => { if (t) c.tag.textContent = t; c.el.classList.toggle("talk", !!t); };
     const hov = (c, el, on) => { if (!el) return; if (on && userOwns(el)) return; el.classList.toggle("gh-hover", on); if (on) c.hov.add(el); else c.hov.delete(el); };
     const fire = (el, type) => el.dispatchEvent(type === "click" ? new MouseEvent("click", {bubbles: true, cancelable: true}) : new PointerEvent(type, {bubbles: true, pointerType: "mouse"}));
-    // a human click: hesitate, maybe decide not to, ~90 ms press with a 1-2 px drift, ripple
+    // a human click: hesitate, maybe decide not to, ~90 ms press with a 1-2 px drift, ripple. Never on a stale or user-held target.
     async function click(c, el, g, o = {}) {
       if (userOwns(el)) throw CANCEL;
       await idle(c, o.must ? rnd(90, 200) : rnd(c.P.hes[0], c.P.hes[1]), g);
       if (!o.must && chance(c.P.skip)) { c.stats.skips++; return false; }
-      if (userOwns(el) || (o.disrupt && (userBusy(1500) || (dash.userView && st().view !== "postiz") || (dash.userDrawer && st().drawer)))) throw CANCEL;
+      if (!vis(el)) { S.staleBlocked++; throw CANCEL; } if (userOwns(el) || (o.disrupt && !navOK(true))) throw CANCEL;
       c.el.classList.add("down"); c.el.classList.remove("click"); void c.el.offsetWidth; c.el.classList.add("click");
       await seg(c, [c.x + rnd(-1.6, 1.6), c.y + rnd(-.6, 1.8)], rnd(80, 105), { ka: 1.2, kb: 1.6 }); ok(g);
-      c.el.classList.remove("down"); fire(el, "click"); S.log.push([performance.now() - U.last, !!o.disrupt]); if (S.log.length > 200) S.log.shift();
+      c.el.classList.remove("down"); if (!vis(el)) { S.staleBlocked++; throw CANCEL; } S.fired++; fire(el, "click");
+      if (o.disrupt) { S.log.push(performance.now() - U.last); if (S.log.length > 200) S.log.shift(); }
       await idle(c, rnd(150, 400), g); return true; }
     const NEAR = { a: "s", b: "v", c: "x", d: "s", e: "w", f: "d", g: "h", h: "j", i: "u", j: "k", k: "l", l: "k", m: "n", n: "m", o: "i", p: "o", r: "e", s: "a", t: "r", u: "y", w: "e" };
     async function type(c, inp, word, g) { S.typing = true;
@@ -393,9 +403,15 @@
       S.typing = false; }
     const q1 = s => win.querySelector(s), qa = s => $$(s, win).filter(vis);
     const side = (v, co) => q1(`.side .si[data-go="${v}"]${co ? `[data-co="${co}"]` : ""}`);
+    const label = el => (el.lastChild && el.lastChild.nodeType === 3 ? el.lastChild.textContent : el.textContent).trim();
     const desk = () => innerWidth > 1100, st = () => dash.state();
+    const VX = s => s.split(",").map(x => `.view.vx:not([hidden]) ${x.trim()}`).join(", ");   // every selector scoped to the open view
+    // what's on screen right now, used to look around after a change and for changes of mind
+    const CONTENT = () => { const s = st(); if (s.drawer) return qa(".sd-l li, .sd-h b, .sd-f");
+      return s.view === "postiz" ? qa(".kpi, .ch-h .big, .phead, #moves .mv, .dtabs button") : qa(VX(".vh b, button, li, .so-n b, .so-t"));
+    };
 
-    // --- the real user: whatever you hover or focus is yours; while you're active, nobody changes your view
+    // --- the real user
     const U = { last: -1e9, over: null, focus: null, inside: false };
     const CTRL = "button, a, input, .vsrc li, .sd-l li, #plot, .ch-h";
     const touch = () => { U.last = performance.now(); };
@@ -410,143 +426,175 @@
     const userOwns = el => [U.over, U.focus].some(u => u && el && (u === el || el.contains(u) || u.contains(el)));
     const userIn = sel => [U.over, U.focus].some(u => u && u.closest(sel));
     const userBusy = ms => performance.now() - U.last < ms;
-    const canDisrupt = () => !userBusy(3000);
-    const mayUndoUser = () => !U.inside && !U.focus && !userBusy(3000);
+    const mayUndoUser = () => !U.inside && !U.focus && !userBusy(8000);
+    // changing what everyone sees: only while you're idle (3 s), never within 1.5 s of you, never away from something you adopted
+    function navOK(atClick) { if (userBusy(atClick ? 1500 : 3000)) return false; const s = st();
+      if (dash.userView && s.view !== "postiz" && !mayUndoUser()) return false; if (dash.userDrawer && s.drawer && !mayUndoUser()) return false; return true; }
     const drawerRect = () => { const d = $("#sdrawer"); return d && d.classList.contains("open") ? d.getBoundingClientRect() : null; };
-    const clear = el => { const d = drawerRect(); return !d || el.getBoundingClientRect().right < d.left - 4; };
+    const clear = el => { const d = drawerRect(); return !d || el.closest("#sdrawer") || el.getBoundingClientRect().right < d.left - 4; };
     const free = k => !S.locks.has(k) && !(k instanceof Element && userOwns(k));
-    const chartFree = () => free("chart") && !userIn("#plot, #moves, .dtabs, .ch-h") && !(chartAPI && chartAPI.userPinned());
     const userKpi = k => k.dataset.u === "1";
+    const chartFree = () => free("chart") && !userIn("#plot, #moves, .dtabs, .ch-h") && !(chartAPI && chartAPI.userPinned());
     const chartRest = () => { if (!chartAPI) return; if (chartAPI.userPinned()) chartAPI.idle(); else chartAPI.reset(); };
-    const label = el => (el.lastChild && el.lastChild.nodeType === 3 ? el.lastChild.textContent : el.textContent).trim();
-    const onPostiz = () => { const s = st(); return s.view === "postiz" && (!s.drawer || dash.userDrawer); };
-    const readerOK = () => !S.scene && !S.want && onPostiz();
-    async function reader(c, g, keys, fn) { const s = S; if (keys.some(k => s.locks.has(k))) return; keys.forEach(k => s.locks.add(k)); s.readers++;
-      try { await fn(); } finally { s.readers--; keys.forEach(k => s.locks.delete(k)); } }
-    async function scene(c, g, pre, fn) { const s = S; s.want = c; const mine = [pre, side("postiz")].filter(k => k && !s.locks.has(k)); mine.forEach(k => s.locks.add(k));
-      try { if (pre && vis(pre)) await go(c, pre, g); const t0 = performance.now(); while (s.readers > 0 && performance.now() - t0 < 4500) await idle(c, 260, g);
-        if (!canDisrupt()) throw CANCEL; s.scene = c; s.want = null; await fn(); }
-      finally { if (s.want === c) s.want = null; if (s.scene === c) s.scene = null; mine.forEach(k => s.locks.delete(k)); } }
-    async function backToPostiz(c, g) { if (st().view === "postiz") return;
-      const el = vis(side("postiz")) ? side("postiz") : qa('.view.vx:not([hidden]) [data-go="postiz"]')[0];
-      if (el) { say(c, "Back to Postiz"); await go(c, el, g); hov(c, el, true); await click(c, el, g, {must: true, disrupt: true}); hov(c, el, false); } else dash.show("postiz"); }
+    // hold a control (or several) for the length of an action
+    async function hold(keys, fn) { const s = S; if (keys.some(k => !free(k))) throw CANCEL; keys.forEach(k => s.locks.add(k)); try { await fn(); } finally { keys.forEach(k => s.locks.delete(k)); } }
+    // things a ghost toggled and must put back (a KPI source, a ticked step, an expanded row, a filter)
+    const mess = (el, undo, still) => S.dirty.set(el, { undo, still }), tidied = el => S.dirty.delete(el);
     const PTS = () => { const out = []; if (!chartAPI) return out; const b = box(), d = drawerRect();
       for (let k = 0; k < chartAPI.count; k++) { const p = chartAPI.point(k); if (p && (!d || p[0] < d.left - 6)) out.push([k, p[0] - b.left, p[1] - b.top]); } return out; };
+    // hover something, look at it, leave
+    const look = (sel, text, pre) => ({ w: 3, can: () => qa(sel).filter(free).filter(clear).length > 0, run: async (c, g) => {
+      const el = any(qa(sel).filter(free).filter(clear)); await hold([el], async () => { say(c, typeof text === "function" ? text(el) : text); await go(c, el, g, ...(pre || [])); hov(c, el, true); await idle(c, rnd(500, 1100), g); hov(c, el, false); }); } });
+    // click something that changes the view (only when navOK)
+    const nav = (sel, text, w = 2.5) => ({ w, can: () => navOK() && free("nav") && qa(sel).filter(free).length > 0, run: async (c, g) => {
+      const el = any(qa(sel).filter(free)); await hold(["nav", el], async () => { say(c, typeof text === "function" ? text(el) : text); await go(c, el, g); hov(c, el, true); await click(c, el, g, {disrupt: true}); hov(c, el, false); }); } });
 
-    const ACTIONS = [
-      // KPI: hover, maybe click to see its source, then put it back
-      { w: 6, can: () => readerOK() && $$(".kpi", win).some((k, i) => free("kpi" + i) && free(k) && vis(k) && clear(k) && !userKpi(k)), run: async (c, g) => {
-          const ks = $$(".kpi", win), i = any(ks.map((k, j) => j).filter(j => free("kpi" + j) && free(ks[j]) && vis(ks[j]) && clear(ks[j]) && !userKpi(ks[j]))), k = ks[i];
-          const L = ["Checking MRR's source", "Checking all-time revenue", "Checking subscriptions", "Checking the GitHub stars"];
-          await reader(c, g, ["kpi" + i], async () => { say(c, L[i]); await go(c, k, g); hov(c, k, true);
-            if (await click(c, k, g)) { await idle(c, rnd(800, 1600), g); if (k.getAttribute("aria-pressed") === "true" && !userKpi(k)) await click(c, k, g, {must: true}); }
-            else await idle(c, rnd(300, 700), g); hov(c, k, false); }); } },
-      // chart: scrub along it at an uneven pace, sometimes backing up; the tooltip follows exactly like a real pointer
-      { w: 5, can: () => readerOK() && chartFree() && PTS().length > 2, run: async (c, g) => {
-          await reader(c, g, ["chart"], async () => { const pts = PTS(), n = Math.min(pts.length, Math.round(rnd(3, 6))), s0 = Math.floor(rnd(0, pts.length - n + 1));
-            let cur = -1; const follow = cc => { const b = box(); let best = null, bd = 1e9; for (const p of pts) { const d = Math.abs(p[1] - cc.x); if (d < bd) { bd = d; best = p; } } if (best && best[0] !== cur) { cur = best[0]; chartAPI.show(cur); } };
-            say(c, "Scrubbing the chart"); await aim(c, pts[s0][1], pts[s0][2], g, 14, { on: follow });
-            for (let j = 1; j < n; j++) { if (!chartFree()) break; const p = pts[s0 + j];
-              await seg(c, [p[1] + rnd(-6, 6), p[2] + rnd(-10, 8)], rnd(220, 720) * c.P.speed, { ka: rnd(1.2, 1.8), kb: rnd(1.6, 2.8), on: follow }); ok(g);
-              await idle(c, rnd(120, 650), g);
-              if (chance(.2) && j > 1) { const q = pts[s0 + j - 1]; await seg(c, [q[1] + rnd(-4, 4), q[2]], rnd(200, 420), { ka: 1.4, kb: 2, on: follow }); ok(g); await idle(c, rnd(150, 400), g); } }
-            chartRest(); }); } },
-      // move tags: click one or two, the list highlights and scrolls
-      { w: 4, can: () => readerOK() && chartFree() && !!chartAPI && [0, 1, 2, 3, 4, 5, 6, 7].some(i => vis(chartAPI.tag(i)) && clear(chartAPI.tag(i))), run: async (c, g) => {
-          await reader(c, g, ["chart"], async () => { const ids = [0, 1, 2, 3, 4, 5, 6, 7].filter(i => vis(chartAPI.tag(i)) && clear(chartAPI.tag(i)));
-            for (let r = 0, n = chance(.45) ? 2 : 1; r < n; r++) { if (!chartFree()) break; const i = any(ids), t = chartAPI.tag(i); say(c, "Reading move " + (i + 1));
-              await go(c, t, g, .5, .5); if (await click(c, t, g)) await idle(c, rnd(900, 1500), g); }
-            chartRest(); }); } },
-      // the moves list, top to bottom, with pauses
-      { w: 3, can: () => readerOK() && chartFree() && qa("#moves .mv").filter(clear).length > 0, run: async (c, g) => {
-          await reader(c, g, ["chart"], async () => { const mv = $("#moves"), o = mv.getBoundingClientRect();
-            const rows = qa("#moves .mv").filter(b => { const r = b.getBoundingClientRect(); return r.top >= o.top - 1 && r.bottom <= o.bottom + 2 && clear(b); });
-            const s0 = Math.floor(rnd(0, Math.max(1, rows.length - 3))), n = Math.min(rows.length - s0, Math.round(rnd(3, 5)));
-            for (let j = 0; j < n; j++) { const b = rows[s0 + j]; if (!chartFree()) break; say(c, "Reading move " + (+b.dataset.i + 1));
-              await go(c, b, g, rnd(.2, .55), rnd(.35, .6)); hov(c, b, true); fire(b, "pointerover"); await idle(c, rnd(500, 1200), g); hov(c, b, false); }
-            fire(mv, "pointerleave"); chartRest(); }); } },
-      // time tabs: changes what everyone sees, so only while you're idle
-      { w: 3, can: () => readerOK() && chartFree() && canDisrupt() && desk() && vis(q1("[data-range]")) && !(dash.userRange && !mayUndoUser()), run: async (c, g) => {
-          await reader(c, g, ["chart"], async () => { const t = q1('[data-range][aria-selected="false"]'); say(c, t.dataset.range === "12" ? "Comparing 12 months" : "Back to all time");
-            await go(c, t, g); hov(c, t, true); if (await click(c, t, g, {disrupt: true})) await idle(c, rnd(1100, 1800), g); hov(c, t, false); }); } },
-      // hover, never press: Open breakdown and Go Pro
-      { w: 2, can: () => readerOK() && free("open") && vis(q1(".mtop .btn-p")) && free(q1(".mtop .btn-p")) && clear(q1(".mtop .btn-p")), run: async (c, g) => {
-          await reader(c, g, ["open"], async () => { const b = q1(".mtop .btn-p"); say(c, "Eyeing the full breakdown"); await go(c, b, g); hov(c, b, true); await idle(c, rnd(500, 1000), g); hov(c, b, false); }); } },
-      { w: 2, can: () => desk() && free("gopro") && free(q1(".splan a")), run: async (c, g) => { const s = S; s.locks.add("gopro");
-          try { const a = q1(".splan a"); say(c, "Looking at Go Pro"); await go(c, a, g); hov(c, a, true); await idle(c, rnd(500, 900), g); hov(c, a, false); } finally { s.locks.delete("gopro"); } } },
-      // browsing the sidebar without clicking (always possible, so nobody stands still)
-      { w: 1.5, can: () => !S.scene, run: async (c, g) => { const s = S, items = (desk() ? qa(".side .si") : qa(".kpi, .ch-h .legend span, .phead")).filter(free).filter(clear);
-          const el = any(items); if (!el) { await idle(c, 500, g); return; } s.locks.add(el);
-          try { say(c, desk() ? "Browsing" : "Looking around"); await go(c, el, g); hov(c, el, true); await idle(c, rnd(350, 800), g); hov(c, el, false);
-            if (chance(c.P.wander)) { const el2 = any(items.filter(x => x !== el && free(x))); if (el2) { s.locks.delete(el); s.locks.add(el2); await go(c, el2, g); await idle(c, rnd(250, 600), g); s.locks.delete(el2); } } }
-          finally { s.locks.delete(el); } } },
-      // guests: inside a view someone else opened (another cursor, or you), look around; only click inside ghost-opened views
-      { w: 6, can: c => (!!S.scene && S.scene !== c) || (st().view !== "postiz" && dash.userView && !S.scene) || (st().drawer && dash.userDrawer), run: async (c, g) => { const s = S; let held = null;
-          try { const dr = st().drawer, mine = !(dash.userView || (dr && dash.userDrawer));
-            const pool = () => (dr ? qa(".sd-l li") : qa(".view.vx:not([hidden]) .vrow, .view.vx:not([hidden]) .hcard, .view.vx:not([hidden]) .ck, .view.vx:not([hidden]) .vsrc li")).filter(free);
-            for (let r = 0, n = Math.round(rnd(2, 4)); r < n && S === s; r++) { const el = any(pool()); if (!el) { await idle(c, 400, g); break; } held = el; s.locks.add(el);
-              say(c, dr ? "Reading a source" : el.classList.contains("ck") && mine ? "Ticking a step" : "Skimming the list"); await go(c, el, g); hov(c, el, true);
-              if (el.classList.contains("ck") && mine && !dash.userView) { if (await click(c, el, g)) { await idle(c, rnd(400, 800), g); await click(c, el, g, {must: true}); } } else await idle(c, rnd(400, 900), g);
-              hov(c, el, false); s.locks.delete(el); held = null; } }
-          finally { if (held) s.locks.delete(held); } } },
-      // scenes (one at a time, only while you're idle): open a sidebar view and browse it
-      { w: 3, can: () => desk() && !S.scene && !S.want && canDisrupt() && st().view === "postiz" && !st().drawer, run: async (c, g) => { const v = any(["home", "breakdowns", "checklists", "sources"]), el = side(v);
-          await scene(c, g, el, async () => { const N = {home: "Home", breakdowns: "Breakdowns", checklists: "My checklists", sources: "Sources"};
-            say(c, "Opening " + N[v]); hov(c, el, true); const did = await click(c, el, g, {disrupt: true}); hov(c, el, false); if (!did) return;
-            await idle(c, rnd(500, 900), g);
-            const pick = any(qa(".view.vx:not([hidden]) .vrow, .view.vx:not([hidden]) .hcard, .view.vx:not([hidden]) .ck, .view.vx:not([hidden]) .vsrc li").filter(free));
-            if (pick) { S.locks.add(pick); try { say(c, pick.matches(".vrow, .hcard") ? "Opening a breakdown" : pick.classList.contains("ck") ? "Ticking a step" : "Reading the sources"); await go(c, pick, g); hov(c, pick, true);
-              if (pick.matches(".vrow, .hcard")) { if (await click(c, pick, g, {disrupt: true})) await idle(c, rnd(700, 1200), g); }
-              else if (pick.classList.contains("ck")) { if (await click(c, pick, g)) { await idle(c, rnd(500, 900), g); await click(c, pick, g, {must: true}); } }
-              else await idle(c, rnd(500, 900), g); hov(c, pick, false); } finally { S.locks.delete(pick); } }
-            await backToPostiz(c, g); }); } },
-      { w: 3, can: () => !S.scene && !S.want && canDisrupt() && onPostiz() && !st().drawer && vis($("#srcbtn")) && free($("#srcbtn")), run: async (c, g) => { const b = $("#srcbtn");
-          await scene(c, g, b, async () => { say(c, "Opening the sources"); hov(c, b, true); const did = await click(c, b, g, {disrupt: true}); hov(c, b, false); if (!did) return;
-            await idle(c, rnd(500, 800), g);
-            const rows = qa(".sd-l li"), s0 = Math.floor(rnd(0, 3));
-            for (let r = 0, n = Math.round(rnd(2, 3)); r < n; r++) { const li = rows[s0 + r]; if (!li || !free(li)) continue; say(c, "Checking " + li.querySelector(".sr-n").textContent.trim()); await go(c, li, g, rnd(.15, .5), .5); hov(c, li, true); await idle(c, rnd(450, 900), g); hov(c, li, false); }
-            if (dash.userDrawer) return;
-            const x = q1(".sd-x"); say(c, "Closing the sources"); await go(c, x, g, .5, .5); hov(c, x, true); await click(c, x, g, {must: true, disrupt: true}); hov(c, x, false); }); } },
-      { w: 2.5, can: () => desk() && !S.scene && !S.want && canDisrupt() && st().view === "postiz" && !st().drawer && vis(dash.search) && !dash.search.value && U.focus !== dash.search, run: async (c, g) => { const inp = dash.search, lab = inp.closest(".search");
-          await scene(c, g, inp, async () => { const word = any(["goji", "dm", "sten", "wind", "post", "champ"]); say(c, "Searching");
-            try { if (!(await click(c, inp, g, {disrupt: true}))) return; lab.classList.add("gh-focus"); await type(c, inp, word, g);
-              await idle(c, rnd(300, 700), g); const hit = qa(".side .si")[0]; lab.classList.remove("gh-focus");
-              if (hit && !userBusy(1500)) { say(c, "Opening " + label(hit)); await go(c, hit, g); hov(c, hit, true); if (await click(c, hit, g, {disrupt: true})) await idle(c, rnd(700, 1100), g); hov(c, hit, false); }
-              say(c, "Clearing the search"); await go(c, inp, g); lab.classList.add("gh-focus");
-              while (inp.value) { if (U.focus === inp) break; inp.value = inp.value.slice(0, -1); dash.filter(); await wait(rnd(60, 110), g); } }
-            finally { lab.classList.remove("gh-focus"); S.typing = false; if (U.focus !== inp && !dash.userQ && inp.value) { inp.value = ""; dash.filter(); } }
-            await backToPostiz(c, g); }); } },
-      { w: 2.5, can: () => desk() && !S.scene && !S.want && canDisrupt() && st().view === "postiz" && !st().drawer, run: async (c, g) => { const el = any(qa('.side .si[data-go="soon"]').filter(free)); if (!el) return;
-          await scene(c, g, el, async () => { say(c, "Opening " + label(el)); hov(c, el, true); const did = await click(c, el, g, {disrupt: true}); hov(c, el, false); if (!did) return;
-            await idle(c, rnd(900, 1500), g);
-            const back = q1('.view[data-view="soon"] [data-go="postiz"]');
-            if (back && vis(back)) { say(c, "Back to Postiz"); await go(c, back, g); hov(c, back, true); await click(c, back, g, {must: true, disrupt: true}); hov(c, back, false); } else await backToPostiz(c, g); }); } },
-      // soft reset: puts back anything a ghost left open; your own changes only once you've left the window and been idle
-      { w: 0, can: () => { if (S.scene || S.want || !canDisrupt()) return false; const s = st();
-          const ghostMess = (s.view !== "postiz" && !dash.userView) || (s.drawer && !dash.userDrawer) || (s.q && !dash.userQ && U.focus !== dash.search);
-          const userMess = (s.view !== "postiz" && dash.userView) || (s.drawer && dash.userDrawer) || (s.q && dash.userQ);
-          return ghostMess ? 40 : userMess && mayUndoUser() && performance.now() - U.last > 8000 ? 20 : performance.now() - S.lastReset > 40000 ? 6 : false; },
-        run: async (c, g) => { await scene(c, g, null, async () => { const s = st();
-          if (s.drawer) { const x = q1(".sd-x"); say(c, "Closing the sources"); await go(c, x, g, .5, .5); await click(c, x, g, {must: true, disrupt: true}); dash.userDrawer = false; }
-          if (s.q && U.focus !== dash.search) { dash.search.value = ""; dash.filter(); dash.userQ = false; }
-          await backToPostiz(c, g); dash.userView = false;
-          for (const k of $$(".kpi[aria-pressed=true]", win)) { if (userOwns(k) || (userKpi(k) && !mayUndoUser())) continue; k.dataset.u = ""; say(c, "Tidying up"); await go(c, k, g); await click(c, k, g, {must: true}); }
-          if (desk() && st().range && free("chart") && !userIn("#plot, #moves, .dtabs") && (!dash.userRange || mayUndoUser())) { dash.userRange = false; const t = q1('[data-range="all"]'); say(c, "Back to all time"); await go(c, t, g); await click(c, t, g, {must: true, disrupt: true}); }
-          if (chartAPI && free("chart") && !userIn("#plot, #moves") && (!chartAPI.userPinned() || mayUndoUser())) chartAPI.reset(); S.lastReset = performance.now(); }); } },
-    ];
-    async function agent(c, g, i) {
-      await wait(i * rnd(300, 700), g);
+    // ===== one pool per view =====
+    const POOLS = {
+      postiz: [
+        { w: 6, can: () => $$(".kpi", win).some(k => free(k) && vis(k) && clear(k) && !userKpi(k)), run: async (c, g) => {
+            const ks = $$(".kpi", win), k = any(ks.filter(x => free(x) && vis(x) && clear(x) && !userKpi(x))), i = ks.indexOf(k);
+            const L = ["Checking MRR's source", "Checking all-time revenue", "Checking subscriptions", "Checking the GitHub stars"];
+            await hold([k], async () => { say(c, L[i]); await go(c, k, g); hov(c, k, true);
+              if (await click(c, k, g)) { if (k.getAttribute("aria-pressed") === "true") mess(k, k, () => k.getAttribute("aria-pressed") === "true" && !userKpi(k)); await idle(c, rnd(800, 1600), g);
+                if (k.getAttribute("aria-pressed") === "true" && !userKpi(k)) { await click(c, k, g, {must: true}); tidied(k); } }
+              else await idle(c, rnd(300, 700), g); hov(c, k, false); }); } },
+        { w: 5, can: () => chartFree() && PTS().length > 2, run: async (c, g) => {
+            await hold(["chart"], async () => { const pts = PTS(), n = Math.min(pts.length, Math.round(rnd(3, 6))), s0 = Math.floor(rnd(0, pts.length - n + 1));
+              let cur = -1; const follow = cc => { let best = null, bd = 1e9; for (const p of pts) { const d = Math.abs(p[1] - cc.x); if (d < bd) { bd = d; best = p; } } if (best && best[0] !== cur) { cur = best[0]; chartAPI.show(cur); } };
+              say(c, "Scrubbing the chart"); await aim(c, pts[s0][1], pts[s0][2], g, 14, { on: follow });
+              for (let j = 1; j < n; j++) { if (!chartFree.call(null)) break; const p = pts[s0 + j];
+                await seg(c, [p[1] + rnd(-6, 6), p[2] + rnd(-10, 8)], rnd(220, 720) * c.P.speed, { ka: rnd(1.2, 1.8), kb: rnd(1.6, 2.8), on: follow }); ok(g);
+                await idle(c, rnd(120, 650), g);
+                if (chance(.2) && j > 1) { const q = pts[s0 + j - 1]; await seg(c, [q[1] + rnd(-4, 4), q[2]], rnd(200, 420), { ka: 1.4, kb: 2, on: follow }); ok(g); await idle(c, rnd(150, 400), g); } }
+              chartRest(); }); } },
+        { w: 4, can: () => chartFree() && !!chartAPI && [0, 1, 2, 3, 4, 5, 6, 7].some(i => vis(chartAPI.tag(i)) && clear(chartAPI.tag(i))), run: async (c, g) => {
+            await hold(["chart"], async () => { const ids = [0, 1, 2, 3, 4, 5, 6, 7].filter(i => vis(chartAPI.tag(i)) && clear(chartAPI.tag(i)));
+              for (let r = 0, n = chance(.45) ? 2 : 1; r < n; r++) { const i = any(ids), t = chartAPI.tag(i); say(c, "Reading move " + (i + 1));
+                await go(c, t, g, .5, .5); if (await click(c, t, g)) await idle(c, rnd(900, 1500), g); }
+              chartRest(); }); } },
+        { w: 3, can: () => chartFree() && qa("#moves .mv").filter(clear).length > 0, run: async (c, g) => {
+            await hold(["chart"], async () => { const mv = $("#moves"), o = mv.getBoundingClientRect();
+              const rows = qa("#moves .mv").filter(b => { const r = b.getBoundingClientRect(); return r.top >= o.top - 1 && r.bottom <= o.bottom + 2 && clear(b); });
+              const s0 = Math.floor(rnd(0, Math.max(1, rows.length - 3))), n = Math.min(rows.length - s0, Math.round(rnd(3, 5)));
+              for (let j = 0; j < n; j++) { const b = rows[s0 + j]; say(c, "Reading move " + (+b.dataset.i + 1));
+                await go(c, b, g, rnd(.2, .55), rnd(.35, .6)); hov(c, b, true); fire(b, "pointerover"); await idle(c, rnd(500, 1200), g); hov(c, b, false); }
+              fire(mv, "pointerleave"); chartRest(); }); } },
+        { w: 3, can: () => chartFree() && navOK() && desk() && vis(q1("[data-range]")) && !(dash.userRange && !mayUndoUser()), run: async (c, g) => {
+            await hold(["chart"], async () => { const t = q1('[data-range][aria-selected="false"]'); say(c, t.dataset.range === "12" ? "Comparing 12 months" : "Back to all time");
+              await go(c, t, g); hov(c, t, true); if (await click(c, t, g, {disrupt: true})) await idle(c, rnd(1100, 1800), g); hov(c, t, false); }); } },
+        look(".mtop .btn-p", "Eyeing the full breakdown"),
+        nav("#srcbtn", "Opening the sources", 3),
+        { w: 2, can: () => desk() && navOK() && free("nav") && vis(dash.search) && !dash.search.value && U.focus !== dash.search, run: async (c, g) => { const inp = dash.search, lab = inp.closest(".search");
+            await hold(["nav", inp], async () => { const word = any(["goji", "dm", "sten", "wind", "post", "champ"]); say(c, "Searching"); await go(c, inp, g);
+              try { if (!(await click(c, inp, g, {disrupt: true}))) return; lab.classList.add("gh-focus"); await type(c, inp, word, g); }
+              finally { lab.classList.remove("gh-focus"); S.typing = false; } }); } },
+      ],
+      drawer: [
+        look(".sd-l li", el => "Checking " + el.querySelector(".sr-n").textContent.trim(), [rnd(.15, .5), .5]),
+        look(".sd-l li", "Reading a source"),
+        look(".sd-f", "Eyeing the breakdown link"),
+        { w: 2.5, can: () => navOK() && free("nav") && !(dash.userDrawer && !mayUndoUser()) && vis(q1(".sd-x")), run: async (c, g) => { const x = q1(".sd-x");
+            await hold(["nav", x], async () => { say(c, "Closing the sources"); await go(c, x, g, .5, .5); hov(c, x, true); await click(c, x, g, {must: true, disrupt: true}); hov(c, x, false); }); } },
+      ],
+      search: [
+        { w: 6, can: () => navOK() && free("nav") && qa(".side .si").length > 0 && U.focus !== dash.search, run: async (c, g) => { const hit = qa(".side .si")[0];
+            await hold(["nav", hit], async () => { say(c, "Opening " + label(hit)); await go(c, hit, g); hov(c, hit, true); await idle(c, rnd(150, 350), g);
+              if (U.focus !== dash.search && !dash.userQ) { dash.search.value = ""; dash.filter(); }      // the result stays put once the list is full again
+              await click(c, hit, g, {must: true, disrupt: true}); hov(c, hit, false); }); } },
+        { w: 2, can: () => !dash.userQ && U.focus !== dash.search, run: async (c, g) => { const inp = dash.search, lab = inp.closest(".search");
+            await hold([inp], async () => { say(c, "Clearing the search"); await go(c, inp, g); lab.classList.add("gh-focus");
+              try { while (inp.value && U.focus !== inp) { inp.value = inp.value.slice(0, -1); dash.filter(); await wait(rnd(60, 110), g); } } finally { lab.classList.remove("gh-focus"); } }); } },
+      ],
+      home: [
+        look(VX(".hcard:not(.hcont)"), "Reading this week's story"),
+        nav(VX(".hcard:not(.hcont)"), "Continue reading Postiz"),
+        look(VX(".hcont"), "Looking at my checklist"),
+        nav(VX(".hcont"), "Opening my checklist"),
+        look(VX(".vrow"), el => "Looking at " + el.querySelector("b").textContent),
+        nav(VX(".vrow"), el => "Opening " + el.querySelector("b").textContent, 1.5),
+      ],
+      breakdowns: [
+        look(VX(".vrow:not([hidden])"), el => "Looking at " + el.querySelector("b").textContent),
+        { w: 3, can: () => qa("[data-vf]").filter(free).length > 1, run: async (c, g) => { const cur = q1('[data-vf][aria-pressed="true"]'), b = any(qa('[data-vf][aria-pressed="false"]').filter(free)); if (!b) throw CANCEL;
+            await hold([b], async () => { say(c, b.dataset.vf === "all" ? "Showing all" : "Filtering: " + b.textContent.trim()); await go(c, b, g); hov(c, b, true);
+              if (await click(c, b, g)) { if (b.dataset.vf === "all") tidied(q1("[data-vf]")); else mess(q1("[data-vf]"), q1('[data-vf="all"]'), () => q1('[data-vf="all"]').getAttribute("aria-pressed") !== "true"); await idle(c, rnd(700, 1300), g); } hov(c, b, false); }); } },
+        nav(VX('.vrow[data-go="postiz"]'), "Opening Postiz", 2.5),
+        nav(VX('.vrow[data-st="soon"]:not([hidden])'), el => "Opening " + el.querySelector("b").textContent, 1.2),
+      ],
+      checklists: [
+        { w: 5, can: () => qa(VX(".ck")).some(k => free(k) && k.dataset.u !== "1"), run: async (c, g) => { const k = any(qa(VX(".ck")).filter(x => free(x) && x.dataset.u !== "1"));
+            await hold([k], async () => { const was = k.getAttribute("aria-pressed"); say(c, was === "true" ? "Unticking a step" : "Ticking a step"); await go(c, k, g, rnd(.08, .4)); hov(c, k, true);
+              if (await click(c, k, g)) { mess(k, k, () => k.getAttribute("aria-pressed") !== was && k.dataset.u !== "1"); await idle(c, rnd(600, 1200), g); if (k.getAttribute("aria-pressed") !== was && k.dataset.u !== "1") { say(c, "Putting it back"); await click(c, k, g, {must: true}); } tidied(k); } hov(c, k, false); }); } },
+        look(VX(".vh .prog"), "Checking my progress"),
+        look(VX(".ck"), "Reading a step", [rnd(.3, .8), .5]),
+      ],
+      sources: [
+        look(VX(".vs-b"), el => "Looking at " + el.textContent.replace(el.querySelector(".lb") ? el.querySelector(".lb").textContent : "", "").trim()),
+        { w: 4, can: () => qa(VX(".vs-b")).some(b => free(b) && !b.parentElement.classList.contains("open")), run: async (c, g) => { const b = any(qa(VX(".vs-b")).filter(x => free(x) && !x.parentElement.classList.contains("open")));
+            await hold([b], async () => { say(c, "Opening a source"); await go(c, b, g); hov(c, b, true);
+              if (await click(c, b, g)) { mess(b, b, () => b.parentElement.classList.contains("open")); await idle(c, rnd(900, 1600), g); if (b.parentElement.classList.contains("open")) { await click(c, b, g, {must: true}); } tidied(b); } hov(c, b, false); }); } },
+      ],
+      soon: [
+        look(VX("#sonum"), "Reading the number"),
+        look(VX(".so-n .lb"), "Checking the label"),
+        look(VX(".so-a .btn-p"), "Eyeing the weekly email"),
+        nav(VX('.so-a [data-go="postiz"]'), "Back to Postiz", 2.5),
+      ],
+      // anywhere on desktop: hover the sidebar or Go Pro, and after a while move on to another view
+      any: [
+        { w: 1.5, can: () => desk() && qa(".side .si").filter(free).length > 0, run: async (c, g) => { const el = any(qa(".side .si").filter(free));
+            await hold([el], async () => { say(c, "Browsing"); await go(c, el, g); hov(c, el, true); await idle(c, rnd(350, 800), g); hov(c, el, false); }); } },
+        { w: 1, can: () => desk() && free(q1(".splan a")), run: async (c, g) => { const a = q1(".splan a");
+            await hold([a, "gopro"], async () => { say(c, "Looking at Go Pro"); await go(c, a, g); hov(c, a, true); await idle(c, rnd(500, 900), g); hov(c, a, false); }); } },
+        { w: 0, can: () => { if (!desk() || !navOK() || !free("nav") || st().drawer) return false; const t = performance.now() - S.viewSince, home = st().view === "postiz";
+              return t > S.stay ? (home ? 3 : 6) + (t - S.stay) / 1500 : false; },
+          run: async (c, g) => { const s = st(), opts = s.view === "postiz" ? qa('.side .si:not([data-go="postiz"])') : chance(.55) ? [side("postiz")] : qa(".side .si").filter(x => !x.classList.contains("on"));
+            const el = any(opts.filter(free)); if (!el) throw CANCEL;
+            await hold(["nav", el], async () => { say(c, "Opening " + label(el)); await go(c, el, g); hov(c, el, true); await click(c, el, g, {disrupt: true}); hov(c, el, false); }); } },
+      ],
+    };
+    // put back anything a ghost left toggled, in whatever view it's visible
+    const TIDY = { w: 0, can: () => { for (const [el, d] of S.dirty) { if (!d.still()) { S.dirty.delete(el); continue; } if (vis(d.undo) && free(d.undo)) return 12; } return false; }, run: async (c, g) => {
+      const e = [...S.dirty].find(([el, d]) => d.still() && vis(d.undo) && free(d.undo)); if (!e) return; const [el, { undo }] = e;
+      await hold([undo], async () => { say(c, "Tidying up"); await go(c, undo, g); await click(c, undo, g, {must: true}); tidied(el); }); } };
+    const context = () => { const s = st(); if (s.drawer) return "drawer"; return s.view; };
+    function options(c) { const ctx = context(), list = [...(POOLS[ctx] || []), ...POOLS.any, TIDY];
+      if (dash.search.value && !dash.userQ) list.push(...POOLS.search);
+      return list.map(a => { try { const w = a.can(c); return w ? [a, typeof w === "number" ? w : a.w] : null; } catch { return null; } }).filter(Boolean); }
+    // after any view change: drift over the new content for a moment before acting
+    async function lookAround(c, g) { c.stats.looks++; const els = CONTENT(); say(c, "Looking around");
+      await wait(rnd(60, 220), g);
+      for (let n = chance(.5) ? 2 : 1; n > 0; n--) { let x, y, tries = 0;
+        do { const el = any(els); if (!el) break; [x, y] = at(el, rnd(.15, .85), rnd(.25, .75)); } while (crowded(c, x, y) && ++tries < 8);
+        if (x == null || crowded(c, x, y)) {        // a sparse view: glance at a free spot in its area instead
+          const R = (st().drawer ? $("#sdrawer") : q1(".view.vx:not([hidden])") || q1(".vpost")).getBoundingClientRect(), bx = box();
+          for (tries = 0; tries < 10 && (x == null || crowded(c, x, y)); tries++) { x = R.left - bx.left + R.width * rnd(.1, .9); y = R.top - bx.top + R.height * rnd(.1, .7); }
+          if (crowded(c, x, y)) continue; }
+        // a glance, not a trek: the slow hand still gets there in about a second
+        c.tgt = [x, y]; await aim(c, x, y, g, 60, { noFix: true, slow: rnd(.8, 1) / Math.max(1, c.P.speed) }); await idle(c, rnd(180, 450), g); } }
+    async function agent(c, g0, i) {
+      await new Promise(r => setTimeout(r, i * rnd(300, 700)));
+      c.ep = epoch;
       for (;;) {
-        const opts = ACTIONS.map(a => [a, a.can(c)]).filter(([, w]) => w).map(([a, w]) => [a, typeof w === "number" ? w : a.w]);
-        let r = Math.random() * opts.reduce((t, [, w]) => t + w, 0), pick = opts[0][0];
-        for (const [a, w] of opts) { if ((r -= w) <= 0) { pick = a; break; } }
-        try { await pick.run(c, g); } catch (e) { if (e !== CANCEL) throw e; S.cancels++; }
-        ok(g); c.hov.forEach(el => el.classList.remove("gh-hover")); c.hov.clear(); say(c, "");
-        await wait(desk() ? rnd(40, 220) : rnd(300, 700), g);
+        if (g0 !== gen) return;
+        const t = { g: g0, e: epoch };
+        try {
+          if (c.ep !== epoch) { c.ep = epoch; await lookAround(c, t); }
+          else { const opts = options(c); let r = Math.random() * opts.reduce((s, [, w]) => s + w, 0), pick = opts[0] && opts[0][0];
+            for (const [a, w] of opts) { if ((r -= w) <= 0) { pick = a; break; } }
+            if (pick) await pick.run(c, t); else await idle(c, 400, t); }
+        } catch (e) { if (e === STOP) return; if (e === CANCEL) S.cancels++; else if (e === ABORT) S.aborts++; else throw e; }
+        c.hov.forEach(el => el.classList.remove("gh-hover")); c.hov.clear(); say(c, ""); c.tgt = null;
+        await new Promise(r => setTimeout(r, desk() ? rnd(40, 200) : rnd(300, 700)));
       }
     }
+    // a view change (yours or a ghost's): every ghost drops its action now and re-plans
+    win.addEventListener("lv:view", () => { epoch++; if (!S) return; S.viewSince = performance.now(); S.stay = rnd(7000, 14000); S.changes++;
+      ALL.forEach(c => { if (c.seg) { const d = c.seg.done; c.seg = null; d(); } c.hov.forEach(el => el.classList.remove("gh-hover")); c.hov.clear(); });
+      $$(".gh-focus", win).forEach(e => e.classList.remove("gh-focus")); });
     const start = () => { if (active || document.hidden || !inView || innerWidth < 760) return; active = true; gen++; const g = gen;
-      S = { readers: 0, scene: null, want: null, locks: new Set(), lastReset: performance.now(), typing: false, log: [], cancels: 0 };
+      S = { locks: new Set(), dirty: new Map(), typing: false, log: [], cancels: 0, aborts: 0, changes: 0, staleBlocked: 0, fired: 0, viewSince: performance.now(), stay: rnd(7000, 14000) };
       const b = box(); [[.2, .62], [.55, .9], [.88, .35]].forEach(([fx, fy], i) => { const c = ALL[i]; if (!c.x && !c.y) { c.x = b.width * fx; c.y = b.height * fy; } });
       layer.classList.add("on"); if (!raf) raf = requestAnimationFrame(tick);
       ALL.forEach((c, i) => agent(c, g, i).catch(e => { if (e !== STOP) console.error(e); })); };
@@ -554,15 +602,14 @@
       ALL.forEach(c => { if (c.seg) { const d = c.seg.done; c.seg = null; d(); } say(c, ""); c.el.classList.remove("down", "click"); c.hov.forEach(el => el.classList.remove("gh-hover")); c.hov.clear(); });
       $$(".gh-focus", win).forEach(e => e.classList.remove("gh-focus"));
       if (S && S.typing && U.focus !== dash.search) { dash.search.value = ""; dash.filter(); } };
-    // they keep going while you use the dashboard; they only stop for reduced motion, phones, an off-screen hero or a hidden tab
     let inView = false;
     new IntersectionObserver(es => { inView = es[0].isIntersecting; if (inView) start(); else stop(); }, {threshold: .3}).observe(wf);
     document.addEventListener("visibilitychange", () => document.hidden ? stop() : start());
     let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => innerWidth < 760 ? stop() : start(), 200); });
     window.__lvGhosts = { stop, start, active: () => active,
-      peek: () => ALL.map(c => [+c.x.toFixed(2), +c.y.toFixed(2), !!c.seg, c.el.classList.contains("talk") ? c.tag.textContent : ""]),
-      stats: () => ({ cursors: ALL.map(c => ({ ...c.stats, sig: undefined, uniqueMoves: new Set(c.stats.sig.map(String)).size, sampled: c.stats.sig.length })), cancels: S && S.cancels,
-        minUserGapAtDisruptiveClickMs: S ? Math.round(Math.min(...S.log.filter(l => l[1]).map(l => l[0]), 1e9)) : null }) };
+      peek: () => ALL.map(c => [+c.x.toFixed(2), +c.y.toFixed(2), !!c.seg, c.el.classList.contains("talk") ? c.tag.textContent : "", c.tgt ? c.tgt.map(Math.round) : null]),
+      stats: () => ({ cursors: ALL.map(c => ({ ...c.stats, sig: undefined, uniqueMoves: new Set(c.stats.sig.map(String)).size, sampled: c.stats.sig.length })), cancels: S && S.cancels, aborts: S && S.aborts, viewChanges: S && S.changes, staleBlocked: S && S.staleBlocked, ghostClicks: S && S.fired,
+        minUserGapAtDisruptiveClickMs: S && S.log.length ? Math.round(Math.min(...S.log)) : null, dirtyLeft: S ? S.dirty.size : 0 }) };
   }
 
   // ---------- source cards: the card itself grows in place (hover on desktop, focus on keyboard, tap on touch) ----------

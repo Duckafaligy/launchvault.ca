@@ -70,7 +70,7 @@ FCOLS_HTML = "".join(f'<nav class="fcol" aria-label="{h}"><h4>{h}</h4>' + "".joi
 FOOTER = '''<footer class="foot">
   <div class="wrap">
     <div class="fnl">
-      <div><h3>One real startup story. <em class="em">Every week.</em></h3><p>Free. One email a week. Unsubscribe anytime.</p></div>
+      <div><h3>One real startup story, every week.</h3><p>Free. One email a week. Unsubscribe anytime.</p></div>
       <form class="nl pv"><input type="email" required placeholder="you@email.com" aria-label="Email for the weekly breakdown"><button class="btn btn-p" type="submit">Subscribe <span class="arr" aria-hidden="true">→</span></button></form>
     </div>
     <div class="ftop">
@@ -100,6 +100,7 @@ HEAD = '''<!doctype html>
 <link rel="stylesheet" href="/assets/site.css">
 <link rel="stylesheet" href="/assets/pages.css">
 <link rel="stylesheet" href="/assets/home.css">
+<link rel="stylesheet" href="/assets/design.css">
 </head>
 '''
 
@@ -114,8 +115,6 @@ def fragments():
     cut = lambda a, b: home[home.index(a):home.index(b, home.index(a))]
     return {
         "{{POSTS}}": cut('<div class="posts', '<!-- end posts -->'),
-        "{{PLANS}}": cut('<div class="bill">', '<!-- end pricing -->'),
-        "{{FAQ}}": cut('<div class="faqg-in"', '<!-- end faq -->'),
     }
 
 def write(path, text):

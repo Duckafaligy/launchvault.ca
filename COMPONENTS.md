@@ -105,5 +105,8 @@ Buttons go to `/signup/`, `/signup/?plan=pro`, `/signup/?plan=builder`. site.js 
 ## Site structure (2026-11-17 scope change)
 Pages: `/`, `/blog/` + posts (incl. `/blog/postiz/` from `src/post-postiz.body.html`), `/legal/privacy/`, `/legal/terms/`, `/welcome/` (`src/welcome.body.html`), `404.html`.
 Removed (folders deleted by build.py, redirected in vercel.json): /breakdowns/, /breakdowns/postiz/ → /blog/postiz/, /how-we-check/ → /#sources, /pricing/ → /#pricing, /signin/ and /signup/ → /welcome/.
-Homepage section ids to link to: `#stories`, `#sources`, `#check`, `#quiz`, `#inside`, `#pricing`, `#faq`, `#blog`. Nav tabs: Stories, How we check, Pricing, FAQ, Blog; the homepage highlights the tab for the section in view (`aria-current="location"`).
+Homepage order (2026-11-18 condense): hero, `#sources` (logo band; each tile wipes its detail in), `#check` (dark race chart),
+`#stories` (feature card + cards; `#quiz` opens from "Find stories like you" and reorders the cards), `#pricing` (plan table behind
+"Compare plans"), `#inside` (dark; tab 4 holds the old "first four moves"), `#blog`, `#faq`. `#moves-sec` and `#sourced` are gone.
+Section CSS for the condensed layout lives in `assets/design.css` (linked last). Nav tabs: Stories, How we check, Pricing, FAQ, Blog; the homepage highlights the tab for the section in view (`aria-current="location"`).
 Sign in → `/welcome/`; sign-up CTAs → `/welcome/#signup` (plans add `?plan=pro|builder`). Fragments left in build.py: `{{POSTS}}`, `{{PLANS}}`, `{{FAQ}}`.

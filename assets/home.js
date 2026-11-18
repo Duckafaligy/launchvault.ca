@@ -1,4 +1,5 @@
-/* LaunchVault homepage (Coder C): the "Stories like you" quiz and the "Inside a breakdown" tabs.
+/* LaunchVault homepage (Coder C): the "Find stories like you" quiz (it reorders the story cards), the "Inside a breakdown" tabs,
+   the source-tile row and the "Compare plans" toggle.
    Loaded on every page after site.js; each block does nothing when its section isn't on the page. */
 (() => {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -35,18 +36,31 @@
     let step = Math.min(Math.max(+store.get("lv-quiz-step") || 0, 0), Q.length);
     const save = () => { store.set("lv-quiz", ans); store.set("lv-quiz-step", step); };
     const answered = () => ans.filter(a => a != null).length;
-    const path = () => {
+    const rank = () => {
       const sc = {...BASE}, best = {};
       ans.forEach((a, qi) => { if (a == null) return; const [label, w] = Q[qi][1][a];
         for (const k in w) { sc[k] += w[k]; if (!best[k] || w[k] > best[k][0]) best[k] = [w[k], label]; } });
-      return Object.keys(sc).sort((a, b) => sc[b] - sc[a]).slice(0, 3).map(k => [k, best[k] && best[k][1]]);
+      return Object.keys(sc).sort((a, b) => sc[b] - sc[a]).map(k => [k, best[k] && best[k][1]]);
     };
+    const path = () => rank().slice(0, 3);
     const because = b => b ? ` You said <i>${esc(b)}</i>.` : "";
-    const showPath = () => {
+    // the live path IS the story grid: answers reorder the cards (FLIP) and rank the top three in violet
+    const grid = $("#bgrid"), cards = grid ? $$(".bcard:not(.cta)", grid) : [], orig = cards.slice(), qcount = $("#qcount");
+    const nameOf = c => c.querySelector(".bc-n b").textContent.trim();
+    const showPath = animate => {
       const n = answered();
-      $("#pathfor").textContent = n ? n + " of " + Q.length + " answered" : "Start anywhere";
-      $("#pathlist").innerHTML = path().map(([k, b], i) => { const [href] = POSTS[ST[k].p];
-        return `<li><a href="${href}"><span class="pn2">${i + 1}</span><span><b>${k}</b><small>${ST[k].why}${because(b)}</small></span>${ARW}</a></li>`; }).join("");
+      if (qcount) { qcount.hidden = !n; qcount.textContent = n + " of " + Q.length; }
+      if (!grid) return;
+      const order = n ? rank().map(([k]) => orig.find(c => nameOf(c) === k)).filter(Boolean) : orig, top = n ? order.slice(0, 3) : [];
+      const first = new Map(cards.map(c => [c, c.getBoundingClientRect()])), anchor = grid.querySelector(".bcard.cta");
+      order.forEach(c => grid.insertBefore(c, anchor));
+      cards.forEach(c => { let b = c.querySelector(".fyr"); const i = top.indexOf(c); c.classList.toggle("fy", i >= 0);
+        if (i < 0) { if (b) b.remove(); return; }
+        if (!b) { b = document.createElement("span"); b.className = "fyr"; c.querySelector(".bc-top").insertBefore(b, c.querySelector(".bc-top .tag")); }
+        b.textContent = "#" + (i + 1) + " for you"; });
+      if (reduce || !animate) return;
+      cards.forEach(c => { if (c.hidden) return; const a = first.get(c), r = c.getBoundingClientRect(), dx = a.left - r.left, dy = a.top - r.top;
+        if (Math.abs(dx) + Math.abs(dy) > 1) c.animate([{transform: `translate(${dx}px,${dy}px)`}, {transform: "none"}], {duration: 700, easing: OUT}); });
     };
     const result = () => {
       const p = path(), n = answered(), [top] = p[0], [href] = POSTS[ST[top].p];
@@ -80,13 +94,13 @@
       if (res) { if (reduce) res.classList.add("play"); else if (firstRender && "IntersectionObserver" in window) {
           const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); play(res); } }, {threshold: .3}); io.observe(res); }
         else play(res); }
-      firstRender = false;
-      save(); showPath();
+      const wasFirst = firstRender; firstRender = false;
+      save(); showPath(!wasFirst);
     };
     qbody.addEventListener("click", e => {
       const o = e.target.closest(".opt"); if (!o) return;
       const i = +o.dataset.o; ans[step] = ans[step] === i ? null : i; save();
-      $$(".opt", qbody).forEach(x => x.setAttribute("aria-pressed", ans[step] === +x.dataset.o)); showPath();
+      $$(".opt", qbody).forEach(x => x.setAttribute("aria-pressed", ans[step] === +x.dataset.o)); showPath(true);
       $("#qrestart").hidden = false;
       if (ans[step] != null) { const at = step; setTimeout(() => { if (step !== at) return; step++; render("fwd");
         if (document.activeElement === o || document.activeElement === document.body) { const f = qbody.querySelector(".opt, .qres"); if (f) f.focus({preventScroll: true}); } }, reduce ? 0 : 380); }
@@ -95,6 +109,22 @@
     $("#qskip").addEventListener("click", () => { if (step < Q.length) { step++; render("fwd"); } });
     $("#qrestart").addEventListener("click", () => { ans.fill(null); step = 0; render("back"); const f = qbody.querySelector(".opt"); if (f) f.focus({preventScroll: true}); });
     render();
+
+    // the compact control opens the questions in place, above the cards
+    const qopen = $("#qopen"), quiz = $("#quiz");
+    if (qopen && quiz) qopen.addEventListener("click", () => {
+      const open = qopen.getAttribute("aria-expanded") !== "true";
+      qopen.setAttribute("aria-expanded", open);
+      if (quiz._a) { quiz._a.cancel(); quiz._a = null; }
+      if (open) {
+        quiz.hidden = false;
+        if (!reduce) quiz._a = quiz.animate([{height: "0px", opacity: 0}, {height: quiz.offsetHeight + "px", opacity: 1}], {duration: 520, easing: OUT});
+        const res = $(".qres", qbody); if (res) play(res);
+        const f = qbody.querySelector(".opt, .qres"); if (f) f.focus({preventScroll: true});
+      } else if (reduce) quiz.hidden = true;
+      else { quiz._a = quiz.animate([{height: quiz.offsetHeight + "px", opacity: 1}, {height: "0px", opacity: 0}], {duration: 320, easing: "cubic-bezier(.4,0,.2,1)"});
+        quiz._a.onfinish = () => { quiz.hidden = true; quiz._a = null; }; }
+    });
   }
 
   // ---------- inside a breakdown: ARIA tabs with a sliding indicator, crossfading panels, animated height and content ----------
@@ -143,4 +173,30 @@
     let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(place, 80); });
     if (document.fonts) document.fonts.ready.then(place);
   }
+
+  // ---------- sources: under 1024px the logo tiles are one scroll-snap row with arrow buttons ----------
+  const row = $("#sgrid"), arrows = $$(".sarr");
+  if (row && arrows.length) {
+    const page = () => { const c = row.querySelector(".scell"); if (!c) return row.clientWidth; const w = c.offsetWidth + 12; return w * Math.max(1, Math.floor((row.clientWidth + 12) / w)); };
+    const upd = () => { const max = row.scrollWidth - row.clientWidth - 2;
+      arrows.forEach(a => a.disabled = +a.dataset.dir < 0 ? row.scrollLeft <= 2 : row.scrollLeft >= max); };
+    arrows.forEach(a => a.addEventListener("click", () => row.scrollBy({left: +a.dataset.dir * page(), behavior: reduce ? "auto" : "smooth"})));
+    row.addEventListener("scroll", upd, {passive: true}); addEventListener("resize", upd); upd();
+  }
+
+
+  // ---------- pricing: "Compare plans" opens the plan table in place ----------
+  const cbtn = $(".cmpbtn"), cbox = cbtn && document.getElementById(cbtn.getAttribute("aria-controls"));
+  if (cbtn && cbox) cbtn.addEventListener("click", () => {
+    const open = cbtn.getAttribute("aria-expanded") !== "true";
+    cbtn.setAttribute("aria-expanded", open);
+    if (cbox._a) { cbox._a.cancel(); cbox._a = null; }
+    if (open) { cbox.hidden = false; if (!reduce) { cbox.style.overflow = "hidden";
+        cbox._a = cbox.animate([{height: "0px", opacity: 0}, {height: cbox.offsetHeight + "px", opacity: 1}], {duration: 560, easing: OUT});
+        cbox._a.onfinish = () => { cbox.style.overflow = ""; cbox._a = null; }; } }
+    else if (reduce) cbox.hidden = true;
+    else { cbox.style.overflow = "hidden";
+      cbox._a = cbox.animate([{height: cbox.offsetHeight + "px", opacity: 1}, {height: "0px", opacity: 0}], {duration: 340, easing: "cubic-bezier(.4,0,.2,1)"});
+      cbox._a.onfinish = () => { cbox.hidden = true; cbox.style.overflow = ""; cbox._a = null; }; }
+  });
 })();

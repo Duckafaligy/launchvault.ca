@@ -1,0 +1,150 @@
+/* LaunchVault homepage, condensed (design lead, 2026-11-18). Loaded last, after home.css.
+   Order: hero · sources (logo band) · how we check (dark race) · stories · pricing · inside (dark) · blog · FAQ.
+   Rhythm: white, tint, dark · white, tint, dark · white, tint, dark footer. All motion sits behind prefers-reduced-motion. */
+
+/* ---------- rhythm: fewer sections, so a steadier, slightly tighter beat ---------- */
+main > section{padding:88px 0}
+main > section .shead{margin-bottom:32px}
+main > section .shead .lede{max-width:58ch}
+
+/* ---------- sources: one logo band. Logo + name in the brand's colour; the detail wipes down INSIDE the tile ---------- */
+#sources .sgrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:stretch}
+#sources .scell{height:168px;padding:20px;gap:0;justify-content:flex-start;border-radius:12px}
+#sources .scell::before{height:3px}
+#sources .scell .lg{gap:10px;min-height:40px;padding-right:28px}
+#sources .scell .lg .blogo{width:32px;height:32px;border-radius:8px}
+#sources .scell .lg .blogo+.blogo{margin-left:-6px}
+#sources .scell .lg svg{width:34px;height:34px;fill:var(--h)}
+#sources .scell .lg,#sources .scell .lg .wmk{font:700 19px/1.1 var(--fd);letter-spacing:-.02em;color:var(--h,#0B1220)}
+#sources .scell .gv{font-size:13px;color:var(--text);padding-top:12px}
+#sources .scell .pl{top:20px;right:16px}
+#sources .scell:hover,#sources .scell.open{translate:0 -2px}
+#sources .scell{transition:border-color .2s,box-shadow .3s,translate .35s var(--out)}
+#sources .scell:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
+/* the wipe: title row hidden (the logo already names it); every line 12.5px or larger */
+#sources .dkk,#sources .more-in .mr.tr{display:none}
+#sources .more-in{gap:5px;padding:16px 18px 14px}
+#sources .more-in .mr{font-size:13px;line-height:1.4}
+#sources .more-in .mr b{font-size:13px}
+#sources .more-in .mr.ex{padding:7px 10px;gap:2px 8px}
+#sources .more-in .exn{font-size:17px}
+#sources .more-in .exd{font-size:12.5px;flex-basis:auto}
+.sarrows{display:none;justify-content:flex-end;gap:8px;margin-top:12px}
+.sarr{display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);cursor:pointer;
+  transition:background-color .2s,border-color .2s,color .2s}
+.sarr svg{transition:transform .35s var(--out)}
+.sarr:hover:not(:disabled){background:var(--brand);border-color:var(--brand);color:#fff}
+.sarr[data-dir="1"]:hover:not(:disabled) svg{transform:translateX(3px)}
+.sarr[data-dir="-1"]:hover:not(:disabled) svg{transform:translateX(-3px)}
+.sarr:disabled{opacity:.35;cursor:default}
+.sarr:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+#sources .sgfoot{margin-top:18px;font-size:13px;color:var(--text)}
+
+/* ---------- how we check (dark): one picture, one headline (<= 12 words) ---------- */
+#check{padding:80px 0 72px}
+#check .race{margin:0;padding:0;border:0;background:none}
+#check .rc-top{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:20px 24px}
+#check .rc-top h2{grid-column:1/-1;max-width:20ch;font-size:clamp(30px,4vw,48px);line-height:1.08;letter-spacing:-.03em}
+#check .rc-board{margin-top:22px}
+#check .rc-plot{margin-top:18px}
+#check .rc-legend{margin-top:14px;font-size:13px;color:#A3B1C6}
+
+/* ---------- stories: controls row, "Find stories like you" (violet = about you), "#1 for you" ranks ---------- */
+.sctl{display:flex;align-items:center;justify-content:space-between;gap:12px 16px;flex-wrap:wrap;margin:28px 0 14px}
+.sctl .filters{margin:0}
+.fybtn{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 14px 0 16px;border:1px solid #DDD6FE;border-radius:10px;background:#fff;
+  font:600 15px/1 var(--fd);color:var(--ink);cursor:pointer;transition:background-color .25s,border-color .25s,color .25s}
+.fybtn em{font-style:italic;color:var(--violet);transition:color .25s}
+.fybtn .chev{color:var(--violet);transition:transform .4s var(--out),color .25s}
+.fybtn:hover,.fybtn[aria-expanded=true]{background:var(--violet);border-color:var(--violet);color:#fff}
+.fybtn:hover em,.fybtn[aria-expanded=true] em,.fybtn:hover .chev,.fybtn[aria-expanded=true] .chev{color:#fff}
+.fybtn[aria-expanded=true] .chev{transform:rotate(180deg)}
+.fybtn:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+.fy-n{font:600 12px/1 var(--fn);padding:5px 7px;border-radius:6px;background:rgba(124,58,237,.1);color:#5B21B6;transition:background-color .25s,color .25s}
+.fybtn:hover .fy-n,.fybtn[aria-expanded=true] .fy-n{background:rgba(255,255,255,.2);color:#fff}
+.quiz{margin:0 0 16px;overflow:clip;overflow-clip-margin:24px}
+.quiz .qcard{box-shadow:none;border-color:#DDD6FE}
+.quiz .qbody{min-height:0;padding:18px 20px 6px}
+.quiz .qbody h3{font-size:20px}
+.quiz .opts{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.quiz .qtop{font-size:12.5px;color:var(--text)}
+.bgrid .fyr{flex:none;font:600 12px/1 var(--fd);padding:6px 8px;border-radius:6px;background:var(--violet);color:#fff;white-space:nowrap}
+.bgrid .fyr + .tag{margin-left:8px}
+.bc-top .fyr{margin-left:auto}
+.bcard.fy{border-color:#DDD6FE}
+.bcard.fy .tag{display:none}
+.bcard.fy:hover{border-color:#C4B5FD}
+@media (prefers-reduced-motion:no-preference){
+  .bgrid .fyr{animation:fy-in .45s var(--out) both}
+}
+@keyframes fy-in{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
+/* feature card: a tighter Wayback timeline */
+.wbt{gap:8px}
+.wbi{padding:9px 12px;gap:3px}
+.feat .txt{gap:12px}
+/* captions: never under 12px */
+.bc-foot .ch{font-size:13px}
+.bnote{font-size:13px;color:var(--text)}
+
+/* ---------- pricing: tiers + parent box; the plan table opens under "Compare plans" ---------- */
+.pricing .pnote{font-size:13px;color:var(--text)}
+.cmpx{max-width:1080px;margin:20px auto 0;text-align:center}
+.cmpbtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border:1px solid var(--line);border-radius:10px;background:#fff;
+  font:600 15px/1 var(--fd);color:var(--ink);cursor:pointer;transition:background-color .2s,border-color .2s,color .2s}
+.cmpbtn .chev{transition:transform .4s var(--out)}
+.cmpbtn:hover{background:var(--brand);border-color:var(--brand);color:#fff}
+.cmpbtn[aria-expanded=true] .chev{transform:rotate(180deg)}
+.cmpbtn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.cmpx .cmp{margin:16px auto 0;text-align:left}
+.pricing .parent{margin-top:20px}
+
+/* ---------- inside, tab 4: the checklist, the move not to copy, first moves from the other stories ---------- */
+#inside .nocopy{display:flex;gap:10px;align-items:flex-start;padding:11px 16px;border-top:1px solid var(--line2);font-size:13.5px;line-height:1.45;color:var(--text)}
+#inside .nocopy b{color:var(--ink);font-weight:600}
+#inside .nocopy .nx{flex:none;display:grid;place-items:center;width:16px;height:16px;margin-top:2px;border-radius:4px;background:rgba(229,83,61,.12);color:#C2410C}
+#inside .omv{padding:12px 16px 14px;border-top:1px solid var(--line2);background:#FAFBFC}
+#inside .omv-h{display:block;font:600 13px/1.3 var(--fd);color:var(--ink);margin-bottom:8px}
+#inside .omv ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+#inside .omv li{display:flex;gap:10px;align-items:flex-start}
+#inside .omv .tile{width:26px;height:26px;font-size:12px;border-radius:6px;background:#334155}
+#inside .omv li b{display:block;font:600 13.5px/1.35 var(--fd);color:var(--ink)}
+#inside .omv li small{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:12.5px;line-height:1.4;color:var(--text)}
+@media (prefers-reduced-motion:no-preference){
+  #inside .tpanel.play .nocopy{animation:in-rise .5s var(--out) .32s both}
+  #inside .tpanel.play .omv li{animation:in-left .5s var(--out) both}
+  #inside .tpanel.play .omv li:nth-child(1){animation-delay:.42s}#inside .tpanel.play .omv li:nth-child(2){animation-delay:.5s}#inside .tpanel.play .omv li:nth-child(3){animation-delay:.58s}
+}
+
+/* ---------- tap targets: 44px at every width ---------- */
+.bcard .go{min-height:44px}
+footer .fcol a{display:flex;align-items:center;min-height:44px;padding:0}
+footer .fbot .lgl a{display:inline-flex;align-items:center;min-height:44px}
+
+/* ---------- responsive ---------- */
+@media (max-width:1023px){
+  /* the logo tiles become one scroll-snap row; arrows page through it */
+  #sources .sgrid{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(240px,40%);overflow-x:auto;overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;scroll-padding:0 4px;padding:4px;margin:-4px;scrollbar-width:none}
+  #sources .sgrid::-webkit-scrollbar{display:none}
+  #sources .scell{scroll-snap-align:start}
+  .sarrows{display:flex}
+}
+@media (max-width:720px){
+  main > section{padding:64px 0}
+  #check{padding:64px 0 56px}
+  #sources .sgrid{grid-auto-columns:78%}
+  #sources .sgfoot{flex-direction:column;gap:8px}
+  .sctl{flex-direction:column;align-items:stretch}
+  /* story cards: one swipeable row on phones (the quiz still reorders it) */
+  .bgrid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:86%;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;
+    padding:4px 4px 8px;margin:0 -4px;scrollbar-width:none}
+  .bgrid::-webkit-scrollbar{display:none}
+  .bgrid > *{scroll-snap-align:start}
+  .bgrid .empty{grid-column:auto;min-width:80vw}
+  .fybtn{justify-content:center}
+  .quiz .qbody{padding:16px 16px 4px}
+  .quiz .qtop > span:last-child{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  #sources .scell:hover,#sources .scell.open{translate:none}
+}

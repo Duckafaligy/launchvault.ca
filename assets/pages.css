@@ -388,9 +388,6 @@ main .tlink{min-height:44px}
 /* =====================================================================
    HOMEPAGE SECTIONS (pages coder): #sourced, #sources, #check, #stories feat, blog cards
    ===================================================================== */
-/* sourced band: brand colour on every logo and name */
-#sourced .lgo .wmk{color:var(--c)}
-#sourced .lgo svg{fill:var(--c)}
 /* source cards: colour throughout */
 #sources .scell{overflow:hidden}
 #sources .scell::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--h,#0B1220);opacity:.85}
@@ -439,7 +436,7 @@ main .tlink{min-height:44px}
 .rc-plot{position:relative;margin-top:14px}
 .rc-plot svg{display:block;width:100%;overflow:visible;touch-action:pan-y}
 .rc-plot .gl{stroke:rgba(255,255,255,.07)}
-.rc-plot .ax{font:500 11px var(--fn);fill:#64748B}
+.rc-plot .ax{font:500 12px var(--fn);fill:#8494AB}
 .rc-plot .vl{fill:none;stroke:#34D399;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
 .rc-plot .cl{fill:none;stroke:#CBD5E1;stroke-width:2;stroke-dasharray:6 5}
 .rc-plot .vd{fill:#0B1020;stroke:#34D399;stroke-width:1.5;opacity:0;transition:opacity .3s}
@@ -450,14 +447,10 @@ main .tlink{min-height:44px}
 .rc-plot .cx{stroke:rgba(255,255,255,.25);stroke-dasharray:3 3;opacity:0}
 .rc-plot .ovk circle{fill:none;stroke:#34D399;stroke-width:1.5;opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.4);transition:opacity .5s,transform .7s var(--out)}
 .rc-plot .ovk.on circle{opacity:.7;transform:none}
-.rc-cap{min-height:3em;margin-top:6px;font-size:15px;color:#E2E8F0}
 .rc-legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:6px;font-size:12.5px;color:#94A3B8}
 .rc-legend span{display:inline-flex;align-items:center;gap:8px}
 .rc-legend i{width:18px;height:3px;border-radius:2px;background:#34D399;flex:none}
 .rc-legend .c i{background:repeating-linear-gradient(90deg,#CBD5E1 0 4px,transparent 4px 7px)}
-.rc-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 20px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:#94A3B8}
-.rc-foot b{color:#F8FAFC;font-family:var(--fn)}
-.rc-cta{margin-top:24px}
 @media (max-width:720px){
   .race{padding:16px 14px 14px}
   .rc-board{grid-template-columns:1fr 1fr}.rc-mid{grid-column:1/-1;grid-row:2}
@@ -477,15 +470,15 @@ main .tlink{min-height:44px}
 .wbi{display:flex;flex-direction:column;gap:4px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;transition:border-color .2s,transform .3s var(--out),box-shadow .3s}
 .wbi:hover{border-color:#C7D5FE;transform:translateX(3px);box-shadow:0 8px 20px -14px rgba(37,99,235,.4)}
 .wb-d{display:flex;justify-content:space-between;align-items:center;font:600 12px var(--fn);color:#475569}
-.wb-l{display:inline-flex;align-items:center;gap:5px;font:500 11.5px var(--fd);color:var(--muted)}
+.wb-l{display:inline-flex;align-items:center;gap:5px;font:500 12px var(--fd);color:var(--muted)}
 .wb-l svg{width:12px;height:12px;fill:#666}
 .wbi:hover .wb-l{color:var(--brand)}
 .wb-h{font:700 15px/1.3 var(--fd);color:var(--ink);letter-spacing:-.01em}
 .wb-h mark{background:rgba(37,99,235,.12);color:var(--brand);border-radius:4px;padding:0 3px}
-.wb-w{font-size:12.5px;color:var(--text)}
+.wb-w{font-size:13px;color:var(--text)}
 .wb-pr{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:2px}
-.wb-pr i{font:600 11.5px var(--fn);font-style:normal;color:#374151;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
-.wb-pr small{font-size:11.5px;color:var(--muted)}
+.wb-pr i{font:600 12px var(--fn);font-style:normal;color:#374151;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.wb-pr small{font-size:12px;color:var(--muted)}
 .wbt li.turn .wbi{border-color:#C7D5FE}
 @media (prefers-reduced-motion:no-preference){
   .wbt::after{transform:scaleY(0);transition:transform 1.4s var(--out)}
@@ -568,7 +561,6 @@ main .tlink{min-height:44px}
 
 /* ---------- #sources v3: fixed-size cards; the detail wipes down INSIDE the card (figpromo .drop pattern) ---------- */
 .blogo{display:block;flex:none;width:22px;height:22px;object-fit:contain;border-radius:5px}
-#sourced .lgo .blogo{width:28px;height:28px;border-radius:6px}
 #sources .scell{height:272px;min-height:0;overflow:hidden;justify-content:flex-start}
 #sources .scell .lg{color:var(--ink)}
 #sources .scell .lg .wmk{color:var(--ink);font-size:16px}
