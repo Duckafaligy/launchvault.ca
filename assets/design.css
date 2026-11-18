@@ -2,39 +2,42 @@
    Order: hero · sources (logo band) · how we check (dark race) · stories · pricing · inside (dark) · blog · FAQ.
    Rhythm: white, tint, dark · white, tint, dark · white, tint, dark footer. All motion sits behind prefers-reduced-motion. */
 
+/* ---------- tokens (round 11) ----------
+   --pop: the one bright red accent. #E11D48 is 4.7:1 on white and with white text (AA); 4.0:1 on the dark sections, so there it is
+   used only for large text, lines and filled chips with white text. Distinct from the coral "Sources differ" chip (#E5533D, orange-red).
+   Type outside the hero and product pictures: 14 · 16 · 18 · 24 · 32 · 48. Radii: 8 · 12 · pill. Shadows: --sh1 (rest), --sh2 (hover). */
+:root{--pop:#E11D48;--dk-text:#A3B1C6;--sh1:0 1px 2px rgba(15,23,42,.05),0 0 0 1px rgba(15,23,42,.04);--sh2:0 12px 28px -14px rgba(15,23,42,.28),0 0 0 1px rgba(15,23,42,.06)}
+.dk .em.pop,.em.pop{color:var(--pop)}
+
 /* ---------- rhythm: fewer sections, so a steadier, slightly tighter beat ---------- */
 main > section{padding:88px 0}
 main > section .shead{margin-bottom:32px}
 main > section .shead .lede{max-width:58ch}
 
-/* ---------- sources: a compact logo band, 2 x 6. Logo + name in the brand's colour, label + what on one line;
-   the detail wipes down INSIDE the tile (the tile never changes size) ---------- */
-#sources{padding:72px 0}
-#sources .shead{margin-bottom:20px;align-items:flex-end}
-#sources .shead h2{font-size:clamp(28px,3vw,38px)}
-#sources .shead .lede{margin-top:6px;font-size:16px}
-#sources .sgrid{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:stretch}
-#sources .scell{height:96px;min-height:0;padding:14px 14px 12px;gap:0;justify-content:space-between;border-radius:10px;
-  transition:border-color .2s,box-shadow .3s,translate .35s var(--out)}
-#sources .scell .lg{gap:8px;min-height:24px;white-space:nowrap}
-#sources .scell .lg .blogo{width:22px;height:22px;border-radius:5px}
-#sources .scell .lg svg{width:22px;height:22px;color:var(--h)}
-#sources .scell .lg,#sources .scell .lg .wmk{font:700 15px/1.1 var(--fd);letter-spacing:-.02em;color:var(--h,#0B1220);white-space:nowrap}
-#sources .scell .gv{margin-top:auto;padding-top:0;border-top:0;gap:6px;flex-wrap:nowrap;white-space:nowrap;font-size:12.5px;color:var(--text)}
-#sources .scell:hover,#sources .scell.open{translate:0 -2px}
-#sources .scell:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
-#sources .more-in{gap:4px;padding:11px 13px}
-#sources .more-in .mr{font-size:12.5px;line-height:1.35}
-#sources .more-in .mr b{font-size:12.5px}
+/* ---------- sources: badges. Real logo, name, its own tag; a short line always visible. No hover detail (that lives in the blog). ---------- */
+#sources{padding:80px 0}
+.sband{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:24px 48px;align-items:start}
+.sb-col h3{font:600 18px/1.3 var(--fd);color:var(--ink);margin:0 0 14px}
+.sb-big,.sb-flow{list-style:none;margin:0;padding:0}
+.sb-big{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sb-flow{display:flex;flex-wrap:wrap;gap:10px}
+.sbg{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"m t" "m d";column-gap:12px;row-gap:4px;align-items:center;
+  padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:var(--sh1);
+  transition:border-color .25s,box-shadow .35s var(--out),translate .35s var(--out)}
+.sbg:hover{border-color:color-mix(in srgb,var(--h) 35%,var(--line));box-shadow:var(--sh2);translate:0 -2px}
+.sbg .blogo{grid-area:m;width:24px;height:24px;border-radius:8px;color:var(--h);align-self:start}
+.sbg.big{padding:16px;row-gap:8px;grid-template-areas:"m t" "d d"}
+.sbg.big .blogo{width:32px;height:32px}
+.sb-t{grid-area:t;display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;min-width:0}
+.sb-n{font:700 16px/1.2 var(--fd);letter-spacing:-.01em;color:var(--h);white-space:nowrap}
+.sbg.big .sb-n{font-size:18px}
+.sb-d{grid-area:d;font-size:14px;line-height:1.4;color:var(--text)}
+.sb-flow .sbg{flex:1 1 calc(50% - 5px);min-width:0}
 
-/* ---------- how we check (dark): one picture, one headline (<= 12 words) ---------- */
+/* ---------- how we check (dark): one picture, one headline (<= 12 words); readouts + chart in pages.css ---------- */
 #check{padding:80px 0 72px}
-#check .race{margin:0;padding:0;border:0;background:none}
-#check .rc-top{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:20px 24px}
-#check .rc-top h2{grid-column:1/-1;max-width:20ch;font-size:clamp(30px,4vw,48px);line-height:1.08;letter-spacing:-.03em}
-#check .rc-board{margin-top:22px}
-#check .rc-plot{margin-top:18px}
-#check .rc-legend{margin-top:14px;font-size:13px;color:#A3B1C6}
+#check .rc-top h2{grid-column:1/-1;max-width:20ch;font-size:48px;line-height:1.08;letter-spacing:-.03em}
+#check .rc-note{margin-top:14px;font-size:14px;color:var(--dk-text)}
 
 /* ---------- stories: controls row, "Find stories like you" (violet = about you), "#1 for you" ranks ---------- */
 .sctl{display:flex;align-items:center;justify-content:space-between;gap:12px 16px;flex-wrap:wrap;margin:28px 0 14px}
@@ -60,7 +63,6 @@ main > section .shead .lede{max-width:58ch}
 .bc-num{row-gap:6px}
 .bc-sub{flex-basis:100%;font:500 12.5px/1.3 var(--fn);color:var(--text)}
 .bc-num .nv small{font:500 13px var(--fd);color:var(--text)}
-#check .rc-note{margin-top:14px;font-size:14px;color:#CBD5E1}
 .hero h1 .nw{white-space:nowrap}
 .bfoot{display:flex;justify-content:space-between;align-items:center;gap:8px 24px;flex-wrap:wrap;margin-top:12px}
 .bfoot .bnote{margin:0}
@@ -78,9 +80,20 @@ main > section .shead .lede{max-width:58ch}
 .feat .fyr + .lb{margin-left:8px}
 .feat.fy{border-color:#DDD6FE}
 
-/* feature card: a tighter Wayback timeline */
-.wbt{gap:8px}
-.wbi{padding:9px 12px;gap:3px}
+/* feature card: the Wayback list. One card, dated rows, no rail or circles. The turn is the one red highlight in Stories. */
+.wbt{gap:0;padding:0;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.wbt::before,.wbt::after,.wbt li::before{display:none}
+.wbt li + li{border-top:1px solid var(--line2)}
+.wbi{display:grid;grid-template-columns:96px minmax(0,1fr);column-gap:16px;row-gap:2px;padding:12px 16px;border:0;border-radius:0;background:none;
+  transition:background-color .25s}
+.wbi:hover{background:#F8FAFC;transform:none;box-shadow:none}
+.wb-d{grid-row:1 / span 3;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:4px;font:600 14px/1.3 var(--fn);color:var(--ink);font-variant-numeric:tabular-nums}
+.wb-l{font-size:14px}
+.wb-h{font-size:16px}
+.wb-w{font-size:14px}
+.wbt li.turn .wbi{background:rgba(225,29,72,.04)}
+.wbt li.turn .wb-d{color:var(--pop)}
+.wbt li.turn mark{background:rgba(225,29,72,.1);color:var(--pop)}
 .feat .txt{gap:12px}
 /* captions: never under 12px */
 .bc-foot .ch{font-size:13px}
@@ -115,6 +128,46 @@ main > section .shead .lede{max-width:58ch}
   #inside .tpanel.play .omv li:nth-child(1){animation-delay:.42s}#inside .tpanel.play .omv li:nth-child(2){animation-delay:.5s}#inside .tpanel.play .omv li:nth-child(3){animation-delay:.58s}
 }
 
+/* ---------- inside: tabs auto-advance (~3s), a progress bar fills under the active one ---------- */
+.part .pfill{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#60A5FA;transform:scaleX(0);transform-origin:left;pointer-events:none}
+.parts.auto .part[aria-selected=true] .pfill{animation:part-fill 3s linear forwards}
+.parts.paused .part .pfill{animation-play-state:paused}
+@keyframes part-fill{to{transform:scaleX(1)}}
+
+/* ---------- hero: fills the first screen exactly on desktop; the headline block and the dashboard centre as one group ---------- */
+@media (min-width:1024px){
+  header.hero{min-height:100vh;min-height:100svh;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;padding-bottom:16px}
+  header.hero > .wrap{width:100%}
+}
+
+/* ---------- colour, radii, shadows below the hero ----------
+   Text: ink, text, brand, white, --dk-text on dark, --pop, plus the label colours (Verified, Live, Claimed) and brand-coloured logo names.
+   Radii: 12 cards and panels, 8 controls and chips, pill for dots. Shadows: --sh1 at rest, --sh2 on hover. */
+main > section{--muted:var(--text);--faint:var(--text);--lift:var(--sh2);--raised:var(--sh1)}
+#stories .copy,#stories .wb-pr i,#pricing .cs,#pricing .tp .amt{color:var(--text)}
+#pricing .tp .amt{color:inherit}
+#pricing .ptab .cr.th > div:nth-child(3) .tp{color:var(--brand)}
+.dk .lede,#inside .part span,#inside .part .i,.dk .lb.c,#pricing .plan.pro .pd,#pricing .plan.pro .ps,#pricing .plan.pro li,#pricing .plan.pro .tg,#pricing .plan .tg{color:var(--dk-text)}
+#inside .part[aria-selected=true] .i{color:#fff}
+main > section .lb,.fybtn,.cmpbtn,.bc-top .tile,.wb-pr i,.qr-c li,#pricing .cs,.wb-l{border-radius:8px}
+main > section .seg,main > section .filters{border-radius:12px}
+main > section .bcard,main > section .post,main > section .plan,main > section .feat,main > section .qcard,main > section .parent,main > section .ctab,.rc-p{border-radius:12px}
+
+/* ---------- type scale below the hero: 14 · 16 · 18 · 24 · 32 · 48 (product pictures keep their own sizes) ---------- */
+main > section h2{font-size:48px}
+main > section .lb{font-size:14px;height:24px;padding:0 9px}
+main > section .cwin .lb{font-size:12px;height:20px;padding:0 7px}
+main > section .btn,main > section .tlink,main > section .tlink .arr,.cmpbtn,.fybtn{font-size:16px}
+#stories small,#stories dt,#stories .ft > span,#stories .ax,#stories .ax span,#stories .bc-n small,#stories .wb-pr i,#stories .wb-pr small,
+#stories .qh,#stories .qtop span,#stories .nv small,#stories .ch,#stories .bnote,#stories .bc-sub,#stories .nod,
+#pricing small,#pricing .tg,#pricing .cs,#pricing .ps,#pricing .pnote,#pricing .tp,#pricing .tp .amt,#inside .part .i,#blog .by{font-size:14px}
+#stories .ftag b,#stories .sub2,#stories .facts dd,#stories .copy,#stories .bc-n b,#faq .qa-a p,#faq p{font-size:16px}
+#blog .post h3,#stories .qt b{font-size:18px}
+#stories .feat h3,#stories .qbody h3,.qr-h{font-size:24px}
+#stories .bc-num b{font-size:32px}
+#pricing .plan .pr,#pricing .plan .pr .amt{font-size:48px}
+@media (max-width:720px){main > section h2,#check .rc-top h2{font-size:32px}#pricing .ptab,#pricing .ptab .cr > div{font-size:14px}#pricing .ptab .cr.th b{font-size:16px}#pricing .plan .pr,#pricing .plan .pr .amt{font-size:48px}#stories .bc-num b{font-size:32px}}
+
 /* ---------- tap targets: 44px at every width ---------- */
 .bcard .go{min-height:44px}
 footer .fcol a{display:flex;align-items:center;min-height:44px;padding:0}
@@ -129,16 +182,9 @@ footer .fbot .lgl a{display:inline-flex;align-items:center;min-height:44px}
 }
 
 /* ---------- responsive ---------- */
-@media (max-width:1180px){#sources .sgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media (max-width:720px){#sources .sgrid{grid-template-columns:repeat(2,minmax(0,1fr))}#sources .scell{height:92px}}
-@media (max-width:520px){
-  #sources .sgrid{grid-template-columns:1fr;gap:8px}
-  #sources .scell{height:64px;flex-direction:row;align-items:center;gap:12px;padding:0 14px}
-  #sources .scell .lg{flex:1;min-width:0}
-  #sources .scell .gv{margin:0;flex:none}
-  #sources .more-in{padding:8px 14px;gap:2px}
-  #sources .more-in .mr{line-height:1.3}
-}
+@media (max-width:1100px){.sband{grid-template-columns:1fr}}
+@media (max-width:560px){.sb-big{grid-template-columns:1fr}.sb-flow .sbg{flex-basis:100%}}
+@media (max-width:720px){#check .rc-top h2{font-size:32px}}
 @media (max-width:720px){
   main > section{padding:64px 0}
   #check{padding:64px 0 56px}
@@ -155,5 +201,5 @@ footer .fbot .lgl a{display:inline-flex;align-items:center;min-height:44px}
   .quiz .qtop > span:last-child{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  #sources .scell:hover,#sources .scell.open{translate:none}
+  .sbg:hover,.wbi:hover{translate:none}
 }

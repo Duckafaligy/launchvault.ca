@@ -1,4 +1,4 @@
-/* LaunchVault site: nav, reveal + count-up, chart, source cards, tabs + filters, accordion, quiz, pricing, magnetic buttons, Studio cursor.
+/* LaunchVault site: reveal + count-up, chart, source cards, tabs + filters, accordion, quiz, pricing, magnetic buttons, Studio cursor.
    Postiz numbers: TrustMRR (Stripe) read Nov 17 2026; earlier points are Claimed (breakdowns/postiz). Components: see COMPONENTS.md. */
 (() => {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -9,32 +9,7 @@
   const H = document.documentElement;
   const IO = "IntersectionObserver" in window;
 
-  // ---------- nav: 80% -> 64% on scroll; links fold into the menu ----------
-  const nav = $("#nav"), mb = $("#menubtn");
-  if (nav && mb) {
-    const setMenu = o => { nav.classList.toggle("open", o); mb.setAttribute("aria-expanded", o); };
-    const onScroll = () => { nav.classList.toggle("small", scrollY > 8); if (scrollY <= 8 && innerWidth > 1100) setMenu(false); };
-    addEventListener("scroll", onScroll, {passive: true}); onScroll();
-    mb.addEventListener("click", e => { e.stopPropagation(); setMenu(!nav.classList.contains("open")); if (nav.classList.contains("open")) { const f = $("#menuc a"); if (f) f.focus(); } });
-    document.addEventListener("click", e => { if (!e.target.closest("#nav")) setMenu(false); });
-    $$("#menuc a").forEach(a => a.addEventListener("click", () => setMenu(false)));
-    nav.addEventListener("keydown", e => {
-      if (!nav.classList.contains("open") || e.key !== "Tab") return;
-      const f = [mb, ...$$("#menuc a")].filter(x => x.getClientRects().length), i = f.indexOf(document.activeElement);
-      if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
-    });
-    addEventListener("keydown", e => { if (e.key === "Escape" && nav.classList.contains("open")) { setMenu(false); mb.focus(); } });
-  }
-
-  // ---------- homepage scroll-spy: the nav tab for the section you're reading is highlighted ----------
-  if (IO && location.pathname === "/" && nav) {
-    const links = $$('#nav a[href^="/#"]'), map = {stories: "stories", inside: "stories", sources: "sources", check: "sources", pricing: "pricing", faq: "faq"};
-    const vis = new Map();
-    const paint = () => { let best = null, bh = 0; vis.forEach((h, id) => { if (h > bh) { bh = h; best = id; } });
-      const key = best && map[best]; links.forEach(a => { if (key && a.getAttribute("href") === "/#" + key) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); }); };
-    const sio = new IntersectionObserver(es => { es.forEach(e => vis.set(e.target.id, e.isIntersecting ? e.intersectionRect.height : 0)); paint(); }, {threshold: [0, .1, .25, .5, .75, 1], rootMargin: "-80px 0px -35% 0px"});
-    Object.keys(map).forEach(id => { const el = document.getElementById(id); if (el) sio.observe(el); });
-  }
+  // nav, mega menu and scroll-spy live in assets/nav.js
 
   // ---------- preview forms: nothing is sent; say so plainly ----------
   $$("form.pv").forEach(f => f.addEventListener("submit", e => {
@@ -277,7 +252,7 @@
     const drawer = $("#sdrawer"), srcbtn = $("#srcbtn"), search = $("#wsearch"), url = $("#wurl"), sres = $("#sres"), crumb = $("#wcrumb");
     const LOGO = { dm: '<img src="/assets/logos/dmchamp.png" alt="" width="44" height="44">' };
     // numbers from design/data/stories.json: the headline is what cards show, MRR / all-time is the small line
-    const SOON = { dm: ["DM Champ", "AI tool", "$28,426", " in Oct 2026", "MRR $113,809 · Nov 18 2026 · TrustMRR"],
+    const SOON = { dm: ["DM Champ", "AI tool", "$28,426", " in Oct 2026", "MRR $135,927 · Nov 18 2026 · TrustMRR"],
                    stencil: ["Stencil AI", "Mobile app", "$62,976", " in Oct 2026", "All-time $483,794 · Nov 16 2026 · TrustMRR"],
                    windmill: ["Windmill Growth", "Agency", "$118,047", " in Oct 2026", "MRR $118,347 · Nov 16 2026 · TrustMRR"],
                    goji: ["Gojiberry", "AI tool", "$424,368", " MRR", "Aug 14 2026 · TrustMRR"] };
@@ -285,7 +260,7 @@
     const URLS = { postiz: "/library/postiz", home: "/home", breakdowns: "/library", checklists: "/checklists", path: "/path" };
     // coming soon: the homepage cards' monthly series and only facts already on the site
     const RANGE = { dm: ["Dec 2025", "Oct 2026"], stencil: ["Jan 2026", "Oct 2026"], windmill: ["Dec 2025", "Oct 2026"] };
-    const KNOW = { dm: [["About $10K a month in an interview", "c", "Starter Story · Mar 2026"], ["First customers: an AppSumo deal", "c", ""], ["Priced for buyers instead of testers", "c", ""], ["MRR $113,809", "v", "Nov 18 2026"]],
+    const KNOW = { dm: [["About $10K a month in an interview", "c", "Starter Story · Mar 2026"], ["First customers: an AppSumo deal", "c", ""], ["Priced for buyers instead of testers", "c", ""], ["MRR $135,927", "v", "Nov 18 2026"]],
                    stencil: [["16 followers on X", "", ""], ["Started with one brother's tattoo-shop problem", "", ""], ["First customers: a family member's problem", "", ""], ["All-time revenue $483,794", "v", "Nov 16 2026"]],
                    windmill: [["A $250 start, he says", "c", ""], ["Sells a service instead of building an app", "", ""], ["74 clients at about $1,600 a month", "", ""], ["MRR $118,347", "v", "Nov 16 2026"]],
                    goji: [["2,000 sign-ups, $0 paid", "c", ""], ["Rebuilt the product within weeks", "c", ""], ["First customers: a waitlist, then a rebuild", "c", ""], ["$424,368 MRR", "v", "Aug 14 2026"]] };

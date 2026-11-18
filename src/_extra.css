@@ -4,7 +4,6 @@
    Same tokens, 8-12px radii, 1px hairlines, labels carry the only accents.
    ===================================================================== */
 .nav .links a[aria-current=page]{color:var(--ink);background:rgba(0,0,0,.04)}
-.menuc a.ml[aria-current=page]{background:var(--alt)}
 .skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--ink);color:#fff;padding:10px 14px;border-radius:8px;font-weight:600}
 .skip:focus{top:12px}
 

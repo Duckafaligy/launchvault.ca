@@ -70,17 +70,8 @@ section{padding:112px 0}
 .nav .links a{font:500 15px/1 var(--fd);color:#374151;padding:10px 11px;border-radius:8px}
 .nav .links a:hover{background:rgba(0,0,0,.04);color:var(--ink)}
 .nav .right{margin-left:auto;display:flex;gap:8px;align-items:center}
-.nav .menu{display:none}
-.nav.small .links,.nav.small .signin{display:none}.nav.small .menu{display:inline-flex}
+.nav.small .links,.nav.small .signin{display:none}
 .nav .cta .short{display:none}
-.menuc{position:absolute;top:calc(100% + 8px);right:0;width:300px;padding:8px;background:#fff;border-radius:12px;box-shadow:var(--raised);display:grid;gap:2px;
-  opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .2s,transform .3s var(--out),visibility 0s linear .2s}
-.nav.open .menuc{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .3s var(--out)}
-.menuc a.ml{display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0 12px;border-radius:8px;font:500 15px var(--fd);color:var(--ink)}
-.menuc a.ml:hover{background:var(--alt)}
-.menuc a.ml small{color:var(--muted);font-size:13px}
-.menuc .acts{display:grid;gap:8px;padding:8px 4px 4px;border-top:1px solid var(--line2);margin-top:6px}
-.menuc .acts .btn{height:44px}
 
 /* ---------- hero ---------- */
 .hero{padding:140px 0 0;text-align:center;overflow:hidden}
@@ -406,7 +397,7 @@ html.cur-lbl .cur,html.cur-text .cur,html.cur-text .cur-ring{opacity:0}
 /* ---------- responsive ---------- */
 @media (max-width:1100px){
   .nav,.nav.small{width:min(calc(100% - 24px),760px)}
-  .nav .links,.nav .signin{display:none}.nav .menu{display:inline-flex}
+  .nav .links,.nav .signin{display:none}
   .app{grid-template-columns:1fr}.side{display:none}
   .body2{grid-template-columns:1fr}
   .moves ol{display:grid;grid-template-columns:1fr 1fr;column-gap:8px}
@@ -432,7 +423,6 @@ html.cur-lbl .cur,html.cur-text .cur,html.cur-text .cur-ring{opacity:0}
   .nav,.nav.small{top:8px;width:calc(100% - 16px);height:60px;padding:0 8px 0 14px}
   .nav .btn{height:44px}
   .nav .cta .long{display:none}.nav .cta .short{display:inline}
-  .menuc{width:calc(100vw - 32px);right:0}
   .form{flex-direction:column}.form .btn{width:100%}.form input,.nl input{flex:none;height:48px}
   .logo{min-height:44px}
   .win{margin-top:44px;border-radius:12px}
@@ -481,7 +471,6 @@ html.cur-lbl .cur,html.cur-text .cur,html.cur-text .cur-ring{opacity:0}
    Same tokens, 8-12px radii, 1px hairlines, labels carry the only accents.
    ===================================================================== */
 .nav .links a[aria-current=page]{color:var(--ink);background:rgba(0,0,0,.04)}
-.menuc a.ml[aria-current=page]{background:var(--alt)}
 .skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--ink);color:#fff;padding:10px 14px;border-radius:8px;font-weight:600}
 .skip:focus{top:12px}
 
@@ -996,7 +985,7 @@ html.rv-on .bcard.rv:not(.in) .dotv{opacity:0}
 /* ---------- other hover states ---------- */
 .lb{transition:filter .2s}
 .mv{transition:background-color .2s}
-.menuc a.ml{transition:background-color .2s}
+
 .fcol a,.fbot a{transition:color .2s}
 .nav .links a{transition:background-color .2s,color .2s}
 .sl-row,.fr,.par-list > div{transition:background-color .2s}
@@ -1050,7 +1039,6 @@ html.rv-on .bcard.rv:not(.in) .dotv{opacity:0}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 html{scroll-padding-top:78px}
 .nav .links a[aria-current]{color:var(--ink);background:rgba(37,99,235,.08);box-shadow:inset 0 0 0 1px rgba(37,99,235,.14)}
-.menuc a.ml[aria-current]{background:var(--alt);color:var(--brand)}
 
 /* =====================================================================
    Hero demo window = the real LaunchVault app (OneDrive/LaunchVault/App designs).

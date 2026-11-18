@@ -111,3 +111,11 @@ Homepage order (2026-11-18 condense): hero, `#sources` (logo band; each tile wip
 "Compare plans"), `#inside` (dark; tab 4 holds the old "first four moves"), `#blog`, `#faq`. `#moves-sec` and `#sourced` are gone.
 Section CSS for the condensed layout lives in `assets/design.css` (linked last). Nav tabs: Stories, How we check, Pricing, FAQ, Blog; the homepage highlights the tab for the section in view (`aria-current="location"`).
 Sign in → `/welcome/`; sign-up CTAs → `/welcome/#signup` (plans add `?plan=pro|builder`). Fragments left in build.py: `{{POSTS}}`, `{{PLANS}}`, `{{FAQ}}`.
+
+## Nav (round 11, owned by the nav coder)
+Markup: `nav()` + `MEGA` + `JUMP` in build.py. Styles: `assets/nav.css` (linked last). Behaviour: `assets/nav.js` (the old nav code in site.js is gone).
+- Rest: logo, centred tabs, CTA "Read your first success story" (short: "Read a story") → /welcome/. Scrolled, or at ≤1100px: tabs fold into the centred `#menubtn` (3 lines → "=" on hover/focus).
+- `#mega`: mouse hover opens at once, leaving closes (padding-top is the hover bridge); click/Enter/Space pins until a click outside, Esc or the button again. ≤720px it is a tap-to-open sheet with a ✕.
+- Section links are always `/#id`. **If you add, rename or remove a homepage `<section id>`, update `JUMP` in build.py.**
+- `.nav.ondk` (dark tint) is set while the bar sits over `.dk` or the footer. Scroll-spy sets `aria-current="location"` on tabs and jump rows.
+- Check: `node _review/nav/navcheck.js` (all pages × 1440/834/390, behaviour, reduced motion, link crawl).

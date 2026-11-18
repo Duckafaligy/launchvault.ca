@@ -21,3 +21,14 @@ Each file is the company's own site icon or logo, fetched from its official site
 | trustmrr.png | https://trustmrr.com/icon.png (resized). TrustMRR publishes no brand page; this is its own site icon. | Nov 17 2026 |
 | postiz.svg | https://github.com/gitroomhq/postiz-app/blob/main/apps/frontend/public/postiz.svg | Nov 17 2026 |
 | dmchamp.png | DM Champ's icon on its TrustMRR profile (files.stripe.com link in trustmrr.com/startup/dm-champ.md, resized) | Nov 17 2026 |
+| gojiberry.png | GojiberryAI's icon on its TrustMRR profile (files.stripe.com link in trustmrr.com/startup/superfruits.md, 128px PNG) | Nov 18 2026 |
+| rezi.png | Rezi's icon on its TrustMRR profile (files.stripe.com link in trustmrr.com/startup/rezi.md, 128px PNG) | Nov 18 2026 |
+| cometly.png | Cometly's icon on its TrustMRR profile (files.stripe.com link in trustmrr.com/startup/cometly.md, 128px PNG) | Nov 18 2026 |
+| boothie.png | Boothie's app icon on its TrustMRR profile (appatar.io/com.esmakerem.Boothie/large, 128px PNG) | Nov 18 2026 |
+| stencilai.png | Stencil AI's app icon on its TrustMRR profile (appatar.io/app.stencilai/large, 128px PNG) | Nov 18 2026 |
+| calyra.png | Calyra's app icon on its TrustMRR profile (appatar.io/com.nutria25.nutriaapp/large, 128px PNG) | Nov 18 2026 |
+| mindset.png | Mindset's app icon on its TrustMRR profile (appatar.io/com.appstudio.mindset/large, 128px PNG) | Nov 18 2026 |
+| aeoengine.png | AEO Engine's logo on its TrustMRR profile (d21oz30g4w22sz.cloudfront.net/logos/aeo-engine-…png, 128px PNG) | Nov 18 2026 |
+| upscaleb2b.png | Upscale B2B's icon on its TrustMRR profile (files.stripe.com link in trustmrr.com/startup/upscale-system-llc.md, 128px PNG) | Nov 18 2026 |
+| windmillgrowth.png | Windmill Growth's icon on its TrustMRR profile (files.stripe.com link in trustmrr.com/startup/windmill-growth-llc.md, 128px PNG) | Nov 18 2026 |
+| whiteglovecontent.png | White Glove Content's icon on its TrustMRR profile (files.stripe.com link in trustmrr.com/startup/white-glove-content.md, 128px PNG) | Nov 18 2026 |

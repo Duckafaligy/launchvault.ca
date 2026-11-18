@@ -34,11 +34,11 @@
       const X = i => L + i / N * (W - L - R), Y = v => T + (1 - v / MAX) * (H - T - B);
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("height", H); svg.innerHTML = "";
       const defs = el("defs", {}, svg), gr = el("linearGradient", {id: "rcg", x1: 0, x2: 0, y1: 0, y2: 1}, defs);
-      el("stop", {offset: 0, "stop-color": "#34D399", "stop-opacity": .22}, gr); el("stop", {offset: 1, "stop-color": "#34D399", "stop-opacity": 0}, gr);
+      el("stop", {offset: 0, "stop-color": "#34D399", "stop-opacity": .16}, gr); el("stop", {offset: 1, "stop-color": "#34D399", "stop-opacity": 0}, gr);
       [0, 10000, 20000, 30000].forEach(v => { el("line", {x1: L, x2: W - R, y1: Y(v), y2: Y(v), class: "gl"}, svg);
         el("text", {x: L - 8, y: Y(v) + 4, "text-anchor": "end", class: "ax"}, svg).textContent = v ? "$" + v / 1000 + "K" : "$0"; });
       V.forEach((p, i) => { if (narrow && ![0, 3, 6, N].includes(i)) return; el("text", {x: X(i), y: H - 8, "text-anchor": i === 0 ? "start" : i === N ? "end" : "middle", class: "ax"}, svg).textContent = p[0].slice(0, 3) + " " + p[0].slice(-2); });
-      const area = el("path", {fill: "url(#rcg)"}, svg), cl = el("path", {class: "cl"}, svg), vl = el("path", {class: "vl"}, svg);
+      const area = el("path", {fill: "url(#rcg)"}, svg), gp = el("path", {class: "gp"}, svg), cl = el("path", {class: "cl"}, svg), vl = el("path", {class: "vl"}, svg);
       const dots = V.map((p, i) => el("circle", {cx: X(i), cy: Y(p[1]), r: 3, class: "vd"}, svg));
       const cross = el("line", {y1: T, y2: H - B, class: "cx"}, svg);
       const hc = el("g", {class: "hc"}, svg); el("circle", {r: 6}, hc);
@@ -49,19 +49,20 @@
       const hit = el("rect", {x: L, y: T, width: W - L - R, height: H - T - B, fill: "transparent"}, svg);
       hit.addEventListener("pointermove", e => { if (anim) return; const r = svg.getBoundingClientRect(), mx = (e.clientX - r.left) * W / r.width; set(Math.max(0, Math.min(N, Math.round((mx - L) / (W - L - R) * N))), true); });
       hit.addEventListener("pointerleave", () => { if (!anim) set(N); });
-      G = {X, Y, area, cl, vl, dots, cross, hc, hv, ov, lc, lv, H, B, W, narrow};
+      G = {X, Y, area, gp, cl, vl, dots, cross, hc, hv, ov, lc, lv, H, B, W, narrow};
       render(cur);
     };
     const render = t => {
-      const {X, Y, area, cl, vl, dots, hc, hv, ov, H, B} = G, i = Math.floor(t), f = t - i;
+      const {X, Y, area, gp, cl, vl, dots, hc, hv, ov, H, B} = G, i = Math.floor(t), f = t - i;
       const pts = V.slice(0, i + 1).map((p, k) => [X(k), Y(p[1])]);
       if (f > 0 && i < N) pts.push([X(i + f), Y(V[i][1] + (V[i + 1][1] - V[i][1]) * f)]);
       const d = pts.map((p, k) => (k ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
       vl.setAttribute("d", d); area.setAttribute("d", d + ` L${pts.at(-1)[0].toFixed(1)} ${Y(0)} L${pts[0][0]} ${Y(0)} Z`);
       dots.forEach((c, k) => c.classList.toggle("on", k <= t));
       const head = pts.at(-1); hv.setAttribute("transform", `translate(${head[0]},${head[1]})`);
-      if (t >= C0) { cl.setAttribute("d", `M${X(C0)} ${Y(CLAIM)} L${X(t)} ${Y(CLAIM)}`); hc.setAttribute("transform", `translate(${X(t)},${Y(CLAIM)})`); hc.style.opacity = 1; }
-      else { cl.setAttribute("d", ""); hc.style.opacity = 0; }
+      if (t >= C0) { cl.setAttribute("d", `M${X(C0)} ${Y(CLAIM)} L${X(t)} ${Y(CLAIM)}`);
+        const gv = pts.filter((p, k) => k >= C0); gp.setAttribute("d", `M${X(C0)} ${Y(CLAIM)} ` + gv.map(p => `L${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(" ") + ` L${X(t)} ${Y(CLAIM)} Z`); hc.setAttribute("transform", `translate(${X(t)},${Y(CLAIM)})`); hc.style.opacity = 1; }
+      else { cl.setAttribute("d", ""); gp.setAttribute("d", ""); hc.style.opacity = 0; }
       ov.classList.toggle("on", t >= N); G.lc.classList.toggle("on", t >= C0 + .6); G.lv.classList.toggle("on", t >= N);
     };
     const tween = (node, to, pre = "") => { const from = +node.dataset.v || 0; node.dataset.v = to; if (reduce || !to || !from) { node.textContent = to ? pre + money(to) : "Not yet"; return; }

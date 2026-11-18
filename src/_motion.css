@@ -268,7 +268,7 @@ html.rv-on .bcard.rv:not(.in) .dotv{opacity:0}
 /* ---------- other hover states ---------- */
 .lb{transition:filter .2s}
 .mv{transition:background-color .2s}
-.menuc a.ml{transition:background-color .2s}
+
 .fcol a,.fbot a{transition:color .2s}
 .nav .links a{transition:background-color .2s,color .2s}
 .sl-row,.fr,.par-list > div{transition:background-color .2s}
@@ -322,4 +322,3 @@ html.rv-on .bcard.rv:not(.in) .dotv{opacity:0}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 html{scroll-padding-top:78px}
 .nav .links a[aria-current]{color:var(--ink);background:rgba(37,99,235,.08);box-shadow:inset 0 0 0 1px rgba(37,99,235,.14)}
-.menuc a.ml[aria-current]{background:var(--alt);color:var(--brand)}

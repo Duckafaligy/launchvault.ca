@@ -36,22 +36,37 @@ LV = '<svg width="24" height="24" aria-hidden="true"><use href="#i-lv"/></svg>'
 NAVLINKS = [("stories", "/#stories", "Stories"), ("check", "/#sources", "How we check"), ("pricing", "/#pricing", "Pricing"),
             ("faq", "/#faq", "FAQ"), ("blog", "/blog/", "Blog")]
 
+# Mega menu (scrolled state / small screens): each tab gets a line and 1-2 examples; "Jump to a section" lists every homepage section.
+# Links are always /#id, so they work from every page. Keep JUMP in step with the <section id>s in src/index.body.html.
+MEGA = [("Stories", "/#stories", "Real founders, checked: what they did first and what happened next.", [("/blog/postiz/", "Postiz"), ("/#stories", "DM Champ")]),
+        ("How we check", "/#sources", "Every number gets a source, a label and the date we read it.", [("/blog/what-verified-means/", "What Verified means"), ("/#check", "Race chart")]),
+        ("Pricing", "/#pricing", "Free · Pro · Builder. Start free, go Pro when you want more.", [("/#pricing", "Compare plans")]),
+        ("FAQ", "/#faq", "What students and parents ask us before signing up.", [("/#faq", "Where the numbers come from")]),
+        ("Blog", "/blog/", "Short guides on reading the numbers.", [("/blog/postiz/", "Postiz breakdown"), ("/blog/what-verified-means/", "What Verified means")])]
+JUMP = [("top", "Top", "How real apps got their first customers"), ("sources", "Sources", "Every number has a source and a date"),
+        ("check", "Race chart", "Claimed vs verified revenue"), ("stories", "Real stories", "Solo founders, checked"),
+        ("pricing", "Pricing", "Free, Pro and Builder side by side"), ("inside", "Inside a breakdown", "Ten minutes, four parts"),
+        ("blog", "From the blog", "The latest guides"), ("faq", "FAQ", "Questions, answered")]
+
 def nav(active):
     cur = lambda k: ' aria-current="page"' if k == active else ""
     links = "".join(f'<a href="{h}"{cur(k)}>{t}</a>' for k, h, t in NAVLINKS)
-    mlinks = "".join(f'<a class="ml" href="{h}"{cur(k)}>{t}</a>' for k, h, t in NAVLINKS)
+    tabs = "".join(f'<div class="mt"><a class="mth" href="{h}"><b>{t}</b><span>{d}</span></a><p class="mex">'
+                   + "".join(f'<a href="{u}">{x}</a>' for u, x in ex) + "</p></div>" for t, h, d, ex in MEGA)
+    jump = "".join(f'<a href="/#{i}" data-sec="{i}"><b>{t}</b><span>{d}</span></a>' for i, t, d in JUMP)
     return f'''<a class="skip" href="#main">Skip to content</a>
 <nav class="nav" id="nav" aria-label="Main">
   <a class="logo" href="/" aria-label="LaunchVault home">{LV}LaunchVault</a>
   <div class="links">{links}</div>
+  <button class="mbtn" id="menubtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mega"><span class="mic" aria-hidden="true"><i></i><i></i><i></i></span></button>
   <div class="right">
-    <a class="btn btn-p cta" href="/welcome/"><span class="long">Get the weekly breakdown</span><span class="short">Get it free</span></a>
-    <button class="btn btn-s menu" id="menubtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menuc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <a class="btn btn-p cta" href="/welcome/"><span class="long">Read your first success story</span><span class="short">Read a story</span></a>
   </div>
-  <div class="menuc" id="menuc">
-    {mlinks}
-    <div class="acts"><a class="btn btn-p" href="/welcome/">Get the weekly breakdown</a></div>
-  </div>
+  <div class="mega" id="mega" role="region" aria-label="Site menu"><div class="mgc">
+    <div class="mhead"><b>Menu</b><button class="mx" type="button" aria-label="Close menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="mtabs">{tabs}</div>
+    <div class="mjump"><h3>Jump to a section</h3>{jump}</div>
+  </div></div>
 </nav>'''
 
 # Simple Icons paths (CC0). Social accounts don't exist yet: icons render with a "Coming soon" tooltip, aria-disabled, no href.
@@ -69,10 +84,6 @@ FCOLS = [("Explore", [("/#stories", "Stories"), ("/#sources", "How we check"), (
 FCOLS_HTML = "".join(f'<nav class="fcol" aria-label="{h}"><h4>{h}</h4>' + "".join(f'<a href="{u}"><span>{t}</span></a>' for u, t in ls) + "</nav>" for h, ls in FCOLS)
 FOOTER = '''<footer class="foot">
   <div class="wrap">
-    <div class="fnl">
-      <div><h3>One real startup story, every week.</h3><p>Free. One email a week. Unsubscribe anytime.</p></div>
-      <form class="nl pv"><input type="email" required placeholder="you@email.com" aria-label="Email for the weekly breakdown"><button class="btn btn-p" type="submit">Subscribe <span class="arr" aria-hidden="true">→</span></button></form>
-    </div>
     <div class="ftop">
       <div class="fbrand"><a class="logo" href="/">''' + LV + '''LaunchVault</a>
         <p class="tl">Real startup stories, checked and cut down to the part you can use.</p>
@@ -101,6 +112,7 @@ HEAD = '''<!doctype html>
 <link rel="stylesheet" href="/assets/pages.css">
 <link rel="stylesheet" href="/assets/home.css">
 <link rel="stylesheet" href="/assets/design.css">
+<link rel="stylesheet" href="/assets/nav.css">
 </head>
 '''
 
@@ -143,7 +155,7 @@ def main():
         for k, v in frag.items(): b = b.replace(k, v)
         html = (HEAD.format(title=title, desc=desc, og=og(out)) + f'<body{" class=" + chr(34) + cls + chr(34) if cls else ""}>\n' + sprite + "\n" + nav(active)
                 + '\n<main id="main">\n' + b + ("\n" + strip if bstrip else "") + "\n</main>\n"
-                + FOOTER + '\n<script src="/assets/site.js" defer></script>\n<script src="/assets/home.js" defer></script>\n</body>\n</html>\n')
+                + FOOTER + '\n<script src="/assets/nav.js" defer></script>\n<script src="/assets/site.js" defer></script>\n<script src="/assets/home.js" defer></script>\n</body>\n</html>\n')
         path = os.path.join(ROOT, out); os.makedirs(os.path.dirname(path), exist_ok=True)
         write(path, html)
     print("built", len(PAGES), "pages")

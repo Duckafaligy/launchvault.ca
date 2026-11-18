@@ -53,7 +53,7 @@
       if (qcount) { qcount.hidden = !n; qcount.textContent = n + " of " + Q.length; }
       if (!grid) return;
       const r = rank().map(([k]) => k), top = n ? r.slice(0, 3) : [];
-      const order = n ? r.map(k => orig.find(c => nameOf(c) === k)).filter(Boolean) : orig;
+      const ranked = n ? r.map(k => orig.find(c => nameOf(c) === k)).filter(Boolean) : [], order = ranked.concat(orig.filter(c => !ranked.includes(c)));
       const first = new Map(cards.map(c => [c, c.getBoundingClientRect()])), anchor = grid.querySelector(".empty");
       order.forEach(c => grid.insertBefore(c, anchor));
       [...cards, feat].filter(Boolean).forEach(c => { let b = c.querySelector(".fyr"); const i = top.indexOf(nameOf(c)); c.classList.toggle("fy", i >= 0);
@@ -74,7 +74,7 @@
         ${chips ? `<ul class="qr-c" aria-label="Your answers">${chips}</ul>` : ""}
         <ol class="qr-p">${p.map(([k, b], i) => { const [h, t] = POSTS[ST[k].p];
           return `<li style="--i:${i}"><a href="${h}"><span class="qn">${i + 1}</span><span class="qt"><b>${k}</b><small>${ST[k].why}${because(b)}</small><span class="qin">In: ${esc(t)}</span></span>${ARW}</a></li>`; }).join("")}</ol>
-        <div class="qr-a"><a class="btn btn-p" href="/welcome/#signup">Save my path, free <span class="arr" aria-hidden="true">→</span></a><a class="btn btn-s" href="${href}">Read about ${top}</a></div>
+        <div class="qr-a"><a class="btn btn-p" href="/welcome/#signup">Start free <span class="arr" aria-hidden="true">→</span></a><a class="btn btn-s" href="${href}">Read about ${top}</a></div>
       </div>`;
     };
     const play = el => { el.classList.remove("play"); void el.offsetWidth; el.classList.add("play"); };
@@ -173,6 +173,20 @@
     const first = panel(cur);
     if (reduce || !("IntersectionObserver" in window)) first.classList.add("play");
     else { const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); play(panel(cur)); } }, {threshold: .35}); io.observe(win); }
+    // autoplay: about 3s per part, looping, with a progress bar on the active tab. Pauses while hovered or off screen;
+    // stops for good once you pick a tab yourself. Never runs under reduced motion.
+    if (!reduce) {
+      const box = $("#inside .split"); let stopped = false, hovering = false, visible = false;
+      tabs.forEach(t => { const f = document.createElement("span"); f.className = "pfill"; f.setAttribute("aria-hidden", "true"); t.append(f); });
+      const sync = () => parts.classList.toggle("paused", hovering || !visible);
+      const stop = () => { stopped = true; parts.classList.remove("auto"); };
+      parts.addEventListener("animationend", e => { if (e.animationName !== "part-fill" || stopped) return; select(tabs[(tabs.indexOf(cur) + 1) % tabs.length]); });
+      box.addEventListener("pointerenter", () => { hovering = true; sync(); });
+      box.addEventListener("pointerleave", () => { hovering = false; sync(); });
+      tabs.forEach(t => { t.addEventListener("click", e => { if (e.isTrusted) stop(); }); t.addEventListener("keydown", stop); });
+      if ("IntersectionObserver" in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; sync(); }, {threshold: .4}).observe(box); else visible = true;
+      parts.classList.add("auto"); sync();
+    }
     let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(place, 80); });
     if (document.fonts) document.fonts.ready.then(place);
   }
@@ -187,6 +201,9 @@
     mvall.textContent = open ? "Show fewer moves" : "See all 8 moves";
     if (!reduce && ol.animate) ol.animate([{height: h0 + "px"}, {height: ol.offsetHeight + "px"}], {duration: 480, easing: OUT});
   });
+
+  // ---------- stories: tabs (AI tools / Mobile apps / Services, no "All"); show the pressed tab's cards on load ----------
+  const tab0 = $('#stories .filters .chip[aria-pressed="true"]'); if (tab0) tab0.click();
 
   // ---------- pricing: "Compare plans" opens the plan table in place ----------
   const cbtn = $(".cmpbtn"), cbox = cbtn && document.getElementById(cbtn.getAttribute("aria-controls"));
