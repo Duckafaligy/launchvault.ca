@@ -24,10 +24,11 @@
 
   // hover (mouse, card-sized screens only): open with no delay; a short grace on leave plus the CSS bridge stop flicker
   const mouse = e => e.pointerType === "mouse" && !phone();
-  [mb, mega].forEach(el => {
-    el.addEventListener("pointerenter", e => { if (!mouse(e)) return; clearTimeout(t); if (!open) set(true); });
-    el.addEventListener("pointerleave", e => { if (!mouse(e) || pinned) return; clearTimeout(t); t = setTimeout(() => { if (!mb.matches(":hover") && !mega.matches(":hover")) shut(); }, 120); });
-  });
+  // The hover zone is the whole nav: the bar (button + the strip around it), the card and its bridge are all inside #nav,
+  // so moving from the icon to any corner of the card never leaves it. Leaving closes after 150ms; coming back cancels.
+  mb.addEventListener("pointerenter", e => { if (!mouse(e)) return; clearTimeout(t); if (!open) set(true); });
+  nav.addEventListener("pointerenter", e => { if (mouse(e)) clearTimeout(t); });
+  nav.addEventListener("pointerleave", e => { if (!mouse(e) || pinned || !open) return; clearTimeout(t); t = setTimeout(() => { if (!nav.matches(":hover")) shut(); }, 150); });
   // click / tap / Enter / Space: pin open, or unpin and close
   mb.addEventListener("click", e => {
     if (pinned) return shut();
