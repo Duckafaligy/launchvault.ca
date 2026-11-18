@@ -150,3 +150,30 @@
 .so-n .num-h,.so-n .lb.gh-hover{outline:2px solid rgba(37,99,235,.25);outline-offset:2px;border-radius:4px}
 #sonum.gh-hover{color:var(--brand)}
 .vh .prog.gh-hover{text-decoration:underline;text-underline-offset:3px}
+
+/* phone (<760px): the window becomes an app screen. Postiz header, KPIs 2 x 2, the chart, three moves + "See all 8 moves" */
+.mvall{display:none}
+.kpi .ks{display:none}
+@media (max-width:759px){
+  .win .chrome,.win .mtop,.win .ch-h{display:none}
+  .win .main{padding:12px 12px 10px}
+  .win .phead{margin:0 0 10px;gap:10px}
+  .win .phead .tile{width:30px;height:30px}
+  .win .phead b{font-size:17px}
+  .win .phead span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12.5px}
+  .win .kpis{grid-template-columns:1fr 1fr}
+  .win .kpi{padding:8px 10px;gap:2px}
+  .win .kpi .k{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .win .kpi .kf{display:none}.win .kpi .ks{display:inline}
+  .win .kpi .kv{font-size:19px}
+  .win .body2{margin-top:10px;gap:10px}
+  .win .moves .hd{padding:10px 12px 4px}
+  .win #moves{overflow:hidden}
+  .win #moves li:nth-child(n+4){display:none}
+  .win.mv-all #moves li{display:list-item}
+  .win .mv small{display:none}
+  .mvall{display:flex;align-items:center;justify-content:center;width:calc(100% - 12px);min-height:44px;margin:2px 6px 6px;border:1px solid var(--line);border-radius:8px;
+    background:#fff;font:600 14px var(--fd);color:var(--brand);cursor:pointer;transition:background-color .2s,color .2s,border-color .2s}
+  .mvall:hover{background:var(--brand);border-color:var(--brand);color:#fff}
+  .mvall:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+}

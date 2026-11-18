@@ -57,7 +57,8 @@ Status: **done**. Everything below is live in site.css and site.js.
 - `.faq details` (the old markup) gets the same behaviour.
 
 ## Status labels (unchanged)
-`<span class="lb v">Verified</span>` · `.lb.c` Claimed · `.lb.x` Sources differ · `.lb.l` Live.
+`<span class="lb v">Verified</span>` (emerald) · `.lb.l` Live (sky) · `.lb.w` Wayback (slate square, replaces Archived) · `.lb.c` Claimed (slate hollow dot) · `.lb.x` Sources differ (coral diamond) · `.lb.n` Couldn't verify (outlined, no colour).
+Headline company numbers are MRR with their read date (Stencil AI: all-time revenue). Monthly revenue appears only where labelled "revenue each month" (race chart, story sparklines).
 
 ## Cards: hover states
 - `.post` (blog card): background shifts to the alt tint, lifts 2px, title turns blue.

@@ -1,5 +1,5 @@
 /* LaunchVault homepage (Coder C): the "Find stories like you" quiz (it reorders the story cards), the "Inside a breakdown" tabs,
-   the source-tile row and the "Compare plans" toggle.
+   the phone hero's "See all 8 moves" and the "Compare plans" toggle.
    Loaded on every page after site.js; each block does nothing when its section isn't on the page. */
 (() => {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -45,18 +45,21 @@
     const path = () => rank().slice(0, 3);
     const because = b => b ? ` You said <i>${esc(b)}</i>.` : "";
     // the live path IS the story grid: answers reorder the cards (FLIP) and rank the top three in violet
-    const grid = $("#bgrid"), cards = grid ? $$(".bcard:not(.cta)", grid) : [], orig = cards.slice(), qcount = $("#qcount");
-    const nameOf = c => c.querySelector(".bc-n b").textContent.trim();
+    // Postiz is the featured card above the grid; its rank badge goes on the feature, the others reorder in the grid
+    const grid = $("#bgrid"), cards = grid ? $$(".bcard[data-story]", grid) : [], orig = cards.slice(), qcount = $("#qcount"), feat = $(".feat[data-story]");
+    const nameOf = c => c.dataset.story;
     const showPath = animate => {
       const n = answered();
       if (qcount) { qcount.hidden = !n; qcount.textContent = n + " of " + Q.length; }
       if (!grid) return;
-      const order = n ? rank().map(([k]) => orig.find(c => nameOf(c) === k)).filter(Boolean) : orig, top = n ? order.slice(0, 3) : [];
-      const first = new Map(cards.map(c => [c, c.getBoundingClientRect()])), anchor = grid.querySelector(".bcard.cta");
+      const r = rank().map(([k]) => k), top = n ? r.slice(0, 3) : [];
+      const order = n ? r.map(k => orig.find(c => nameOf(c) === k)).filter(Boolean) : orig;
+      const first = new Map(cards.map(c => [c, c.getBoundingClientRect()])), anchor = grid.querySelector(".empty");
       order.forEach(c => grid.insertBefore(c, anchor));
-      cards.forEach(c => { let b = c.querySelector(".fyr"); const i = top.indexOf(c); c.classList.toggle("fy", i >= 0);
+      [...cards, feat].filter(Boolean).forEach(c => { let b = c.querySelector(".fyr"); const i = top.indexOf(nameOf(c)); c.classList.toggle("fy", i >= 0);
         if (i < 0) { if (b) b.remove(); return; }
-        if (!b) { b = document.createElement("span"); b.className = "fyr"; c.querySelector(".bc-top").insertBefore(b, c.querySelector(".bc-top .tag")); }
+        const row = c.querySelector(".bc-top, .ftag");
+        if (!b) { b = document.createElement("span"); b.className = "fyr"; row.insertBefore(b, row.querySelector(".lb")); }
         b.textContent = "#" + (i + 1) + " for you"; });
       if (reduce || !animate) return;
       cards.forEach(c => { if (c.hidden) return; const a = first.get(c), r = c.getBoundingClientRect(), dx = a.left - r.left, dy = a.top - r.top;
@@ -174,16 +177,16 @@
     if (document.fonts) document.fonts.ready.then(place);
   }
 
-  // ---------- sources: under 1024px the logo tiles are one scroll-snap row with arrow buttons ----------
-  const row = $("#sgrid"), arrows = $$(".sarr");
-  if (row && arrows.length) {
-    const page = () => { const c = row.querySelector(".scell"); if (!c) return row.clientWidth; const w = c.offsetWidth + 12; return w * Math.max(1, Math.floor((row.clientWidth + 12) / w)); };
-    const upd = () => { const max = row.scrollWidth - row.clientWidth - 2;
-      arrows.forEach(a => a.disabled = +a.dataset.dir < 0 ? row.scrollLeft <= 2 : row.scrollLeft >= max); };
-    arrows.forEach(a => a.addEventListener("click", () => row.scrollBy({left: +a.dataset.dir * page(), behavior: reduce ? "auto" : "smooth"})));
-    row.addEventListener("scroll", upd, {passive: true}); addEventListener("resize", upd); upd();
-  }
 
+
+  // ---------- phone hero: three moves, then "See all 8 moves" opens the rest (CSS shows the button under 760px) ----------
+  const mvall = $(".mvall"), mvwin = $("#win");
+  if (mvall && mvwin) mvall.addEventListener("click", () => {
+    const open = mvall.getAttribute("aria-expanded") !== "true", ol = $("#moves"), h0 = ol.offsetHeight;
+    mvall.setAttribute("aria-expanded", open); mvwin.classList.toggle("mv-all", open);
+    mvall.textContent = open ? "Show fewer moves" : "See all 8 moves";
+    if (!reduce && ol.animate) ol.animate([{height: h0 + "px"}, {height: ol.offsetHeight + "px"}], {duration: 480, easing: OUT});
+  });
 
   // ---------- pricing: "Compare plans" opens the plan table in place ----------
   const cbtn = $(".cmpbtn"), cbox = cbtn && document.getElementById(cbtn.getAttribute("aria-controls"));

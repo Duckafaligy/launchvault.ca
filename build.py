@@ -64,7 +64,7 @@ SOCIAL_HTML = "".join(f'<a class="soc" role="link" tabindex="0" aria-disabled="t
 FCOLS = [("Explore", [("/#stories", "Stories"), ("/#sources", "How we check"), ("/#pricing", "Pricing"), ("/#faq", "FAQ")]),
          ("From the blog", [("/blog/", "All posts"), ("/blog/postiz/", "The Postiz breakdown"), ("/blog/what-verified-means/", "What Verified means"),
                             ("/blog/how-to-read-a-revenue-chart/", "Reading a revenue chart"), ("/blog/three-ways-to-start-small/", "Three ways to start small")]),
-         ("Account", [("/welcome/", "Get the weekly breakdown")]),
+         ("Account", [("/welcome/", "Sign in"), ("/welcome/#signup", "Sign up")]),
          ("Legal", [("/legal/privacy/", "Privacy (draft)"), ("/legal/terms/", "Terms (draft)")])]
 FCOLS_HTML = "".join(f'<nav class="fcol" aria-label="{h}"><h4>{h}</h4>' + "".join(f'<a href="{u}"><span>{t}</span></a>' for u, t in ls) + "</nav>" for h, ls in FCOLS)
 FOOTER = '''<footer class="foot">

@@ -147,7 +147,7 @@
     let G = null, M0 = 0, animate = !reduce && IO, pinned = null, userPin = false;
     movesEl.innerHTML = EVT.map((e, i) => `<li><button type="button" class="mv${i === TURN ? " turn" : ""}" data-i="${i}"><span class="n">${i + 1}</span><span><b>${e[2]}</b><small>${e[3]}</small></span><span class="w">${e[1]}</span></button></li>`).join("");
     function draw() {
-      const W = Math.max(260, plot.clientWidth - 12), narrow = W < 520, H = narrow ? 230 : size === "big" ? 320 : inHero ? 218 : 262;
+      const W = Math.max(260, plot.clientWidth - 12), narrow = W < 520, H = narrow ? (inHero ? 190 : 230) : size === "big" ? 320 : inHero ? 218 : 262;
       const L = 46, R = 14, T = 12, B = 50, TAG = narrow ? 14 : 16, span = 34 - M0;
       const X = m => L + Math.max(0, m - M0) / span * (W - L - R), Y = v => T + (1 - v / 450000) * (H - T - B);
       svg.innerHTML = ""; svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("height", H);
@@ -204,7 +204,7 @@
     function setActive(i) { G.tags.forEach((g, k) => g.classList.toggle("on", k === i)); movesEl.querySelectorAll(".mv").forEach((b, k) => b.classList.toggle("on", k === i)); }
     function showPoint(p) {
       const x = G.X(p[0]), y = G.Y(p[1]); mark(x, y); setActive(-1);
-      place(x, y, `<div class="d">${p === ALT ? "Mar 2026, second source" : mlabel(p[0])}</div><div class="tv">${money(p[1])}<span class="d" style="font:500 12px var(--fd)"> /mo</span></div><div class="s">${pill(p[2])}<span>${p[3]}</span></div>`);
+      place(x, y, `<div class="d">${p === ALT ? "Mar 2026, second source" : mlabel(p[0])}</div><div class="tv">${money(p[1])}<span class="d" style="font:500 12px var(--fd)">${p[2] === "v" ? " MRR" : " /mo"}</span></div><div class="s">${pill(p[2])}<span>${p[3]}</span></div>`);
     }
     function showEvent(i) {
       const e = EVT[i], x = G.X(e[0]), p = P.find(q => q[0] === e[0] && q[0] >= M0);
@@ -245,7 +245,7 @@
     if (redraw) redraw();
     if (innerWidth <= 1100 || !canHover) return;   // touch tablets scroll naturally and keep 44px targets
     let top = 0; for (let n = wf; n; n = n.offsetParent) top += n.offsetTop;   // layout position, ignores the load-in transform
-    const avail = innerHeight - top - 14;
+    const pv = wf.nextElementSibling, avail = innerHeight - top - (pv ? pv.offsetHeight + parseFloat(getComputedStyle(pv).marginTop) + 8 : 14);
     let nat = w.offsetHeight; if (nat <= avail) return;
     let s = Math.max(.6, avail / nat);
     w.style.width = (wf.clientWidth / s) + "px"; if (redraw) redraw();
@@ -263,8 +263,8 @@
   if (win) {
     const post = win.querySelector('.view[data-view="postiz"]'), views = $$(".view.vx", win), sis = $$(".side .si", win);
     const drawer = $("#sdrawer"), srcbtn = $("#srcbtn"), search = $("#wsearch"), url = $("#wurl");
-    const SOON = { dm: ["D", "DM Champ", "AI tool", "$75,746", "/mo", "Nov 16 2026"], stencil: ["S", "Stencil AI", "Mobile app", "$483,794", " all-time", "Nov 16 2026"],
-                   windmill: ["W", "Windmill Growth", "Agency", "$118,347", "/mo", "Nov 16 2026"], goji: ["G", "Gojiberry", "AI tool", "$424,368", "/mo", "Aug 14 2026"] };
+    const SOON = { dm: ["D", "DM Champ", "AI tool", "$113,809", " MRR", "Nov 18 2026"], stencil: ["S", "Stencil AI", "Mobile app", "$483,794", " all-time", "Nov 16 2026"],
+                   windmill: ["W", "Windmill Growth", "Agency", "$118,347", " MRR", "Nov 16 2026"], goji: ["G", "Gojiberry", "AI tool", "$424,368", " MRR", "Aug 14 2026"] };
     const URLS = { postiz: "/breakdowns/postiz", home: "/home", breakdowns: "/breakdowns", checklists: "/checklists", sources: "/sources" };
     let view = "postiz", co = null;
     const setDrawer = (open, byUser) => {

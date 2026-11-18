@@ -7,38 +7,25 @@ main > section{padding:88px 0}
 main > section .shead{margin-bottom:32px}
 main > section .shead .lede{max-width:58ch}
 
-/* ---------- sources: one logo band. Logo + name in the brand's colour; the detail wipes down INSIDE the tile ---------- */
-#sources .sgrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:stretch}
-#sources .scell{height:168px;padding:20px;gap:0;justify-content:flex-start;border-radius:12px}
-#sources .scell::before{height:3px}
-#sources .scell .lg{gap:10px;min-height:40px;padding-right:28px}
-#sources .scell .lg .blogo{width:32px;height:32px;border-radius:8px}
-#sources .scell .lg .blogo+.blogo{margin-left:-6px}
-#sources .scell .lg svg{width:34px;height:34px;fill:var(--h)}
-#sources .scell .lg,#sources .scell .lg .wmk{font:700 19px/1.1 var(--fd);letter-spacing:-.02em;color:var(--h,#0B1220)}
-#sources .scell .gv{font-size:13px;color:var(--text);padding-top:12px}
-#sources .scell .pl{top:20px;right:16px}
+/* ---------- sources: a compact logo band, 2 x 6. Logo + name in the brand's colour, label + what on one line;
+   the detail wipes down INSIDE the tile (the tile never changes size) ---------- */
+#sources{padding:72px 0}
+#sources .shead{margin-bottom:20px;align-items:flex-end}
+#sources .shead h2{font-size:clamp(28px,3vw,38px)}
+#sources .shead .lede{margin-top:6px;font-size:16px}
+#sources .sgrid{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:stretch}
+#sources .scell{height:96px;min-height:0;padding:14px 14px 12px;gap:0;justify-content:space-between;border-radius:10px;
+  transition:border-color .2s,box-shadow .3s,translate .35s var(--out)}
+#sources .scell .lg{gap:8px;min-height:24px;white-space:nowrap}
+#sources .scell .lg .blogo{width:22px;height:22px;border-radius:5px}
+#sources .scell .lg svg{width:22px;height:22px;color:var(--h)}
+#sources .scell .lg,#sources .scell .lg .wmk{font:700 15px/1.1 var(--fd);letter-spacing:-.02em;color:var(--h,#0B1220);white-space:nowrap}
+#sources .scell .gv{margin-top:auto;padding-top:0;border-top:0;gap:6px;flex-wrap:nowrap;white-space:nowrap;font-size:12.5px;color:var(--text)}
 #sources .scell:hover,#sources .scell.open{translate:0 -2px}
-#sources .scell{transition:border-color .2s,box-shadow .3s,translate .35s var(--out)}
 #sources .scell:focus-visible{outline:2px solid var(--brand);outline-offset:3px}
-/* the wipe: title row hidden (the logo already names it); every line 12.5px or larger */
-#sources .dkk,#sources .more-in .mr.tr{display:none}
-#sources .more-in{gap:5px;padding:16px 18px 14px}
-#sources .more-in .mr{font-size:13px;line-height:1.4}
-#sources .more-in .mr b{font-size:13px}
-#sources .more-in .mr.ex{padding:7px 10px;gap:2px 8px}
-#sources .more-in .exn{font-size:17px}
-#sources .more-in .exd{font-size:12.5px;flex-basis:auto}
-.sarrows{display:none;justify-content:flex-end;gap:8px;margin-top:12px}
-.sarr{display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);cursor:pointer;
-  transition:background-color .2s,border-color .2s,color .2s}
-.sarr svg{transition:transform .35s var(--out)}
-.sarr:hover:not(:disabled){background:var(--brand);border-color:var(--brand);color:#fff}
-.sarr[data-dir="1"]:hover:not(:disabled) svg{transform:translateX(3px)}
-.sarr[data-dir="-1"]:hover:not(:disabled) svg{transform:translateX(-3px)}
-.sarr:disabled{opacity:.35;cursor:default}
-.sarr:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
-#sources .sgfoot{margin-top:18px;font-size:13px;color:var(--text)}
+#sources .more-in{gap:4px;padding:11px 13px}
+#sources .more-in .mr{font-size:12.5px;line-height:1.35}
+#sources .more-in .mr b{font-size:12.5px}
 
 /* ---------- how we check (dark): one picture, one headline (<= 12 words) ---------- */
 #check{padding:80px 0 72px}
@@ -68,16 +55,24 @@ main > section .shead .lede{max-width:58ch}
 .quiz .qbody h3{font-size:20px}
 .quiz .opts{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
 .quiz .qtop{font-size:12.5px;color:var(--text)}
-.bgrid .fyr{flex:none;font:600 12px/1 var(--fd);padding:6px 8px;border-radius:6px;background:var(--violet);color:#fff;white-space:nowrap}
-.bgrid .fyr + .tag{margin-left:8px}
-.bc-top .fyr{margin-left:auto}
+.bgrid .fyr{position:absolute;top:-11px;right:14px;z-index:1;font:600 12px/1 var(--fd);padding:5px 8px;border-radius:6px;background:var(--violet);color:#fff;white-space:nowrap}
+@media (min-width:1101px){.bgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.bfoot{display:flex;justify-content:space-between;align-items:center;gap:8px 24px;flex-wrap:wrap;margin-top:12px}
+.bfoot .bnote{margin:0}
 .bcard.fy{border-color:#DDD6FE}
-.bcard.fy .tag{display:none}
+.bc-n b{white-space:nowrap}
 .bcard.fy:hover{border-color:#C4B5FD}
 @media (prefers-reduced-motion:no-preference){
-  .bgrid .fyr{animation:fy-in .45s var(--out) both}
+  .bgrid .fyr,.feat .fyr{animation:fy-in .45s var(--out) both}
 }
 @keyframes fy-in{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
+/* story sparklines: one style; a card with no public series keeps the same frame */
+.bc-viz.none .spk{display:grid;place-items:center;border:1px dashed #CBD5E1;border-radius:6px}
+.bc-viz.none .nod{font:500 12.5px var(--fd);color:var(--text)}
+.feat .fyr{flex:none;font:600 12px/1 var(--fd);padding:6px 8px;border-radius:6px;background:var(--violet);color:#fff;white-space:nowrap;margin-left:auto}
+.feat .fyr + .lb{margin-left:8px}
+.feat.fy{border-color:#DDD6FE}
+
 /* feature card: a tighter Wayback timeline */
 .wbt{gap:8px}
 .wbi{padding:9px 12px;gap:3px}
@@ -120,24 +115,25 @@ main > section .shead .lede{max-width:58ch}
 footer .fcol a{display:flex;align-items:center;min-height:44px;padding:0}
 footer .fbot .lgl a{display:inline-flex;align-items:center;min-height:44px}
 
-/* ---------- responsive ---------- */
-@media (max-width:1023px){
-  /* the logo tiles become one scroll-snap row; arrows page through it */
-  #sources .sgrid{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(240px,40%);overflow-x:auto;overscroll-behavior-x:contain;
-    scroll-snap-type:x mandatory;scroll-padding:0 4px;padding:4px;margin:-4px;scrollbar-width:none}
-  #sources .sgrid::-webkit-scrollbar{display:none}
-  #sources .scell{scroll-snap-align:start}
-  .sarrows{display:flex}
+/* ---------- phone blog: one swipe row, the next card peeking ---------- */
+@media (max-width:760px){
+  #blog .posts{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:84%;gap:12px;overflow-x:auto;overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;padding:4px 4px 8px;margin:0 -4px;scrollbar-width:none}
+  #blog .posts::-webkit-scrollbar{display:none}
+  #blog .posts > .post{scroll-snap-align:start}
 }
+
+/* ---------- responsive ---------- */
+@media (max-width:1180px){#sources .sgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:720px){#sources .sgrid{grid-template-columns:repeat(2,minmax(0,1fr))}#sources .scell{height:92px}}
 @media (max-width:720px){
   main > section{padding:64px 0}
   #check{padding:64px 0 56px}
-  #sources .sgrid{grid-auto-columns:78%}
-  #sources .sgfoot{flex-direction:column;gap:8px}
+  #sources{padding:56px 0}
   .sctl{flex-direction:column;align-items:stretch}
   /* story cards: one swipeable row on phones (the quiz still reorders it) */
   .bgrid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:86%;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;
-    padding:4px 4px 8px;margin:0 -4px;scrollbar-width:none}
+    padding:14px 4px 8px;margin:-10px -4px 0;scrollbar-width:none}
   .bgrid::-webkit-scrollbar{display:none}
   .bgrid > *{scroll-snap-align:start}
   .bgrid .empty{grid-column:auto;min-width:80vw}
