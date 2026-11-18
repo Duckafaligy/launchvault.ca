@@ -1266,7 +1266,7 @@ html{scroll-padding-top:78px}
 .ghosts{position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0;transition:opacity .35s}
 .ghosts.on{opacity:1}
 .gc{position:absolute;left:0;top:0;will-change:transform}
-.gc svg{display:block;filter:drop-shadow(0 2px 3px rgba(15,23,42,.28));transform-origin:2px 2px;transition:transform .14s var(--out)}
+.gc svg{display:block;filter:drop-shadow(0 2px 3px rgba(15,23,42,.28));transform-origin:2px 2px;transition:transform .08s ease-out}
 .gc.down svg{transform:scale(.84)}
 .gt{position:absolute;left:15px;top:19px;padding:4px 8px;border-radius:6px;font:600 12px/1.2 var(--fd);color:#fff;white-space:nowrap;opacity:0;transform:translateY(4px);transition:opacity .25s,transform .35s var(--out)}
 .gc.talk .gt{opacity:1;transform:none}

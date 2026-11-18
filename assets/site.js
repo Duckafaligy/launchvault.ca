@@ -144,7 +144,7 @@
     const money = v => "$" + v.toLocaleString("en-US");
     const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
     const plot = $("#plot"), tip = $("#tip"), movesEl = $("#moves"), size = plot.dataset.size, inHero = !!plot.closest(".win");
-    let G = null, M0 = 0, animate = !reduce && IO, pinned = null;
+    let G = null, M0 = 0, animate = !reduce && IO, pinned = null, userPin = false;
     movesEl.innerHTML = EVT.map((e, i) => `<li><button type="button" class="mv${i === TURN ? " turn" : ""}" data-i="${i}"><span class="n">${i + 1}</span><span><b>${e[2]}</b><small>${e[3]}</small></span><span class="w">${e[1]}</span></button></li>`).join("");
     function draw() {
       const W = Math.max(260, plot.clientWidth - 12), narrow = W < 520, H = narrow ? 230 : size === "big" ? 320 : inHero ? 218 : 262;
@@ -179,7 +179,7 @@
         const cx = Math.min(Math.max(X(e[0]), L + TAG / 2), W - R - TAG / 2) + (i === 6 ? -3 : i === 7 ? 3 : 0);
         el("rect", {x: cx - TAG / 2, y: H - B + 8, width: TAG, height: TAG, rx: 4}, g);
         el("text", {x: cx, y: H - B + 8 + TAG / 2 + 3.5, "text-anchor": "middle"}, g).textContent = i + 1;
-        g.addEventListener("pointerenter", () => showEvent(i)); g.addEventListener("pointerleave", showDefault); g.addEventListener("click", () => pin(i));
+        g.addEventListener("pointerenter", () => showEvent(i)); g.addEventListener("pointerleave", showDefault); g.addEventListener("click", e => pin(i, e.isTrusted));
         return g;
       });
       const hit = el("rect", {x: L, y: T, width: W - L - R, height: H - B - T, fill: "transparent"}, svg);
@@ -213,12 +213,12 @@
     }
     function showDefault() { if (pinned != null) showEvent(pinned); else showPoint(P[P.length - 1]); }
     // a clicked move stays highlighted, and the list scrolls to it (inside its own panel, never the page)
-    function pin(i) { pinned = pinned === i ? null : i; showDefault();
+    function pin(i, byUser) { pinned = pinned === i && (userPin || !byUser) ? null : i; userPin = !!byUser && pinned != null; showDefault();   // a user's click takes over a ghost's pin
       const b = movesEl.querySelectorAll(".mv")[i];
       if (pinned != null && b && movesEl.scrollHeight > movesEl.clientHeight + 2) movesEl.scrollTo({top: Math.max(0, b.parentElement.offsetTop - 8), behavior: reduce ? "auto" : "smooth"}); }
     movesEl.addEventListener("pointerover", ev => { const b = ev.target.closest(".mv"); if (b) showEvent(+b.dataset.i); });
     movesEl.addEventListener("pointerleave", showDefault);
-    movesEl.addEventListener("click", ev => { const b = ev.target.closest(".mv"); if (b) pin(+b.dataset.i); });
+    movesEl.addEventListener("click", ev => { const b = ev.target.closest(".mv"); if (b) pin(+b.dataset.i, ev.isTrusted); });
     movesEl.addEventListener("focusin", ev => { const b = ev.target.closest(".mv"); if (b) showEvent(+b.dataset.i); });
     const play = () => { if (!animate) return; plot.classList.remove("drawing"); void plot.offsetWidth; plot.classList.add("drawing"); };
     redraw = draw;
@@ -227,13 +227,13 @@
     if (animate) { plot.classList.add("drawing"); plot.style.visibility = "hidden";
       const pio = new IntersectionObserver(es => { if (es[0].isIntersecting) { pio.disconnect(); plot.style.visibility = ""; play(); } }, {threshold: .3}); pio.observe(plot); }
     // range tabs in the hero window
-    $$("[data-range]").forEach(b => b.addEventListener("click", () => {
+    $$("[data-range]").forEach(b => b.addEventListener("click", e => { if (dash) dash.userRange = e.isTrusted && b.dataset.range === "12";
       $$("[data-range]").forEach(x => x.setAttribute("aria-selected", x === b)); const m = b.dataset.range === "12" ? 22 : 0; if (m === M0) return; M0 = m; pinned = null; draw(); play(); }));
     // used by the hero's ghost cursors, so they drive the chart through the same functions as a real pointer
     chartAPI = {
       point: k => { const p = P[k]; if (!G || p[0] < M0) return null; const r = svg.getBoundingClientRect(); return [r.left + G.X(p[0]) * r.width / G.W, r.top + G.Y(p[1]) * r.height / G.H]; },
-      show: k => showPoint(P[k]), reset: () => { pinned = null; movesEl.scrollTo({top: 0}); showDefault(); },
-      tag: i => G && G.tags[i], pinned: () => pinned, range: () => M0, count: P.length };
+      show: k => showPoint(P[k]), reset: () => { pinned = null; userPin = false; movesEl.scrollTo({top: 0}); showDefault(); }, userPinned: () => userPin,
+      idle: () => showDefault(), tag: i => G && G.tags[i], pinned: () => pinned, range: () => M0, count: P.length };
     let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { fitHero(); }, 80); });
   }
 
@@ -284,10 +284,10 @@
       if (v === "postiz" && redraw) redraw();
     };
     win.addEventListener("click", e => {
-      const g = e.target.closest("[data-go]"); if (g) { e.preventDefault(); show(g.dataset.go, g.dataset.co); return; }
-      const k = e.target.closest(".kpi"); if (k) { k.setAttribute("aria-pressed", k.getAttribute("aria-pressed") !== "true"); return; }
-      if (e.target.closest("#srcbtn")) { setDrawer(!drawer.classList.contains("open"), e.isTrusted); return; }
-      if (e.target.closest(".sd-x")) setDrawer(false, e.isTrusted);
+      const g = e.target.closest("[data-go]"); if (g) { e.preventDefault(); if (dash) dash.userView = e.isTrusted && g.dataset.go !== "postiz"; show(g.dataset.go, g.dataset.co); return; }
+      const k = e.target.closest(".kpi"); if (k) { const on = k.getAttribute("aria-pressed") !== "true"; k.setAttribute("aria-pressed", on); k.dataset.u = e.isTrusted && on ? "1" : ""; return; }
+      if (e.target.closest("#srcbtn")) { const o = !drawer.classList.contains("open"); if (dash) dash.userDrawer = e.isTrusted && o; setDrawer(o, e.isTrusted); return; }
+      if (e.target.closest(".sd-x")) { if (dash) dash.userDrawer = false; setDrawer(false, e.isTrusted); }
     });
     win.addEventListener("keydown", e => { if (e.key === "Escape" && drawer && drawer.classList.contains("open")) { e.stopPropagation(); setDrawer(false, true); } });
     // search filters the sidebar; Ctrl/Cmd K focuses it while the pointer is over the window
@@ -296,112 +296,273 @@
       $$(".side .grp", win).forEach(g => g.hidden = !!q);
       $("#snone").hidden = n > 0; };
     if (search) {
-      search.addEventListener("input", filter);
+      search.addEventListener("input", e => { filter(); if (dash) dash.userQ = e.isTrusted && !!search.value; });
       search.addEventListener("keydown", e => { if (e.key === "Escape") { search.value = ""; filter(); } else if (e.key === "Enter") { const f = sis.find(s => !s.hidden); if (f) f.click(); } });
       let over = false; win.addEventListener("pointerenter", () => over = true); win.addEventListener("pointerleave", () => over = false);
       addEventListener("keydown", e => { if (over && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k" && search.offsetParent) { e.preventDefault(); search.focus(); } });
     }
-    dash = { show, setDrawer, filter, search, win,
+    dash = { show, setDrawer, filter, search, win, userView: false, userDrawer: false, userQ: false,
              state: () => ({ view, drawer: !!(drawer && drawer.classList.contains("open")), q: search ? search.value : "", range: chartAPI ? chartAPI.range() : 0,
                              kpi: $$(".kpi[aria-pressed=true]", win).length, pinned: chartAPI ? chartAPI.pinned() : null }) };
   }
 
-  // ---------- ghost cursors: red, green and blue run a short demo through the same code paths as a real pointer ----------
+  // ---------- ghost cursors: three "people" browsing alongside you (red quick, green careful, blue wandery) ----------
+  // Human motion: Fitts-timed aimed moves on lopsided arcs with a skewed speed profile, over/undershoot + 1-2 corrections,
+  // smoothed hand tremor, idle drift, hesitation, changes of mind. They share the dashboard with the real user:
+  // never pause for you, never touch what you're using, and never switch the view while you're active.
   const wf = $("#winfit");
   if (dash && wf && !reduce && IO) {
     const layer = document.createElement("div"); layer.className = "ghosts"; layer.setAttribute("aria-hidden", "true"); wf.append(layer);
-    const mk = (k, col) => { const el = document.createElement("div"); el.className = "gc gc-" + k;
+    const rnd = (a, b) => a + Math.random() * (b - a), any = a => a[Math.floor(Math.random() * a.length)], chance = p => Math.random() < p;
+    const PERS = [
+      { speed: .74, over: [1, 4], corr: [0, 1], hes: [120, 260], dwell: .75, skip: .06, mind: .07, drift: 4, typ: [75, 140], wander: .08 },
+      { speed: 1.35, over: [0, 2.5], corr: [1, 2], hes: [300, 600], dwell: 1.3, skip: .14, mind: .08, drift: 3, typ: [140, 220], wander: .08 },
+      { speed: 1.02, over: [3, 8], corr: [1, 2], hes: [180, 480], dwell: 1.05, skip: .22, mind: .28, drift: 9, typ: [90, 200], wander: .4 } ];
+    const mk = (k, col, P) => { const el = document.createElement("div"); el.className = "gc gc-" + k;
       el.innerHTML = `<svg width="20" height="24" viewBox="0 0 20 24"><path d="M2 2v17.5l4.6-4.4 3.2 7.2 3-1.3-3.2-7.1 6.6-.3z" fill="${col}" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><span class="gt"></span><i class="rp"></i>`;
-      layer.append(el); return { el, tag: el.querySelector(".gt"), x: 0, y: 0, mv: null }; };
-    const R = mk("r", "#E5484D"), Gc = mk("g", "#10B981"), Bc = mk("b", "#2563EB"), ALL = [R, Gc, Bc];
-    const STOP = {}; let gen = 0, active = false, raf = 0;
+      layer.append(el); return { el, tag: el.querySelector(".gt"), x: 0, y: 0, seg: null, P, hov: new Set(),
+        tr: { a: rnd(.6, 1.3), f1: rnd(3.5, 7), f2: rnd(9, 14), p1: rnd(0, 6.3), p2: rnd(0, 6.3) }, stats: { moves: 0, corrections: 0, overshoots: 0, changes: 0, skips: 0, typos: 0, sig: [] } }; };
+    const ALL = [mk("r", "#E5484D", PERS[0]), mk("g", "#10B981", PERS[1]), mk("b", "#2563EB", PERS[2])];
+    const STOP = {}, CANCEL = {}; let gen = 0, active = false, raf = 0, S = null;
     const box = () => wf.getBoundingClientRect();
-    const place = c => { c.el.style.transform = `translate3d(${(c.x - 2).toFixed(1)}px,${(c.y - 2).toFixed(1)}px,0)`; c.el.classList.toggle("flip", c.x > wf.clientWidth - 200); };
-    const tick = now => { let busy = false;
-      ALL.forEach(c => { const m = c.mv; if (!m) return;
-        const k = Math.min(1, (now - m.t0) / m.d), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2, u = 1 - e;
-        c.x = u * u * m.a[0] + 2 * u * e * m.c[0] + e * e * m.b[0]; c.y = u * u * m.a[1] + 2 * u * e * m.c[1] + e * e * m.b[1]; place(c);
-        if (k >= 1) { c.mv = null; m.done(); } else busy = true; });
-      raf = busy ? requestAnimationFrame(tick) : 0; };
+    const place = (c, x, y) => { c.el.style.transform = `translate3d(${(x - 2).toFixed(1)}px,${(y - 2).toFixed(1)}px,0)`; c.el.classList.toggle("flip", x > wf.clientWidth - 200); };
+    // one rAF loop: segments (Kumaraswamy time warp = quick start, long tail; optional mid-move pause) + smoothed tremor
+    const tick = now => { if (!active) { raf = 0; return; }
+      const ts = now / 1000;
+      ALL.forEach(c => { const s = c.seg;
+        if (s) { let t = now - s.t0; if (s.pz && t > s.pz[0]) t = t < s.pz[0] + s.pz[1] ? s.pz[0] : t - s.pz[1];
+          const k = Math.min(1, t / s.d), e = 1 - Math.pow(1 - Math.pow(k, s.ka), s.kb), u = 1 - e;
+          c.x = u * u * s.a[0] + 2 * u * e * s.c[0] + e * e * s.b[0]; c.y = u * u * s.a[1] + 2 * u * e * s.c[1] + e * e * s.b[1];
+          if (s.on) s.on(c); if (k >= 1) { c.seg = null; s.done(); } }
+        const T = c.tr, jx = T.a * (.65 * Math.sin(ts * T.f1 + T.p1) + .35 * Math.sin(ts * T.f2 + T.p2)), jy = T.a * (.65 * Math.cos(ts * T.f1 * .87 + T.p2) + .35 * Math.sin(ts * T.f2 * 1.13 + T.p1));
+        place(c, c.x + jx, c.y + jy); });
+      raf = requestAnimationFrame(tick); };
     const ok = g => { if (g !== gen) throw STOP; };
     const wait = (ms, g) => new Promise((res, rej) => setTimeout(() => g === gen ? res() : rej(STOP), ms));
-    // a gentle curve to (x, y) in window-box coordinates, eased in and out
-    const glide = (c, x, y) => new Promise(res => {
-      const a = [c.x, c.y], dx = x - a[0], dy = y - a[1], dist = Math.hypot(dx, dy) || 1, bend = (dx > 0 ? 1 : -1) * Math.min(70, dist * .2);
-      c.mv = { a, b: [x, y], c: [(a[0] + x) / 2 - dy / dist * bend, (a[1] + y) / 2 + dx / dist * bend], t0: performance.now(), d: Math.max(500, Math.min(1250, 420 + dist * 1.05)), done: res };
-      if (!raf) raf = requestAnimationFrame(tick); });
-    const at = (el, fx = .5, fy = .55) => { const r = el.getBoundingClientRect(), b = box(); return [r.left - b.left + r.width * fx, r.top - b.top + r.height * fy]; };
-    const vis = el => !!el && el.getClientRects().length > 0 && !el.closest("[hidden], .under") && el.getBoundingClientRect().width > 0;
-    const say = (c, t) => { if (t) c.tag.textContent = t; c.el.classList.toggle("talk", !!t); };
-    const go = async (c, el, g, fx, fy) => { const [x, y] = at(el, fx, fy); await glide(c, x, y); ok(g); };
-    const hov = (el, on) => el && el.classList.toggle("gh-hover", on);
-    const tap = async (c, el, g) => { c.el.classList.add("down"); c.el.classList.remove("click"); void c.el.offsetWidth; c.el.classList.add("click");
-      await wait(140, g); c.el.classList.remove("down"); el.dispatchEvent(new MouseEvent("click", {bubbles: true, cancelable: true})); };
-    const q1 = s => win.querySelector(s);
-    const side = (v, c) => q1(`.side .si[data-go="${v}"]${c ? `[data-co="${c}"]` : ""}`);
-    const tablet = () => innerWidth <= 1100;
-
-    // put things back the way a real visitor would find them, by clicking, from wherever they were left
-    async function tidy(g) {
-      const s = dash.state();
-      if (s.drawer) { const x = q1(".sd-x"); await go(Bc, x, g); say(Bc, "Closing the sources"); await tap(Bc, x, g); await wait(450, g); }
-      if (s.view !== "postiz") { const el = vis(side("postiz")) ? side("postiz") : null; if (el) { await go(Bc, el, g); say(Bc, "Back to Postiz"); await tap(Bc, el, g); await wait(500, g); } else dash.show("postiz"); }
-      if (s.q) { dash.search.value = ""; dash.filter(); }
-      for (const k of $$(".kpi[aria-pressed=true]", win)) { await go(R, k, g); await tap(R, k, g); await wait(250, g); }
-      if (s.range) { const t = q1('[data-range="all"]'); if (vis(t)) { await go(Gc, t, g); await tap(Gc, t, g); await wait(600, g); } }
-      if (chartAPI && chartAPI.pinned() != null) chartAPI.reset();
-      ALL.forEach(c => say(c, ""));
+    const seg = (c, to, d, o = {}) => new Promise(res => { if (c.seg) { const p = c.seg.done; c.seg = null; p(); }
+      c.seg = { a: [c.x, c.y], b: to, c: o.c || [(c.x + to[0]) / 2, (c.y + to[1]) / 2], t0: performance.now(), d: Math.max(16, d), ka: o.ka || 1.5, kb: o.kb || 2.4, pz: o.pz || null, on: o.on || null, done: res }; });
+    // an aimed move: ballistic arc to just past/short of the target, then small corrections onto it
+    async function aim(c, x, y, g, w = 24, o = {}) {
+      const P = c.P, dx = x - c.x, dy = y - c.y, D = Math.hypot(dx, dy); if (D < 1.5) return;
+      const ux = dx / D, uy = dy / D, MT = (150 + 135 * Math.log2(D / Math.max(8, w) + 1)) * P.speed * rnd(.82, 1.28) * (o.slow || 1);
+      let ov = o.exact ? 0 : rnd(P.over[0], P.over[1]) * (chance(.72) ? 1 : -.6); if (D < 30) ov *= .3;
+      const side = rnd(-1.8, 1.8), ex = x + ux * ov - uy * side, ey = y + uy * ov + ux * side;
+      const f = rnd(.22, .62), off = D * rnd(.03, .17) * (chance(.5) ? -1 : 1), ctrl = [c.x + dx * f - uy * off, c.y + dy * f + ux * off];
+      const d1 = MT * rnd(.7, .82), ka = rnd(1.25, 1.9), kb = rnd(2.1, 3.8);
+      c.stats.moves++; if (Math.abs(ov) > 2) c.stats.overshoots++; c.stats.sig.push([Math.round(d1), +ka.toFixed(2), +kb.toFixed(2), Math.round(off)]); if (c.stats.sig.length > 60) c.stats.sig.shift();
+      await seg(c, [ex, ey], d1, { c: ctrl, ka, kb, on: o.on, pz: D > 140 && chance(.12) ? [d1 * rnd(.3, .6), rnd(50, 140)] : null }); ok(g);
+      if (o.noFix) return;
+      const n = Math.round(rnd(P.corr[0], P.corr[1])) + (Math.abs(ov) > 3 ? 1 : 0);
+      for (let i = 0; i < n; i++) { const last = i === n - 1, tx = x + (last ? rnd(-1, 1) : rnd(-2.6, 2.6)), ty = y + (last ? rnd(-1, 1) : rnd(-2.6, 2.6));
+        c.stats.corrections++; await seg(c, [tx, ty], rnd(85, 200) * P.speed, { ka: rnd(1.2, 1.7), kb: rnd(1.8, 2.8), on: o.on }); ok(g);
+        if (!last) await wait(rnd(25, 90), g); }
     }
+    const at = (el, fx, fy) => { const r = el.getBoundingClientRect(), b = box(); return [r.left - b.left + r.width * fx, r.top - b.top + r.height * fy, Math.min(r.width, r.height)]; };
+    const vis = el => !!el && el.getClientRects().length > 0 && !el.closest("[hidden], .under, [inert]") && el.getBoundingClientRect().width > 0;
+    // slow idle drift while "reading": never frozen, never fast
+    async function idle(c, ms, g) { const end = performance.now() + ms * c.P.dwell;
+      while (end - performance.now() > 40) { const r = c.P.drift; await seg(c, [c.x + rnd(-r, r), c.y + rnd(-r * .7, r * .7)], Math.min(end - performance.now(), rnd(500, 1300)), { ka: rnd(1.3, 1.8), kb: rnd(1.6, 2.4) }); ok(g); } }
+    const DECOYS = () => qa(".kpi, .side .si, .mv, .dtabs button, .phead, .vrow, .ck, .vsrc li, .sd-l li, .mtop .btn");
+    async function go(c, el, g, fx = rnd(.3, .7), fy = rnd(.38, .66)) {
+      if (chance(c.P.mind)) { const d = any(DECOYS().filter(x => x !== el)); if (d) { c.stats.changes++; const [x, y] = at(d, .5, .5), k = rnd(.35, .7);
+        await aim(c, c.x + (x - c.x) * k, c.y + (y - c.y) * k, g, 40, { noFix: true }); await wait(rnd(120, 380), g); } }
+      if (!vis(el)) throw CANCEL; let [x, y, w] = at(el, fx, fy);
+      for (let t = 0; t < 6 && crowded(c, x, y); t++) [x, y, w] = at(el, rnd(.12, .88), rnd(.25, .8));
+      if (crowded(c, x, y)) throw CANCEL; c.tgt = [x, y]; await aim(c, x, y, g, w); }
+    const crowded = (c, x, y) => ALL.some(o => o !== c && (Math.hypot(o.x - x, o.y - y) < 26 || (o.tgt && Math.hypot(o.tgt[0] - x, o.tgt[1] - y) < 26)));
+    const say = (c, t) => { if (t) c.tag.textContent = t; c.el.classList.toggle("talk", !!t); };
+    const hov = (c, el, on) => { if (!el) return; if (on && userOwns(el)) return; el.classList.toggle("gh-hover", on); if (on) c.hov.add(el); else c.hov.delete(el); };
+    const fire = (el, type) => el.dispatchEvent(type === "click" ? new MouseEvent("click", {bubbles: true, cancelable: true}) : new PointerEvent(type, {bubbles: true, pointerType: "mouse"}));
+    // a human click: hesitate, maybe decide not to, ~90 ms press with a 1-2 px drift, ripple
+    async function click(c, el, g, o = {}) {
+      if (userOwns(el)) throw CANCEL;
+      await idle(c, o.must ? rnd(90, 200) : rnd(c.P.hes[0], c.P.hes[1]), g);
+      if (!o.must && chance(c.P.skip)) { c.stats.skips++; return false; }
+      if (userOwns(el) || (o.disrupt && (userBusy(1500) || (dash.userView && st().view !== "postiz") || (dash.userDrawer && st().drawer)))) throw CANCEL;
+      c.el.classList.add("down"); c.el.classList.remove("click"); void c.el.offsetWidth; c.el.classList.add("click");
+      await seg(c, [c.x + rnd(-1.6, 1.6), c.y + rnd(-.6, 1.8)], rnd(80, 105), { ka: 1.2, kb: 1.6 }); ok(g);
+      c.el.classList.remove("down"); fire(el, "click"); S.log.push([performance.now() - U.last, !!o.disrupt]); if (S.log.length > 200) S.log.shift();
+      await idle(c, rnd(150, 400), g); return true; }
+    const NEAR = { a: "s", b: "v", c: "x", d: "s", e: "w", f: "d", g: "h", h: "j", i: "u", j: "k", k: "l", l: "k", m: "n", n: "m", o: "i", p: "o", r: "e", s: "a", t: "r", u: "y", w: "e" };
+    async function type(c, inp, word, g) { S.typing = true;
+      const typo = chance(.25) ? Math.floor(rnd(1, word.length)) : -1;
+      for (let i = 0; i < word.length; i++) {
+        if (U.focus === inp) throw CANCEL;
+        if (i === typo) { c.stats.typos++; inp.value += NEAR[word[i]] || "x"; dash.filter(); await wait(rnd(150, 320), g); inp.value = inp.value.slice(0, -1); dash.filter(); await wait(rnd(90, 170), g); }
+        inp.value += word[i]; dash.filter(); await wait(rnd(c.P.typ[0], c.P.typ[1]) + (chance(.12) ? rnd(250, 520) : 0), g); }
+      S.typing = false; }
+    const q1 = s => win.querySelector(s), qa = s => $$(s, win).filter(vis);
+    const side = (v, co) => q1(`.side .si[data-go="${v}"]${co ? `[data-co="${co}"]` : ""}`);
+    const desk = () => innerWidth > 1100, st = () => dash.state();
 
-    // one loop, about 25 s; each beat is one cursor acting while the next one drifts toward its target
-    const BEATS = [
-      { c: () => R, t: () => q1(".kpi"), run: async (c, el, g) => { say(c, "Checking the source"); hov(el, true); await wait(700, g); await tap(c, el, g); await wait(1300, g); await tap(c, el, g); hov(el, false); await wait(300, g); } },
-      { c: () => Gc, desk: true, t: () => q1('[data-range="12"]'), run: async (c, el, g) => { say(c, "Comparing 12 months"); hov(el, true); await wait(350, g); await tap(c, el, g); hov(el, false); await wait(2200, g); } },
-      { c: () => Bc, t: () => q1("#chart"), run: async (c, el, g) => { say(c, "Reading the line");
-          for (const k of [6, 8, 9]) { const p = chartAPI && chartAPI.point(k); if (!p) continue; const b = box(); await glide(c, p[0] - b.left, p[1] - b.top); ok(g); chartAPI.show(k); await wait(750, g); } } },
-      { c: () => Gc, desk: true, t: () => q1('[data-range="all"]'), run: async (c, el, g) => { say(c, "Back to all time"); await tap(c, el, g); await wait(1700, g); } },
-      { c: () => R, t: () => chartAPI && chartAPI.tag(5), run: async (c, el, g) => { say(c, "Reading move 6"); await tap(c, el, g); await wait(1700, g); chartAPI.reset(); } },
-      { c: () => Bc, t: () => $("#srcbtn"), run: async (c, el, g) => { say(c, "Opening the sources"); hov(el, true); await wait(300, g); await tap(c, el, g); hov(el, false); await wait(1000, g);
-          const li = $$(".sd-l li", win)[1]; if (li) { say(c, "Checking GitHub"); await go(c, li, g, .4, .5); await wait(900, g); }
-          const x = q1(".sd-x"); say(c, "Closing"); await go(c, x, g); hov(x, true); await wait(250, g); await tap(c, x, g); hov(x, false); await wait(400, g); } },
-      { c: () => R, desk: true, t: () => dash.search, run: async (c, el, g) => { say(c, "Searching"); await tap(c, el, g); el.closest(".search").classList.add("gh-focus");
-          for (const ch of "goji") { el.value += ch; dash.filter(); await wait(170, g); } await wait(1100, g);
-          while (el.value) { el.value = el.value.slice(0, -1); dash.filter(); await wait(90, g); } el.closest(".search").classList.remove("gh-focus"); await wait(300, g); } },
-      { c: () => Gc, desk: true, t: () => side("checklists"), run: async (c, el, g) => { say(c, "Opening my checklists"); hov(el, true); await wait(300, g); await tap(c, el, g); hov(el, false); await wait(1600, g);
-          const p = side("postiz"); say(c, "Back to Postiz"); await go(c, p, g); hov(p, true); await wait(250, g); await tap(c, p, g); hov(p, false); await wait(500, g); } },
+    // --- the real user: whatever you hover or focus is yours; while you're active, nobody changes your view
+    const U = { last: -1e9, over: null, focus: null, inside: false };
+    const CTRL = "button, a, input, .vsrc li, .sd-l li, #plot, .ch-h";
+    const touch = () => { U.last = performance.now(); };
+    win.addEventListener("pointermove", e => { if (!e.isTrusted) return; touch(); U.inside = true; U.over = e.target.closest(CTRL);
+      // reading something a ghost opened makes it yours: they won't close it or switch away from it
+      if (e.target.closest("#sdrawer.open")) dash.userDrawer = true; else if (e.target.closest(".view.vx:not([hidden])")) dash.userView = true; }, {passive: true});
+    win.addEventListener("pointerleave", e => { if (e.isTrusted) { U.over = null; U.inside = false; } });
+    ["pointerdown", "keydown", "wheel", "touchstart"].forEach(t => win.addEventListener(t, e => { if (e.isTrusted) touch(); }, {passive: true}));
+    win.addEventListener("focusin", e => { if (!e.isTrusted) return; touch(); U.focus = e.target;
+      if (e.target === dash.search && S && S.typing) { dash.search.value = ""; dash.filter(); S.typing = false; } });
+    win.addEventListener("focusout", e => { if (e.isTrusted) U.focus = null; });
+    const userOwns = el => [U.over, U.focus].some(u => u && el && (u === el || el.contains(u) || u.contains(el)));
+    const userIn = sel => [U.over, U.focus].some(u => u && u.closest(sel));
+    const userBusy = ms => performance.now() - U.last < ms;
+    const canDisrupt = () => !userBusy(3000);
+    const mayUndoUser = () => !U.inside && !U.focus && !userBusy(3000);
+    const drawerRect = () => { const d = $("#sdrawer"); return d && d.classList.contains("open") ? d.getBoundingClientRect() : null; };
+    const clear = el => { const d = drawerRect(); return !d || el.getBoundingClientRect().right < d.left - 4; };
+    const free = k => !S.locks.has(k) && !(k instanceof Element && userOwns(k));
+    const chartFree = () => free("chart") && !userIn("#plot, #moves, .dtabs, .ch-h") && !(chartAPI && chartAPI.userPinned());
+    const userKpi = k => k.dataset.u === "1";
+    const chartRest = () => { if (!chartAPI) return; if (chartAPI.userPinned()) chartAPI.idle(); else chartAPI.reset(); };
+    const label = el => (el.lastChild && el.lastChild.nodeType === 3 ? el.lastChild.textContent : el.textContent).trim();
+    const onPostiz = () => { const s = st(); return s.view === "postiz" && (!s.drawer || dash.userDrawer); };
+    const readerOK = () => !S.scene && !S.want && onPostiz();
+    async function reader(c, g, keys, fn) { const s = S; if (keys.some(k => s.locks.has(k))) return; keys.forEach(k => s.locks.add(k)); s.readers++;
+      try { await fn(); } finally { s.readers--; keys.forEach(k => s.locks.delete(k)); } }
+    async function scene(c, g, pre, fn) { const s = S; s.want = c; const mine = [pre, side("postiz")].filter(k => k && !s.locks.has(k)); mine.forEach(k => s.locks.add(k));
+      try { if (pre && vis(pre)) await go(c, pre, g); const t0 = performance.now(); while (s.readers > 0 && performance.now() - t0 < 4500) await idle(c, 260, g);
+        if (!canDisrupt()) throw CANCEL; s.scene = c; s.want = null; await fn(); }
+      finally { if (s.want === c) s.want = null; if (s.scene === c) s.scene = null; mine.forEach(k => s.locks.delete(k)); } }
+    async function backToPostiz(c, g) { if (st().view === "postiz") return;
+      const el = vis(side("postiz")) ? side("postiz") : qa('.view.vx:not([hidden]) [data-go="postiz"]')[0];
+      if (el) { say(c, "Back to Postiz"); await go(c, el, g); hov(c, el, true); await click(c, el, g, {must: true, disrupt: true}); hov(c, el, false); } else dash.show("postiz"); }
+    const PTS = () => { const out = []; if (!chartAPI) return out; const b = box(), d = drawerRect();
+      for (let k = 0; k < chartAPI.count; k++) { const p = chartAPI.point(k); if (p && (!d || p[0] < d.left - 6)) out.push([k, p[0] - b.left, p[1] - b.top]); } return out; };
+
+    const ACTIONS = [
+      // KPI: hover, maybe click to see its source, then put it back
+      { w: 6, can: () => readerOK() && $$(".kpi", win).some((k, i) => free("kpi" + i) && free(k) && vis(k) && clear(k) && !userKpi(k)), run: async (c, g) => {
+          const ks = $$(".kpi", win), i = any(ks.map((k, j) => j).filter(j => free("kpi" + j) && free(ks[j]) && vis(ks[j]) && clear(ks[j]) && !userKpi(ks[j]))), k = ks[i];
+          const L = ["Checking MRR's source", "Checking all-time revenue", "Checking subscriptions", "Checking the GitHub stars"];
+          await reader(c, g, ["kpi" + i], async () => { say(c, L[i]); await go(c, k, g); hov(c, k, true);
+            if (await click(c, k, g)) { await idle(c, rnd(800, 1600), g); if (k.getAttribute("aria-pressed") === "true" && !userKpi(k)) await click(c, k, g, {must: true}); }
+            else await idle(c, rnd(300, 700), g); hov(c, k, false); }); } },
+      // chart: scrub along it at an uneven pace, sometimes backing up; the tooltip follows exactly like a real pointer
+      { w: 5, can: () => readerOK() && chartFree() && PTS().length > 2, run: async (c, g) => {
+          await reader(c, g, ["chart"], async () => { const pts = PTS(), n = Math.min(pts.length, Math.round(rnd(3, 6))), s0 = Math.floor(rnd(0, pts.length - n + 1));
+            let cur = -1; const follow = cc => { const b = box(); let best = null, bd = 1e9; for (const p of pts) { const d = Math.abs(p[1] - cc.x); if (d < bd) { bd = d; best = p; } } if (best && best[0] !== cur) { cur = best[0]; chartAPI.show(cur); } };
+            say(c, "Scrubbing the chart"); await aim(c, pts[s0][1], pts[s0][2], g, 14, { on: follow });
+            for (let j = 1; j < n; j++) { if (!chartFree()) break; const p = pts[s0 + j];
+              await seg(c, [p[1] + rnd(-6, 6), p[2] + rnd(-10, 8)], rnd(220, 720) * c.P.speed, { ka: rnd(1.2, 1.8), kb: rnd(1.6, 2.8), on: follow }); ok(g);
+              await idle(c, rnd(120, 650), g);
+              if (chance(.2) && j > 1) { const q = pts[s0 + j - 1]; await seg(c, [q[1] + rnd(-4, 4), q[2]], rnd(200, 420), { ka: 1.4, kb: 2, on: follow }); ok(g); await idle(c, rnd(150, 400), g); } }
+            chartRest(); }); } },
+      // move tags: click one or two, the list highlights and scrolls
+      { w: 4, can: () => readerOK() && chartFree() && !!chartAPI && [0, 1, 2, 3, 4, 5, 6, 7].some(i => vis(chartAPI.tag(i)) && clear(chartAPI.tag(i))), run: async (c, g) => {
+          await reader(c, g, ["chart"], async () => { const ids = [0, 1, 2, 3, 4, 5, 6, 7].filter(i => vis(chartAPI.tag(i)) && clear(chartAPI.tag(i)));
+            for (let r = 0, n = chance(.45) ? 2 : 1; r < n; r++) { if (!chartFree()) break; const i = any(ids), t = chartAPI.tag(i); say(c, "Reading move " + (i + 1));
+              await go(c, t, g, .5, .5); if (await click(c, t, g)) await idle(c, rnd(900, 1500), g); }
+            chartRest(); }); } },
+      // the moves list, top to bottom, with pauses
+      { w: 3, can: () => readerOK() && chartFree() && qa("#moves .mv").filter(clear).length > 0, run: async (c, g) => {
+          await reader(c, g, ["chart"], async () => { const mv = $("#moves"), o = mv.getBoundingClientRect();
+            const rows = qa("#moves .mv").filter(b => { const r = b.getBoundingClientRect(); return r.top >= o.top - 1 && r.bottom <= o.bottom + 2 && clear(b); });
+            const s0 = Math.floor(rnd(0, Math.max(1, rows.length - 3))), n = Math.min(rows.length - s0, Math.round(rnd(3, 5)));
+            for (let j = 0; j < n; j++) { const b = rows[s0 + j]; if (!chartFree()) break; say(c, "Reading move " + (+b.dataset.i + 1));
+              await go(c, b, g, rnd(.2, .55), rnd(.35, .6)); hov(c, b, true); fire(b, "pointerover"); await idle(c, rnd(500, 1200), g); hov(c, b, false); }
+            fire(mv, "pointerleave"); chartRest(); }); } },
+      // time tabs: changes what everyone sees, so only while you're idle
+      { w: 3, can: () => readerOK() && chartFree() && canDisrupt() && desk() && vis(q1("[data-range]")) && !(dash.userRange && !mayUndoUser()), run: async (c, g) => {
+          await reader(c, g, ["chart"], async () => { const t = q1('[data-range][aria-selected="false"]'); say(c, t.dataset.range === "12" ? "Comparing 12 months" : "Back to all time");
+            await go(c, t, g); hov(c, t, true); if (await click(c, t, g, {disrupt: true})) await idle(c, rnd(1100, 1800), g); hov(c, t, false); }); } },
+      // hover, never press: Open breakdown and Go Pro
+      { w: 2, can: () => readerOK() && free("open") && vis(q1(".mtop .btn-p")) && free(q1(".mtop .btn-p")) && clear(q1(".mtop .btn-p")), run: async (c, g) => {
+          await reader(c, g, ["open"], async () => { const b = q1(".mtop .btn-p"); say(c, "Eyeing the full breakdown"); await go(c, b, g); hov(c, b, true); await idle(c, rnd(500, 1000), g); hov(c, b, false); }); } },
+      { w: 2, can: () => desk() && free("gopro") && free(q1(".splan a")), run: async (c, g) => { const s = S; s.locks.add("gopro");
+          try { const a = q1(".splan a"); say(c, "Looking at Go Pro"); await go(c, a, g); hov(c, a, true); await idle(c, rnd(500, 900), g); hov(c, a, false); } finally { s.locks.delete("gopro"); } } },
+      // browsing the sidebar without clicking (always possible, so nobody stands still)
+      { w: 1.5, can: () => !S.scene, run: async (c, g) => { const s = S, items = (desk() ? qa(".side .si") : qa(".kpi, .ch-h .legend span, .phead")).filter(free).filter(clear);
+          const el = any(items); if (!el) { await idle(c, 500, g); return; } s.locks.add(el);
+          try { say(c, desk() ? "Browsing" : "Looking around"); await go(c, el, g); hov(c, el, true); await idle(c, rnd(350, 800), g); hov(c, el, false);
+            if (chance(c.P.wander)) { const el2 = any(items.filter(x => x !== el && free(x))); if (el2) { s.locks.delete(el); s.locks.add(el2); await go(c, el2, g); await idle(c, rnd(250, 600), g); s.locks.delete(el2); } } }
+          finally { s.locks.delete(el); } } },
+      // guests: inside a view someone else opened (another cursor, or you), look around; only click inside ghost-opened views
+      { w: 6, can: c => (!!S.scene && S.scene !== c) || (st().view !== "postiz" && dash.userView && !S.scene) || (st().drawer && dash.userDrawer), run: async (c, g) => { const s = S; let held = null;
+          try { const dr = st().drawer, mine = !(dash.userView || (dr && dash.userDrawer));
+            const pool = () => (dr ? qa(".sd-l li") : qa(".view.vx:not([hidden]) .vrow, .view.vx:not([hidden]) .hcard, .view.vx:not([hidden]) .ck, .view.vx:not([hidden]) .vsrc li")).filter(free);
+            for (let r = 0, n = Math.round(rnd(2, 4)); r < n && S === s; r++) { const el = any(pool()); if (!el) { await idle(c, 400, g); break; } held = el; s.locks.add(el);
+              say(c, dr ? "Reading a source" : el.classList.contains("ck") && mine ? "Ticking a step" : "Skimming the list"); await go(c, el, g); hov(c, el, true);
+              if (el.classList.contains("ck") && mine && !dash.userView) { if (await click(c, el, g)) { await idle(c, rnd(400, 800), g); await click(c, el, g, {must: true}); } } else await idle(c, rnd(400, 900), g);
+              hov(c, el, false); s.locks.delete(el); held = null; } }
+          finally { if (held) s.locks.delete(held); } } },
+      // scenes (one at a time, only while you're idle): open a sidebar view and browse it
+      { w: 3, can: () => desk() && !S.scene && !S.want && canDisrupt() && st().view === "postiz" && !st().drawer, run: async (c, g) => { const v = any(["home", "breakdowns", "checklists", "sources"]), el = side(v);
+          await scene(c, g, el, async () => { const N = {home: "Home", breakdowns: "Breakdowns", checklists: "My checklists", sources: "Sources"};
+            say(c, "Opening " + N[v]); hov(c, el, true); const did = await click(c, el, g, {disrupt: true}); hov(c, el, false); if (!did) return;
+            await idle(c, rnd(500, 900), g);
+            const pick = any(qa(".view.vx:not([hidden]) .vrow, .view.vx:not([hidden]) .hcard, .view.vx:not([hidden]) .ck, .view.vx:not([hidden]) .vsrc li").filter(free));
+            if (pick) { S.locks.add(pick); try { say(c, pick.matches(".vrow, .hcard") ? "Opening a breakdown" : pick.classList.contains("ck") ? "Ticking a step" : "Reading the sources"); await go(c, pick, g); hov(c, pick, true);
+              if (pick.matches(".vrow, .hcard")) { if (await click(c, pick, g, {disrupt: true})) await idle(c, rnd(700, 1200), g); }
+              else if (pick.classList.contains("ck")) { if (await click(c, pick, g)) { await idle(c, rnd(500, 900), g); await click(c, pick, g, {must: true}); } }
+              else await idle(c, rnd(500, 900), g); hov(c, pick, false); } finally { S.locks.delete(pick); } }
+            await backToPostiz(c, g); }); } },
+      { w: 3, can: () => !S.scene && !S.want && canDisrupt() && onPostiz() && !st().drawer && vis($("#srcbtn")) && free($("#srcbtn")), run: async (c, g) => { const b = $("#srcbtn");
+          await scene(c, g, b, async () => { say(c, "Opening the sources"); hov(c, b, true); const did = await click(c, b, g, {disrupt: true}); hov(c, b, false); if (!did) return;
+            await idle(c, rnd(500, 800), g);
+            const rows = qa(".sd-l li"), s0 = Math.floor(rnd(0, 3));
+            for (let r = 0, n = Math.round(rnd(2, 3)); r < n; r++) { const li = rows[s0 + r]; if (!li || !free(li)) continue; say(c, "Checking " + li.querySelector(".sr-n").textContent.trim()); await go(c, li, g, rnd(.15, .5), .5); hov(c, li, true); await idle(c, rnd(450, 900), g); hov(c, li, false); }
+            if (dash.userDrawer) return;
+            const x = q1(".sd-x"); say(c, "Closing the sources"); await go(c, x, g, .5, .5); hov(c, x, true); await click(c, x, g, {must: true, disrupt: true}); hov(c, x, false); }); } },
+      { w: 2.5, can: () => desk() && !S.scene && !S.want && canDisrupt() && st().view === "postiz" && !st().drawer && vis(dash.search) && !dash.search.value && U.focus !== dash.search, run: async (c, g) => { const inp = dash.search, lab = inp.closest(".search");
+          await scene(c, g, inp, async () => { const word = any(["goji", "dm", "sten", "wind", "post", "champ"]); say(c, "Searching");
+            try { if (!(await click(c, inp, g, {disrupt: true}))) return; lab.classList.add("gh-focus"); await type(c, inp, word, g);
+              await idle(c, rnd(300, 700), g); const hit = qa(".side .si")[0]; lab.classList.remove("gh-focus");
+              if (hit && !userBusy(1500)) { say(c, "Opening " + label(hit)); await go(c, hit, g); hov(c, hit, true); if (await click(c, hit, g, {disrupt: true})) await idle(c, rnd(700, 1100), g); hov(c, hit, false); }
+              say(c, "Clearing the search"); await go(c, inp, g); lab.classList.add("gh-focus");
+              while (inp.value) { if (U.focus === inp) break; inp.value = inp.value.slice(0, -1); dash.filter(); await wait(rnd(60, 110), g); } }
+            finally { lab.classList.remove("gh-focus"); S.typing = false; if (U.focus !== inp && !dash.userQ && inp.value) { inp.value = ""; dash.filter(); } }
+            await backToPostiz(c, g); }); } },
+      { w: 2.5, can: () => desk() && !S.scene && !S.want && canDisrupt() && st().view === "postiz" && !st().drawer, run: async (c, g) => { const el = any(qa('.side .si[data-go="soon"]').filter(free)); if (!el) return;
+          await scene(c, g, el, async () => { say(c, "Opening " + label(el)); hov(c, el, true); const did = await click(c, el, g, {disrupt: true}); hov(c, el, false); if (!did) return;
+            await idle(c, rnd(900, 1500), g);
+            const back = q1('.view[data-view="soon"] [data-go="postiz"]');
+            if (back && vis(back)) { say(c, "Back to Postiz"); await go(c, back, g); hov(c, back, true); await click(c, back, g, {must: true, disrupt: true}); hov(c, back, false); } else await backToPostiz(c, g); }); } },
+      // soft reset: puts back anything a ghost left open; your own changes only once you've left the window and been idle
+      { w: 0, can: () => { if (S.scene || S.want || !canDisrupt()) return false; const s = st();
+          const ghostMess = (s.view !== "postiz" && !dash.userView) || (s.drawer && !dash.userDrawer) || (s.q && !dash.userQ && U.focus !== dash.search);
+          const userMess = (s.view !== "postiz" && dash.userView) || (s.drawer && dash.userDrawer) || (s.q && dash.userQ);
+          return ghostMess ? 40 : userMess && mayUndoUser() && performance.now() - U.last > 8000 ? 20 : performance.now() - S.lastReset > 40000 ? 6 : false; },
+        run: async (c, g) => { await scene(c, g, null, async () => { const s = st();
+          if (s.drawer) { const x = q1(".sd-x"); say(c, "Closing the sources"); await go(c, x, g, .5, .5); await click(c, x, g, {must: true, disrupt: true}); dash.userDrawer = false; }
+          if (s.q && U.focus !== dash.search) { dash.search.value = ""; dash.filter(); dash.userQ = false; }
+          await backToPostiz(c, g); dash.userView = false;
+          for (const k of $$(".kpi[aria-pressed=true]", win)) { if (userOwns(k) || (userKpi(k) && !mayUndoUser())) continue; k.dataset.u = ""; say(c, "Tidying up"); await go(c, k, g); await click(c, k, g, {must: true}); }
+          if (desk() && st().range && free("chart") && !userIn("#plot, #moves, .dtabs") && (!dash.userRange || mayUndoUser())) { dash.userRange = false; const t = q1('[data-range="all"]'); say(c, "Back to all time"); await go(c, t, g); await click(c, t, g, {must: true, disrupt: true}); }
+          if (chartAPI && free("chart") && !userIn("#plot, #moves") && (!chartAPI.userPinned() || mayUndoUser())) chartAPI.reset(); S.lastReset = performance.now(); }); } },
     ];
-    async function run(g) {
-      const b = box(), W0 = b.width, H0 = b.height;
-      [[R, .2, .62], [Gc, .55, .9], [Bc, .88, .35]].forEach(([c, fx, fy]) => { if (!c.x && !c.y) { c.x = W0 * fx; c.y = H0 * fy; } place(c); });
-      await wait(500, g); await tidy(g);
+    async function agent(c, g, i) {
+      await wait(i * rnd(300, 700), g);
       for (;;) {
-        const list = BEATS.filter(bt => !(bt.desk && tablet()));
-        for (let i = 0; i < list.length; i++) {
-          const bt = list[i], c = bt.c(), el = bt.t(); if (!vis(el)) continue;
-          ALL.forEach(x => x !== c && say(x, ""));
-          // the next beat's cursor starts drifting toward its target while this one acts (staggered, never all at once)
-          const nx = list[(i + 1) % list.length], nc = nx.c(), ne = nx.t();
-          await go(c, el, g, bt.t === BEATS[2].t ? .55 : .5);
-          if (nc !== c && vis(ne)) { const [x, y] = at(ne); setTimeout(() => { if (g === gen && !nc.mv) glide(nc, x + 46, y + 38); }, 350); }
-          await bt.run(c, el, g); ok(g);
-          say(c, ""); await wait(300, g);
-        }
-        await tidy(g); await wait(1200, g);
+        const opts = ACTIONS.map(a => [a, a.can(c)]).filter(([, w]) => w).map(([a, w]) => [a, typeof w === "number" ? w : a.w]);
+        let r = Math.random() * opts.reduce((t, [, w]) => t + w, 0), pick = opts[0][0];
+        for (const [a, w] of opts) { if ((r -= w) <= 0) { pick = a; break; } }
+        try { await pick.run(c, g); } catch (e) { if (e !== CANCEL) throw e; S.cancels++; }
+        ok(g); c.hov.forEach(el => el.classList.remove("gh-hover")); c.hov.clear(); say(c, "");
+        await wait(desk() ? rnd(40, 220) : rnd(300, 700), g);
       }
     }
-    const start = () => { if (active || document.hidden || !inView || hold || innerWidth < 760) return; active = true; gen++; layer.classList.add("on"); run(gen).catch(e => { if (e !== STOP) console.error(e); }); };
+    const start = () => { if (active || document.hidden || !inView || innerWidth < 760) return; active = true; gen++; const g = gen;
+      S = { readers: 0, scene: null, want: null, locks: new Set(), lastReset: performance.now(), typing: false, log: [], cancels: 0 };
+      const b = box(); [[.2, .62], [.55, .9], [.88, .35]].forEach(([fx, fy], i) => { const c = ALL[i]; if (!c.x && !c.y) { c.x = b.width * fx; c.y = b.height * fy; } });
+      layer.classList.add("on"); if (!raf) raf = requestAnimationFrame(tick);
+      ALL.forEach((c, i) => agent(c, g, i).catch(e => { if (e !== STOP) console.error(e); })); };
     const stop = () => { if (!active) return; active = false; gen++; layer.classList.remove("on");
-      ALL.forEach(c => { if (c.mv) { const d = c.mv.done; c.mv = null; d(); } say(c, ""); c.el.classList.remove("down", "click"); });
-      $$(".gh-hover", win).forEach(e => e.classList.remove("gh-hover")); $$(".gh-focus", win).forEach(e => e.classList.remove("gh-focus")); };
-    // hand-off: any real pointer, touch, key or focus in the window pauses them at once; they come back ~6 s after you leave or go idle
-    let inView = false, hold = false, idle = 0;
-    const user = () => { hold = true; stop(); clearTimeout(idle); idle = setTimeout(() => { hold = false; start(); }, 6000); };
-    ["pointermove", "pointerdown", "wheel", "keydown", "focusin", "touchstart"].forEach(t => wf.addEventListener(t, user, {passive: true}));
-    wf.addEventListener("pointerenter", user);
+      ALL.forEach(c => { if (c.seg) { const d = c.seg.done; c.seg = null; d(); } say(c, ""); c.el.classList.remove("down", "click"); c.hov.forEach(el => el.classList.remove("gh-hover")); c.hov.clear(); });
+      $$(".gh-focus", win).forEach(e => e.classList.remove("gh-focus"));
+      if (S && S.typing && U.focus !== dash.search) { dash.search.value = ""; dash.filter(); } };
+    // they keep going while you use the dashboard; they only stop for reduced motion, phones, an off-screen hero or a hidden tab
+    let inView = false;
     new IntersectionObserver(es => { inView = es[0].isIntersecting; if (inView) start(); else stop(); }, {threshold: .3}).observe(wf);
     document.addEventListener("visibilitychange", () => document.hidden ? stop() : start());
     let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => innerWidth < 760 ? stop() : start(), 200); });
-    window.__lvGhosts = { stop, start, active: () => active };
+    window.__lvGhosts = { stop, start, active: () => active,
+      peek: () => ALL.map(c => [+c.x.toFixed(2), +c.y.toFixed(2), !!c.seg, c.el.classList.contains("talk") ? c.tag.textContent : ""]),
+      stats: () => ({ cursors: ALL.map(c => ({ ...c.stats, sig: undefined, uniqueMoves: new Set(c.stats.sig.map(String)).size, sampled: c.stats.sig.length })), cancels: S && S.cancels,
+        minUserGapAtDisruptiveClickMs: S ? Math.round(Math.min(...S.log.filter(l => l[1]).map(l => l[0]), 1e9)) : null }) };
   }
 
   // ---------- source cards: the card itself grows in place (hover on desktop, focus on keyboard, tap on touch) ----------
