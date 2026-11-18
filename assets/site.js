@@ -147,7 +147,7 @@
     let G = null, M0 = 0, animate = !reduce && IO, pinned = null, userPin = false;
     movesEl.innerHTML = EVT.map((e, i) => `<li><button type="button" class="mv${i === TURN ? " turn" : ""}" data-i="${i}"><span class="n">${i + 1}</span><span><b>${e[2]}</b><small>${e[3]}</small></span><span class="w">${e[1]}</span></button></li>`).join("");
     function draw() {
-      const W = Math.max(260, plot.clientWidth - 12), narrow = W < 520, H = narrow ? (inHero ? 190 : 230) : size === "big" ? 320 : inHero ? 218 : 262;
+      const W = Math.max(260, plot.clientWidth - 12), narrow = W < 520, H = narrow ? (inHero ? 190 : 230) : size === "big" ? 320 : inHero ? 192 : 262;
       const L = 46, R = 14, T = 12, B = 50, TAG = narrow ? 14 : 16, span = 34 - M0;
       const X = m => L + Math.max(0, m - M0) / span * (W - L - R), Y = v => T + (1 - v / 450000) * (H - T - B);
       svg.innerHTML = ""; svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("height", H);
@@ -191,8 +191,20 @@
         showPoint(best);
       });
       hit.addEventListener("pointerleave", showDefault);
-      showDefault();
+      showDefault(); placeBand();
     }
+    // phase band (hero): the same time axis as the chart, so each phase sits under its stretch of the line
+    const band = $("#pband"), ptip = $("#ptip");
+    function placeBand() { if (!band || !G) return; const sc = (plot.clientWidth - 12) / G.W;
+      band.querySelectorAll(".pseg").forEach(b => { const a = +b.dataset.a, z = +b.dataset.b;
+        if (M0 > 0 && z <= M0) { b.hidden = true; return; } b.hidden = false;
+        const x0 = a < 0 ? 0 : G.X(Math.max(a, M0)), x1 = z >= 34 ? G.W : G.X(z);
+        b.style.left = (x0 * sc + 1) + "px"; b.style.width = Math.max(0, (x1 - x0) * sc - 2) + "px"; }); }
+    const bandTip = b => { if (!b) { ptip.classList.remove("on"); return; } ptip.innerHTML = b.dataset.full + `<span>${b.dataset.when}</span>`; ptip.classList.add("on");
+      const l = b.offsetLeft + b.offsetWidth / 2 - ptip.offsetWidth / 2; ptip.style.left = Math.max(0, Math.min(band.clientWidth - ptip.offsetWidth, l)) + "px"; };
+    if (band) { band.addEventListener("pointerover", e => bandTip(e.target.closest(".pseg"))); band.addEventListener("pointerleave", () => bandTip(null));
+      band.addEventListener("focusin", e => bandTip(e.target.closest(".pseg"))); band.addEventListener("focusout", () => bandTip(null));
+      band.addEventListener("click", e => { const b = e.target.closest(".pseg"); if (!b) return; band.querySelectorAll(".pseg").forEach(x => x.classList.toggle("on", x === b)); bandTip(b); }); }
     function place(px, py, html) {
       tip.innerHTML = html;
       const ox = 6 + px * ((plot.clientWidth - 12) / G.W), oy = 6 + py, w = tip.offsetWidth, h = tip.offsetHeight;
@@ -233,7 +245,7 @@
     chartAPI = {
       point: k => { const p = P[k]; if (!G || p[0] < M0) return null; const r = svg.getBoundingClientRect(); return [r.left + G.X(p[0]) * r.width / G.W, r.top + G.Y(p[1]) * r.height / G.H]; },
       show: k => showPoint(P[k]), reset: () => { pinned = null; userPin = false; movesEl.scrollTo({top: 0}); showDefault(); }, userPinned: () => userPin,
-      idle: () => showDefault(), tag: i => G && G.tags[i], pinned: () => pinned, range: () => M0, count: P.length };
+      idle: () => showDefault(), bandTip: b => band && bandTip(b), tag: i => G && G.tags[i], pinned: () => pinned, range: () => M0, count: P.length };
     let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { fitHero(); }, 80); });
   }
 
@@ -257,15 +269,27 @@
   if (document.fonts) document.fonts.ready.then(fitHero);
   if (!svg) { let rt2; addEventListener("resize", () => { clearTimeout(rt2); rt2 = setTimeout(fitHero, 80); }); }
 
-  // ---------- hero dashboard: every control does something real ----------
+  // ---------- hero dashboard: the real app, every control does something real ----------
   const win = $("#win");
   let dash = null;
   if (win) {
     const post = win.querySelector('.view[data-view="postiz"]'), views = $$(".view.vx", win), sis = $$(".side .si", win);
-    const drawer = $("#sdrawer"), srcbtn = $("#srcbtn"), search = $("#wsearch"), url = $("#wurl");
-    const SOON = { dm: ["D", "DM Champ", "AI tool", "$113,809", " MRR", "Nov 18 2026"], stencil: ["S", "Stencil AI", "Mobile app", "$483,794", " all-time", "Nov 16 2026"],
-                   windmill: ["W", "Windmill Growth", "Agency", "$118,347", " MRR", "Nov 16 2026"], goji: ["G", "Gojiberry", "AI tool", "$424,368", " MRR", "Aug 14 2026"] };
-    const URLS = { postiz: "/breakdowns/postiz", home: "/home", breakdowns: "/breakdowns", checklists: "/checklists", sources: "/sources" };
+    const drawer = $("#sdrawer"), srcbtn = $("#srcbtn"), search = $("#wsearch"), url = $("#wurl"), sres = $("#sres"), crumb = $("#wcrumb");
+    const LOGO = { dm: '<img src="/assets/logos/dmchamp.png" alt="" width="44" height="44">' };
+    // numbers from design/data/stories.json: the headline is what cards show, MRR / all-time is the small line
+    const SOON = { dm: ["DM Champ", "AI tool", "$28,426", " in Oct 2026", "MRR $113,809 · Nov 18 2026 · TrustMRR"],
+                   stencil: ["Stencil AI", "Mobile app", "$62,976", " in Oct 2026", "All-time $483,794 · Nov 16 2026 · TrustMRR"],
+                   windmill: ["Windmill Growth", "Agency", "$118,047", " in Oct 2026", "MRR $118,347 · Nov 16 2026 · TrustMRR"],
+                   goji: ["Gojiberry", "AI tool", "$424,368", " MRR", "Aug 14 2026 · TrustMRR"] };
+    const NAME = { postiz: "Postiz", home: "Home", breakdowns: "Library", checklists: "Checklists", path: "My path" };
+    const URLS = { postiz: "/library/postiz", home: "/home", breakdowns: "/library", checklists: "/checklists", path: "/path" };
+    // coming soon: the homepage cards' monthly series and only facts already on the site
+    const RANGE = { dm: ["Dec 2025", "Oct 2026"], stencil: ["Jan 2026", "Oct 2026"], windmill: ["Dec 2025", "Oct 2026"] };
+    const KNOW = { dm: [["About $10K a month in an interview", "c", "Starter Story · Mar 2026"], ["First customers: an AppSumo deal", "c", ""], ["Priced for buyers instead of testers", "c", ""], ["MRR $113,809", "v", "Nov 18 2026"]],
+                   stencil: [["16 followers on X", "", ""], ["Started with one brother's tattoo-shop problem", "", ""], ["First customers: a family member's problem", "", ""], ["All-time revenue $483,794", "v", "Nov 16 2026"]],
+                   windmill: [["A $250 start, he says", "c", ""], ["Sells a service instead of building an app", "", ""], ["74 clients at about $1,600 a month", "", ""], ["MRR $118,347", "v", "Nov 16 2026"]],
+                   goji: [["2,000 sign-ups, $0 paid", "c", ""], ["Rebuilt the product within weeks", "c", ""], ["First customers: a waitlist, then a rebuild", "c", ""], ["$424,368 MRR", "v", "Aug 14 2026"]] };
+    const LBN = { v: "Verified", c: "Claimed" };
     let view = "postiz", co = null;
     const setDrawer = (open, byUser) => {
       if (!drawer) return; const was = drawer.classList.contains("open"); drawer.classList.toggle("open", open); drawer.setAttribute("aria-hidden", !open); drawer.inert = !open;
@@ -273,45 +297,62 @@
       if (srcbtn) srcbtn.setAttribute("aria-expanded", open);
       if (byUser) (open ? drawer.querySelector(".sd-x") : srcbtn).focus({preventScroll: true});
     };
+    const setCrumb = () => {
+      const lib = '<button class="crumb" type="button" data-go="breakdowns">Library</button><span aria-hidden="true">/</span>';
+      crumb.innerHTML = view === "postiz" ? lib + "<b>Postiz</b>" : view === "soon" ? lib + "<b>" + SOON[co][0] + "</b>" : "<b>" + NAME[view] + "</b>"; };
     const show = (v, c) => {
       const changed = v !== view || (v === "soon" && c !== co);
       view = v; co = v === "soon" ? c : null;
-      post.classList.toggle("under", v !== "postiz");
+      post.classList.toggle("under", v !== "postiz"); win.classList.toggle("on-postiz", v === "postiz");
       views.forEach(x => { x.hidden = x.dataset.view !== v; });
       sis.forEach(s => { const on = s.dataset.go === v && (v !== "soon" || s.dataset.co === c); s.classList.toggle("on", on); if (on) s.setAttribute("aria-current", "page"); else s.removeAttribute("aria-current"); });
       if (v === "soon" && SOON[c]) { const d = SOON[c];
-        $("#sotile").textContent = d[0]; $("#soname").textContent = d[1]; $("#socat").textContent = d[2] + " · breakdown coming soon"; $("#sonum").textContent = d[3]; $("#sounit").textContent = d[4]; $("#sodt").textContent = d[5]; }
-      if (url) url.textContent = v === "soon" ? "/breakdowns/" + c : URLS[v] || "/";
-      setDrawer(false);
+        $("#sotile").innerHTML = LOGO[c] || `<i class="lt">${d[0][0]}</i>`; $("#soname").textContent = d[0]; $("#socat").textContent = d[1] + " · breakdown coming soon";
+        $("#sonum").textContent = d[2]; $("#sounit").textContent = d[3]; $("#sosub").textContent = d[4]; }
+      if (url) url.textContent = v === "soon" ? "/library/" + c : URLS[v];
+      if (v === "soon") { const tp = $("#so-sparks"), sp = tp && tp.content.querySelector(`[data-co="${c}"]`), r = RANGE[c];
+        $("#sospark").innerHTML = sp ? sp.innerHTML : '<span class="noser big">No public monthly series. TrustMRR shows MRR only.</span>';
+        $("#sorange").textContent = r ? r[0] + " to " + r[1] : "Not public"; $("#soax0").textContent = r ? r[0] : ""; $("#soax1").textContent = r ? r[1] : "";
+        $("#soknow").innerHTML = (KNOW[c] || []).map(([t, k, d]) => `<li><span>${t}</span>${d ? `<span class="kd">${d}</span>` : ""}${k ? `<span class="lb ${k}">${LBN[k]}</span>` : ""}</li>`).join(""); }
+      if (search && search.value) search.value = "";
+      setCrumb(); setDrawer(false); closeRes();
       if (v === "postiz" && redraw) redraw();
       requestAnimationFrame(() => $$(".seg", win).forEach(placeInd));
       // tells anyone watching (the ghost cursors) that the dashboard now shows something else
       if (changed) win.dispatchEvent(new CustomEvent("lv:view", {detail: {view: v, co: co, drawer: false}}));
     };
+    // checklist: tick, untick, the bar and "2 of 6 · 33%" follow
+    const ckUpd = () => { const cks = $$("#wck .ck", win), n = cks.filter(x => x.getAttribute("aria-pressed") === "true").length;
+      $("#ckpn").textContent = `${n} of ${cks.length} · ${Math.round(n / cks.length * 100)}%`; $("#ckbar").style.width = (n / cks.length * 100) + "%"; };
     win.addEventListener("click", e => {
       const g = e.target.closest("[data-go]"); if (g) { e.preventDefault(); if (dash) dash.userView = e.isTrusted && g.dataset.go !== "postiz"; show(g.dataset.go, g.dataset.co); return; }
       const k = e.target.closest(".kpi"); if (k) { const on = k.getAttribute("aria-pressed") !== "true"; k.setAttribute("aria-pressed", on); k.dataset.u = e.isTrusted && on ? "1" : ""; return; }
       if (e.target.closest("#srcbtn")) { const o = !drawer.classList.contains("open"); if (dash) dash.userDrawer = e.isTrusted && o; setDrawer(o, e.isTrusted); return; }
       if (e.target.closest(".sd-x")) { if (dash) dash.userDrawer = false; setDrawer(false, e.isTrusted); return; }
-      const f = e.target.closest("[data-vf]");        // Breakdowns filter
-      if (f) { $$("[data-vf]", win).forEach(x => x.setAttribute("aria-pressed", x === f)); $$("#bdlist .vrow", win).forEach(r => r.hidden = f.dataset.vf !== "all" && r.dataset.st !== f.dataset.vf); return; }
-      const vb = e.target.closest(".vs-b");           // Sources: a row expands in place
-      if (vb) { const li = vb.parentElement, o = !li.classList.contains("open"); li.classList.toggle("open", o); vb.setAttribute("aria-expanded", o); return; }
-      const ck = e.target.closest(".ck"); if (ck && e.isTrusted) ck.dataset.u = "1";
+      const f = e.target.closest("[data-vf]");        // Library filter
+      if (f) { $$("[data-vf]", win).forEach(x => x.setAttribute("aria-pressed", x === f)); $$("#bdlist .lrow", win).forEach(r => r.closest(".lset").hidden = f.dataset.vf !== "all" && r.dataset.st !== f.dataset.vf); return; }
+      const ck = e.target.closest("#wck .ck"); if (ck) { ck.setAttribute("aria-pressed", ck.getAttribute("aria-pressed") !== "true"); if (e.isTrusted) ck.dataset.u = "1"; ckUpd(); return; }
+      const pd = e.target.closest(".pdone"); if (pd) { const on = pd.getAttribute("aria-pressed") !== "true"; pd.setAttribute("aria-pressed", on); pd.textContent = on ? "Done · undo" : "Mark step done";
+        pd.closest(".pst").classList.toggle("done", on); pd.closest(".pst").classList.toggle("now", !on); if (e.isTrusted) pd.dataset.u = on ? "1" : ""; return; }
     });
     win.addEventListener("keydown", e => { if (e.key === "Escape" && drawer && drawer.classList.contains("open")) { e.stopPropagation(); setDrawer(false, true); } });
-    // search filters the sidebar; Ctrl/Cmd K focuses it while the pointer is over the window
-    const filter = () => { const q = search.value.trim().toLowerCase(); let n = 0;
-      sis.forEach(s => { const on = !q || s.textContent.toLowerCase().includes(q); s.hidden = !on; if (on) n++; });
-      $$(".side .grp", win).forEach(g => g.hidden = !!q);
-      $("#snone").hidden = n > 0; };
+    // search: results drop down under the box (companies + this week's breakdown); Ctrl/Cmd K focuses it while the pointer is over the window
+    const ITEMS = [["Postiz", "postiz", "", "Ready"], ["DM Champ", "soon", "dm", "Soon"], ["Stencil AI", "soon", "stencil", "Soon"], ["Windmill Growth", "soon", "windmill", "Soon"], ["Gojiberry", "soon", "goji", "Soon"],
+                   ["My checklists", "checklists", "", "Postiz"], ["My path", "path", "", "2 of 6"], ["Library", "breakdowns", "", "5 stories"]];
+    function closeRes() { if (sres) { sres.hidden = true; sres.innerHTML = ""; } }
+    const filter = () => { const q = search.value.trim().toLowerCase(); if (!q) { closeRes(); return; }
+      const hits = ITEMS.filter(i => i[0].toLowerCase().includes(q));
+      sres.innerHTML = hits.length ? hits.map(([n, go, c, s]) => `<button type="button" role="option" data-go="${go}"${c ? ` data-co="${c}"` : ""}>${n}<span>${s}</span></button>`).join("") : '<p class="none">Nothing matches.</p>';
+      sres.hidden = false; };
     if (search) {
       search.addEventListener("input", e => { filter(); if (dash) dash.userQ = e.isTrusted && !!search.value; });
-      search.addEventListener("keydown", e => { if (e.key === "Escape") { search.value = ""; filter(); } else if (e.key === "Enter") { const f = sis.find(s => !s.hidden); if (f) f.click(); } });
+      search.addEventListener("keydown", e => { if (e.key === "Escape") { search.value = ""; filter(); } else if (e.key === "Enter") { const f = sres.querySelector("button"); if (f) { search.value = ""; f.click(); } } });
+      search.addEventListener("blur", () => setTimeout(() => { if (!search.value && document.activeElement !== search) closeRes(); }, 150));
       let over = false; win.addEventListener("pointerenter", () => over = true); win.addEventListener("pointerleave", () => over = false);
       addEventListener("keydown", e => { if (over && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k" && search.offsetParent) { e.preventDefault(); search.focus(); } });
     }
-    dash = { show, setDrawer, filter, search, win, userView: false, userDrawer: false, userQ: false,
+    win.classList.add("on-postiz");
+    dash = { show, setDrawer, filter, search, win, ckUpd, userView: false, userDrawer: false, userQ: false,
              state: () => ({ view, drawer: !!(drawer && drawer.classList.contains("open")), q: search ? search.value : "", range: chartAPI ? chartAPI.range() : 0,
                              kpi: $$(".kpi[aria-pressed=true]", win).length, pinned: chartAPI ? chartAPI.pinned() : null }) };
   }
@@ -326,9 +367,9 @@
     const layer = document.createElement("div"); layer.className = "ghosts"; layer.setAttribute("aria-hidden", "true"); wf.append(layer);
     const rnd = (a, b) => a + Math.random() * (b - a), any = a => a[Math.floor(Math.random() * a.length)], chance = p => Math.random() < p;
     const PERS = [
-      { speed: .74, over: [1, 4], corr: [0, 1], hes: [120, 260], dwell: .75, skip: .06, mind: .07, drift: 4, typ: [75, 140], wander: .08 },
-      { speed: 1.35, over: [0, 2.5], corr: [1, 2], hes: [300, 600], dwell: 1.3, skip: .14, mind: .08, drift: 3, typ: [140, 220], wander: .08 },
-      { speed: 1.02, over: [3, 8], corr: [1, 2], hes: [180, 480], dwell: 1.05, skip: .22, mind: .28, drift: 9, typ: [90, 200], wander: .4 } ];
+      { speed: .8, hes: [140, 260], dwell: .8, skip: .06, typ: [80, 140] },
+      { speed: 1.28, hes: [260, 480], dwell: 1.25, skip: .1, typ: [130, 210] },
+      { speed: 1.02, hes: [180, 380], dwell: 1, skip: .14, typ: [90, 180] } ];
     const mk = (k, col, P) => { const el = document.createElement("div"); el.className = "gc gc-" + k;
       el.innerHTML = `<svg width="20" height="24" viewBox="0 0 20 24"><path d="M2 2v17.5l4.6-4.4 3.2 7.2 3-1.3-3.2-7.1 6.6-.3z" fill="${col}" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><span class="gt"></span><i class="rp"></i>`;
       layer.append(el); return { el, tag: el.querySelector(".gt"), x: 0, y: 0, seg: null, P, hov: new Set(), ep: 0, tgt: null,
@@ -339,43 +380,30 @@
     const place = (c, x, y) => { c.el.style.transform = `translate3d(${(x - 2).toFixed(1)}px,${(y - 2).toFixed(1)}px,0)`; c.el.classList.toggle("flip", x > wf.clientWidth - 200); };
     // one rAF loop: segments (Kumaraswamy time warp = quick start, long tail; optional mid-move pause) + smoothed tremor
     const tick = now => { if (!active) { raf = 0; return; }
-      const ts = now / 1000;
       ALL.forEach(c => { const s = c.seg;
-        if (s) { let t = now - s.t0; if (s.pz && t > s.pz[0]) t = t < s.pz[0] + s.pz[1] ? s.pz[0] : t - s.pz[1];
-          const k = Math.min(1, t / s.d), e = 1 - Math.pow(1 - Math.pow(k, s.ka), s.kb), u = 1 - e;
+        if (s) { const k = Math.min(1, (now - s.t0) / s.d), e = s.lin ? k : (1 - Math.cos(Math.PI * k)) / 2, u = 1 - e;
           c.x = u * u * s.a[0] + 2 * u * e * s.c[0] + e * e * s.b[0]; c.y = u * u * s.a[1] + 2 * u * e * s.c[1] + e * e * s.b[1];
           if (s.on) s.on(c); if (k >= 1) { c.seg = null; s.done(); } }
-        const T = c.tr, jx = T.a * (.65 * Math.sin(ts * T.f1 + T.p1) + .35 * Math.sin(ts * T.f2 + T.p2)), jy = T.a * (.65 * Math.cos(ts * T.f1 * .87 + T.p2) + .35 * Math.sin(ts * T.f2 * 1.13 + T.p1));
-        place(c, c.x + jx, c.y + jy); });
+        place(c, c.x, c.y); });
       raf = requestAnimationFrame(tick); };
     // a token per action: STOP when the ghosts are switched off, ABORT when the view changed under it
     const ok = t => { if (t.g !== gen) throw STOP; if (t.e !== epoch) throw ABORT; };
     const wait = (ms, t) => new Promise((res, rej) => setTimeout(() => { try { ok(t); res(); } catch (e) { rej(e); } }, ms));
     const seg = (c, to, d, o = {}) => new Promise(res => { if (c.seg) { const p = c.seg.done; c.seg = null; p(); }
-      c.seg = { a: [c.x, c.y], b: to, c: o.c || [(c.x + to[0]) / 2, (c.y + to[1]) / 2], t0: performance.now(), d: Math.max(16, d), ka: o.ka || 1.5, kb: o.kb || 2.4, pz: o.pz || null, on: o.on || null, done: res }; });
+      c.seg = { a: [c.x, c.y], b: to, c: o.c || [(c.x + to[0]) / 2, (c.y + to[1]) / 2], t0: performance.now(), d: Math.max(16, d), lin: !!o.lin, on: o.on || null, done: res }; });
+    // one smooth move: a gentle bezier arc, eased in and out, timed by distance and target size (Fitts), straight onto the target
     async function aim(c, x, y, g, w = 24, o = {}) {
-      const P = c.P, dx = x - c.x, dy = y - c.y, D = Math.hypot(dx, dy); if (D < 1.5) return;
-      const ux = dx / D, uy = dy / D, MT = (150 + 135 * Math.log2(D / Math.max(8, w) + 1)) * P.speed * rnd(.82, 1.28) * (o.slow || 1);
-      let ov = o.exact ? 0 : rnd(P.over[0], P.over[1]) * (chance(.72) ? 1 : -.6); if (D < 30) ov *= .3;
-      const side = rnd(-1.8, 1.8), ex = x + ux * ov - uy * side, ey = y + uy * ov + ux * side;
-      const f = rnd(.22, .62), off = D * rnd(.03, .17) * (chance(.5) ? -1 : 1), ctrl = [c.x + dx * f - uy * off, c.y + dy * f + ux * off];
-      const d1 = MT * rnd(.7, .82), ka = rnd(1.25, 1.9), kb = rnd(2.1, 3.8);
-      c.stats.moves++; if (Math.abs(ov) > 2) c.stats.overshoots++; c.stats.sig.push([Math.round(d1), +ka.toFixed(2), +kb.toFixed(2), Math.round(off)]); if (c.stats.sig.length > 60) c.stats.sig.shift();
-      await seg(c, [ex, ey], d1, { c: ctrl, ka, kb, on: o.on, pz: D > 140 && chance(.12) ? [d1 * rnd(.3, .6), rnd(50, 140)] : null }); ok(g);
-      if (o.noFix) return;
-      const n = Math.round(rnd(P.corr[0], P.corr[1])) + (Math.abs(ov) > 3 ? 1 : 0);
-      for (let i = 0; i < n; i++) { const last = i === n - 1, tx = x + (last ? rnd(-1, 1) : rnd(-2.6, 2.6)), ty = y + (last ? rnd(-1, 1) : rnd(-2.6, 2.6));
-        c.stats.corrections++; await seg(c, [tx, ty], rnd(85, 200) * P.speed, { ka: rnd(1.2, 1.7), kb: rnd(1.8, 2.8), on: o.on }); ok(g);
-        if (!last) await wait(rnd(25, 90), g); }
+      const dx = x - c.x, dy = y - c.y, D = Math.hypot(dx, dy); if (D < 1.5) return;
+      const ux = dx / D, uy = dy / D, d = (340 + 185 * Math.log2(D / Math.max(8, w) + 1)) * c.P.speed * rnd(.92, 1.1) * (o.slow || 1);
+      const f = rnd(.4, .6), off = D * rnd(.04, .12) * (chance(.5) ? -1 : 1), ctrl = [c.x + dx * f - uy * off, c.y + dy * f + ux * off];
+      c.stats.moves++; c.stats.sig.push([Math.round(d), Math.round(off)]); if (c.stats.sig.length > 60) c.stats.sig.shift();
+      await seg(c, [x, y], d, { c: ctrl, on: o.on }); ok(g);
     }
     const at = (el, fx, fy) => { const r = el.getBoundingClientRect(), b = box(); return [r.left - b.left + r.width * fx, r.top - b.top + r.height * fy, Math.min(r.width, r.height)]; };
     const vis = el => !!el && el.isConnected && el.getClientRects().length > 0 && !el.closest("[hidden], .under, [inert]") && el.getBoundingClientRect().width > 0;
-    async function idle(c, ms, g) { const end = performance.now() + ms * c.P.dwell;
-      while (end - performance.now() > 40) { const r = c.P.drift; await seg(c, [c.x + rnd(-r, r), c.y + rnd(-r * .7, r * .7)], Math.min(end - performance.now(), rnd(500, 1300)), { ka: rnd(1.3, 1.8), kb: rnd(1.6, 2.4) }); ok(g); } }
+    const idle = (c, ms, g) => wait(ms * c.P.dwell, g);   // a still, natural pause
     const crowded = (c, x, y) => ALL.some(o => o !== c && (Math.hypot(o.x - x, o.y - y) < 26 || (o.tgt && Math.hypot(o.tgt[0] - x, o.tgt[1] - y) < 26)));
     async function go(c, el, g, fx = rnd(.3, .7), fy = rnd(.38, .66)) {
-      if (chance(c.P.mind)) { const d = any(CONTENT().filter(x => x !== el)); if (d) { c.stats.changes++; const [x, y] = at(d, .5, .5), k = rnd(.35, .7);
-        await aim(c, c.x + (x - c.x) * k, c.y + (y - c.y) * k, g, 40, { noFix: true }); await wait(rnd(120, 380), g); } }
       if (!vis(el)) throw CANCEL; let [x, y, w] = at(el, fx, fy);
       for (let t = 0; t < 6 && crowded(c, x, y); t++) [x, y, w] = at(el, rnd(.12, .88), rnd(.25, .8));
       if (crowded(c, x, y)) throw CANCEL; c.tgt = [x, y]; await aim(c, x, y, g, w); }
@@ -389,7 +417,7 @@
       if (!o.must && chance(c.P.skip)) { c.stats.skips++; return false; }
       if (!vis(el)) { S.staleBlocked++; throw CANCEL; } if (userOwns(el) || (o.disrupt && !navOK(true))) throw CANCEL;
       c.el.classList.add("down"); c.el.classList.remove("click"); void c.el.offsetWidth; c.el.classList.add("click");
-      await seg(c, [c.x + rnd(-1.6, 1.6), c.y + rnd(-.6, 1.8)], rnd(80, 105), { ka: 1.2, kb: 1.6 }); ok(g);
+      await wait(110, g);
       c.el.classList.remove("down"); if (!vis(el)) { S.staleBlocked++; throw CANCEL; } S.fired++; fire(el, "click");
       if (o.disrupt) { S.log.push(performance.now() - U.last); if (S.log.length > 200) S.log.shift(); }
       await idle(c, rnd(150, 400), g); return true; }
@@ -408,12 +436,12 @@
     const VX = s => s.split(",").map(x => `.view.vx:not([hidden]) ${x.trim()}`).join(", ");   // every selector scoped to the open view
     // what's on screen right now, used to look around after a change and for changes of mind
     const CONTENT = () => { const s = st(); if (s.drawer) return qa(".sd-l li, .sd-h b, .sd-f");
-      return s.view === "postiz" ? qa(".kpi, .ch-h .big, .phead, #moves .mv, .dtabs button") : qa(VX(".vh b, button, li, .so-n b, .so-t"));
+      return s.view === "postiz" ? qa(".kpi, .chartp .big, .rh-t b, #moves .mv, .dtabs button, .pseg") : qa(VX(".vh b, button, li, .so-n b, .so-t, .ckh b, .hc-t b"));
     };
 
     // --- the real user
     const U = { last: -1e9, over: null, focus: null, inside: false };
-    const CTRL = "button, a, input, .vsrc li, .sd-l li, #plot, .ch-h";
+    const CTRL = "button, a, input, .vsrc li, .sd-l li, #plot, .ch-h, .pst";
     const touch = () => { U.last = performance.now(); };
     win.addEventListener("pointermove", e => { if (!e.isTrusted) return; touch(); U.inside = true; U.over = e.target.closest(CTRL);
       // reading something a ghost opened makes it yours: they won't close it or switch away from it
@@ -434,7 +462,7 @@
     const clear = el => { const d = drawerRect(); return !d || el.closest("#sdrawer") || el.getBoundingClientRect().right < d.left - 4; };
     const free = k => !S.locks.has(k) && !(k instanceof Element && userOwns(k));
     const userKpi = k => k.dataset.u === "1";
-    const chartFree = () => free("chart") && !userIn("#plot, #moves, .dtabs, .ch-h") && !(chartAPI && chartAPI.userPinned());
+    const chartFree = () => free("chart") && !userIn("#plot, #moves, .dtabs, .ch-h, .pband") && !(chartAPI && chartAPI.userPinned());
     const chartRest = () => { if (!chartAPI) return; if (chartAPI.userPinned()) chartAPI.idle(); else chartAPI.reset(); };
     // hold a control (or several) for the length of an action
     async function hold(keys, fn) { const s = S; if (keys.some(k => !free(k))) throw CANCEL; keys.forEach(k => s.locks.add(k)); try { await fn(); } finally { keys.forEach(k => s.locks.delete(k)); } }
@@ -464,9 +492,8 @@
               let cur = -1; const follow = cc => { let best = null, bd = 1e9; for (const p of pts) { const d = Math.abs(p[1] - cc.x); if (d < bd) { bd = d; best = p; } } if (best && best[0] !== cur) { cur = best[0]; chartAPI.show(cur); } };
               say(c, "Scrubbing the chart"); await aim(c, pts[s0][1], pts[s0][2], g, 14, { on: follow });
               for (let j = 1; j < n; j++) { if (!chartFree.call(null)) break; const p = pts[s0 + j];
-                await seg(c, [p[1] + rnd(-6, 6), p[2] + rnd(-10, 8)], rnd(220, 720) * c.P.speed, { ka: rnd(1.2, 1.8), kb: rnd(1.6, 2.8), on: follow }); ok(g);
-                await idle(c, rnd(120, 650), g);
-                if (chance(.2) && j > 1) { const q = pts[s0 + j - 1]; await seg(c, [q[1] + rnd(-4, 4), q[2]], rnd(200, 420), { ka: 1.4, kb: 2, on: follow }); ok(g); await idle(c, rnd(150, 400), g); } }
+                await seg(c, [p[1], p[2]], rnd(480, 700) * c.P.speed, { on: follow }); ok(g);
+                await idle(c, rnd(250, 500), g); }
               chartRest(); }); } },
         { w: 4, can: () => chartFree() && !!chartAPI && [0, 1, 2, 3, 4, 5, 6, 7].some(i => vis(chartAPI.tag(i)) && clear(chartAPI.tag(i))), run: async (c, g) => {
             await hold(["chart"], async () => { const ids = [0, 1, 2, 3, 4, 5, 6, 7].filter(i => vis(chartAPI.tag(i)) && clear(chartAPI.tag(i)));
@@ -483,7 +510,15 @@
         { w: 3, can: () => chartFree() && navOK() && desk() && vis(q1("[data-range]")) && !(dash.userRange && !mayUndoUser()), run: async (c, g) => {
             await hold(["chart"], async () => { const t = q1('[data-range][aria-selected="false"]'); say(c, t.dataset.range === "12" ? "Comparing 12 months" : "Back to all time");
               await go(c, t, g); hov(c, t, true); if (await click(c, t, g, {disrupt: true})) await idle(c, rnd(1100, 1800), g); hov(c, t, false); }); } },
-        look(".mtop .btn-p", "Eyeing the full breakdown"),
+        look(".rhead .btn-p", "Eyeing the full breakdown"),
+        // the phase band: hover a phase to read its name and dates, sometimes pick it, then put "Turning point" back
+        { w: 3, can: () => chartFree() && qa(".pseg").filter(free).length > 1, run: async (c, g) => {
+            await hold(["chart"], async () => { const segs = qa(".pseg"), n = Math.min(segs.length, chance(.5) ? 2 : 3), s0 = Math.floor(rnd(0, segs.length - n + 1));
+              for (let j = 0; j < n; j++) { const b = segs[s0 + j]; say(c, "Reading the phases"); await go(c, b, g, .5, .5); hov(c, b, true); chartAPI.bandTip(b); await idle(c, rnd(600, 1000), g); hov(c, b, false); }
+              const b = segs[s0 + n - 1];
+              if (!b.classList.contains("on") && chance(.5) && await click(c, b, g)) { const home = q1('.pseg[data-b="32"]'); mess(b, home, () => !home.classList.contains("on")); await idle(c, rnd(700, 1100), g);
+                say(c, "Back to the turning point"); await go(c, home, g, .5, .5); await click(c, home, g, {must: true}); tidied(b); }
+              chartAPI.bandTip(null); }); } },
         nav("#srcbtn", "Opening the sources", 3),
         { w: 2, can: () => desk() && navOK() && free("nav") && vis(dash.search) && !dash.search.value && U.focus !== dash.search, run: async (c, g) => { const inp = dash.search, lab = inp.closest(".search");
             await hold(["nav", inp], async () => { const word = any(["goji", "dm", "sten", "wind", "post", "champ"]); say(c, "Searching"); await go(c, inp, g);
@@ -491,31 +526,36 @@
               finally { lab.classList.remove("gh-focus"); S.typing = false; } }); } },
       ],
       drawer: [
-        look(".sd-l li", el => "Checking " + el.querySelector(".sr-n").textContent.trim(), [rnd(.15, .5), .5]),
+        look(".sd-l li", el => "Checking " + el.querySelector(".sr-t b").textContent.trim(), [rnd(.15, .5), .5]),
         look(".sd-l li", "Reading a source"),
         look(".sd-f", "Eyeing the breakdown link"),
         { w: 2.5, can: () => navOK() && free("nav") && !(dash.userDrawer && !mayUndoUser()) && vis(q1(".sd-x")), run: async (c, g) => { const x = q1(".sd-x");
             await hold(["nav", x], async () => { say(c, "Closing the sources"); await go(c, x, g, .5, .5); hov(c, x, true); await click(c, x, g, {must: true, disrupt: true}); hov(c, x, false); }); } },
       ],
       search: [
-        { w: 6, can: () => navOK() && free("nav") && qa(".side .si").length > 0 && U.focus !== dash.search, run: async (c, g) => { const hit = qa(".side .si")[0];
+        { w: 14, can: () => navOK() && free("nav") && qa("#sres button").length > 0 && U.focus !== dash.search, run: async (c, g) => { const hit = qa("#sres button")[0];
             await hold(["nav", hit], async () => { say(c, "Opening " + label(hit)); await go(c, hit, g); hov(c, hit, true); await idle(c, rnd(150, 350), g);
-              if (U.focus !== dash.search && !dash.userQ) { dash.search.value = ""; dash.filter(); }      // the result stays put once the list is full again
               await click(c, hit, g, {must: true, disrupt: true}); hov(c, hit, false); }); } },
-        { w: 2, can: () => !dash.userQ && U.focus !== dash.search, run: async (c, g) => { const inp = dash.search, lab = inp.closest(".search");
+        { w: 6, can: () => !dash.userQ && U.focus !== dash.search, run: async (c, g) => { const inp = dash.search, lab = inp.closest(".search");
             await hold([inp], async () => { say(c, "Clearing the search"); await go(c, inp, g); lab.classList.add("gh-focus");
               try { while (inp.value && U.focus !== inp) { inp.value = inp.value.slice(0, -1); dash.filter(); await wait(rnd(60, 110), g); } } finally { lab.classList.remove("gh-focus"); } }); } },
       ],
       home: [
-        look(VX(".hcard:not(.hcont)"), "Reading this week's story"),
-        nav(VX(".hcard:not(.hcont)"), "Continue reading Postiz"),
-        look(VX(".hcont"), "Looking at my checklist"),
-        nav(VX(".hcont"), "Opening my checklist"),
-        look(VX(".vrow"), el => "Looking at " + el.querySelector("b").textContent),
-        nav(VX(".vrow"), el => "Opening " + el.querySelector("b").textContent, 1.5),
+        look(VX(".hcont .hc-t"), "Checking where I left off"),
+        look(VX(".hres"), "About to resume"),
+        nav(VX(".hres"), "Resuming Postiz", 2.5),
+        look(VX(".hnext"), "Reading the next breakdown"),
+        nav(VX(".hnext"), "Opening DM Champ", 1.5),
+        look(VX(".hck"), el => "Looking at " + el.querySelector(".hk-t b").textContent.split(" · ")[0]),
+        nav(VX(".hck"), el => "Opening " + (el.dataset.go === "path" ? "my path" : "my checklist"), 1.5),
+        look(VX(".hlike"), el => "Looking at " + el.querySelector("b").textContent),
+        nav(VX(".hlike"), el => "Opening " + el.querySelector("b").textContent, 1.2),
+        look(VX(".hsoon"), el => "Checking " + el.querySelector("b").textContent),
+        nav(VX(".hsoon"), el => "Opening " + el.querySelector("b").textContent, 1),
       ],
       breakdowns: [
         look(VX(".vrow:not([hidden])"), el => "Looking at " + el.querySelector("b").textContent),
+        look(VX(".lgrp"), "Reading the patterns"),
         { w: 3, can: () => qa("[data-vf]").filter(free).length > 1, run: async (c, g) => { const cur = q1('[data-vf][aria-pressed="true"]'), b = any(qa('[data-vf][aria-pressed="false"]').filter(free)); if (!b) throw CANCEL;
             await hold([b], async () => { say(c, b.dataset.vf === "all" ? "Showing all" : "Filtering: " + b.textContent.trim()); await go(c, b, g); hov(c, b, true);
               if (await click(c, b, g)) { if (b.dataset.vf === "all") tidied(q1("[data-vf]")); else mess(q1("[data-vf]"), q1('[data-vf="all"]'), () => q1('[data-vf="all"]').getAttribute("aria-pressed") !== "true"); await idle(c, rnd(700, 1300), g); } hov(c, b, false); }); } },
@@ -526,19 +566,29 @@
         { w: 5, can: () => qa(VX(".ck")).some(k => free(k) && k.dataset.u !== "1"), run: async (c, g) => { const k = any(qa(VX(".ck")).filter(x => free(x) && x.dataset.u !== "1"));
             await hold([k], async () => { const was = k.getAttribute("aria-pressed"); say(c, was === "true" ? "Unticking a step" : "Ticking a step"); await go(c, k, g, rnd(.08, .4)); hov(c, k, true);
               if (await click(c, k, g)) { mess(k, k, () => k.getAttribute("aria-pressed") !== was && k.dataset.u !== "1"); await idle(c, rnd(600, 1200), g); if (k.getAttribute("aria-pressed") !== was && k.dataset.u !== "1") { say(c, "Putting it back"); await click(c, k, g, {must: true}); } tidied(k); } hov(c, k, false); }); } },
-        look(VX(".vh .prog"), "Checking my progress"),
+        look(VX("#ckpn"), "Checking my progress"),
+        nav(VX(".ckh .hlink"), "Opening the breakdown", 1.2),
+        look(VX(".ckpath"), "Looking at my path"),
+        nav(VX(".ckpath"), "Opening my path", 1),
+        look(VX(".cksoon"), "Checking what's coming"),
+        nav(VX(".cksoon"), "Opening the library", .8),
         look(VX(".ck"), "Reading a step", [rnd(.3, .8), .5]),
       ],
-      sources: [
-        look(VX(".vs-b"), el => "Looking at " + el.textContent.replace(el.querySelector(".lb") ? el.querySelector(".lb").textContent : "", "").trim()),
-        { w: 4, can: () => qa(VX(".vs-b")).some(b => free(b) && !b.parentElement.classList.contains("open")), run: async (c, g) => { const b = any(qa(VX(".vs-b")).filter(x => free(x) && !x.parentElement.classList.contains("open")));
-            await hold([b], async () => { say(c, "Opening a source"); await go(c, b, g); hov(c, b, true);
-              if (await click(c, b, g)) { mess(b, b, () => b.parentElement.classList.contains("open")); await idle(c, rnd(900, 1600), g); if (b.parentElement.classList.contains("open")) { await click(c, b, g, {must: true}); } tidied(b); } hov(c, b, false); }); } },
+      path: [
+        look(VX(".pst"), el => el.classList.contains("now") ? "Reading my next step" : "Reading a step", [rnd(.2, .7), .4]),
+        look(VX(".pmeta"), "Checking where it's from"),
+        { w: 3, can: () => qa(VX(".pdone")).some(b => free(b) && b.dataset.u !== "1" && b.getAttribute("aria-pressed") === "false"), run: async (c, g) => { const b = q1(".pdone");
+            await hold([b], async () => { say(c, "Marking the step done"); await go(c, b, g); hov(c, b, true);
+              if (await click(c, b, g)) { mess(b, b, () => b.getAttribute("aria-pressed") === "true" && b.dataset.u !== "1"); await idle(c, rnd(900, 1400), g);
+                if (b.getAttribute("aria-pressed") === "true" && b.dataset.u !== "1") { say(c, "Undo, not yet"); await click(c, b, g, {must: true}); } tidied(b); } hov(c, b, false); }); } },
       ],
       soon: [
         look(VX("#sonum"), "Reading the number"),
         look(VX(".so-n .lb"), "Checking the label"),
+        look(VX(".so-spk"), "Reading the monthly revenue", [0.85, 0.3]),
+        look(VX(".so-know li"), "Reading what we know"),
         look(VX(".so-a .btn-p"), "Eyeing the weekly email"),
+        look(VX(".sst"), el => "Checking: " + el.textContent.trim()),
         nav(VX('.so-a [data-go="postiz"]'), "Back to Postiz", 2.5),
       ],
       // anywhere on desktop: hover the sidebar or Go Pro, and after a while move on to another view
@@ -546,7 +596,7 @@
         { w: 1.5, can: () => desk() && qa(".side .si").filter(free).length > 0, run: async (c, g) => { const el = any(qa(".side .si").filter(free));
             await hold([el], async () => { say(c, "Browsing"); await go(c, el, g); hov(c, el, true); await idle(c, rnd(350, 800), g); hov(c, el, false); }); } },
         { w: 1, can: () => desk() && free(q1(".splan a")), run: async (c, g) => { const a = q1(".splan a");
-            await hold([a, "gopro"], async () => { say(c, "Looking at Go Pro"); await go(c, a, g); hov(c, a, true); await idle(c, rnd(500, 900), g); hov(c, a, false); }); } },
+            await hold([a, "gopro"], async () => { say(c, "Looking at Upgrade"); await go(c, a, g); hov(c, a, true); await idle(c, rnd(500, 900), g); hov(c, a, false); }); } },
         { w: 0, can: () => { if (!desk() || !navOK() || !free("nav") || st().drawer) return false; const t = performance.now() - S.viewSince, home = st().view === "postiz";
               return t > S.stay ? (home ? 3 : 6) + (t - S.stay) / 1500 : false; },
           run: async (c, g) => { const s = st(), opts = s.view === "postiz" ? qa('.side .si:not([data-go="postiz"])') : chance(.55) ? [side("postiz")] : qa(".side .si").filter(x => !x.classList.contains("on"));
@@ -671,7 +721,7 @@
   if (!reduce) {
     const REACH = 12, PULL = .28, MAX = 8, IN = .16, OUT = .1, st = new Map(); let mx = -999, my = -999, running = false;
     const frame = () => { let moving = false;
-      $$(".btn").forEach(b => { let q = st.get(b); if (!q) { q = {x: 0, y: 0}; st.set(b, q); } const r = b.getBoundingClientRect(); if (!r.width) return;
+      $$(".btn").forEach(b => { if (b.closest("#win")) return; /* the demo window's buttons stay still */ let q = st.get(b); if (!q) { q = {x: 0, y: 0}; st.set(b, q); } const r = b.getBoundingClientRect(); if (!r.width) return;
         const l = r.left - q.x, t = r.top - q.y, cx = l + r.width / 2, cy = t + r.height / 2;
         const near = Math.hypot(Math.max(l - mx, 0, mx - (l + r.width)), Math.max(t - my, 0, my - (t + r.height))) <= REACH;
         const tx = near ? Math.max(-MAX, Math.min(MAX, (mx - cx) * PULL)) : 0, ty = near ? Math.max(-MAX, Math.min(MAX, (my - cy) * PULL)) : 0, f = near ? IN : OUT;
