@@ -92,7 +92,7 @@ HEAD = '''<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<meta name="robots" content="noindex">
+{og}<meta name="robots" content="noindex">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -123,6 +123,11 @@ def write(path, text):
     with open(tmp, "w", encoding="utf-8") as f: f.write(text)
     os.replace(tmp, path)
 
+def og(out):
+    # ponytail: blog posts get their cover; every other page uses the Postiz cover
+    slug = out.split("/")[1] if out.startswith("blog/") and out.count("/") == 2 else "postiz"
+    return f'<meta property="og:image" content="https://launchvault-site.vercel.app/assets/covers/{slug}.png">' + chr(10)
+
 def main():
     css = "/* LaunchVault site styles. Part 1: the round 10 homepage system (design/round10/final/mockup.html). Part 2: the other pages. Built by build.py. */\n"
     # read every input before opening the output, then write via a temp file, so a missing input can never leave site.css empty
@@ -137,7 +142,7 @@ def main():
     for out, body, title, desc, active, bstrip, fn, cls in PAGES:
         b = read(body)
         for k, v in frag.items(): b = b.replace(k, v)
-        html = (HEAD.format(title=title, desc=desc) + f'<body{" class=" + chr(34) + cls + chr(34) if cls else ""}>\n' + sprite + "\n" + nav(active)
+        html = (HEAD.format(title=title, desc=desc, og=og(out)) + f'<body{" class=" + chr(34) + cls + chr(34) if cls else ""}>\n' + sprite + "\n" + nav(active)
                 + '\n<main id="main">\n' + b + ("\n" + strip if bstrip else "") + "\n</main>\n"
                 + FOOTER + '\n<script src="/assets/site.js" defer></script>\n<script src="/assets/home.js" defer></script>\n</body>\n</html>\n')
         path = os.path.join(ROOT, out); os.makedirs(os.path.dirname(path), exist_ok=True)
