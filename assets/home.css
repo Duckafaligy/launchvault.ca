@@ -63,7 +63,6 @@
 #inside .bar2 b{display:inline-block}
 #inside .tpanel:not([hidden]){animation:none}
 #inside .tpanel .mchart svg{animation:none}
-#inside .tpanel.leaving{position:absolute;left:0;right:0;z-index:0;pointer-events:none}
 
 @media (prefers-reduced-motion:no-preference){
   /* 01: the line draws, markers land as it passes them, rows follow */

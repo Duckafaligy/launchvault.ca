@@ -130,34 +130,22 @@
     });
   }
 
-  // ---------- inside a breakdown: ARIA tabs with a sliding indicator, crossfading panels, animated height and content ----------
+  // ---------- inside a breakdown: ARIA tabs with a sliding indicator; panels crossfade in a fixed-size window ----------
   const parts = $("#inside .parts[data-tabs]"), win = $("#inside .cwin");
   if (parts && win) {
     const tabs = $$('[role="tab"]', parts), nm = $("#cropname"), panel = t => document.getElementById(t.getAttribute("aria-controls"));
     const ind = document.createElement("i"); ind.className = "pind"; ind.setAttribute("aria-hidden", "true"); parts.prepend(ind); parts.classList.add("has-pind");
-    let cur = tabs.find(t => t.getAttribute("aria-selected") === "true") || tabs[0], cleanup = null;
+    // the panels share one grid cell, so the window is always as tall as the tallest panel: it never resizes between tabs
+    let cur = tabs.find(t => t.getAttribute("aria-selected") === "true") || tabs[0];
     const place = () => { ind.style.transform = `translateY(${cur.offsetTop}px)`; ind.style.height = cur.offsetHeight + "px"; };
     const play = p => { p.classList.remove("play"); void p.offsetWidth; p.classList.add("play"); };
+    const show = () => tabs.forEach(x => { const on = x === cur, p = panel(x); x.setAttribute("aria-selected", on); x.tabIndex = on ? 0 : -1; p.hidden = false; p.classList.toggle("on", on); p.toggleAttribute("inert", !on); });
     const select = (t, focus) => {
-      tabs.forEach(x => { const on = x === t; x.setAttribute("aria-selected", on); x.tabIndex = on ? 0 : -1; });
+      const prev = cur; cur = t; show(); place();
       if (focus) t.focus();
-      if (cleanup) cleanup();
-      const prev = cur, a = panel(prev), b = panel(t); cur = t; place();
-      if (t === prev) { b.hidden = false; return; }
+      if (t === prev) return;
       if (nm) { nm.textContent = t.querySelector("b").textContent; if (!reduce && nm.animate) nm.animate([{opacity: 0, transform: "translateY(6px)"}, {opacity: 1, transform: "none"}], {duration: 380, easing: OUT}); }
-      if (reduce || !win.animate) { a.hidden = true; b.hidden = false; b.classList.add("play"); return; }
-      const dir = tabs.indexOf(t) > tabs.indexOf(prev) ? 1 : -1, h0 = win.offsetHeight, top = a.offsetTop;
-      a.classList.add("leaving"); a.style.top = top + "px";       // the old panel floats on top while it fades out
-      b.hidden = false; play(b);
-      const h1 = win.offsetHeight;
-      const anims = [
-        win.animate([{height: h0 + "px"}, {height: h1 + "px"}], {duration: 520, easing: OUT}),
-        a.animate([{opacity: 1, transform: "none"}, {opacity: 0, transform: `translateX(${-dir * 28}px)`}], {duration: 240, easing: "cubic-bezier(.4,0,1,1)", fill: "forwards"}),
-        b.animate([{opacity: 0, transform: `translateX(${dir * 28}px)`}, {opacity: 1, transform: "none"}], {duration: 520, delay: 90, easing: OUT, fill: "backwards"})
-      ];
-      cleanup = () => { anims.forEach(x => x.cancel()); a.hidden = true; a.classList.remove("leaving"); a.style.top = ""; cleanup = null; };
-      anims[1].onfinish = () => { if (cleanup) { a.hidden = true; a.classList.remove("leaving"); a.style.top = ""; anims[1].cancel(); } };
-      anims[0].onfinish = () => { cleanup = null; };
+      play(panel(t));
     };
     tabs.forEach((t, i) => {
       t.addEventListener("click", () => select(t));
@@ -167,24 +155,27 @@
         if (to) { e.preventDefault(); select(to, true); }
       });
     });
-    tabs.forEach(x => { const on = x === cur; x.setAttribute("aria-selected", on); x.tabIndex = on ? 0 : -1; panel(x).hidden = !on; });
+    show();
     ind.style.transition = "none"; place(); requestAnimationFrame(() => requestAnimationFrame(() => ind.style.transition = ""));
     // the first panel plays its entrance when the section scrolls into view
     const first = panel(cur);
     if (reduce || !("IntersectionObserver" in window)) first.classList.add("play");
     else { const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); play(panel(cur)); } }, {threshold: .35}); io.observe(win); }
-    // autoplay: about 3s per part, looping, with a progress bar on the active tab. Pauses while hovered or off screen;
-    // stops for good once you pick a tab yourself. Never runs under reduced motion.
+    // autoplay: about 3s per part, looping, with a progress bar on the active tab. Pauses while hovered or off screen.
+    // Picking a tab stops it; after 10s with no clicks or hovers in the section it resumes from the current tab. Never under reduced motion.
     if (!reduce) {
-      const box = $("#inside .split"); let stopped = false, hovering = false, visible = false;
+      const box = $("#inside"); let stopped = false, hovering = false, visible = false, idle = 0;
       tabs.forEach(t => { const f = document.createElement("span"); f.className = "pfill"; f.setAttribute("aria-hidden", "true"); t.append(f); });
       const sync = () => parts.classList.toggle("paused", hovering || !visible);
-      const stop = () => { stopped = true; parts.classList.remove("auto"); };
+      const resume = () => { if (!stopped || hovering) return; stopped = false; parts.classList.remove("auto"); void parts.offsetWidth; parts.classList.add("auto"); };
+      const arm = () => { clearTimeout(idle); if (stopped && !hovering) idle = setTimeout(resume, 10000); };
+      const stop = () => { stopped = true; parts.classList.remove("auto"); arm(); };
       parts.addEventListener("animationend", e => { if (e.animationName !== "part-fill" || stopped) return; select(tabs[(tabs.indexOf(cur) + 1) % tabs.length]); });
-      box.addEventListener("pointerenter", () => { hovering = true; sync(); });
-      box.addEventListener("pointerleave", () => { hovering = false; sync(); });
+      box.addEventListener("pointerenter", () => { hovering = true; clearTimeout(idle); sync(); });
+      box.addEventListener("pointerleave", () => { hovering = false; sync(); arm(); });
+      box.addEventListener("click", () => arm());
       tabs.forEach(t => { t.addEventListener("click", e => { if (e.isTrusted) stop(); }); t.addEventListener("keydown", stop); });
-      if ("IntersectionObserver" in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; sync(); }, {threshold: .4}).observe(box); else visible = true;
+      if ("IntersectionObserver" in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; sync(); }, {threshold: .4}).observe($("#inside .split")); else visible = true;
       parts.classList.add("auto"); sync();
     }
     let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(place, 80); });
@@ -204,6 +195,22 @@
 
   // ---------- stories: tabs (AI tools / Mobile apps / Services, no "All"); show the pressed tab's cards on load ----------
   const tab0 = $('#stories .filters .chip[aria-pressed="true"]'); if (tab0) tab0.click();
+
+  // ---------- FAQ: exactly one answer open, and the list keeps the height of its tallest open state, so the footer never moves ----------
+  const facc = $("#faq .acc");
+  if (facc) {
+    const ds = $$("details", facc);
+    facc.addEventListener("click", e => { const sm = e.target.closest("summary"); if (sm && sm.parentElement.classList.contains("is-open")) { e.preventDefault(); e.stopPropagation(); } }, true);
+    const fit = () => {
+      facc.style.height = "";
+      const openD = ds.find(d => d.open) || ds[0], ans = d => d.querySelector(".qa-a") || d;
+      const now = facc.offsetHeight, curA = openD.open ? ans(openD).offsetHeight : 0;
+      let max = 0; ds.forEach(d => { const was = d.open; d.open = true; max = Math.max(max, ans(d).offsetHeight); d.open = was; });
+      facc.style.height = (now - curA + max) + "px";
+    };
+    fit(); if (document.fonts) document.fonts.ready.then(fit);
+    let fr; addEventListener("resize", () => { clearTimeout(fr); fr = setTimeout(fit, 120); });
+  }
 
   // ---------- pricing: "Compare plans" opens the plan table in place ----------
   const cbtn = $(".cmpbtn"), cbox = cbtn && document.getElementById(cbtn.getAttribute("aria-controls"));

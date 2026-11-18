@@ -134,6 +134,23 @@ main > section .shead .lede{max-width:58ch}
 .parts.paused .part .pfill{animation-play-state:paused}
 @keyframes part-fill{to{transform:scaleX(1)}}
 
+/* ---------- inside: a stationary window. Panels share one grid cell (the window is the tallest panel's height) and crossfade ---------- */
+#inside .cwin{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;align-content:start}
+#inside .cwin > .bar2{grid-row:1}
+#inside .cwin > .tpanel,#inside .cwin > .tpanel[hidden]{display:block;grid-row:2;grid-column:1;align-self:start;position:static;opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
+#inside .cwin > .tpanel.ckl[hidden]{display:block}
+#inside .cwin > .tpanel.on{opacity:1;visibility:visible;transition:opacity .45s var(--out)}
+/* fact check: one real 3-column grid, same column widths on every row */
+#inside .fcm{grid-template-columns:168px minmax(0,1fr) 132px}
+#inside .fcm .lb{justify-self:end}
+@media (max-width:720px){#inside .fcm{grid-template-columns:minmax(0,1fr) auto}}
+/* FAQ: the list height is fixed by JS; rows shift inside it */
+#faq .acc{overflow:visible}
+
+/* ---------- blog cards: bigger, 2 x 2 (covers ~16:9 and readable) ---------- */
+@media (min-width:761px){.posts.tkposts{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}}
+.posts .post h3,#blog .post h3{font-size:24px;line-height:1.25}
+
 /* ---------- hero: fills the first screen exactly on desktop; the headline block and the dashboard centre as one group ---------- */
 @media (min-width:1024px){
   header.hero{min-height:100vh;min-height:100svh;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;padding-bottom:16px}
@@ -162,7 +179,7 @@ main > section .btn,main > section .tlink,main > section .tlink .arr,.cmpbtn,.fy
 #stories .qh,#stories .qtop span,#stories .nv small,#stories .ch,#stories .bnote,#stories .bc-sub,#stories .nod,
 #pricing small,#pricing .tg,#pricing .cs,#pricing .ps,#pricing .pnote,#pricing .tp,#pricing .tp .amt,#inside .part .i,#blog .by{font-size:14px}
 #stories .ftag b,#stories .sub2,#stories .facts dd,#stories .copy,#stories .bc-n b,#faq .qa-a p,#faq p{font-size:16px}
-#blog .post h3,#stories .qt b{font-size:18px}
+#stories .qt b{font-size:18px}
 #stories .feat h3,#stories .qbody h3,.qr-h{font-size:24px}
 #stories .bc-num b{font-size:32px}
 #pricing .plan .pr,#pricing .plan .pr .amt{font-size:48px}

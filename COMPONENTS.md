@@ -113,9 +113,10 @@ Section CSS for the condensed layout lives in `assets/design.css` (linked last).
 Sign in → `/welcome/`; sign-up CTAs → `/welcome/#signup` (plans add `?plan=pro|builder`). Fragments left in build.py: `{{POSTS}}`, `{{PLANS}}`, `{{FAQ}}`.
 
 ## Nav (round 11, owned by the nav coder)
-Markup: `nav()` + `MEGA` + `JUMP` in build.py. Styles: `assets/nav.css` (linked last). Behaviour: `assets/nav.js` (the old nav code in site.js is gone).
-- Rest: logo, centred tabs, CTA "Read your first success story" (short: "Read a story") → /welcome/. Scrolled, or at ≤1100px: tabs fold into the centred `#menubtn` (3 lines → "=" on hover/focus).
-- `#mega`: mouse hover opens at once, leaving closes (padding-top is the hover bridge); click/Enter/Space pins until a click outside, Esc or the button again. ≤720px it is a tap-to-open sheet with a ✕.
-- Section links are always `/#id`. **If you add, rename or remove a homepage `<section id>`, update `JUMP` in build.py.**
-- `.nav.ondk` (dark tint) is set while the bar sits over `.dk` or the footer. Scroll-spy sets `aria-current="location"` on tabs and jump rows.
-- Check: `node _review/nav/navcheck.js` (all pages × 1440/834/390, behaviour, reduced motion, link crawl).
+Markup: `nav()` + `mega_html()` in build.py. Styles: `assets/nav.css` (linked last). Behaviour: `assets/nav.js` (the old nav code in site.js is gone).
+- Rest: logo, centred tabs, CTA "Read your first success story" (short: "Read a story") → /welcome/. Scrolled, or at ≤1100px: tabs fold into the centred `#menubtn` (3 lines → "=").
+- `#mega` card: sidebar list (Stories, How we check, Race chart, Pricing, Inside a breakdown, FAQ, Blog) + a detail pane per item, fixed height. Hover opens at once, click pins, Esc / outside click close; arrows move through the list. ≤720px: a sheet, list first, tap for detail, back button.
+- **The card is built from the homepage markup** (story tabs + companies, plan names/prices, the 4 `#inside` tabs, the first 4 FAQ questions, the 4 blog posts). build.py stops with "mega_html: homepage markup changed shape" if those patterns change.
+- Any `/#id` link in the nav scrolls with animation; `data-f` (Stories tab), `data-t` (Inside tab id) and `data-q` (FAQ index) pick a tab or open a question. From other pages it goes home, then scrolls.
+- `.nav.ondk` (dark tint) over `.dk` and the footer. Scroll-spy sets `aria-current="location"` on tabs and sidebar items.
+- Check: `node _review/nav2/nav2check.js` (all pages × 1440/834/390, behaviour, card height, reduced motion, link crawl).
