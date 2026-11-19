@@ -38,7 +38,7 @@
   "facts": {
     "cost_to_start": {"text": "$1,000, as told to a founder-story site.", "label": "Claimed", "date": "Apr 10 2026", "source": "https://founderbase.ai/interviews/aeo-engine"},
     "first_revenue": {"text": "Not public. The business says its roots go back to an Amazon marketing agency started in 2018, so it already had paying clients before the AEO Engine name.", "label": "Claimed", "date": "Nov 19 2026", "source": "https://aeoengine.ai/about"},
-    "first_customers": {"text": "Not public. The company says the older agency served 100+ Amazon and Shopify brands, and the team is closely tied to Amazon seller communities and events.", "label": "Claimed", "date": "Nov 19 2026", "source": "https://aeoengine.ai/llm-info"},
+    "first_customers": {"short": "not public", "text": "Not public. The company says the older agency served 100+ Amazon and Shopify brands, and the team is closely tied to Amazon seller communities and events.", "label": "Claimed", "date": "Nov 19 2026", "source": "https://aeoengine.ai/llm-info"},
     "team": {"text": "1 founder listed on TrustMRR. The company's own About page also lists a co-founder.", "label": "Sources differ", "date": "Nov 19 2026", "source": "https://aeoengine.ai/about"}
   },
   "phases": [

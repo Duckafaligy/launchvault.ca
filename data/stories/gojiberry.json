@@ -36,7 +36,7 @@
   "facts": {
     "cost_to_start": {"text": "Not public. In December 2025 a case study said it was bootstrapped, with no outside funding.", "label": "Claimed", "date": "Dec 31 2025", "source": "https://superframeworks.com/case-study/gojiberry"},
     "first_revenue": {"text": "Not public. The first version made $0; sales began after the rebuild in mid-2025.", "label": "Claimed", "date": "Dec 31 2025", "source": "https://superframeworks.com/case-study/gojiberry"},
-    "first_customers": {"text": "The first version had a 2,000-person waitlist and made $0. After a rebuild around buying signals it reached 100+ paying customers in 60 days. The founder says Reddit helped bring the first 100.", "label": "Claimed", "date": "Jan 2026", "source": "https://www.youtube.com/watch?v=pvjalHFNM9Q"},
+    "first_customers": {"short": "A $0 waitlist, then a rebuild", "text": "The first version had a 2,000-person waitlist and made $0. After a rebuild around buying signals it reached 100+ paying customers in 60 days. The founder says Reddit helped bring the first 100.", "label": "Claimed", "date": "Jan 2026", "source": "https://www.youtube.com/watch?v=pvjalHFNM9Q"},
     "team": {"text": "1 founder listed on TrustMRR", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/superfruits"}
   },
   "phases": [

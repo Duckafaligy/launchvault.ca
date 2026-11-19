@@ -38,7 +38,7 @@
   "facts": {
     "cost_to_start": {"text": "Not public. The founder says 2015 to 2018 went on looking for money and paying an agency (an outside company hired to do the work) to build the software, but gives no total.", "label": "Claimed", "date": "Aug 8 2024", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder"},
     "first_revenue": {"text": "A Microsoft Word resume template plus a guide, sold for about $9.69.", "label": "Claimed", "date": "Aug 8 2024", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder"},
-    "first_customers": {"text": "Started after a resume template the founder posted on Reddit got used by others. The first product turned users' text into that template.", "label": "Claimed", "date": "Jul 5 2023", "source": "https://www.rezi.ai/posts/0-to-1-million-users"},
+    "first_customers": {"short": "A resume template shared on Reddit", "text": "Started after a resume template the founder posted on Reddit got used by others. The first product turned users' text into that template.", "label": "Claimed", "date": "Jul 5 2023", "source": "https://www.rezi.ai/posts/0-to-1-million-users"},
     "team": {"text": "1 founder listed on TrustMRR", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/rezi"}
   },
   "phases": [

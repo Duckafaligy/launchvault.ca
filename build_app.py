@@ -106,6 +106,8 @@ def validate(S, path=""):
         fact(f, f"fact_checks[{i}]")
     for k, f in (S.get("facts") or {}).items():
         if f and f.get("label"): fact(f, f"facts.{k}")
+    sh = ((S.get("facts") or {}).get("first_customers") or {}).get("short")
+    if sh is not None and not (isinstance(sh, str) and 0 < len(sh) <= 60): err.append("facts.first_customers.short: a string of 60 characters or fewer")
     for i, w in enumerate(S.get("wayback") or []):
         if not w.get("source") or not w.get("date") or not w.get("headline"): err.append(f"wayback[{i}]: needs date, headline and source")
     if len(S["checklist"]) < 3: err.append("checklist: need at least 3 items")
@@ -161,7 +163,7 @@ def norm_soon(s):
     if h["measure"] == "revenue in month": hv, hu, hd = money(h["value"]), f' in {mlab(h["month"])}', dlab(s["monthly"]["read_on"]) if s.get("monthly") else ""
     else: hv, hu, hd = money(h["value"]), " MRR", dlab(h["date"])
     m = (s.get("monthly") or {}).get("months") or {}
-    return {"slug": s["slug"], "name": s["company"], "tab": s["category"], "type": CAT1[s["category"]], "what": s.get("what", ""),
+    return {"slug": s["slug"], "name": s["company"], "tab": s["category"], "type": CAT1[s["category"]], "what": re.sub(r"\s*\([0-9a-f]{6}\)", "", s.get("what", "")),
             "logo": "/" + s["logo"].replace("site/", ""), "pattern": PATTERN.get(s["company"], "Pattern not checked yet"), "lessons": [],
             "hv": hv, "hu": hu, "hl": h["label"], "hd": hd, "hsrc": s.get("trustmrr_url", ""), "status": "soon", "stale": f'Stale · last synced {dlab(s["mrr"]["date"])}' if s.get("stale") and s.get("mrr") else "",
             "href": f"/app/story/{s['slug']}/", "read": 0, "published": "", "mrr": (s.get("mrr") or {}).get("value", 0),
@@ -185,9 +187,13 @@ def norm_ready(S, legacy):
     stale = f'Stale · last synced {dlab(legacy["mrr"]["date"])}' if legacy and legacy.get("stale") and legacy.get("mrr") else ""
     if stale: hd = dlab(legacy["mrr"]["date"])   # a stale headline carries the last sync date everywhere (quiz, Library, reader)
     tab = S.get("tab") if "tab" in S else {"AI tool": "ai", "Mobile app": "mobile", "Service": "services"}.get(S["category"])
-    return {"slug": S["slug"], "name": S["name"], "tab": tab, "type": S.get("type_label") or S["category"], "what": S["what"], "logo": S["logo"],
+    hm = "MRR" if hu == " MRR" else ("Revenue" + hu) if hu.startswith(" in ") else hu.lstrip(" ·")   # what the headline number is, in words
+    hsrc = (legacy.get("trustmrr_url") if legacy and (sub or stale) else "") or h.get("source", S["numbers"][0].get("source", ""))
+    fcu = (S.get("facts") or {}).get("first_customers") or {}; first = fcu.get("short") or ""
+    return {"first": first, "firstl": (fcu.get("label") or "") if first and first.lower() != "not public" else "", "hm": hm, "hs": src_name({"source": hsrc}),
+            "slug": S["slug"], "name": S["name"], "tab": tab, "type": S.get("type_label") or S["category"], "what": S["what"], "logo": S["logo"],
             "pattern": S["pattern"], "lessons": [p["lesson"] for p in S["phases"]], "hv": hv, "hu": hu, "hl": hl, "sub": sub,
-            "hd": hd, "hsrc": h.get("source", S["numbers"][0].get("source", "")), "status": "ready", "stale": stale,
+            "hd": hd, "hsrc": hsrc, "status": "ready", "stale": stale,
             "href": f"/app/story/{S['slug']}/", "read": S["read_min"], "published": S["published"],
             "mrr": mrr, "series": [[p[0], p[1]] for p in S["series"]["points"]], "title": S["title"], "S": S}
 def growth(series):
@@ -304,23 +310,53 @@ def chart_table(S):
             '<thead><tr><th scope="col">Month</th><th scope="col">Value</th><th scope="col">Label</th><th scope="col">Source</th></tr></thead><tbody>'
             + "".join(f'<tr><th scope="row">{esc(pd.get(m) or mlab(m))}{(" (" + kd[m] + ")") if m in kd else ""}</th><td>{money(v)}</td><td>{lb(l)}</td><td>{esc(src_name({"source": sr}) if sr else "")}</td></tr>' for m, v, l, sr in rows)
             + "</tbody></table></details>")
+def move_tags(S):
+    """Each move against the chart's months: 'in', 'before' or '' (unknown / after). A bare year only counts as before when the whole year is."""
+    se = S["series"]; mi = lambda t: int(t[:4]) * 12 + int(t[5:7]) - 1
+    x0 = min([mi(se["points"][0][0])] + ([mi(se["start"])] if se.get("start") else [])); x1 = mi(se["points"][-1][0]); out = []
+    for m in S["moves"]:
+        if m.get("at"): x = mi(m["at"]); out.append("in" if x0 <= x <= x1 else "before" if x < x0 else ""); continue
+        w = m.get("when", ""); ms = re.findall(r"\b(" + "|".join(MON) + r")[a-z]*\.? (?:\d{1,2},? )?(\d{4})", w); ys = re.findall(r"\b((?:19|20)\d{2})\b", w)
+        latest = max(int(y) * 12 + MONI[mo] - 1 for mo, y in ms) if ms else (max(map(int, ys)) * 12 + 11 if ys else None)
+        out.append("before" if latest is not None and latest < x0 else "")
+    return out
+def chart_intro(S):
+    """Says truthfully where the founder's moves are: on the line, before it, or only in the list."""
+    se = S["series"]; tags = move_tags(S) if S.get("moves") else []; n = len(tags); nin = tags.count("in"); bef = [i + 1 for i, t in enumerate(tags) if t == "before"]
+    a, b = mlab(se["points"][0][0]), mlab(se["points"][-1][0])
+    base = f'This chart shows {esc(se["what"].lower())}.'
+    if not n: return base
+    if nin == n: return base + " Numbered markers are the founder's moves; tap one to see what happened then."
+    if len(bef) == n: return f"This chart covers {a} to {b}. The founder's {n} moves came earlier; they are listed below."
+    def nums(L):
+        if len(L) == 1: return f"Move {L[0]}"
+        if len(L) > 2 and L == list(range(L[0], L[-1] + 1)): return f"Moves {L[0]} to {L[-1]}"
+        return "Moves " + ", ".join(map(str, L[:-1])) + f" and {L[-1]}"
+    out = [base + " Numbered markers are the founder's moves inside these months; tap one to see what happened then."] if nin else [f"This chart covers {a} to {b}."]
+    if bef: out.append(f"{nums(bef)} happened before this chart starts ({a}), so {'they are' if len(bef) > 1 else 'it is'} listed below, not on the line.")
+    rest = n - nin - len(bef)
+    if rest: out.append(f"{rest} more {'fall' if rest > 1 else 'falls'} outside these months or {'have' if rest > 1 else 'has'} no exact month, so {'they are' if rest > 1 else 'it is'} in the list only.")
+    return " ".join(out)
 def chart_block(S, moves_list=True, band=True):
     mark_mrr(S)
-    data = {"series": S["series"], "moves": [m for m in S["moves"]]}
+    data = {"series": S["series"], "moves": [{**m, "w": w} for m, w in zip(S["moves"], move_tags(S))] if S["moves"] else []}
     for i, p in enumerate(S["phases"]):
         for n in p.get("moves", []):
             if p.get("turn") and 0 < n <= len(data["moves"]): data["moves"][n - 1] = {**data["moves"][n - 1], "turn": True}
     legend = '<span><i class="lv"></i>Verified</span><span><i class="lc"></i>Claimed</span>' + ('<span><i class="lx"></i>Sources differ</span>' if any((p[2] if len(p) > 2 else "") == "Sources differ" for p in S["series"]["points"] + S["series"].get("alt", [])) else "") + ('<span><i class="lm">1</i>Founder\'s move</span>' if S["moves"] else "")
-    last = S["series"]["points"][-1]
+    nb = move_tags(S).count("before") if S["moves"] else 0
+    if nb: legend += f'<span><i class="lm bfk">← {nb}</i>{nb} move{"s" if nb > 1 else ""} before {mlab(min([S["series"]["points"][0][0]] + ([S["series"]["start"]] if S["series"].get("start") else [])))}</span>'
+    last = S["series"]["points"][-1]; kd = S["series"].get("kind") or {}
+    big = f'{kd[last[0]]}, {(S["series"].get("point_dates") or {}).get(last[0]) or mlab(last[0])}' if last[0] in kd else S["series"]["what"].lower()   # an MRR point is never called revenue
     ml = ""
     if moves_list and S["moves"]:
-        ml = f'<div class="mvh"><b>All {len(S["moves"])} moves</b><span>Tap one to move the chart</span></div><ol class="moves">' + "".join(f'<li><button type="button" data-i="{i}" class="{"turn" if data["moves"][i].get("turn") else ""}"><span class="n">{i + 1}</span><span>{esc(m["text"])}</span><span class="w">{esc(m["when"])}</span></button></li>' for i, m in enumerate(S["moves"])) + "</ol>"
+        ml = f'<div class="mvh"><b>All {len(S["moves"])} moves</b><span>Tap one to see it in the readout</span></div><ol class="moves">' + "".join(f'<li><button type="button" data-i="{i}" class="{"turn" if data["moves"][i].get("turn") else ""}"><span class="w">{esc(m["when"])}</span><span class="n">{i + 1}</span><span class="mt">{esc(m["text"])}</span></button></li>' for i, m in enumerate(S["moves"])) + "</ol>"
     bd = ""
     if band:
         bd = '<div class="pband" role="group" aria-label="Phases">' + "".join(f'<button type="button" data-ph="{i + 1}" aria-pressed="false" title="{esc(p["name"])}, {esc(p["when"])}">{esc(p.get("short") or p["name"])}</button>' for i, p in enumerate(S["phases"])) + "</div>"
-    return (f'<div class="chartc lvchart"><div class="hd"><div><div class="big">{money(last[1])}<small>{esc(S["series"]["what"].lower())}</small></div>'
+    return (f'<div class="chartc lvchart"><div class="hd"><div><div class="big">{money(last[1])}<small>{esc(big)}</small></div>'
             f'<div class="legend">{legend}</div></div></div><div class="readout" aria-live="polite"></div>'
-            f'<div class="plot"><svg role="img" aria-label="{esc(S["name"])}: {esc(S["series"]["what"].lower())}, ' + ", ".join(f"{mlab(p[0])} {money(p[1])}" for p in S["series"]["points"]) + f'"></svg></div>'
+            f'<div class="plot"><svg role="img" aria-label="{esc(S["name"])}: {esc(S["series"]["what"].lower())}, ' + ", ".join(f"{mlab(p[0])} {money(p[1])}" for p in S["series"]["points"]) + f'"></svg></div><noscript><p class="cfail">The chart needs JavaScript. The numbers are in the table below.</p></noscript>'
             f'{bd}{ml}{chart_table(S)}<p class="cprov">{esc(S["series"].get("note") or "Points carry their own labels. Hover or tap the line for the month, the value and where it came from.")}</p>'
             f'<script type="application/json" class="lvchart-data">{json.dumps(data, separators=(",", ":"))}</script></div>')
 
@@ -363,6 +399,21 @@ def link_row(S, cls="srow"):
     soc += "".join(f'<a class="soc txt" href="{esc(o["url"])}" target="_blank" rel="noopener">{esc(o["name"])} ↗</a>' for o in L.get("other", []))
     return f'<div class="{cls}">{btn}{soc}</div>'
 
+def first_block(S):
+    """How the first customers came: four facts, each with its label, source and date. No label = Not public, no chip."""
+    F = S.get("facts") or {}
+    def row(t, k):
+        f = F.get(k)
+        if not isinstance(f, dict): return ""
+        txt = f.get("text") or "Not public"
+        more = '<button type="button" class="fcmore" data-fcmore aria-expanded="false">More</button>' if len(txt) > 165 else ""   # about 4 lines on a phone
+        if not f.get("label"): return f'<div class="fcr"><dt>{t}</dt><dd><p class="fcv">{esc(txt)}</p></dd></div>'
+        meta = esc(" · ".join(x for x in (src_name(f), f.get("date", "")) if x)); u = f.get("source") or f.get("url") or ""
+        src = f'<a href="{esc(u)}" target="_blank" rel="noopener">{meta} <span aria-hidden="true">↗</span></a>' if u.startswith("http") else f"<span>{meta}</span>"
+        return f'<div class="fcr"><dt>{t}</dt><dd><p class="fcv">{esc(txt)}</p>{more}<p class="fcsrc">{lb(f["label"])}{src}</p></dd></div>'
+    rows = "".join(row(t, k) for t, k in (("First customers came from", "first_customers"), ("First money came from", "first_revenue"), ("Cost to start", "cost_to_start"), ("Team", "team")))
+    return f'<div class="fcust"><h2>How the first customers came</h2><dl>{rows}</dl></div>' if rows else ""
+
 def reader(E, S, gate=True):
     set_srcmap(S); slug = S["slug"]; n = len(S["phases"])
     me = next((e for e in E if e["slug"] == slug), {}); stale_chip = f'<span class="lb n">{esc(me["stale"])}</span>' if me.get("stale") else ""
@@ -372,10 +423,12 @@ def reader(E, S, gate=True):
     synced = next((x["date"] for x in S["numbers"] if tmr(x)), "")
     intro = lambda t: f'<p class="sint">{t}</p>'
     sec = lambda id_, h, t, body, extra="": f'<section class="rsec rcard" id="{id_}"{extra}><div class="sh"><h2>{h}</h2></div>{intro(t)}{body}</section>'
+    # "Check our work" panels: open on desktop, app.js folds them on phones
+    panel = lambda id_, h, t, body: f'<details class="cow" id="{id_}" open><summary><span class="cwh"><b>{h}</b><span>{t}</span></span><span class="chev" aria-hidden="true"></span></summary><div class="cwb">{body}</div></details>'
     def phase(i, p):
         body = "".join(f"<p>{esc(t)}</p>" for t in p["story"].split("\n\n"))
         return (f'<details class="ph" id="ph{i + 1}" data-ph="{i + 1}" open><summary><span class="pn">{i + 1}</span><span class="phh"><b>{esc(p["name"])}</b><span class="when">{esc(p["when"])}</span></span><span class="chev" aria-hidden="true"></span></summary>'
-                f'<div class="phb"><div class="body">{body}</div>{nbox(p.get("number") or [])}<p class="lesson"><b>Lesson</b>{esc(p["lesson"])}</p></div></details>')
+                f'<div class="phb"><div class="body">{body}</div>{nbox(p.get("number") or [])}<p class="lesson"><b>Lesson:</b> {esc(p["lesson"])}</p></div></details>')
     phases_free = phase(0, S["phases"][0]); phases_rest = "".join(phase(i, p) for i, p in enumerate(S["phases"]) if i)
     kmoves = ""
     if S.get("highlights"):
@@ -389,8 +442,8 @@ def reader(E, S, gate=True):
             link = "Open snapshot" if "archive.org" in w["source"] else "Open site"
             return (f'<li class="snap"><div class="sb"><b>{esc(w["date"])}</b>{lb(w.get("label", "Wayback"))}</div>'
                     f'{img}<p class="hl">"{esc(w["headline"])}"</p>' + (f'<p class="sp">{esc(w["sub"])}</p>' if w.get("sub") else "") + f'{prices(w.get("prices"))}<div class="ft"><span>{esc(w.get("prices_date", ""))}</span><a href="{esc(w["source"])}" target="_blank" rel="noopener">{link} ↗</a></div></li>')
-        tn = sec("then", "Then and now", "What the company's homepage said at different times, from saved copies of the page.", '<ol class="tnow">' + "".join(snap(w) for w in S["wayback"]) + "</ol>")
-    fc = sec("facts", "Fact checks", f'Claims people made about {esc(S["name"])}, and what the sources actually show. Checked {esc(S.get("fact_checks_read") or latest_date(x["date"] for x in S["sources"]))}.',
+        tn = panel("then", "Then and now", "What the company's homepage said at different times, from saved copies of the page.", '<ol class="tnow">' + "".join(snap(w) for w in S["wayback"]) + "</ol>")
+    fc = panel("facts", "Fact checks", f'Claims people made about {esc(S["name"])}, and what the sources actually show. Checked {esc(S.get("fact_checks_read") or latest_date(x["date"] for x in S["sources"]))}.',
              '<div class="fcards">' + "".join(f'<div class="fcard"><div class="fh">{lb(f["label"])}<span class="src">{esc(f.get("who") or src_name(f))} · {esc(f["date"])}</span></div>'
                                             f'<p class="said"><span>What was said</span>{esc(f["claim"])}</p><p class="found"><span>What we found</span>{esc(f["found"])}</p></div>' for f in S["fact_checks"])
              + '</div><p class="fnote">If we get a number wrong, we fix it here and note the change.</p>')
@@ -407,70 +460,82 @@ def reader(E, S, gate=True):
     srow = lambda x: ((f'<a class="sr2" href="{esc(x["url"])}" target="_blank" rel="noopener">' if x.get("url") else '<div class="sr2">') + src_logo(x)
                       + f'<span><b>{esc(x["name"])}</b><small>{esc(x.get("what", ""))}</small></span><span class="dt">{esc(x["date"])}</span>{lb(x["label"])}'
                       + (f'<span class="ext">{ic(I["ext"], 14)}</span></a>' if x.get("url") else '<span class="ext"></span></div>'))
-    src = sec("sources", "Sources", "Everywhere a number or quote in this breakdown comes from, with the date we read it.",
+    src = panel("sources", "Sources", "Everywhere a number or quote in this breakdown comes from, with the date we read it.",
               "".join(f'<h3 class="sgh">{g}</h3><div class="srcl">' + "".join(srow(x) for x in L) + "</div>" for g, L in grp.items() if L)
               + f'<div class="rfoot"><span>Breakdowns by LaunchVault. Not financial advice.</span><span>Last checked {esc(S["numbers"][0]["date"])}</span></div>')
-    gate_html = (f'<div class="gate" id="gate"><h3>{ic(I["lock"], 18)}The rest of this breakdown is on Pro</h3><p>Phase 1, the numbers, the chart and the Sources stay free.</p>'
-                 f'<div class="lk"><small>Locked on Free</small>Phases 2 to {n} · Then and now · Fact checks</div>'
-                 '<div class="acts"><a class="btn btn-p" href="/app/account/#plan">Get Pro</a><a class="btn btn-s" href="/app/account/#parent">Under 18? Send a parent link</a></div>'
-                 '<p class="fine">$7.99 a month · $6.49 a month billed yearly. Payments open with accounts.</p></div>')
+    # truthful gate: there is no checkout yet, so no button that looks like one
+    also = "the lessons recap, Fact checks and Then and now" if tn else "the lessons recap and Fact checks"
+    gate_html = (f'<div class="gate" id="gate"><h3>{ic(I["lock"], 18)}{f"Phases 2 to {n} are" if n > 2 else "Phase 2 is"} on Pro</h3><p>Pro is $7.99 a month. Payments open soon.</p>'
+                 f'<p>Phase 1, the numbers, the checklist, the story check and the Sources stay free. Also on Pro: {also}.</p>'
+                 '<div class="acts"><a class="btn btn-s" href="/app/account/#parent">Under 18? Send a parent link</a></div></div>')
     teaser = f'<div class="gatewrap"><div class="fade" aria-hidden="true">{phase(1, S["phases"][1]).replace(" open>", ">")}</div>{gate_html}</div>' if n > 1 and gate else ""
     phs = sec("phases", "How it happened", f"The story in {n} steps, in order. Each one ends with a lesson you can use.", f'<div class="ptl">{phases_free}' + (teaser + f'<div id="locked" data-locked="1" hidden>{phases_rest}</div>' if gate else phases_rest) + "</div>")
     locked = lambda h: f'<div data-locked="1" hidden>{h}</div>' if gate and h else h
-    chk = check_html(S, E)
-    nav_items = [("overview", "Overview"), ("chart", "The numbers"), ("phases", "How it happened")] + ([("two", "Key moves")] if kmoves else []) + ([] if gate else [("facts", "Fact checks")] + ([("then", "Then and now")] if tn else [])) + [("todo", "Checklist")] + ([("check", "Story check")] if chk else []) + [("sources", "Sources")]
+    chk = check_html(S, E, gate)
+    recap = sec("lessons", f"The whole story in {n} lesson{'s' if n != 1 else ''}", "Every phase's lesson in one place. Tap a phase name to go back to it.",
+                '<ol class="recap">' + "".join(f'<li><span class="rn">{i + 1}</span><div><p>{esc(p["lesson"])}</p><a href="#ph{i + 1}">Phase {i + 1}: {esc(p["name"])}</a></div></li>' for i, p in enumerate(S["phases"])) + "</ol>")
+    proof = ('<section class="rsec rcard" id="proof"><div class="sh"><h2>Check our work</h2></div>' + intro("Where every claim and number comes from. Open a panel and check it yourself.") + locked(fc) + locked(tn) + src + "</section>")
+    nav_items = [("overview", "Overview"), ("chart", "The numbers"), ("phases", "How it happened"), ("todo", "Checklist")] + ([("check", "Story check")] if chk else []) + [("proof", "Check our work")]
+    rail = ('<aside class="rrail"><nav class="rtoc" aria-label="On this page"><h2>On this page</h2>' + "".join(f'<a href="#{k}" data-r="{k}"><span>{t}</span><i data-rdone="{k}" hidden>{CHK}</i></a>' for k, t in nav_items) + "</nav>"
+            f'<div class="rnext"><h2>Your next step</h2><p data-cknext="{slug}"></p><a class="btn btn-p" href="#todo">Jump to the checklist</a></div></aside>')
     nav = (f'<nav class="snav" aria-label="Sections"><div class="snav-in">' + "".join(f'<a href="#{k}" data-r="{k}">{t}</a>' for k, t in nav_items)
            + f'</div><span class="snph">Phase <b data-curph>1</b> of {n}</span><div class="rprog"><i data-readbar2></i></div></nav>')
     title = S["title"]; em = S.get("title_em")
     t_html = esc(title[:-len(em.rstrip("."))]) + f'<em class="em">{esc(em.rstrip("."))}</em>' if em and title.endswith(em.rstrip(".")) else esc(title)
     over = (f'<section class="rsec rcard sumc" id="overview"><div class="rh"><span class="logo big"><img src="{S["logo"]}" alt="" width="44" height="44"></span><div class="rhm">'
-            f'<p class="co"><b>{esc(S["name"])}</b><span class="tag">{esc(S.get("type_label") or S["category"])}</span>{stale_chip}</p><p class="what">{esc(S["what"])}</p></div>'
+            f'<p class="co"><b>{esc(S["name"])}</b><span class="tag">{esc(S.get("type_label") or S["category"])}</span>{stale_chip}</p><p class="what">{esc(S["what"])}</p><p class="what pat">Pattern: <b>{esc(S["pattern"])}</b></p></div>'
             f'<button type="button" class="star" data-star="{slug}" aria-pressed="false">{ic(I["saved"], 18)}<span>Save</span></button></div>'
-            f'<h1>{t_html}</h1><p class="dek">{esc(S["dek"])}</p>{link_row(S)}'
+            f'<h1>{t_html}</h1><p class="dek">{esc(S["dek"])}</p>{link_row(S)}{first_block(S)}'
             f'<div class="ktiles">{nums}</div>' + (f'<p class="synced">Revenue numbers from TrustMRR, synced {esc(synced)}.</p>' if synced else "")
             + f'<div class="rmeta"><span>By LaunchVault</span><span>{len(S["sources"])} sources</span><span>{S["read_min"]} min read</span><button type="button" class="rpt" data-report="{esc(slug)}">Report a mistake</button></div></section>')
-    art = (over + sec("chart", "The numbers", f'This chart shows {esc(S["series"]["what"].lower())}. Numbered markers are the founder\'s moves; tap one to see what happened then.', chart_block(S))
-           + phs + kmoves + locked(fc) + locked(tn) + ck + chk + src)
-    body = f'{nav}<div class="rd rd2" data-reader="{slug}" data-phases="{n}"><article>{art}</article></div>'
+    art = (over + sec("chart", "The numbers", chart_intro(S), chart_block(S))
+           + phs + kmoves + locked(recap) + ck + chk + proof)
+    body = f'{nav}<div class="rd rd2" data-reader="{slug}" data-phases="{n}"><article>{art}</article>{rail}</div>'
     return shell(E, S["name"], S["dek"], "story-" + slug, body, crumbs=[("/app/library/", "Library"), ("", S["name"])], scripts='\n<script src="/assets/chart.js" defer></script>', og_slug=slug)
 
-def story_check(S, E):
-    """4-5 multiple-choice questions, each answer traced to a field in the story JSON. Order is deterministic (hash), not random."""
+def story_check(S, E, gate=False):
+    """Up to 5 multiple-choice questions. Every right answer is a field of this story's JSON; every wrong one is real text from another story (nothing invented).
+    Order is deterministic (hash), not random. "h"/"hl" say where in the reader the answer is."""
     import hashlib
+    hk = lambda *a: hashlib.md5("|".join((S["slug"],) + a).encode()).hexdigest()
     def mix(key, right, wrong):
         opts = list(dict.fromkeys([right] + [w for w in wrong if w != right]))[:4]
-        opts.sort(key=lambda o: hashlib.md5((S["slug"] + key + o).encode()).hexdigest())
+        opts.sort(key=lambda o: hk(key, o))
         return opts, opts.index(right)
+    pick = lambda key, pool, bad=(): sorted({x for x in pool if x and x not in bad}, key=lambda x: hk(key, x))[:3]
+    others = [e["S"] for e in E if e["status"] == "ready" and e["slug"] != S["slug"]]
+    short = lambda X: ((X.get("facts") or {}).get("first_customers") or {}).get("short") or ""
+    ctext = lambda c: c["text"] if isinstance(c, dict) else c
     Q = []
-    ph = S["phases"]
-    if len(ph) >= 3:
-        o, a = mix("ph", ph[0]["name"], [p["name"] for p in ph[1:]][-3:])
-        Q.append({"q": "Which phase came first?", "o": o, "a": a, "e": f'Phase 1 is "{ph[0]["name"]}" ({ph[0]["when"]}).'})
-    whens = [m.get("when") for m in S["moves"]]
-    mv = next((m for m in S["moves"] if m.get("when") and whens.count(m["when"]) == 1), None)
-    if mv and len(S["moves"]) >= 4:
-        o, a = mix("mv", mv["text"], [m["text"] for m in S["moves"] if m is not mv][:3])
-        Q.append({"q": f'Which move happened in {mv["when"]}?', "o": o, "a": a, "e": f'In {mv["when"]}: {mv["text"]}.' + (f' Labelled {mv["label"]}.' if mv.get("label") else "")})
-    num = next((x for x in S["numbers"] if x["label"] == "Verified" and "MRR" in x["k"]), None) or next((x for x in S["numbers"] if x["label"] == "Verified"), None)
-    if num and re.fullmatch(r"\$[\d,]+", num["v"]):
-        v = int(num["v"][1:].replace(",", ""))
-        def r3(x): d = max(0, len(str(int(x))) - 3); return int(round(x / 10 ** d) * 10 ** d)
-        o, a = mix("num", num["v"], [money(r3(v * f)) for f in (0.5, 2, 10)])
-        Q.append({"q": f'What was the verified {"MRR" if "MRR" in num["k"] else num["k"]} on {num["date"]}?', "o": o, "a": a, "e": f'{num["v"]}, labelled Verified, read {num["date"]}.'})
-    pats = [e["pattern"] for e in E if e["status"] == "ready" and e["slug"] != S["slug"] and e["pattern"] != S["pattern"]]
-    if len(set(pats)) >= 3:
-        o, a = mix("pat", S["pattern"], sorted(set(pats), key=lambda t: hashlib.md5((S["slug"] + t).encode()).hexdigest())[:3])
-        Q.append({"q": "Which pattern does this story follow?", "o": o, "a": a, "e": f'The pattern is "{S["pattern"]}".'})
+    fcu = (S.get("facts") or {}).get("first_customers") or {}; sh = short(S)
+    pool = pick("fc", [short(o) for o in others if short(o).lower() != "not public"], (sh,))
+    if sh and fcu.get("text") and len(pool) == 3:
+        o, a = mix("fc", "Not public" if sh.lower() == "not public" else sh, pool)
+        Q.append({"q": f'Where did {S["name"]}\'s first customers come from?', "o": o, "a": a, "e": fcu["text"], "h": "#overview", "hl": "How the first customers came"})
+    ph = S["phases"]; i = 0 if gate else int(hk("lesson"), 16) % len(ph)   # a gated story only asks about the free phase
+    pool = pick("ls", [p["lesson"] for o in others for p in o["phases"]], [p["lesson"] for p in ph])
+    if len(pool) == 3:
+        o, a = mix("ls", ph[i]["lesson"], pool)
+        Q.append({"q": f'Which lesson belongs to phase {i + 1}, "{ph[i]["name"]}"?', "o": o, "a": a, "e": f'That is the lesson at the end of phase {i + 1} ({ph[i]["when"]}).', "h": f"#ph{i + 1}", "hl": f'Phase {i + 1}: {ph[i]["name"]}'})
+    pool = pick("pat", [o["pattern"] for o in others], (S["pattern"],))
+    if len(pool) == 3:
+        o, a = mix("pat", S["pattern"], pool)
+        Q.append({"q": "Which pattern does this story follow?", "o": o, "a": a, "e": f'The pattern is "{S["pattern"]}".', "h": "#overview", "hl": "Overview"})
     fcs = [f for f in S["fact_checks"] if f["label"] in ("Verified", "Claimed", "Sources differ", "Couldn't verify")]
-    if fcs:
+    if fcs and not gate:   # fact checks are locked on a gated story, so it is not asked there
         f = next((f for f in fcs if f["label"] == "Claimed"), fcs[0])
         o, a = mix("lab", f["label"], ["Verified", "Claimed", "Sources differ", "Couldn't verify"])
-        Q.append({"q": f'How is this claim labelled: "{f["claim"]}"?', "o": o, "a": a, "e": f'Labelled {f["label"]}. {f["found"]}'})
+        Q.append({"q": f'How is this claim labelled: "{f["claim"]}"?', "o": o, "a": a, "e": f'Labelled {f["label"]}. {f["found"]}', "h": "#facts", "hl": "Fact checks"})
+    cl = [ctext(c) for c in S["checklist"]]; k = int(hk("step"), 16) % len(cl)
+    pool = pick("ck", [ctext(c) for o in others for c in o["checklist"]], cl)
+    if len(pool) == 3:
+        o, a = mix("ck", cl[k], pool)
+        Q.append({"q": "Which of these steps is on this story's checklist?", "o": o, "a": a, "e": f'It is step {k + 1} on the {S["name"]} checklist. The other three come from other breakdowns.', "h": "#todo", "hl": "Your checklist"})
     return Q[:5]
-def check_html(S, E):
-    Q = story_check(S, E)
+def check_html(S, E, gate=False):
+    Q = story_check(S, E, gate)
     if len(Q) < 3: return ""
-    return (f'<section class="rsec rcard" id="check"><div class="sh"><h2>Story check</h2></div><p class="sint">{len(Q)} quick questions, all answered in this breakdown. See how much stuck.</p>'
+    return (f'<section class="rsec rcard" id="check"><div class="sh"><h2>Story check</h2></div><p class="sint">Takes about 2 minutes. {len(Q)} questions. {len(Q) - 1} to log the story as complete.</p>'
             f'<div class="scheck" data-check="{S["slug"]}"><script type="application/json">{json.dumps(Q).replace("</", "<\\/")}</script><div data-checkbody></div></div></section>')
 
 # ============================================================ coming-soon story page
@@ -489,18 +554,19 @@ def soon_page(E, e):
         if isinstance(f, dict): know.append((t + f["text"], f.get("label"), (dlab(f["date"]) if len(f.get("date", "")) == 10 else mlab(f["date"]) if f.get("date") else ""), f.get("source")))
     know.append(("Revenue read by TrustMRR from " + s["payment_source"].replace(" (API key)", ""), "Verified", e["hd"], s.get("trustmrr_url")))
     kl = "".join(f'<div class="row"><span style="flex:1;min-width:0;color:#0B1220">{esc(t)}</span>{lb(l)}<span class="meta">{esc(d)}</span>'
-                 + (f'<a class="tl" href="{esc(u)}" target="_blank" rel="noopener" aria-label="Source">↗</a>' if u and u.startswith("http") else "") + "</div>" for t, l, d, u in know)
+                 + (f'<a class="tl srcx" href="{esc(u)}" target="_blank" rel="noopener" aria-label="Source">↗</a>' if u and u.startswith("http") else "") + "</div>" for t, l, d, u in know)
     ch = ""
     if e["series"] and len(e["series"]) > 1:
         S = {"name": e["name"], "series": {"what": "Revenue each month", "label": "Verified", "source": s.get("trustmrr_url"), "points": [[k, v, "Verified", "TrustMRR, read from Stripe"] for k, v in e["series"]]},
              "moves": [], "phases": []}
         ch = f'<section class="rsec" id="chart"><div class="sh"><h2>Revenue each month</h2><span class="meta">TrustMRR, read from Stripe · read {esc(e["hd"])}</span></div>{chart_block(S, moves_list=False, band=False)}</section>'
     body = (f'<div class="rd" style="grid-template-columns:minmax(0,1fr)"><article><div class="rh"><span class="logo big"><img src="{e["logo"]}" alt="" width="36" height="36"></span><div>'
-            f'<h1>{esc(e["name"])}</h1><p class="dek">{esc(e["what"])}</p><div class="rmeta"><span>{esc(e["type"])}</span><span>Breakdown coming soon</span>'
-            + (f'<a href="{esc(s["trustmrr_url"])}" target="_blank" rel="noopener">TrustMRR page ↗</a>' if s.get("trustmrr_url") else "") + '</div></div></div>'
+            f'<h1>{esc(e["name"])}</h1><p class="dek">{esc(e["what"])}</p><div class="rmeta"><span>{esc(e["type"])}</span><span>Breakdown coming soon</span></div>'
+            + (f'<a class="btn btn-s" style="margin-top:12px" href="{esc(s["trustmrr_url"])}" target="_blank" rel="noopener">TrustMRR page <span aria-hidden="true">↗</span></a>' if s.get("trustmrr_url") else "") + '</div></div>'
             f'<section class="rsec" style="margin-top:20px"><div class="nums5" style="grid-template-columns:repeat({len(tiles)},minmax(0,1fr))">{nums}</div></section>{ch}'
             f'<section class="rsec"><div class="sh"><h2>What we know so far</h2><span class="meta">Each fact with its label and date</span></div><div class="card">{kl}</div></section>'
-            f'<section class="rsec"><div class="note dash">The full breakdown (phases, fact check and a checklist) lands here when it is out. The weekly email tells you when.<a class="tl" style="margin-left:auto" href="/app/library/">Back to the Library</a></div></section>'
+            f'<section class="rsec"><div class="sh"><h2>Read a finished breakdown while you wait</h2><a class="tl" href="/app/library/">Open the Library</a></div>'
+            f'<p class="sint">The full {esc(e["name"])} breakdown (phases, fact checks and a checklist) lands here when it is out. These are ready now.</p><div class="scards two" data-sooncards="{e["tab"]}"></div></section>'
             '</article></div>')
     return shell(E, e["name"], e["what"], "", body, crumbs=[("/app/library/", "Library"), ("", e["name"])], scripts='\n<script src="/assets/chart.js" defer></script>')
 
@@ -589,7 +655,7 @@ def blog_post(S, E):
     rep = {"{{SLUG}}": S["slug"], "{{H1}}": h1, "{{DEK}}": esc(S["dek"]), "{{LOGO}}": S["logo"], "{{NAME}}": esc(S["name"]), "{{READ}}": str(S["read_min"]), "{{NSRC}}": str(len(S["sources"])),
            "{{DATE}}": esc(S["numbers"][0]["date"]), "{{KPIS}}": kpis, "{{CHART}}": chart_block(S, moves_list=True, band=False), "{{HL}}": hl, "{{NHL}}": str(len(S.get("highlights", []))),
            "{{PHASES}}": "\n      ".join(ph(i, p) for i, p in enumerate(S["phases"])), "{{FC}}": fc, "{{NFC}}": str(len(S["fact_checks"])), "{{FCREAD}}": esc(S.get("fact_checks_read") or latest_date(s["date"] for s in S["sources"])), "{{FCSUM}}": fc_summary(S["fact_checks"]),
-           "{{TN}}": tn, "{{LINKS}}": link_row(S, "srow post-links"), "{{CKS}}": cks, "{{NCK}}": str(len(cl)), "{{SRC}}": src, "{{APP}}": f"/app/story/{S['slug']}/"}
+           "{{TN}}": tn, "{{FIRST}}": first_block(S), "{{LINKS}}": link_row(S, "srow post-links"), "{{CKS}}": cks, "{{NCK}}": str(len(cl)), "{{SRC}}": src, "{{APP}}": f"/app/story/{S['slug']}/"}
     for k, v in rep.items(): tpl = tpl.replace(k, v)
     if not S.get("highlights"):
         tpl = re.sub(r"<!--HL-->.*?<!--/HL-->", lambda m: '<section class="sec-alt" id="moves-two"><div class="wrap">', tpl, flags=re.S)
@@ -734,8 +800,8 @@ def main():
     pz_ck = [c for c in pz["checklist"]]
     steps = [{"id": c["id"], "text": c["text"], "from": c["from"], "n": int(c["id"][1:]), "task": TASKS.get(c["id"], "")} for c in [pz_ck[i] for i in (0, 1, 5, 3, 2)]]
     APPDATA = {
-        "stories": [{k: e[k] for k in ("slug", "name", "title", "tab", "type", "what", "logo", "pattern", "lessons", "hv", "hu", "hl", "hd", "sub", "status", "stale", "href", "read", "published", "mrr", "growth")}
-                    | {"spark": spark(e["series"], name=e["name"]), "phases": len(e["S"]["phases"]), "site": (e["S"].get("links") or {}).get("site") or e["S"].get("site", "")} for e in E if e["status"] == "ready"],
+        "stories": [{k: e[k] for k in ("slug", "name", "title", "tab", "type", "what", "logo", "pattern", "lessons", "hv", "hu", "hl", "hd", "hm", "hs", "first", "firstl", "sub", "status", "stale", "href", "read", "published", "mrr", "growth")}
+                    | {"spark": spark(e["series"]), "phases": len(e["S"]["phases"]), "site": (e["S"].get("links") or {}).get("site") or e["S"].get("site", "")} for e in E if e["status"] == "ready"],
         "tabs": TABS,
         "checklists": [{"slug": S["slug"], "name": S["name"], "logo": S["logo"], "href": next(e["href"] for e in E if e["slug"] == S["slug"]), "key": f"lv-{S['slug']}-checks",
                         "items": [c if isinstance(c, dict) else {"text": c, "from": ""} for c in S["checklist"]], "phases": len(S["phases"]),

@@ -43,7 +43,7 @@
   "facts": {
     "cost_to_start": {"text": "Not public", "label": null},
     "first_revenue": {"text": "~$700/mo in Sep 2024, about 8 months in", "label": "Claimed", "date": "Jul 2026", "source": "Superframeworks case study"},
-    "first_customers": {"text": "Open-source launch weeks: Hacker News, Reddit, Dev.to, Product Hunt", "label": "Claimed", "date": "Nov 2025", "source": "The founder on Dev.to"},
+    "first_customers": {"short": "Open-source launch weeks", "text": "Open-source launch weeks: Hacker News, Reddit, Dev.to, Product Hunt", "label": "Claimed", "date": "Nov 2025", "source": "The founder on Dev.to"},
     "team": {"text": "A single developer", "label": "Claimed", "date": "2025", "source": "The founder's 2025 article title"}
   },
   "highlights": [

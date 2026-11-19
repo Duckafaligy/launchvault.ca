@@ -35,16 +35,21 @@
     const x0 = Math.min(S.start ? mi(S.start) : Infinity, pts[0].x), x1 = pts.at(-1).x;
     // only moves inside the chart's months get an axis marker (earlier moves stay in the list)
     const moves = (D.moves || []).map((m, i) => ({...m, i, x: m.at ? mi(m.at) : NaN})).filter(m => m.x >= x0 && m.x <= x1);
+    const before = (D.moves || []).filter(m => m.w === "before").length;   // moves dated before the first month: counted at the left edge, listed below
     const top = nice(Math.max(...pts.map(p => p.v), ...alt.map(p => p.v)) * 1.05);
     let G = null, cur = -1;
     const draw = () => {
-      const W = Math.max(280, plot.clientWidth), narrow = W < 560, H = narrow ? 230 : 300, L = 48, R = 12, T = 12, B = moves.length ? 54 : 30;
+      const W = Math.max(280, plot.clientWidth), narrow = W < 560, H = narrow ? 230 : 300, L = 48, R = 12, T = 12, B = moves.length || before ? 54 : 30;
       const X = x => L + (x - x0) / Math.max(1, x1 - x0) * (W - L - R), Y = v => T + (1 - v / top) * (H - T - B);
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("height", H); svg.innerHTML = "";
       [0, .25, .5, .75, 1].forEach(f => { const v = top * f; el("line", {x1: L, x2: W - R, y1: Y(v), y2: Y(v), class: "gl"}, svg);
         el("text", {x: L - 8, y: Y(v) + 4, "text-anchor": "end", class: "ax"}, svg).textContent = short(v); });
-      const yrs = []; for (let y = Math.ceil(x0 / 12) * 12; y <= x1; y += 12) yrs.push(y);
-      yrs.forEach(x => el("text", {x: X(x), y: H - 4, "text-anchor": "middle", class: "ax"}, svg).textContent = narrow ? String(x / 12) : "Jan " + x / 12);
+      // x axis: the first and last month are always named; a January in between is added where there is room
+      el("text", {x: X(x0), y: H - 4, "text-anchor": "start", class: "ax"}, svg).textContent = mlab(x0);
+      if (x1 > x0) el("text", {x: X(x1), y: H - 4, "text-anchor": "end", class: "ax"}, svg).textContent = mlab(x1);
+      for (let y = Math.ceil(x0 / 12) * 12; y <= x1; y += 12) if (X(y) - X(x0) > 110 && X(x1) - X(y) > 110) el("text", {x: X(y), y: H - 4, "text-anchor": "middle", class: "ax"}, svg).textContent = narrow ? String(y / 12) : "Jan " + y / 12;
+      if (before) { const g = el("g", {class: "bf", "aria-hidden": "true"}, svg); el("rect", {x: L, y: H - B + 8, width: 34, height: 18, rx: 4}, g);
+        el("text", {x: L + 17, y: H - B + 21, "text-anchor": "middle"}, g).textContent = "← " + before; el("title", {}, g).textContent = `${before} move${before > 1 ? "s" : ""} before ${mlab(x0)}`; }
       if (S.empty_note && pts[0].x - x0 > 4 && !narrow) el("text", {x: X(x0) + 4, y: Y(0) - 8, class: "note"}, svg).textContent = S.empty_note;
       const P = pts.map(p => [X(p.x), Y(p.v)]), line = monotone(P);
       const area = el("path", {class: "area", d: line + `L${P.at(-1)[0].toFixed(1)} ${Y(0)}L${P[0][0].toFixed(1)} ${Y(0)}Z`}, svg);
@@ -57,7 +62,7 @@
         if (p.k) el("text", {x: cx - 8, y: cy - 10, "text-anchor": "end", class: "ax kdl"}, svg).textContent = p.k; });
       const hl = el("circle", {r: 7, class: "hl"}, svg);
       const mks = moves.map((m, i) => { const g = el("g", {class: "mk" + (m.turn ? " turn" : ""), tabindex: "-1", "aria-hidden": "true"}, svg);
-        const cx = Math.min(Math.max(X(m.x), L + 9), W - R - 9) + (moves[i - 1] && Math.abs(X(moves[i - 1].x) - X(m.x)) < 18 ? 9 : 0);
+        const cx = Math.min(Math.max(X(m.x), L + (before ? 48 : 9)), W - R - 9) + (moves[i - 1] && Math.abs(X(moves[i - 1].x) - X(m.x)) < 18 ? 9 : 0);
         el("rect", {x: cx - 9, y: H - B + 8, width: 18, height: 18, rx: 4}, g); el("text", {x: cx, y: H - B + 21, "text-anchor": "middle"}, g).textContent = m.i + 1;
         g.addEventListener("pointerenter", () => showMove(i)); g.addEventListener("click", () => showMove(i)); return g; });
       const hit = el("rect", {x: L, y: T, width: W - L - R, height: H - B - T, fill: "transparent"}, svg);
@@ -88,9 +93,13 @@
     return {showMove: n => { const k = moves.findIndex(m => m.i === n); if (k >= 0) showMove(k); else { const m = (D.moves || [])[n]; if (m) { activate(-1); G.cross.style.opacity = 0; G.hl.style.opacity = 0; setRO(`Move ${n + 1}`, esc(m.when), `<span style="color:#0B1220;font-weight:600">${esc(m.text)}</span> ${chip(m.label)}`); } } }, showDefault, moves};
   };
 
+  // the chart could not be drawn: say so and point at the table (it is plain HTML and always there)
+  const fail = root => { const pl = root.querySelector(".plot"); if (!pl || root.querySelector(".cfail")) return; pl.hidden = true;
+    pl.insertAdjacentHTML("afterend", '<div class="cfail" role="status"><span>The chart didn\'t load. Reload, or read the table.</span><button class="btn btn-s" type="button">Show the table</button></div>');
+    root.querySelector(".cfail button").addEventListener("click", () => { const d = root.querySelector(".ctab"); if (d) { d.open = true; d.scrollIntoView({block: "nearest"}); } }); };
   // auto-mount every chart block on the page
-  document.querySelectorAll(".lvchart").forEach(root => {
-    let D; try { D = JSON.parse(root.querySelector(".lvchart-data").textContent); } catch { return; }
+  document.querySelectorAll(".lvchart").forEach(root => { try {
+    const D = JSON.parse(root.querySelector(".lvchart-data").textContent);
     const list = root.querySelector(".moves"), band = root.querySelector(".pband");
     const api = LVChart(root, D, {move: i => { if (list) list.querySelectorAll("button").forEach((b, k) => b.classList.toggle("on", k === i)); }});
     if (list) { list.addEventListener("pointerover", e => { const b = e.target.closest("button[data-i]"); if (b) api.showMove(+b.dataset.i); });
@@ -100,5 +109,5 @@
     if (band) band.addEventListener("click", e => { const b = e.target.closest("button[data-ph]"); if (!b) return;
       band.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
       const t = document.getElementById("ph" + b.dataset.ph); if (t && !t.closest("[hidden]")) t.scrollIntoView({behavior: reduce ? "auto" : "smooth", block: "start"}); });
-  });
+  } catch (e) { fail(root); } });
 })();

@@ -39,7 +39,7 @@ A scheduled job publishes a new story by adding one file here and pushing. Nothi
   "facts": {
     "cost_to_start": {"text": "Not public", "label": null},
     "first_revenue": {"text": "...", "label": "Claimed", "date": "...", "source": "..."},
-    "first_customers": {"text": "...", "label": "Claimed", "date": "...", "source": "..."},
+    "first_customers": {"short": "A resume template shared on Reddit", "text": "...", "label": "Claimed", "date": "...", "source": "..."},
     "team": {"text": "...", "label": "Verified", "date": "...", "source": "..."}
   },
   "phases": [
@@ -60,6 +60,7 @@ A scheduled job publishes a new story by adding one file here and pushing. Nothi
 ```
 - Aim for 4–6 `phases`, 4–8 `moves`, 2–4 `fact_checks` and 6 `checklist` items.
 - `wayback` is optional. Fill it in when real captures exist.
+- `facts.first_customers.short` is the one-line version shown on story cards, in the reader and in the story check: 60 characters or fewer, written ONLY by condensing that same fact's `text` (no new claims, no new numbers). When the fact is not public, write exactly `"not public"`. The build rejects a `short` longer than 60 characters.
 
 ## links (optional)
 

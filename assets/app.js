@@ -140,7 +140,7 @@
   const rd = $("[data-reader]");
   if (rd) {
     const slug = rd.dataset.reader, art = $("article", rd), n = +rd.dataset.phases;
-    const links = $$(".snav [data-r]"), secs = links.map(a => document.getElementById(a.dataset.r)).filter(Boolean);
+    const links = $$(".snav [data-r], .rrail [data-r]"), secs = links.map(a => document.getElementById(a.dataset.r)).filter(Boolean);
     const names = (CL[slug] || {}).phase_names || [];
     let saved = ls.get("lv-read-" + slug, {}) || {}, lastSave = 0;
     const onScroll = () => {
@@ -175,10 +175,12 @@
   const bar = (f, cls = "") => `<span class="bar${cls}"><i style="--w:${Math.round(Math.max(0, Math.min(1, f)) * 100)}%"></i></span>`;
   const storyCard = s => { const st = stateOf(s), k = Math.min(seen(s.slug).length, nph(s)), sv = savedList().includes(s.slug), wk = s.slug === WEEKS;
     return `<article class="scard${wk ? " wk" : ""}"><a class="scl" href="${s.href}"><span class="sct">${logo(s, 32)}<span class="nm"><b>${esc(s.name)}</b><small>${esc(s.type)}</small></span></span>`
-      + `<span class="num"><b>${esc(s.hv)}</b>${esc(s.hu)}${s.hl && s.hl !== "Verified" ? " " + chip(s.hl) : ""}<small>${esc(s.hd)}${staleChip(s)}</small></span>${s.spark}`
-      + `<span class="tags">${wk ? '<span class="tag wkc">This week</span>' : ""}<span class="tag">${esc(s.pattern)}</span><span class="tag">${s.read} min</span></span>`
+      + `<span class="stt">${esc(s.title || s.what)}</span>`
+      + (s.first ? `<span class="sfc">First customers: ${esc(s.first)}${s.firstl ? " " + chip(s.firstl) : ""}</span>` : "")
+      + `<span class="num"><b>${esc(s.hv)}</b><span>${esc(s.hm || s.hu)}</span>${chip(s.hl)}${staleChip(s)}<span>${esc([s.hs, s.hd].filter(Boolean).join(" · "))}</span></span>${s.spark}`
+      + `<span class="sft"><span class="spt">${esc(s.pattern)}</span><span class="smt">${wk ? '<span class="tag wkc">This week</span>' : ""}${s.read} min · ${nph(s)} phases</span>`
       + (st === "new" ? "" : `<span class="sp">${bar(k / nph(s))}${st === "done" ? '<span class="done">Done</span>' : `<span>${k} of ${nph(s)} phases</span>`}</span>`)
-      + `</a>${s.site ? `<a class="web" href="${esc(s.site)}" target="_blank" rel="noopener" aria-label="${esc(s.name)} website"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></a>` : ""}<button class="star" type="button" data-star="${s.slug}" aria-pressed="${sv}" aria-label="${sv ? "Remove" : "Save"} ${esc(s.name)}">${STAR}</button></article>`; };
+      + `</span></a>${s.site ? `<a class="web" href="${esc(s.site)}" target="_blank" rel="noopener" aria-label="${esc(s.name)} website"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></a>` : ""}<button class="star" type="button" data-star="${s.slug}" aria-pressed="${sv}" aria-label="${sv ? "Remove" : "Save"} ${esc(s.name)}">${STAR}</button></article>`; };
   const syncStars = () => { const L = savedList(), I = savedItems();
     $$("[data-star]").forEach(b => { const on = L.includes(b.dataset.star); b.setAttribute("aria-pressed", on); const t = b.querySelector("span"); if (t) t.textContent = on ? "Saved" : "Save"; });
     $$("[data-staritem]").forEach(b => b.setAttribute("aria-pressed", I.includes(b.dataset.staritem)));
@@ -301,53 +303,93 @@
   }
   if (rd) {   // phases fold on phones (first open); the section chips follow the scroll
     if (innerWidth < 600) $$("details.ph", rd).forEach((d, i) => { if (i && !(location.hash === "#" + d.id)) d.open = false; });
+    if (innerWidth < 600) $$("details.cow", rd).forEach(d => { if (location.hash !== "#" + d.id) d.open = false; });
     const hp = location.hash && document.getElementById(location.hash.slice(1)); if (hp && hp.tagName === "DETAILS") hp.open = true;
     const nav = $(".snav-in"); let lastOn = null;
     addEventListener("scroll", () => { const on = nav && $("a.on", nav); if (on && on !== lastOn) { lastOn = on; nav.scrollTo({left: on.offsetLeft - nav.clientWidth / 2 + on.clientWidth / 2, behavior: reduce ? "auto" : "smooth"}); } }, {passive: true});
   }
-  // story check + logging a story complete: pass the check (all but one right) OR answer the feedback questions
+  // story check (one question per screen) + logging a story complete: pass the check (all but one right) OR answer the feedback questions
+  const CKI = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  const XI = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
   const FBQ = [["clarity", "How clear was this breakdown?", ["Very clear", "Mostly clear", "Confusing in places", "Hard to follow"]],
     ["useful", "Will you use anything from it?", ["Yes, soon", "Maybe later", "Not really"]],
     ["best_part", "Which part helped most?", ["The numbers and chart", "The phases and lessons", "The checklist", "Fact checks and sources"]]];
   $$("[data-check]").forEach(box => {
-    const slug = box.dataset.check, nm = (S[slug] || {}).name || slug, body = $("[data-checkbody]", box); let Q;
+    const slug = box.dataset.check, me = S[slug] || {}, nm = me.name || slug, body = $("[data-checkbody]", box); let Q;
     try { Q = JSON.parse($("script", box).textContent); } catch { return; }
     const need = Math.max(1, Q.length - 1), cbox = document.createElement("div"); cbox.className = "cdone"; box.after(cbox);
+    const go = h => { const t = document.getElementById(h.slice(1)); return t && !t.closest("[hidden]") ? h : "#gate"; };   // a locked section points at the gate
     const logDone = how => { if (doneOf(slug)) return; ls.set("lv-done-" + slug, {how, t: Date.now()}); logAct(`Completed ${nm}`); toast("Story logged as complete"); renderAll(); };
-    const paintDone = () => { const d = doneOf(slug);
-      cbox.innerHTML = d ? `<p class="cok" tabindex="-1"><b>Logged complete</b> ${new Date(d.t).toLocaleDateString()} · ${d.how === "check" ? "passed the story check" : "answered the feedback questions"}</p>`
-        : `<h3>Log this story as complete</h3><p>Two ways: get ${need} of ${Q.length} right on the check above, or answer a few quick questions that help us make LaunchVault better.</p><button class="btn btn-s" type="button" data-fb>Answer questions instead</button>`;
-      const fb = $("[data-fb]", cbox); if (fb) fb.addEventListener("click", feedback); };
+    // read next: a quiz match first, else the newest story not started, else any story not done
+    const nextStory = () => { const q = quiz(), open = s => s && s.status === "ready" && s.slug !== slug && !doneOf(s.slug);
+      return ((q && q.matches) || []).map(k => S[k]).find(open) || READY.find(s => open(s) && stateOf(s) === "new") || READY.find(open); };
+    const paintDone = () => { const d = doneOf(slug); cbox.classList.toggle("fin", !!d);
+      if (!d) { cbox.innerHTML = `<h3>Log this story as complete</h3><p>Two ways: get ${need} of ${Q.length} right on the check above, or answer a few quick questions that help us make LaunchVault better.</p><button class="btn btn-s" type="button" data-fb>Answer questions instead</button>`;
+        $("[data-fb]", cbox).addEventListener("click", feedback); return; }
+      const r = checkRes(slug), n = nph(me), k = Math.min(n, seen(slug).length), t = ticks(slug), i = t.indexOf(false), nx = nextStory();
+      const row = (h, a, b) => `<a href="${h}"><span><b>${a}</b><small>${esc(b)}</small></span><i aria-hidden="true">→</i></a>`;
+      cbox.innerHTML = `<div class="cok" tabindex="-1"><span class="fck">${CKI}</span><div><h3>Story complete</h3><p>${k ? `You read ${k} of ${n} phases and ` : "You "}${d.how === "check" ? "passed the check" + (r ? ` with ${r.best} of ${r.n}` : "") : "answered the feedback questions"}. Logged ${new Date(d.t).toLocaleDateString()}.</p></div></div><div class="fnext">`
+        + (i >= 0 ? row("#todo", `Do step ${i + 1} of the checklist`, CL[slug].items[i].text) : "") + (nx ? row(nx.href, "Read next", nx.title || nx.name) : "") + row("/app/path/", "See your path", D.path.title) + "</div>"; };
     const feedback = () => {
-      cbox.innerHTML = `<form class="ckform fbform"><h3>Help us improve this breakdown</h3>${FBQ.map(([k, q, o], i) => `<fieldset><legend><span class="qn">${i + 1}</span>${esc(q)}</legend>${o.map(t => `<label class="opt2"><input type="radio" name="${k}" value="${esc(t)}" required><span>${esc(t)}</span></label>`).join("")}</fieldset>`).join("")}
-        <label class="fbl" for="fbmiss"><span class="qn">4</span>What was confusing, missing or wrong?</label><textarea id="fbmiss" name="missing" required minlength="5" maxlength="2000"></textarea>
+      cbox.innerHTML = `<form class="ckform fbform" novalidate><h3>Help us improve this breakdown</h3>${FBQ.map(([k, q, o], i) => `<fieldset><legend><span class="qn">${i + 1}</span>${esc(q)}</legend>${o.map(t => `<label class="opt2"><input type="radio" name="${k}" value="${esc(t)}" required><span>${esc(t)}</span></label>`).join("")}</fieldset>`).join("")}
+        <label class="fbl" for="fbmiss"><span class="qn">4</span>What was confusing, missing or wrong? (optional)</label><textarea id="fbmiss" name="missing" maxlength="2000"></textarea>
         <label class="fbl" for="fbnext"><span class="qn">5</span>Which app or company should we break down next? (optional)</label><input id="fbnext" name="next_idea" maxlength="200" autocomplete="off">
         <p class="rmsg" role="status" aria-live="polite"></p><div class="ckact"><button class="btn btn-p" type="submit">Send and log complete</button><button class="btn btn-s" type="button" data-fbx>Cancel</button></div></form>`;
       const f = $("form", cbox), msg = $(".rmsg", cbox), send = $('[type="submit"]', cbox);
       $("[data-fbx]", cbox).addEventListener("click", paintDone); $("input", f).focus();
       f.addEventListener("submit", async ev => { ev.preventDefault(); const v = Object.fromEntries(new FormData(f));
+        const un = FBQ.find(([k]) => !v[k]); if (un) { msg.className = "rmsg err"; msg.textContent = "Please answer questions 1 to 3."; $(`[name="${un[0]}"]`, f).focus(); return; }
         v.missing = (v.missing || "").trim(); v.next_idea = (v.next_idea || "").trim() || null;
-        if (v.missing.length < 5) { msg.className = "rmsg err"; msg.textContent = "Please write at least a few words."; $("#fbmiss", f).focus(); return; }
+        if (v.missing && v.missing.length < 5) { msg.className = "rmsg err"; msg.textContent = "Leave question 4 empty, or write at least 5 characters."; $("#fbmiss", f).focus(); return; }
+        v.missing = v.missing || "(none)";   // the table needs 5 to 2000 characters; an empty box is sent as "(none)"
         send.disabled = true; msg.className = "rmsg"; msg.textContent = "Sending…";
         try { const r = await fetch(SB_URL + "/rest/v1/feedback", {method: "POST", headers: {apikey: SB_KEY, "Content-Type": "application/json", Prefer: "return=minimal"}, body: JSON.stringify({story_slug: slug, ...v})});
           if (!r.ok) throw new Error(r.status); logDone("feedback"); paintDone(); $(".cok", cbox).focus();
         } catch (err) { send.disabled = false; msg.className = "rmsg err"; msg.textContent = "Sorry, that didn't send (" + err.message + "). Please try again in a minute."; } }); };
-    const form = () => { const r = checkRes(slug);
-      body.innerHTML = `<form class="ckform">${Q.map((q, i) => `<fieldset><legend><span class="qn">${i + 1}</span>${esc(q.q)}</legend>${q.o.map((o, j) => `<label class="opt2"><input type="radio" name="q${i}" value="${j}" required><span>${esc(o)}</span></label>`).join("")}</fieldset>`).join("")}`
-        + `<div class="ckact"><button class="btn btn-p" type="submit">Check my answers</button>${r ? `<span>Best so far: ${r.best} of ${r.n}</span>` : ""}</div></form>`;
-      $("form", body).addEventListener("submit", ev => { ev.preventDefault(); const fd = new FormData(ev.target), got = Q.map((q, i) => +fd.get("q" + i)), score = got.filter((g, i) => g === Q[i].a).length;
-        const prev = checkRes(slug) || {best: 0}; ls.set("lv-check-" + slug, {best: Math.max(prev.best, score), last: score, n: Q.length, t: Date.now()}); logAct(`Scored ${score}/${Q.length} on the ${nm} check`);
-        const pass = score >= need; if (pass) logDone("check");
-        body.innerHTML = `<div class="ckres" tabindex="-1"><p class="sc"><b>${score} of ${Q.length}</b> right${score === Q.length ? ". Every one." : ""}${pass || doneOf(slug) ? "" : ` · ${need} needed to log it complete`}</p>${bar(score / Q.length)}<ol>${Q.map((q, i) => { const ok = got[i] === q.a;
-          return `<li class="${ok ? "ok" : "no"}"><b>${esc(q.q)}</b><span>${ok ? "Right" : "Not quite"}: ${esc(q.o[q.a])}${ok ? "" : ` (you picked ${esc(q.o[got[i]])})`}</span><small>${esc(q.e)}</small></li>`; }).join("")}</ol><button class="btn btn-s" type="button" data-retake>Retake</button></div>`;
-        paintDone(); $(".ckres", body).focus(); $("[data-retake]", body).addEventListener("click", form); }); };
-    form(); paintDone();
+    const finish = got => { const score = got.filter((g, i) => g === Q[i].a).length, prev = checkRes(slug) || {best: 0}, best = Math.max(prev.best, score);
+      ls.set("lv-check-" + slug, {best, last: score, n: Q.length, t: Date.now()}); logAct(`Scored ${score}/${Q.length} on the ${nm} check`);
+      const pass = score >= need; if (pass) logDone("check");
+      const miss = Q.map((q, i) => ({q, g: got[i]})).filter(x => x.g !== x.q.a);
+      body.innerHTML = `<div class="ckres" tabindex="-1"><p class="sc"><b>${score} of ${Q.length}</b> right${score === Q.length ? ". Every one." : ""}${pass || doneOf(slug) ? "" : ` · ${need} needed to log it complete`}</p>${bar(score / Q.length)}`
+        + (miss.length ? `<h3>Worth another look</h3><ol>${miss.map(({q, g}) => `<li><b>${esc(q.q)}</b><span class="no">${XI}Not quite. You picked: ${esc(q.o[g])}</span><span class="ok">${CKI}Right answer: ${esc(q.o[q.a])}</span><small>${esc(q.e)}</small>${q.h ? `<a class="tl" href="${go(q.h)}">Go to ${esc(q.hl)}</a>` : ""}</li>`).join("")}</ol>` : "")
+        + `<div class="ckact"><button class="btn btn-s" type="button" data-retake>Retake</button><span>Best so far: ${best} of ${Q.length}</span></div></div>`;
+      paintDone(); $(".ckres", body).focus(); $("[data-retake]", body).addEventListener("click", () => run(true)); };
+    const run = focus => { const got = Q.map(() => null); let i = 0;
+      const show = focus => { const q = Q[i], g = got[i], done = g != null, r = checkRes(slug), last = i === Q.length - 1;
+        body.innerHTML = `<form class="ckform kq" novalidate><div class="kqh"><b>Story check · Question ${i + 1} of ${Q.length}</b>${r ? `<span>Best so far: ${r.best} of ${r.n}</span>` : ""}</div>${bar((i + (done ? 1 : 0)) / Q.length)}`
+          + `<fieldset${done ? " disabled" : ""}><legend>${esc(q.q)}</legend>${q.o.map((o, j) => { const c = !done ? "" : j === q.a ? " ok" : j === g ? " no" : "";
+            return `<label class="opt2${c}"><input type="radio" name="q" value="${j}"${g === j ? " checked" : ""}><span>${esc(o)}</span>${c === " ok" ? `<em>${CKI}Right answer</em>` : c === " no" ? `<em>${XI}Not quite</em>` : ""}</label>`; }).join("")}</fieldset>`
+          + `<p class="kqe" id="kqe-${slug}">${done ? `<b>${g === q.a ? "Right." : "Not quite."}</b> ${esc(q.e)}` : ""}</p>`
+          + `<div class="ckact">${i ? '<button class="tl" type="button" data-kback>Back</button>' : ""}<button class="btn btn-p" type="submit" aria-describedby="kqe-${slug}"${done ? "" : " disabled"}>${!done ? "Check" : last ? "See my result" : "Next"}</button></div></form>`;
+        const f = $("form", body), sb = $('[type="submit"]', f), bk = $("[data-kback]", f);
+        f.addEventListener("change", () => { sb.disabled = false; });
+        f.addEventListener("submit", ev => { ev.preventDefault();
+          if (got[i] == null) { const v = new FormData(f).get("q"); if (v == null) return; got[i] = +v; show(true); }
+          else if (!last) { i++; show(true); } else finish(got); });
+        if (bk) bk.addEventListener("click", () => { i--; show(true); });
+        if (focus) (done ? sb : $("input", f)).focus(); };
+      show(focus); };
+    run(false); paintDone();
   });
 
-  const renderAll = () => { renderHome(); renderSaved(); libDraw(); syncStars(); paint(); };
+  // right rail ticks: a section is done when its phases are all seen / its steps all ticked / the story is logged complete
+  const railDone = () => { if (!rd) return; const slug = rd.dataset.reader, t = ticks(slug), ok = {phases: seen(slug).length >= +rd.dataset.phases, todo: t.length > 0 && t.every(Boolean), check: !!doneOf(slug)};
+    $$("[data-rdone]").forEach(n => n.hidden = !ok[n.dataset.rdone]); };
+  // coming-soon page: two finished breakdowns of the same type (any ready story fills a gap)
+  const renderSoon = () => $$("[data-sooncards]").forEach(n => { const L = READY.filter(s => s.tab === n.dataset.sooncards); n.innerHTML = L.concat(READY.filter(s => !L.includes(s))).slice(0, 2).map(storyCard).join(""); });
+  document.addEventListener("click", e => {
+    const a = e.target.closest('a[href^="#"]');   // an in-page link opens any folded panel its target sits in
+    if (a && a.hash.length > 1) for (let d = document.getElementById(a.hash.slice(1)); d; d = d.parentElement) if (d.tagName === "DETAILS") d.open = true;
+    const m = e.target.closest("[data-fcmore]"); if (m) { const on = m.previousElementSibling.classList.toggle("open"); m.setAttribute("aria-expanded", on); m.textContent = on ? "Less" : "More"; }
+    const tb = e.target.closest("[data-showtab]"); if (tb) { const d = tb.closest(".lvchart").querySelector(".ctab"); if (d) { d.open = true; d.scrollIntoView({block: "nearest"}); } }
+  });
+  // chart.js blocked or failed to load: say so and point at the table (chart.js handles its own runtime errors the same way)
+  addEventListener("load", () => $$(".lvchart").forEach(r => { const pl = $(".plot", r); if (!pl || $("svg", pl).childElementCount || $(".cfail", r)) return;
+    pl.hidden = true; pl.insertAdjacentHTML("afterend", '<div class="cfail" role="status"><span>The chart didn\'t load. Reload, or read the table.</span><button class="btn btn-s" type="button" data-showtab>Show the table</button></div>'); }));
+  const renderAll = () => { renderHome(); renderSaved(); renderSoon(); libDraw(); syncStars(); paint(); railDone(); };
   addEventListener("storage", renderAll);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) renderAll(); });
-  addEventListener("lv:changed", () => { clearTimeout(renderAll.t); renderAll.t = setTimeout(() => { renderHome(); renderSaved(); syncStars(); }, 50); });
+  addEventListener("lv:changed", () => { clearTimeout(renderAll.t); renderAll.t = setTimeout(() => { renderHome(); renderSaved(); syncStars(); railDone(); }, 50); });
 
   // ---------- my path ----------
   const stepsEl = $("[data-steps]");
