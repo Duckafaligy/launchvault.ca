@@ -122,22 +122,34 @@ SOCIAL = [
     ("TikTok", "M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"),
 ]
 SOCIAL_HTML = "".join(f'<a class="soc" role="link" tabindex="0" aria-disabled="true" aria-label="{n}, coming soon" data-tip="Coming soon"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="{d}"/></svg></a>' for n, d in SOCIAL)
-FCOLS = [("Explore", [("/#stories", "Stories"), ("/#sources", "How we check"), ("/#pricing", "Pricing"), ("/#faq", "FAQ")]),
+FCOLS = [("Explore", [("/#stories", "Stories"), ("/#sources", "How we check"), ("/#check", "Verified vs Claimed"), ("/#inside", "Inside a breakdown"), ("/#pricing", "Pricing"), ("/#faq", "FAQ")]),
          ("From the blog", [("/blog/", "All posts"), ("/blog/postiz/", "The Postiz breakdown"), ("/blog/what-verified-means/", "What Verified means"),
                             ("/blog/how-to-read-a-revenue-chart/", "Reading a revenue chart"), ("/blog/three-ways-to-start-small/", "Three ways to start small")]),
          ("Account", [("/welcome/", "Sign in"), ("/welcome/#signup", "Sign up")]),
          ("Legal", [("/legal/privacy/", "Privacy (draft)"), ("/legal/terms/", "Terms (draft)")])]
 FCOLS_HTML = "".join(f'<nav class="fcol" aria-label="{h}"><h4>{h}</h4>' + "".join(f'<a href="{u}"><span>{t}</span></a>' for u, t in ls) + "</nav>" for h, ls in FCOLS)
+FKEY = ('''    <div class="fkey" aria-label="What each label means"><h4>Every number carries one label</h4>
+      <div><span class="lb v">Verified</span>Read from payments (Stripe or RevenueCat) through TrustMRR.</div>
+      <div><span class="lb l">Live</span>Counted by the platform itself, like GitHub stars.</div>
+      <div><span class="lb w">Wayback</span>A dated snapshot saved on the Wayback Machine.</div>
+      <div><span class="lb c">Claimed</span>What a founder said, linked and dated.</div>
+      <div><span class="lb x">Sources differ</span>Two sources disagree, so we show both.</div>
+      <div><span class="lb n">Couldn't verify</span>No source we could check, or it stopped updating.</div>
+    </div>
+    <div class="fsrc"><h4>Read from</h4>''' + "".join(f'<span><img src="/assets/logos/{f}" alt="" width="18" height="18" loading="lazy" decoding="async">{n}</span>' for f, n in [
+        ("trustmrr.png", "TrustMRR"), ("stripe.svg", "Stripe"), ("github.svg", "GitHub"), ("internetarchive.png", "Wayback Machine"), ("starterstory.png", "Starter Story"),
+        ("mixergy.png", "Mixergy"), ("devto.png", "DEV"), ("hackernews.svg", "Hacker News"), ("producthunt.png", "Product Hunt")]) + '</div>\n')
 FOOTER = '''<footer class="foot">
   <div class="wrap">
     <div class="ftop">
       <div class="fbrand"><a class="logo" href="/">''' + LV + '''LaunchVault</a>
         <p class="tl">Real startup stories, checked and cut down to the part you can use.</p>
+        <p class="fstat"><b>13 stories tracked.</b> Revenue read from Stripe and RevenueCat through TrustMRR, last read Nov 17 to 18 2026. <em>Under 18? A parent pays for Pro.</em></p>
         <!-- SOCIAL URLS TBC: no accounts yet. When they exist, give each .soc an href, drop aria-disabled, role and data-tip. -->
         <div class="socs">''' + SOCIAL_HTML + '''</div></div>
       ''' + FCOLS_HTML + '''
     </div>
-    <div class="fbot"><span>© 2026 LaunchVault · Not financial advice</span><span class="lgl"><a href="/legal/privacy/">Privacy</a><a href="/legal/terms/">Terms</a><a href="/#top">Back to top <span aria-hidden="true">↑</span></a></span>
+''' + FKEY + '''    <div class="fbot"><span>© 2026 LaunchVault · Not financial advice</span><span class="lgl"><a href="/legal/privacy/">Privacy</a><a href="/legal/terms/">Terms</a><a href="/#top">Back to top <span aria-hidden="true">↑</span></a></span>
       <span class="own">Logos belong to their owners and show where data was read, not a partnership.</span></div>
   </div>
 </footer>'''

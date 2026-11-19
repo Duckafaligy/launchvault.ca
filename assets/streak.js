@@ -1,5 +1,5 @@
 // Site streak (spacefs-style): thousands of tiny red-to-orange particles drifting along an S-shaped wave.
-// One fixed full-screen canvas behind every page's content, plus one inside the dark footer.
+// One fixed full-screen canvas behind every page's content.
 (() => {
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches, small = innerWidth < 760, LANES = 34;
   const A = [225, 29, 72], B = [255, 138, 0], CQ = 16, AQ = 10, STY = [];             // #E11D48 -> #FF8A00, pre-built colour x alpha styles
@@ -47,9 +47,4 @@
   const kickBg = wave(bg, () => [innerWidth, innerHeight], small ? 9400 : 34300, bgLive); kickBg();
   addEventListener("scroll", kickBg, { passive: true });
 
-  if (foot) {
-    const fc = make("streak-foot"); foot.append(fc); let seen = false;
-    const kick = wave(fc, () => [foot.clientWidth, foot.clientHeight], small ? 5000 : 18000, () => seen);
-    new IntersectionObserver(([e]) => { seen = e.isIntersecting; kick(); }).observe(foot);
-  }
 })();
