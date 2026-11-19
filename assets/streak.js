@@ -1,7 +1,8 @@
-// Hero streak: thousands of tiny red-to-orange particles drifting along an S-shaped wave behind the demo window.
+// Site streak (spacefs-style): thousands of tiny red-to-orange particles drifting along an S-shaped wave,
+// on a fixed full-screen canvas behind every page's content, so it carries on through every section as you scroll.
 (() => {
-  const hero = document.querySelector(".hero"), cv = hero && hero.querySelector(".streak");
-  if (!cv) return;
+  const cv = document.createElement("canvas"); cv.className = "streak"; cv.setAttribute("aria-hidden", "true");
+  document.body.prepend(cv);
   const ctx = cv.getContext("2d"), still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const N = innerWidth < 760 ? 6000 : 22000, LANES = 34, P = [];
   const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;      // ~[-1,1], dense in the middle
@@ -9,10 +10,10 @@
   const A = [225, 29, 72], B = [255, 138, 0], CQ = 16, AQ = 10, STY = [];            // #E11D48 -> #FF8A00, pre-built colour x alpha styles
   for (let c = 0; c < CQ; c++) for (let a = 0; a < AQ; a++) { const k = c / (CQ - 1), m = i => A[i] + (B[i] - A[i]) * k | 0; STY.push(`rgba(${m(0)},${m(1)},${m(2)},${((a + 1) / AQ).toFixed(2)})`); }
   const bins = STY.map(() => []);
-  let W, H, dpr, vis = true, t0 = performance.now();
-  const size = () => { dpr = Math.min(devicePixelRatio || 1, 2); W = hero.clientWidth; H = hero.clientHeight; cv.width = W * dpr; cv.height = H * dpr; };
+  let W, H, dpr, t0 = performance.now(), sy = scrollY;
+  const size = () => { dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; };
   const frame = now => {
-    const t = (now - t0) / 1000;
+    const t = (now - t0) / 1000 + sy * .0015;                                          // scrolling nudges the wave too
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
     const band = Math.min(H * .34, 320), d = Math.max(1, 1.1 * dpr) / dpr;
     for (const b of bins) b.length = 0;
@@ -28,9 +29,10 @@
       bins[Math.min(CQ - 1, x * CQ | 0) * AQ + Math.min(AQ - 1, al * AQ | 0)].push(sx, y);
     }
     for (let i = 0; i < bins.length; i++) { const b = bins[i]; if (!b.length) continue; ctx.fillStyle = STY[i]; for (let j = 0; j < b.length; j += 2) ctx.fillRect(b[j], b[j + 1], d, d); }
-    if (!still && vis) requestAnimationFrame(frame);
+    if (!still && !document.hidden) requestAnimationFrame(frame);
   };
   size(); addEventListener("resize", () => { size(); if (still) frame(performance.now()); });
-  new IntersectionObserver(([e]) => { const was = vis; vis = e.isIntersecting; if (vis && !was && !still) requestAnimationFrame(frame); }).observe(hero);
+  addEventListener("scroll", () => { sy = scrollY; if (still) frame(performance.now()); }, { passive: true });
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && !still) requestAnimationFrame(frame); });
   requestAnimationFrame(frame);
 })();

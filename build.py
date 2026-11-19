@@ -202,7 +202,7 @@ def main():
         for k, v in frag.items(): b = b.replace(k, v)
         html = (HEAD.format(title=title, desc=desc, og=og(out)) + f'<body{" class=" + chr(34) + cls + chr(34) if cls else ""}>\n' + sprite + "\n" + nav(active)
                 + '\n<main id="main">\n' + b + ("\n" + strip if bstrip else "") + "\n</main>\n"
-                + FOOTER + '\n<script src="/assets/nav.js" defer></script>\n<script src="/assets/site.js" defer></script>\n<script src="/assets/home.js" defer></script>\n</body>\n</html>\n')
+                + FOOTER + '\n<script src="/assets/nav.js" defer></script>\n<script src="/assets/site.js" defer></script>\n<script src="/assets/home.js" defer></script>\n<script src="/assets/streak.js" defer></script>\n</body>\n</html>\n')
         path = os.path.join(ROOT, out); os.makedirs(os.path.dirname(path), exist_ok=True)
         write(path, html)
     print("built", len(PAGES), "pages")

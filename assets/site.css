@@ -720,11 +720,12 @@ footer .fmsg,.dk .fmsg{color:#E2E8F0;justify-content:flex-start}
 .chrome .dots i:nth-child(1){background:#FF5F57}
 .chrome .dots i:nth-child(2){background:#FEBC2E}
 .chrome .dots i:nth-child(3){background:#28C840}
-/* hero pop: particle streak (assets/streak.js), spacefs-style S-wave of tiny red-to-orange dots behind the demo (2026-11-18) */
-.hero{position:relative;isolation:isolate}
-.hero > .wrap{position:relative;z-index:1}
-.hero .streak{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.winfit .win{box-shadow:0 30px 80px -24px rgba(225,29,72,.28),0 0 0 1px rgba(15,23,42,.06),0 0 60px -14px rgba(255,138,0,.28)}
+/* site streak (assets/streak.js): fixed full-screen particle wave behind all content, spacefs-style (2026-11-18).
+   Content sits above it; light section backgrounds are see-through so the wave carries on through them. */
+.streak{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
+#main,footer.foot{position:relative;z-index:1}
+.sec-alt{background:rgba(248,250,252,.55)}
+.hero{position:relative}.hero > .wrap{position:relative;z-index:1}
 
 /* =====================================================================
    Round 11: remodel + motion. Shared components (see COMPONENTS.md).
