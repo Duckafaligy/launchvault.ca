@@ -105,10 +105,10 @@
    #signup opens the sign-up tab. While accounts are off (LV_AUTH false) every option just opens the app. */
 (() => {
   const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-  const want = () => location.hash === "#signup" || /^(pro|developer|builder|full)$/.test(new URLSearchParams(location.search).get("plan") || "") ? "signup" : location.hash === "#signin" ? "signin" : null;
+  const want = () => location.hash === "#signup" || /^(pro|developer|builder|lifetime|full)$/.test(new URLSearchParams(location.search).get("plan") || "") ? "signup" : location.hash === "#signin" ? "signin" : null;
   const set = id => ["signin", "signup"].forEach(k => { const on = k === id; document.getElementById(k).setAttribute("aria-selected", on); document.getElementById("p-" + k).hidden = !on; });
   const w = want(); if (w) set(w);
-  if (/^(pro|developer|builder|full)$/.test(new URLSearchParams(location.search).get("plan") || "")) $("#plannote").hidden = false;
+  if (/^(pro|developer|builder|lifetime|full)$/.test(new URLSearchParams(location.search).get("plan") || "")) $("#plannote").hidden = false;
   addEventListener("hashchange", () => { const w = want(); if (w) document.getElementById(w).click(); });
   $$(".wtabs [role=tab]").forEach(t => t.addEventListener("click", () => history.replaceState(null, "", "#" + t.id)));
   const isNew = () => document.getElementById("signup").getAttribute("aria-selected") === "true";

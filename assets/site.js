@@ -19,7 +19,7 @@
   }));
   // ?plan=pro|developer|builder(alias)|full on /signup/ shows the plan note; .pname (if present) gets the plan's name
   const plan = new URLSearchParams(location.search).get("plan"), pn = $("#plannote");
-  if (pn && plan && /^(pro|developer|builder|full)$/.test(plan)) { pn.hidden = false; const nm = pn.querySelector(".pname"); if (nm) nm.textContent = /^(developer|builder)$/.test(plan) ? "Developer" : "Pro"; }
+  if (pn && plan && /^(pro|developer|builder|lifetime|full)$/.test(plan)) { pn.hidden = false; const nm = pn.querySelector(".pname"); if (nm) nm.textContent = /^(developer|builder)$/.test(plan) ? "Developer" : plan === "lifetime" ? "Lifetime (beta)" : "Pro"; }
   $$("a.parentmail").forEach(a => { const url = location.origin + "/#pricing";
     a.href = "mailto:?subject=" + encodeURIComponent("LaunchVault") + "&body=" + encodeURIComponent("Can you look at this? Pro is $7.99 a month (or $6.49 a month billed yearly, $77.88 a year), cancel anytime, and payments go through Stripe: " + url); });
 

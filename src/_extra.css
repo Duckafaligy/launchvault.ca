@@ -276,3 +276,13 @@ footer.foot .lb.x{color:#FCA5A5;background:rgba(229,83,61,.16)}footer.foot .lb.n
 .fsrc img{width:18px;height:18px;border-radius:4px;object-fit:contain;background:#fff;padding:1px}
 @media (max-width:900px){.fkey{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.fkey{grid-template-columns:1fr}}
+
+/* Beta lifetime offer under the plans */
+#pricing .beta{margin-top:20px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:28px 32px;border-radius:16px;background:#0B1220;color:#fff;box-shadow:0 0 0 1px rgba(225,29,72,.35),0 24px 60px -30px rgba(225,29,72,.55)}
+#pricing .beta h3{margin:10px 0 6px;font-size:26px;color:#fff}
+#pricing .beta p{margin:0;color:#CBD5E1;max-width:560px}
+#pricing .beta .tg{display:inline-block;padding:5px 12px;border-radius:999px;font-size:13px;font-weight:600;line-height:1.2;background:#E11D48!important;border-color:#E11D48!important;color:#fff!important}
+#pricing .beta .bp{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+#pricing .beta .pr{font-size:44px;font-weight:600;color:#fff}#pricing .beta .pr small{color:#CBD5E1!important}
+#pricing .beta .ps{color:#CBD5E1!important}
+@media (max-width:720px){#pricing .beta{grid-template-columns:1fr;padding:22px}#pricing .beta .bp{text-align:left;align-items:stretch}}
