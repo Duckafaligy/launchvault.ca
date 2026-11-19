@@ -318,7 +318,7 @@ main .tlink{min-height:44px}
 .ltoc b{padding-left:16px}
 .lsum{background:#fff;border-left:3px solid var(--brand)}
 .legal .prose{max-width:68ch}
-@media (max-width:900px){.ltoc .ind{display:none}.ltoc a{box-shadow:none;padding-left:12px;border-radius:8px}.ltoc b{padding-left:0}}
+@media (max-width:900px){.ltoc{position:static}.ltoc .ind{display:none}.ltoc a{box-shadow:none;padding-left:12px;border-radius:8px}.ltoc b{padding-left:0}}
 
 /* ---------- auth ---------- */
 .auth{background:var(--alt)}

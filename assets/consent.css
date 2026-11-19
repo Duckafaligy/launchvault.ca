@@ -1,0 +1,51 @@
+/* LaunchVault cookie consent card (assets/consent.js). Desktop: small card, bottom left. Phones: bottom sheet.
+   Fixed position, so it never shifts the layout. Brand #2563EB, white, black. No grey text: notes are italic brand blue. */
+.lvc{position:fixed;left:20px;bottom:20px;z-index:45;width:min(372px,calc(100vw - 40px));max-height:calc(100vh - 40px);overflow:auto;
+  background:#fff;color:#0B1220;border:1px solid #0B1220;border-radius:14px;padding:18px 18px 16px;
+  box-shadow:0 2px 0 #0B1220,0 24px 60px -18px rgba(11,18,32,.45);font:15px/1.5 "Schibsted Grotesk",system-ui,sans-serif;
+  opacity:0;transform:translateY(14px);transition:opacity .32s cubic-bezier(.16,1,.3,1),transform .32s cubic-bezier(.16,1,.3,1)}
+.lvc.on{opacity:1;transform:none}
+.lvc[hidden]{display:none}
+.lvc:focus,.lvc:focus-visible{outline:none}
+.lvc h2{margin:0 0 6px;font-size:17px;line-height:1.3;font-weight:700;letter-spacing:-.01em;color:#0B1220}
+.lvc p{margin:0;color:#0B1220}
+.lvc em{font-style:italic;color:#2563EB;font-weight:500}
+.lvc a{color:#0B1220;text-decoration:underline;text-decoration-color:#2563EB;text-decoration-thickness:2px;text-underline-offset:3px}
+.lvc a:hover{color:#2563EB}
+.lvc-panel{margin-top:12px;border-top:1px solid #0B1220}
+.lvc-panel[hidden]{display:none}
+.lvc-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px;padding:10px 0;border-bottom:1px solid #DBE4FF}
+.lvc-row label{font-weight:600}
+.lvc-row em{grid-column:1/-1;font-size:13.5px;line-height:1.4}
+.lvc-sw{position:relative;width:44px;height:26px;padding:0;border:1.5px solid #0B1220;border-radius:99px;background:#fff;cursor:pointer;transition:background .2s}
+.lvc-sw i{position:absolute;top:2.5px;left:3px;width:18px;height:18px;border-radius:50%;background:#0B1220;transition:transform .2s cubic-bezier(.16,1,.3,1),background .2s}
+.lvc-sw[aria-checked="true"]{background:#2563EB;border-color:#2563EB}
+.lvc-sw[aria-checked="true"] i{transform:translateX(17px);background:#fff}
+.lvc-sw:disabled{cursor:not-allowed}
+.lvc-sw:focus-visible,.lvc-b:focus-visible{outline:3px solid #2563EB;outline-offset:2px}
+.lvc-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.lvc-b{min-height:44px;padding:0 14px;border:1.5px solid #0B1220;border-radius:10px;background:#fff;color:#0B1220;font:600 14.5px/1 "Schibsted Grotesk",system-ui,sans-serif;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.lvc-b:hover{background:#0B1220;color:#fff}
+.lvc-p{background:#2563EB;border-color:#2563EB;color:#fff}
+.lvc-p:hover{background:#1D4ED8;border-color:#1D4ED8}
+.lvc-l{grid-column:1/-1;border-color:transparent;background:none;color:#2563EB;text-decoration:underline;text-underline-offset:3px}
+.lvc-l:hover{background:#EEF3FF;color:#1D4ED8}
+.lvc-l[data-c="save"]{border-color:#0B1220;color:#0B1220;text-decoration:none}
+.lvc-l[data-c="save"]:hover{background:#0B1220;color:#fff}
+@media (max-width:600px){
+  .lvc{left:0;right:0;bottom:0;width:auto;max-height:85vh;border-width:1px 0 0;border-radius:18px 18px 0 0;
+    padding:18px 16px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -18px 50px -20px rgba(11,18,32,.45);transform:translateY(100%)}
+  .lvc.on{transform:none}
+}
+@media (prefers-reduced-motion:reduce){.lvc,.lvc-sw,.lvc-sw i{transition:none}}
+
+/* legal pages: the cookie and storage tables on /legal/cookies/ */
+.ltable{width:100%;border-collapse:collapse;margin:8px 0 24px;font-size:15px;line-height:1.5}
+.ltable th,.ltable td{text-align:left;vertical-align:top;padding:10px 12px 10px 0;border-bottom:1px solid #E5E7EB}
+.ltable th{color:#0B1220;font-weight:600;border-bottom:1.5px solid #0B1220}
+.ltable code{font-size:13.5px;color:#0B1220;background:#EEF3FF;border-radius:4px;padding:1px 5px;overflow-wrap:anywhere}
+@media (max-width:640px){
+  .ltable thead{display:none}
+  .ltable tr{display:block;padding:12px 0;border-bottom:1px solid #E5E7EB}
+  .ltable td{display:block;border:0;padding:2px 0}
+}

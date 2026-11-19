@@ -2,39 +2,110 @@
   <div class="wrap">
     <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span>Legal</span><span aria-hidden="true">/</span><span>Privacy</span></nav>
     <h1>Privacy policy</h1>
-    <p class="pmeta" style="margin-top:12px">Draft · November 17, 2026</p>
-    <p class="draft"><span><b>Draft, not yet reviewed by a lawyer.</b> This is a plain-English first draft of how LaunchVault plans to handle your information. It will be reviewed before launch, and it may change.</span></p>
+    <p class="pmeta" style="margin-top:12px">Draft · Last updated November 19, 2026</p>
+    <p class="draft"><span><b>Draft, not yet reviewed by a lawyer.</b> This is a plain-English template of how LaunchVault plans to handle your information. It will be reviewed before launch, and it may change. Text in [square brackets] is still to be filled in.</span></p>
   </div>
 </section>
 
 <section style="padding-top:0">
   <div class="wrap legal">
-    <nav class="ltoc" aria-label="Contents"><b>Contents</b><span class="ind" aria-hidden="true"></span><a href="#who">Who we are</a><a href="#collect">What we collect</a><a href="#payments">Payments</a><a href="#dont">What we don't do</a><a href="#rights">Your rights</a><a href="#changes">Changes</a><a href="#contact">Contact</a></nav>
+    <nav class="ltoc" aria-label="Contents"><b>Contents</b><span class="ind" aria-hidden="true"></span><a href="#who">Who we are</a><a href="#now">Right now (preview)</a><a href="#collect">What we collect</a><a href="#why">Why we use it</a><a href="#where">Where it's stored</a><a href="#keep">How long we keep it</a><a href="#minors">Under 18 and parents</a><a href="#cookies">Cookies and storage</a><a href="#dont">What we don't do</a><a href="#rights">Your rights</a><a href="#regions">EU, UK and California</a><a href="#changes">Changes</a><a href="#contact">Contact</a></nav>
     <div class="prose">
       <div class="lsum"><b>The short version</b><ul>
-        <li>We collect your email, and an account only if you choose to make one.</li>
-        <li>Payments go through Stripe. We never see or store your card number.</li>
-        <li>We don't sell your data, and you can ask us to delete it.</li></ul></div>
+        <li>Right now nothing you do on LaunchVault is sent to us. Your ticks, progress and quiz answers stay on your device.</li>
+        <li>When accounts open, we keep your email, age range, progress and quiz answers, in Canada.</li>
+        <li>If you're under 13, we store nothing at all.</li>
+        <li>No ads, no trackers, no selling your data. You can download or delete your data at any time.</li></ul></div>
+
       <h2 id="who">Who we are</h2>
-      <p>LaunchVault publishes breakdowns of real company success stories. In this policy, "we" means LaunchVault.</p>
-      <h2 id="collect">What we collect</h2>
+      <p>LaunchVault publishes breakdowns of real company success stories for people aged about 15 to 20. In this policy, "LaunchVault", "we" and "us" mean the operator of launchvault-site.vercel.app and the LaunchVault app. [Legal name of the business, if different.]</p>
+      <p>We are based in Ontario, Canada. Canada's federal privacy law, the Personal Information Protection and Electronic Documents Act (PIPEDA), applies to how we handle personal information. Ontario has no separate private-sector privacy law that replaces it, so PIPEDA is the main law for us. Our privacy contact is listed under <a href="#contact">Contact</a>.</p>
+
+      <h2 id="now">Right now (preview)</h2>
+      <p>LaunchVault is a preview. Sign-in is built but switched off, and there are no payments. That means:</p>
       <ul>
-        <li>Your email address, if you sign up for the weekly email or an account.</li>
-        <li>A password, if you create an account. Passwords are stored hashed, never as plain text.</li>
-        <li>Your quiz answers stay on your device. If you make an account, we save them so your path follows you.</li>
-        <li>Basic usage data, like which pages are opened, to see what's useful.</li>
+        <li>Nothing you type or tick is sent to us. The sign-up forms show a "sign-ups open soon" message and send nothing.</li>
+        <li>Your progress, checklist ticks, age range and quiz answers are saved only in your browser's storage on this device.</li>
+        <li>We run no analytics and no ad trackers.</li>
       </ul>
-      <p>This preview doesn't collect anything yet: the sign-up forms don't send data anywhere.</p>
-      <h2 id="payments">Payments</h2>
-      <p>If you or a parent pay for Full, the payment is handled by Stripe. We receive whether the payment worked and the plan, not your full card number. If you're under 18, a parent or guardian pays.</p>
+      <p>The rest of this policy also covers what happens once sign-in is turned on, so you know before it does.</p>
+
+      <h2 id="collect">What we collect</h2>
+      <p><b>On your device (now):</b> what you do in the app, like checklist ticks, how far you've read each story, your age range, your quiz answers and path, your email-preference switches, and the date you shared the parent link. The full list of storage keys is in the <a href="/legal/cookies/">cookie policy</a>.</p>
+      <p><b>When you make an account (later):</b></p>
+      <ul>
+        <li><b>Your email address.</b> You sign in through Clerk, with Google, GitHub, Apple, Discord or a one-time email code. We copy only your email into our own database.</li>
+        <li><b>Your age range</b> (13 to 15, 16 to 17, 18 to 20, or 21 or older). Never your exact birthday.</li>
+        <li><b>Your progress:</b> which checklist items you ticked and how far you read each story.</li>
+        <li><b>Your quiz answers</b> and the path they built.</li>
+        <li><b>Your email preferences</b> (for example, "tell me when a new story is out").</li>
+      </ul>
+      <p>The sign-in provider you pick may share your name and profile picture with Clerk. Clerk holds those for sign-in; we don't copy them into our database. We never see your Google, GitHub, Apple or Discord password.</p>
+      <p><b>From anyone who visits:</b> our host, Vercel, receives the basic details every website gets, like your IP address, browser type and the page asked for, to deliver the page and keep the site secure. Your browser also asks Google Fonts for our fonts, which shares your IP address with Google.</p>
+      <p><b>From under 13s:</b> nothing. See <a href="#minors">Under 18 and parents</a>.</p>
+
+      <h2 id="why">Why we use it</h2>
+      <ul>
+        <li><b>To run your account:</b> to sign you in and keep your progress the same on every device.</li>
+        <li><b>To show you the right path:</b> your quiz answers pick which stories and checklists come first.</li>
+        <li><b>To apply the age rules:</b> your age range decides whether a parent needs to pay for a plan.</li>
+        <li><b>To email you</b> only what you switched on. Every email will have an unsubscribe link, as Canada's anti-spam law (CASL) requires.</li>
+        <li><b>To keep the site safe and working:</b> basic server logs help us stop abuse and fix errors.</li>
+      </ul>
+      <p>We only use your information for these reasons. If we ever want to use it for something new, we'll ask first.</p>
+
+      <h2 id="where">Where it's stored</h2>
+      <ul>
+        <li><b>Supabase</b> holds our database (email, age range, progress, quiz answers, email preferences), in its Canada region (ca-central-1, Montreal).</li>
+        <li><b>Clerk</b> runs sign-in. It is based in the United States and stores sign-in details there.</li>
+        <li><b>Vercel</b> hosts the website. It serves pages from data centres around the world, so request logs may be handled outside Canada.</li>
+        <li><b>Google Fonts</b> serves our fonts.</li>
+        <li><b>Stripe</b> will handle payments when they open. We will never see or store a full card number.</li>
+      </ul>
+      <p>When information is handled outside Canada, the laws of that country apply to it, and their authorities may be able to access it. We pick providers that protect data with contracts and security standards. [List each provider's data processing agreement once signed.]</p>
+
+      <h2 id="keep">How long we keep it</h2>
+      <ul>
+        <li><b>On your device:</b> until you delete it. Your cookie choice is kept for 12 months, then we ask again.</li>
+        <li><b>Your account data:</b> while your account is open. When you delete your account, we delete it within 30 days, and from backups within [backup period, for example 30] more days.</li>
+        <li><b>If an account is unused for [2] years,</b> we'll email you, then delete it if you don't reply.</li>
+        <li><b>Server logs:</b> a short time, set by Vercel, for security and debugging.</li>
+        <li><b>Payment records (later):</b> as long as tax law requires, which in Canada is usually 6 years.</li>
+      </ul>
+
+      <h2 id="minors">Under 18 and parents</h2>
+      <ul>
+        <li><b>Under 13:</b> you can read the public site, but we don't store anything about you. If you tell the app you're under 13, it stops, clears anything it saved on your device and saves nothing more, and it never sends anything to our database. If we learn we have information from someone under 13, we delete it.</li>
+        <li><b>13 to 17:</b> you can use LaunchVault and make an account (when accounts open). A paid plan needs a parent or guardian to pay.</li>
+        <li><b>Parent pays:</b> in the app you can copy a link to our plans, or open your own email app to send it to a parent. We don't send that email and we don't store your parent's email address. We only keep the date you shared the link, on your device. When payments open, your parent pays through Stripe, and we'll keep the parent's email only to send receipts.</li>
+        <li><b>Parents</b> can ask to see or delete their child's data at any time. Write to us at the address under <a href="#contact">Contact</a>.</li>
+      </ul>
+
+      <h2 id="cookies">Cookies and storage</h2>
+      <p>We don't use advertising or tracking cookies. We use your browser's local storage for things the site needs, like your ticks and progress, and for preferences you can turn off. Sign-in will add a few cookies from Clerk when it's turned on. The <a href="/legal/cookies/">cookie policy</a> lists every one and what it does. You can change your choice any time with <a href="/legal/cookies/" data-consent-open>Cookie settings</a>.</p>
+
       <h2 id="dont">What we don't do</h2>
-      <ul><li>We don't sell your personal information.</li><li>We don't show ads based on your personal information.</li><li>We don't share your quiz answers with anyone.</li></ul>
+      <ul><li>We don't sell your personal information, or share it for advertising.</li><li>We don't show ads based on your personal information.</li><li>We don't share your quiz answers with anyone.</li></ul>
+
       <h2 id="rights">Your rights</h2>
-      <p>Under Canada's privacy law (PIPEDA) you can ask what we hold about you, ask us to correct it, and ask us to delete it. We'll reply within 30 days. You can also complain to the Office of the Privacy Commissioner of Canada.</p>
+      <p>Wherever you live, you can:</p>
+      <ul>
+        <li><b>Download your data.</b> Right now: open <a href="/app/account/">Account</a> in the app and choose "Download your data". It saves everything on this device as a file. With an account, ask us and we'll send what we hold.</li>
+        <li><b>Delete your data.</b> Right now: "Delete your data" on the same Account page clears everything LaunchVault saved on this device. With an account, delete it from Account or ask us.</li>
+        <li><b>Correct your data</b>, for example your email or age range.</li>
+        <li><b>Withdraw consent</b>, for example turn off emails or Preferences storage.</li>
+      </ul>
+      <p>We'll reply within 30 days, and we may need to check it's really you first. If you're not happy with our answer, you can complain to the <a href="https://www.priv.gc.ca/" rel="noopener">Office of the Privacy Commissioner of Canada</a>.</p>
+
+      <h2 id="regions">EU, UK and California</h2>
+      <p><b>EU and UK (GDPR and UK GDPR).</b> We use your information because it's needed to provide the service you asked for (your account and progress), because of our legitimate interest in keeping the site secure, and with your consent for emails and Preferences storage. You also have the right to restrict or object to how we use your data and to take it to another service. You can complain to your local data protection authority, or in the UK to the Information Commissioner's Office. [Name an EU or UK representative here if one is legally required.]</p>
+      <p><b>California (CCPA, as amended by the CPRA).</b> You have the right to know what we collect, to delete it, to correct it, and not to be treated differently for using these rights. We don't sell or share personal information, so there is nothing to opt out of. If we ever add analytics, we'll treat a Global Privacy Control signal from your browser as a "no".</p>
+
       <h2 id="changes">Changes</h2>
-      <p>If we change this policy, we'll update the date at the top and tell account holders by email.</p>
+      <p>If we change this policy, we'll update the date at the top. If a change is important, we'll tell account holders by email before it applies.</p>
+
       <h2 id="contact">Contact</h2>
-      <p>Contact details coming before launch.</p>
+      <p>Email our privacy contact at <b>[contact email]</b>. Write "Privacy" in the subject line. [Optional: a mailing address for privacy requests. Never a home address.]</p>
       <p style="margin-top:28px"><a href="/legal/terms/">Read the terms of use (draft) →</a></p>
     </div>
   </div>

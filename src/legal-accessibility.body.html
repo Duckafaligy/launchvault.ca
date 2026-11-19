@@ -1,0 +1,50 @@
+<section class="phero tight">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span>Legal</span><span aria-hidden="true">/</span><span>Accessibility</span></nav>
+    <h1>Accessibility statement</h1>
+    <p class="pmeta" style="margin-top:12px">Draft · Last updated November 19, 2026</p>
+    <p class="draft"><span><b>Draft, not yet reviewed by a lawyer.</b> LaunchVault is a preview, and we are still testing it.</span></p>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap legal">
+    <nav class="ltoc" aria-label="Contents"><b>Contents</b><span class="ind" aria-hidden="true"></span><a href="#goal">Our goal</a><a href="#done">What we do</a><a href="#gaps">Known gaps</a><a href="#feedback">Tell us</a></nav>
+    <div class="prose">
+      <h2 id="goal">Our goal</h2>
+      <p>We want everyone to be able to read LaunchVault, including people who use a screen reader, a keyboard, zoom or other assistive tools. We aim to meet the Web Content Accessibility Guidelines (WCAG) 2.1 at level AA, which is also the standard Ontario's accessibility law (AODA) points to.</p>
+
+      <h2 id="done">What we do</h2>
+      <ul>
+        <li>Every page works with a keyboard, and there's a "Skip to content" link at the top.</li>
+        <li>Focus is easy to see when you move through the page with Tab.</li>
+        <li>Every number has a text label (Verified, Claimed and so on), not just a colour.</li>
+        <li>Animations calm down or stop when your device asks for reduced motion.</li>
+        <li>Pages are built and checked for phone, tablet and desktop screens.</li>
+        <li>The cookie card can be used with a keyboard and closes with Esc.</li>
+      </ul>
+
+      <h2 id="gaps">Known gaps</h2>
+      <ul>
+        <li>We haven't had an outside accessibility audit yet. [Planned date.]</li>
+        <li>Revenue charts don't yet have a text version for screen readers. The key numbers are in the text around them, and we're adding a full text version.</li>
+        <li>Company logos come from their owners and may not have strong contrast.</li>
+      </ul>
+
+      <h2 id="feedback">Tell us</h2>
+      <p>If something is hard to use, or you need a page in another format, email <b>[contact email]</b> with the page link and what went wrong. We'll reply within [5] business days and tell you what we'll fix and when.</p>
+      <p style="margin-top:28px"><a href="/legal/privacy/">Privacy policy (draft) →</a></p>
+    </div>
+  </div>
+</section>
+
+<script>
+/* contents: highlights the section you're reading */
+(() => { const links = [...document.querySelectorAll(".ltoc a")], secs = links.map(a => document.getElementById(a.hash.slice(1))), ind = document.querySelector(".ltoc .ind");
+  let cur = -2;
+  const f = () => { let i = 0; secs.forEach((s, k) => { if (s && s.getBoundingClientRect().top < innerHeight * .3) i = k; });
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) i = links.length - 1;
+    if (i === cur) return; cur = i; links.forEach((a, k) => a.toggleAttribute("aria-current", k === i));
+    if (ind) { ind.style.transform = `translateY(${links[i].offsetTop}px)`; ind.style.height = links[i].offsetHeight + "px"; } };
+  addEventListener("scroll", f, {passive: true}); addEventListener("resize", () => { cur = -2; f(); }); f(); })();
+</script>

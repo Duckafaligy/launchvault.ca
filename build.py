@@ -25,6 +25,8 @@ PAGES = [
      "A family member's problem, a service you can sell now, or a free version people can try. A real example of each.", "blog", False, False, ""),
     ("legal/privacy/index.html", "privacy.body.html", "Privacy policy (draft) · LaunchVault", "LaunchVault's privacy policy. Draft, not yet reviewed by a lawyer.", "", False, False, ""),
     ("legal/terms/index.html", "terms.body.html", "Terms of use (draft) · LaunchVault", "LaunchVault's terms of use. Draft, not yet reviewed by a lawyer.", "", False, False, ""),
+    ("legal/cookies/index.html", "legal-cookies.body.html", "Cookie policy (draft) · LaunchVault", "Every cookie and storage key LaunchVault uses, and why. Draft, not yet reviewed by a lawyer.", "", False, False, ""),
+    ("legal/accessibility/index.html", "legal-accessibility.body.html", "Accessibility statement · LaunchVault", "How LaunchVault works for everyone, known gaps, and how to tell us about a problem.", "", False, False, ""),
     ("welcome/index.html", "welcome.body.html", "Welcome · LaunchVault", "Sign in or make a free LaunchVault account.", "welcome", False, False, ""),
     ("404.html", "404.body.html", "Page not found · LaunchVault", "This page isn't here.", "", False, False, ""),
 ]
@@ -126,7 +128,7 @@ FCOLS = [("Explore", [("/#stories", "Stories"), ("/#sources", "How we check"), (
          ("From the blog", [("/blog/", "All posts"), ("/blog/postiz/", "The Postiz breakdown"), ("/blog/what-verified-means/", "What Verified means"),
                             ("/blog/how-to-read-a-revenue-chart/", "Reading a revenue chart"), ("/blog/three-ways-to-start-small/", "Three ways to start small")]),
          ("Account", [("/welcome/", "Sign in"), ("/welcome/#signup", "Sign up")]),
-         ("Legal", [("/legal/privacy/", "Privacy (draft)"), ("/legal/terms/", "Terms (draft)")])]
+         ("Legal", [("/legal/privacy/", "Privacy (draft)"), ("/legal/terms/", "Terms (draft)"), ("/legal/cookies/", "Cookies (draft)"), ("/legal/accessibility/", "Accessibility")])]
 FCOLS_HTML = "".join(f'<nav class="fcol" aria-label="{h}"><h4>{h}</h4>' + "".join(f'<a href="{u}"><span>{t}</span></a>' for u, t in ls) + "</nav>" for h, ls in FCOLS)
 FKEY = ('''    <div class="fkey" aria-label="What each label means"><h4>Every number carries one label</h4>
       <div><span class="lb v">Verified</span>Read from payments (Stripe or RevenueCat) through TrustMRR.</div>
@@ -149,7 +151,7 @@ FOOTER = '''<footer class="foot">
         <div class="socs">''' + SOCIAL_HTML + '''</div></div>
       ''' + FCOLS_HTML + '''
     </div>
-''' + FKEY + '''    <div class="fbot"><span>© 2026 LaunchVault · Not financial advice</span><span class="lgl"><a href="/legal/privacy/">Privacy</a><a href="/legal/terms/">Terms</a><a href="/#top">Back to top <span aria-hidden="true">↑</span></a></span>
+''' + FKEY + '''    <div class="fbot"><span>© 2026 LaunchVault · Not financial advice</span><span class="lgl"><a href="/legal/privacy/">Privacy</a><a href="/legal/terms/">Terms</a><a href="/legal/cookies/" data-consent-open>Cookie settings</a><a href="/#top">Back to top <span aria-hidden="true">↑</span></a></span>
       <span class="own">Logos belong to their owners and show where data was read, not a partnership.</span></div>
   </div>
 </footer>'''
@@ -171,6 +173,7 @@ HEAD = '''<!doctype html>
 <link rel="stylesheet" href="/assets/home.css">
 <link rel="stylesheet" href="/assets/design.css">
 <link rel="stylesheet" href="/assets/nav.css">
+<link rel="stylesheet" href="/assets/consent.css">
 </head>
 '''
 
@@ -214,7 +217,7 @@ def main():
         for k, v in frag.items(): b = b.replace(k, v)
         html = (HEAD.format(title=title, desc=desc, og=og(out)) + f'<body{" class=" + chr(34) + cls + chr(34) if cls else ""}>\n' + sprite + "\n" + nav(active)
                 + '\n<main id="main">\n' + b + ("\n" + strip if bstrip else "") + "\n</main>\n"
-                + FOOTER + '\n<script src="/assets/nav.js" defer></script>\n<script src="/assets/site.js" defer></script>\n<script src="/assets/home.js" defer></script>\n<script src="/assets/streak.js" defer></script>\n</body>\n</html>\n')
+                + FOOTER + '\n<script src="/assets/consent.js" defer></script>\n<script src="/assets/nav.js" defer></script>\n<script src="/assets/site.js" defer></script>\n<script src="/assets/home.js" defer></script>\n<script src="/assets/streak.js" defer></script>\n</body>\n</html>\n')
         path = os.path.join(ROOT, out); os.makedirs(os.path.dirname(path), exist_ok=True)
         write(path, html)
     print("built", len(PAGES), "pages")

@@ -1,0 +1,95 @@
+<section class="phero tight">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span>Legal</span><span aria-hidden="true">/</span><span>Cookies</span></nav>
+    <h1>Cookie policy</h1>
+    <p class="pmeta" style="margin-top:12px">Draft · Last updated November 19, 2026</p>
+    <p class="draft"><span><b>Draft, not yet reviewed by a lawyer.</b> This lists every cookie and storage key LaunchVault uses today, and the ones sign-in will add when it's turned on.</span></p>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap legal">
+    <nav class="ltoc" aria-label="Contents"><b>Contents</b><span class="ind" aria-hidden="true"></span><a href="#basics">The basics</a><a href="#settings">Your choice</a><a href="#necessary">Necessary</a><a href="#preferences">Preferences</a><a href="#analytics">Analytics</a><a href="#signin">When sign-in is on</a><a href="#others">Other services</a><a href="#control">Clearing it</a><a href="#contact">Contact</a></nav>
+    <div class="prose">
+      <div class="lsum"><b>The short version</b><ul>
+        <li>Right now LaunchVault sets no cookies. It uses your browser's local storage, and everything stays on this device.</li>
+        <li>No ads, no tracking, no analytics.</li>
+        <li>Preferences storage is optional. Necessary storage keeps your ticks and progress working.</li></ul></div>
+
+      <h2 id="basics">The basics</h2>
+      <p>A <b>cookie</b> is a small file a website saves in your browser. <b>Local storage</b> and <b>session storage</b> do the same job, but they are never sent to a server: only the page itself can read them. LaunchVault uses local storage for nearly everything, so your progress stays on your device unless you make an account.</p>
+
+      <h2 id="settings">Your choice</h2>
+      <p>The first time you visit, a small card asks what you allow. You can pick "Accept all", "Only necessary", or "Choose" to set each kind yourself. We remember your choice for 12 months, then ask again.</p>
+      <p><a href="/legal/cookies/" data-consent-open>Change your cookie settings</a></p>
+
+      <h2 id="necessary">Necessary (always on)</h2>
+      <p>These make the features you use work. They aren't used to track you, and they never leave your device while sign-in is off.</p>
+      <table class="ltable">
+        <thead><tr><th scope="col">Key</th><th scope="col">Type</th><th scope="col">What it does</th><th scope="col">How long</th></tr></thead>
+        <tbody>
+          <tr><td><code>lv-consent</code></td><td>Local storage</td><td>Your cookie choice.</td><td>12 months</td></tr>
+          <tr><td><code>lv-go</code></td><td>Session storage</td><td>Which homepage section to scroll to after you pick one in the menu on another page.</td><td>Removed when the next page opens</td></tr>
+          <tr><td><code>lv-[story]-checks</code></td><td>Local storage</td><td>Your checklist ticks for each story, on breakdown pages and in the app.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-[story]-checkdates</code></td><td>Local storage</td><td>The date you ticked each checklist item.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-read-[story]</code></td><td>Local storage</td><td>How far you've read each story in the app.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-age</code></td><td>Local storage</td><td>Your age range, so the right rules apply. Never saved for under 13s.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-quiz-app</code></td><td>Local storage</td><td>Your answers to the app's setup quiz, which build your path.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-path-extra</code></td><td>Local storage</td><td>The date you finished the extra step on your path.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-pathnote</code></td><td>Local storage</td><td>Whether you've closed the "your path is ready" note.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-prefs</code></td><td>Local storage</td><td>Your email-preference switches on the Account page.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-parent</code></td><td>Local storage</td><td>The date you shared the plans link with a parent. Not their email.</td><td>Until you delete it</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="preferences">Preferences (optional)</h2>
+      <p>These remember choices that make the site nicer but aren't needed. If you turn Preferences off, we clear them from this device each time you leave a page on the public site.</p>
+      <table class="ltable">
+        <thead><tr><th scope="col">Key</th><th scope="col">Type</th><th scope="col">What it does</th><th scope="col">How long</th></tr></thead>
+        <tbody>
+          <tr><td><code>lv-quiz</code></td><td>Local storage</td><td>Your answers to "Find stories like you" on the homepage, which reorder the story cards.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-quiz-step</code></td><td>Local storage</td><td>Which question of that quiz you were on.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-lib</code></td><td>Local storage</td><td>Your search, filters, sort and view in the app's Library.</td><td>Until you delete it</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="analytics">Analytics (off)</h2>
+      <p>We don't use any analytics right now, so there is nothing to list. The switch stays off. If we ever add analytics, we'll update this page and ask you again before anything runs.</p>
+
+      <h2 id="signin">When sign-in is turned on</h2>
+      <p>Sign-in is built but switched off. When it's on, Clerk runs sign-in and sets these necessary cookies. Exact names can carry a short suffix; we'll confirm the final list when it goes live.</p>
+      <table class="ltable">
+        <thead><tr><th scope="col">Name</th><th scope="col">Set by</th><th scope="col">What it does</th><th scope="col">How long</th></tr></thead>
+        <tbody>
+          <tr><td><code>__session</code></td><td>Clerk</td><td>A short-lived token that proves you're signed in.</td><td>About a minute, renewed while you use the site</td></tr>
+          <tr><td><code>__client_uat</code></td><td>Clerk</td><td>When you last signed in or out, so every tab agrees.</td><td>Up to 1 year</td></tr>
+          <tr><td><code>__client</code></td><td>Clerk (its own sign-in domain)</td><td>Keeps you signed in between visits. Your browser's scripts can't read it.</td><td>Until you sign out, or up to [session lifetime set in Clerk]</td></tr>
+        </tbody>
+      </table>
+      <p><b>Supabase</b> sets no cookies or storage of its own. When you're signed in, the app passes Clerk's token to Supabase to save your progress; Supabase doesn't keep a separate login in your browser.</p>
+
+      <h2 id="others">Other services</h2>
+      <p>Your browser loads our fonts from Google Fonts, which sets no cookies for this but does see your IP address. When sign-in is on, the sign-in code is loaded from the jsDelivr CDN. If you choose Google, GitHub, Apple or Discord to sign in, that company's own cookies apply on its sign-in page.</p>
+
+      <h2 id="control">Clearing it</h2>
+      <ul>
+        <li>In the app, open <a href="/app/account/">Account</a> and choose "Delete your data" to clear everything LaunchVault saved on this device.</li>
+        <li>You can also clear site data in your browser's settings. Your ticks and progress will be gone unless you have an account.</li>
+      </ul>
+
+      <h2 id="contact">Contact</h2>
+      <p>Questions? Email <b>[contact email]</b>. More on how we handle your data is in the <a href="/legal/privacy/">privacy policy</a>.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+/* contents: highlights the section you're reading */
+(() => { const links = [...document.querySelectorAll(".ltoc a")], secs = links.map(a => document.getElementById(a.hash.slice(1))), ind = document.querySelector(".ltoc .ind");
+  let cur = -2;
+  const f = () => { let i = 0; secs.forEach((s, k) => { if (s && s.getBoundingClientRect().top < innerHeight * .3) i = k; });
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) i = links.length - 1;
+    if (i === cur) return; cur = i; links.forEach((a, k) => a.toggleAttribute("aria-current", k === i));
+    if (ind) { ind.style.transform = `translateY(${links[i].offsetTop}px)`; ind.style.height = links[i].offsetHeight + "px"; } };
+  addEventListener("scroll", f, {passive: true}); addEventListener("resize", () => { cur = -2; f(); }); f(); })();
+</script>
