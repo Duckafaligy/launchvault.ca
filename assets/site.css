@@ -720,24 +720,11 @@ footer .fmsg,.dk .fmsg{color:#E2E8F0;justify-content:flex-start}
 .chrome .dots i:nth-child(1){background:#FF5F57}
 .chrome .dots i:nth-child(2){background:#FEBC2E}
 .chrome .dots i:nth-child(3){background:#28C840}
-/* hero pop: a red-to-orange streak running BEHIND the demo window: soft glow + halftone dots merged into it (2026-11-18) */
-.winfit{isolation:isolate}
-.winfit::before,.winfit::after{content:"";position:absolute;z-index:-1;left:50%;width:100vw;top:50%;pointer-events:none;
-  translate:-50% -50%;rotate:-8deg;background:linear-gradient(90deg,#E11D48 0%,#FF5A1F 22%,#FF8A00 40%,#E11D48 60%,#FF5A1F 80%,#E11D48 100%) 0 0/200% 100%;
-  animation:streak-flow 10s linear infinite,streak-sway 14s ease-in-out infinite alternate}
-.winfit::before{height:240px;border-radius:999px;filter:blur(44px);opacity:.4;
-  -webkit-mask:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent);mask:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent)}
-.winfit::after{height:230px;opacity:1;animation:streak-flow 10s linear infinite,streak-sway 14s ease-in-out infinite alternate,dot-drift 18s linear infinite;
-  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3.2 0 0 0 -1.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/220px 220px,linear-gradient(transparent,#000 35%,#000 65%,transparent),linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
-  -webkit-mask-composite:source-in,source-in;
-  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3.2 0 0 0 -1.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/220px 220px,linear-gradient(transparent,#000 35%,#000 65%,transparent),linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
-  mask-composite:intersect}
-.winfit .win{box-shadow:0 30px 80px -20px rgba(225,29,72,.35),0 0 0 1px rgba(15,23,42,.06),0 0 60px -10px rgba(255,138,0,.35)}
-@keyframes streak-flow{to{background-position:-200% 0}}
-@keyframes streak-sway{from{rotate:-8deg;translate:-50% -50%}to{rotate:-7deg;translate:-50% calc(-50% - 10px)}}
-@keyframes dot-drift{to{-webkit-mask-position:220px 0,0 0,0 0;mask-position:220px 0,0 0,0 0}}
-@media (max-width:760px){.winfit::before{height:150px}.winfit::after{height:150px}}
-@media (prefers-reduced-motion:reduce){.winfit::before,.winfit::after{animation:none}}
+/* hero pop: particle streak (assets/streak.js), spacefs-style S-wave of tiny red-to-orange dots behind the demo (2026-11-18) */
+.hero{position:relative;isolation:isolate}
+.hero > .wrap{position:relative;z-index:1}
+.hero .streak{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.winfit .win{box-shadow:0 30px 80px -24px rgba(225,29,72,.28),0 0 0 1px rgba(15,23,42,.06),0 0 60px -14px rgba(255,138,0,.28)}
 
 /* =====================================================================
    Round 11: remodel + motion. Shared components (see COMPONENTS.md).
