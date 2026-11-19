@@ -4,7 +4,7 @@
   const cv = document.createElement("canvas"); cv.className = "streak"; cv.setAttribute("aria-hidden", "true");
   document.body.prepend(cv);
   const ctx = cv.getContext("2d"), still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const N = innerWidth < 760 ? 7200 : 26400, LANES = 34, P = [];
+  const N = innerWidth < 760 ? 9400 : 34300, LANES = 34, P = [];
   const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;      // ~[-1,1], dense in the middle
   for (let i = 0; i < N; i++) P.push({ x: Math.random(), lane: Math.floor(Math.random() * LANES), j: gauss() * .35, v: .00004 + Math.random() * .00008, a: Math.random() });
   const A = [225, 29, 72], B = [255, 138, 0], CQ = 16, AQ = 10, STY = [];            // #E11D48 -> #FF8A00, pre-built colour x alpha styles
