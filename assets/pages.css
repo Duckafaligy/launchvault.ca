@@ -402,26 +402,32 @@ main .tlink{min-height:44px}
   color:#F8FAFC;font:600 14px var(--fd);cursor:pointer;transition:background-color .2s,border-color .2s}
 .rc-replay:hover{background:var(--brand);border-color:var(--brand)}
 .rc-replay svg{transition:transform .5s var(--out)}.rc-replay:hover svg{transform:rotate(-200deg)}
-.rc-board{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:12px;align-items:stretch;margin-top:22px}
+.rc-board{display:grid;grid-template-columns:minmax(0,1fr) 248px minmax(0,1fr);gap:12px;align-items:stretch;margin-top:22px}
 .rc-p{border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px 18px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));
-  display:flex;flex-direction:column;gap:8px;transition:border-color .45s,background-color .45s,box-shadow .45s}
+  display:flex;flex-direction:column;justify-content:center;gap:8px;transition:border-color .45s,box-shadow .45s}
 .rc-p.c{text-align:right;align-items:flex-end}
-.rc-k{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;white-space:nowrap;font-size:14px;color:#F8FAFC}
+.rc-k{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:14px;color:#F8FAFC}
 .rc-p.c .rc-k{justify-content:flex-end}
 .rc-k i{width:16px;height:3px;border-radius:2px;background:#34D399;flex:none;box-shadow:0 0 8px rgba(52,211,153,.6)}
 .rc-p.c .rc-k i{background:repeating-linear-gradient(90deg,var(--pop) 0 5px,transparent 5px 8px);box-shadow:none}
-.rc-vrow{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .rc-p b{display:block;width:8ch;font:600 36px/1.05 var(--fn);color:#F8FAFC;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
 .rc-p.c b{text-align:right}
 .rc-p.v b{color:#6EE7B7}
-.rc-p small{display:block;font:500 14px var(--fn);color:#F8FAFC;opacity:.75;font-variant-numeric:tabular-nums;white-space:nowrap}
-/* the delta chip lives on the Verified card: fixed size, tabular numbers, colour = who is ahead */
-.rc-lead{flex:none;display:flex;align-items:center;justify-content:center;width:236px;height:40px;padding:0 12px;border-radius:8px;font:600 15px var(--fn);
-  white-space:nowrap;font-variant-numeric:tabular-nums;border:1px solid transparent;transition:background-color .35s,color .35s,border-color .35s}
-.rc-lead.none{background:rgba(255,255,255,.06);color:#F8FAFC;border-color:rgba(255,255,255,.1)}
-.rc-lead.tie{background:rgba(255,255,255,.1);color:#F8FAFC;border-color:rgba(255,255,255,.18)}
-.rc-lead.c{background:var(--pop);color:#fff;box-shadow:0 8px 20px -10px rgba(225,29,72,.8)}
-.rc-lead.v{background:rgba(16,185,129,.16);color:#6EE7B7;border-color:rgba(52,211,153,.45)}
+.rc-p small{display:block;font:500 14px var(--fn);color:#F8FAFC;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rc-p.v small{color:#A7F3D0}.rc-p.c small{color:#FECDD3}
+/* the difference is the hero of the row: fixed box, tabular numbers, colour = who is ahead; a bar pair on one $0-$30K scale links the two cards */
+.rc-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:14px 16px;border-radius:12px;
+  border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);transition:border-color .4s,background-color .4s}
+.rc-delta{display:block;width:100%;text-align:center;font:700 32px/1.05 var(--fn);letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap;color:#F8FAFC;transition:color .35s}
+.rc-mult{display:block;width:100%;text-align:center;font:500 14px var(--fn);font-variant-numeric:tabular-nums;white-space:nowrap;color:#F8FAFC}
+.rc-bars{display:grid;gap:4px;width:100%;margin-top:6px}
+.rc-bars i{display:block;height:6px;border-radius:3px;width:0;transition:width .45s var(--out)}
+.rc-bars .bv{background:#34D399;box-shadow:0 0 8px rgba(52,211,153,.45)}
+.rc-bars .bc{background:repeating-linear-gradient(90deg,var(--pop) 0 6px,rgba(225,29,72,.35) 6px 9px)}
+.rc-mid[data-state=v]{border-color:rgba(52,211,153,.45);background:rgba(16,185,129,.09)}
+.rc-mid[data-state=v] .rc-delta{color:#6EE7B7}.rc-mid[data-state=v] .rc-mult{color:#A7F3D0}
+.rc-mid[data-state=c]{border-color:rgba(225,29,72,.6);background:rgba(225,29,72,.12)}
+.rc-mid[data-state=c] .rc-delta{color:#FF8FA3}.rc-mid[data-state=c] .rc-mult{color:#FECDD3}
 .race.over .rc-p.v{border-color:rgba(52,211,153,.45);box-shadow:0 18px 40px -26px rgba(52,211,153,.55)}
 .rc-plot{position:relative;margin-top:18px;padding:12px 8px 4px;border-radius:12px;border:1px solid rgba(255,255,255,.06);
   background:radial-gradient(120% 90% at 85% 0%,rgba(52,211,153,.06),rgba(52,211,153,0) 60%),linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0) 75%)}
@@ -445,20 +451,34 @@ main .tlink{min-height:44px}
 .rc-plot .lab.c{fill:#FF8FA3}.rc-plot .lab.v{fill:#6EE7B7;font-size:16px}
 .rc-plot .pv{font:600 14px var(--fn);font-variant-numeric:tabular-nums;opacity:0;pointer-events:none;paint-order:stroke;stroke:#0B1020;stroke-width:4px}
 .rc-plot .pv.v{fill:#6EE7B7}
-.rc-legend{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:14px;font-size:14px}
-.rc-legend span{display:inline-flex;align-items:center;gap:8px}
-.rc-legend .v{color:#6EE7B7}.rc-legend .c{color:#FF8FA3}.rc-legend .g{color:#F8FAFC;font-style:italic}
-.rc-legend i{width:18px;height:3px;border-radius:2px;background:#34D399;flex:none}
-.rc-legend .c i{background:repeating-linear-gradient(90deg,var(--pop) 0 5px,transparent 5px 8px)}
-.rc-legend .g i{width:12px;height:12px;border-radius:3px;background:rgba(52,211,153,.35)}.rc-legend .g i.r{background:rgba(225,29,72,.45);margin-left:-4px}
-@media (prefers-reduced-motion:reduce){.rc-plot .ovk.on circle{animation:none}}
+/* Verified vs Claimed: a 2-column comparison under the chart, 1px hairlines */
+.rc-table{margin-top:18px;border:1px solid rgba(255,255,255,.12);border-radius:12px;overflow:hidden}
+.rt-row{display:grid;grid-template-columns:168px minmax(0,1fr) minmax(0,1fr);border-top:1px solid rgba(255,255,255,.1);transition:background-color .2s}
+.rt-row:first-child{border-top:0}
+.rt-row:not(.rt-h):hover{background:rgba(255,255,255,.03)}
+.rt-row > span{padding:12px 16px;font-size:14px;line-height:1.45;color:#F8FAFC}
+.rt-row > span + span{border-left:1px solid rgba(255,255,255,.1)}
+.rt-l{font-weight:600}
+.rt-h{background:rgba(255,255,255,.04)}
+.rt-h > span{display:flex;flex-direction:column;gap:4px;justify-content:center}
+.rt-hd{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font:600 16px var(--fd)}
+.rt-v .rt-hd{color:#6EE7B7}.rt-c .rt-hd{color:#FF8FA3}
+.rt-hd .sw{width:18px;height:3px;border-radius:2px;flex:none;background:#34D399;box-shadow:0 0 8px rgba(52,211,153,.6)}
+.rt-c .rt-hd .sw{background:repeating-linear-gradient(90deg,var(--pop) 0 5px,transparent 5px 8px);box-shadow:none}
+.rt-key{font-size:14px;font-style:italic}.rt-v .rt-key{color:#6EE7B7}.rt-c .rt-key{color:#FF8FA3}
+@media (prefers-reduced-motion:reduce){.rc-plot .ovk.on circle{animation:none}.rc-bars i{transition:none}}
 @media (max-width:720px){
-  .rc-board{grid-template-columns:minmax(0,1fr)}
+  .rc-board{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .rc-mid{grid-column:1/-1;grid-row:2}
   .rc-p{padding:14px}
+  .rc-k{white-space:normal;flex-wrap:wrap;gap:4px 8px}.rc-k i{display:none}
+  .rc-p b{font-size:26px;width:8ch;max-width:100%}
   .rc-p.c{text-align:left;align-items:flex-start}.rc-p.c .rc-k{justify-content:flex-start}.rc-p.c b{text-align:left}
-  .rc-vrow{flex-wrap:wrap;gap:10px}
-  .rc-p b{font-size:30px}
-  .rc-lead{width:100%}
+  .rt-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .rt-row > .rt-l{grid-column:1/-1;padding-bottom:0}
+  .rt-row > span{padding:10px 12px}
+  .rt-row > span + span{border-left:0}.rt-row > span:last-child{border-left:1px solid rgba(255,255,255,.1)}
+  .rt-h > .rt-l{display:none}
 }
 
 /* ---------- #stories: Postiz logo + Wayback timeline ---------- */

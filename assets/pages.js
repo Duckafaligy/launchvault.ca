@@ -22,7 +22,7 @@
                ["Jun 2026",8094],["Jul 2026",6998],["Aug 2026",6241],["Sep 2026",9936],["Oct 2026",28426]];
     const CLAIM = 10000, C0 = 3, N = V.length - 1, MAX = 30000;
     const plot = race.querySelector(".rc-plot"), svg = plot.querySelector("svg"), rv = race.querySelector("[data-rv]"), rc = race.querySelector("[data-rc]"),
-          rm = race.querySelector("[data-rm]"), lead = race.querySelector("[data-lead]"), cap = race.querySelector("[data-cap]"), replay = race.querySelector(".rc-replay");
+          rm = race.querySelector("[data-rm]"), lead = race.querySelector("[data-lead]"), mult = race.querySelector("[data-mult]"), mid = race.querySelector(".rc-mid"), bvb = race.querySelector("[data-bv]"), bcb = race.querySelector("[data-bc]"), cap = race.querySelector("[data-cap]"), replay = race.querySelector(".rc-replay");
     const CAPS = i => i < C0 ? "TrustMRR's public record starts in Dec 2025. No interview yet."
       : i === C0 ? "The interview said about $10K a month. Stripe that month: $10,310. Neck and neck."
       : i < N - 1 ? "The claim stays at ~$10K. Stripe dips under it: " + money(V[i][1]) + " in " + V[i][0].split(" ")[0] + "."
@@ -114,8 +114,11 @@
       const v = V[i][1], c = i >= C0 ? CLAIM : 0;
       rm.textContent = V[i][0]; tween(rv, v); if (c) tween(rc, c, "~"); else { rc.dataset.v = 0; rc.textContent = "Not yet"; }
       const gap = v - c, close = c && Math.abs(gap) / c < .05;
-      lead.className = "rc-lead " + (!c ? "none" : close ? "tie" : gap > 0 ? "v" : "c");
-      lead.textContent = !c ? "No claim yet" : close ? "Within " + Math.round(Math.abs(gap) / c * 100) + "%: neck and neck" : gap > 0 ? "Stripe ahead by " + money(gap) : "Claim ahead by " + money(-gap);
+      // the difference is the hero: signed dollars, the multiple of the claim, and a bar pair on one fixed scale
+      if (mid) mid.dataset.state = !c ? "none" : close ? "tie" : gap > 0 ? "v" : "c";
+      lead.textContent = !c ? "No claim yet" : (gap >= 0 ? "+" : "-") + money(Math.abs(gap));
+      if (mult) mult.textContent = !c ? "The interview is in Mar 2026" : (v / c).toFixed(1) + "× the claim";
+      if (bvb) bvb.style.width = Math.min(100, v / MAX * 100) + "%"; if (bcb) bcb.style.width = (c ? c / MAX * 100 : 0) + "%";
       if (cap) cap.textContent = CAPS(i);
       race.classList.toggle("over", i === N);
     };
