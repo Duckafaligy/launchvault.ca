@@ -80,7 +80,7 @@
       G = {X, Y, W, yc, y0, up, dn, cl, vl, dots, cross, hc, hv, tv, ov, lc, lv, fg, m1, m2};
       render(cur); if (scrubbing) unscrub();
     };
-    const render = t => {
+    const render = t => { t = Math.max(0, Math.min(N, t));   // easing can dip below 0 or above N
       const {X, Y, yc, y0, up, dn, cl, vl, dots, hc, hv, ov} = G, i = Math.floor(t), f = t - i;
       const pts = V.slice(0, i + 1).map((p, k) => [X(k), Y(p[1])]);
       if (f > 0 && i < N) pts.push([X(i + f), Y(V[i][1] + (V[i + 1][1] - V[i][1]) * f)]);
