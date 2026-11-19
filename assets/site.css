@@ -725,17 +725,18 @@ footer .fmsg,.dk .fmsg{color:#E2E8F0;justify-content:flex-start}
 .winfit::before,.winfit::after{content:"";position:absolute;z-index:-1;left:50%;width:100vw;top:50%;pointer-events:none;
   translate:-50% -50%;rotate:-8deg;background:linear-gradient(90deg,#E11D48 0%,#FF5A1F 22%,#FF8A00 40%,#E11D48 60%,#FF5A1F 80%,#E11D48 100%) 0 0/200% 100%;
   animation:streak-flow 10s linear infinite,streak-sway 14s ease-in-out infinite alternate}
-.winfit::before{height:240px;border-radius:999px;filter:blur(36px);opacity:.9;
+.winfit::before{height:240px;border-radius:999px;filter:blur(44px);opacity:.4;
   -webkit-mask:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent);mask:linear-gradient(90deg,transparent,#000 15%,#000 85%,transparent)}
-.winfit::after{height:300px;opacity:.95;
-  -webkit-mask:radial-gradient(circle,#000 2px,transparent 2.6px) 0 0/9px 9px,linear-gradient(transparent,#000 30%,#000 70%,transparent),linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+.winfit::after{height:230px;opacity:1;animation:streak-flow 10s linear infinite,streak-sway 14s ease-in-out infinite alternate,dot-drift 18s linear infinite;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3.2 0 0 0 -1.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/220px 220px,linear-gradient(transparent,#000 35%,#000 65%,transparent),linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
   -webkit-mask-composite:source-in,source-in;
-  mask:radial-gradient(circle,#000 2px,transparent 2.6px) 0 0/9px 9px,linear-gradient(transparent,#000 30%,#000 70%,transparent),linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3.2 0 0 0 -1.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/220px 220px,linear-gradient(transparent,#000 35%,#000 65%,transparent),linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
   mask-composite:intersect}
 .winfit .win{box-shadow:0 30px 80px -20px rgba(225,29,72,.35),0 0 0 1px rgba(15,23,42,.06),0 0 60px -10px rgba(255,138,0,.35)}
 @keyframes streak-flow{to{background-position:-200% 0}}
-@keyframes streak-sway{from{rotate:-8deg;translate:-50% -50%}to{rotate:-5deg;translate:-50% calc(-50% - 24px)}}
-@media (max-width:760px){.winfit::before{height:150px}.winfit::after{height:190px}}
+@keyframes streak-sway{from{rotate:-8deg;translate:-50% -50%}to{rotate:-7deg;translate:-50% calc(-50% - 10px)}}
+@keyframes dot-drift{to{-webkit-mask-position:220px 0,0 0,0 0;mask-position:220px 0,0 0,0 0}}
+@media (max-width:760px){.winfit::before{height:150px}.winfit::after{height:150px}}
 @media (prefers-reduced-motion:reduce){.winfit::before,.winfit::after{animation:none}}
 
 /* =====================================================================
