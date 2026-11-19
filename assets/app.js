@@ -38,6 +38,12 @@
   const tickDates = slug => ls.get("lv-" + slug + "-checkdates", {});
   const readPct = slug => Math.round((ls.get("lv-read-" + slug, {}) || {}).pct || 0);
   const quiz = () => ls.get("lv-quiz-app");
+  // the path follows the quiz: top match's checklist, plus the next match's opening step; no clear match keeps the general Postiz path
+  const pathFor = m => { m = (m || []).filter(s => D.paths && D.paths[s]); const P = D.paths && D.paths[m[0]];
+    return P ? {...P, extra: m[1] ? D.paths[m[1]].lead : D.path.extra} : D.path; };
+  { const q = quiz(); if (q && q.top !== null) D.path = pathFor(q.matches); }
+  const ADULT = () => ls.get("lv-age") === "21 or older";
+  $$("[data-school]").forEach(n => { if (ADULT()) n.textContent = n.dataset.school; });
   const pathSteps = () => { const p = D.path; const t = ticks(p.source); const dates = tickDates(p.source);
     return p.steps.map(s => ({...s, done: t[s.n - 1], date: dates[s.n - 1]})).concat([{...p.extra, n: 0, extra: 1, done: !!ls.get("lv-path-extra"), date: ls.get("lv-path-extra")}]); };
   const pathDone = () => pathSteps().filter(s => s.done).length;
@@ -225,7 +231,7 @@
         <p class="pm">${s.extra ? (s.href ? `<a href="${s.href}">${esc(s.from)} ↗</a>` : esc(s.from)) : `Checklist item ${s.n} · <a href="${src.href}#todo">${esc(s.from)} ↗</a>`}</p>${state === "now" ? `<button class="btn btn-p" type="button" data-stepdone="${i}">Mark step done</button>` : s.done ? `<button class="tl" type="button" data-stepundo="${i}">Undo</button>` : ""}</div><span class="dt">${s.done && s.date ? "Done " + esc(s.date) : ""}</span></div>`; };
     stepsEl.innerHTML = st.filter(s => !s.extra).map((s, i) => one(s, i)).join("");
     const ex = $("[data-extra]"); if (ex) ex.innerHTML = one(st[st.length - 1], st.length - 1);
-    const q = quiz(); const ed = $("[data-editq]"); if (ed) ed.textContent = q ? "Edit answers" : "Take the quiz"; const m = $("[data-matched]"); if (m) m.textContent = q ? "From your quiz: " + (q.summary || "") : "Take the quiz to match stories to you. The steps work either way.";
+    const q = quiz(); const ed = $("[data-editq]"); if (ed) ed.textContent = q ? "Edit answers" : "Take the quiz"; const m = $("[data-matched]"); if (m) m.textContent = !q ? "Take the quiz to match stories to you. The steps work either way." : q.top && q.why ? "Matched on: " + q.why.join(" · ") : q.top === null ? "No single story matched your answers, so this is the general path." : "From your quiz: " + (q.summary || "");
     const ps = $("[data-pathsrc]"); if (ps) ps.innerHTML = `<img src="${esc(src.logo)}" alt="" width="16" height="16" style="vertical-align:-3px;margin-right:6px">From the ${esc(src.name)} breakdown`;
     $$("[data-likeyou]").forEach(n => { if (!n.closest("section").querySelector("[data-homepath]")) n.innerHTML = matches().map(s => { const x = S[s];
       return `<a class="mini${x.status === "soon" ? " soon" : ""}" href="${x.href}" style="min-height:56px"><img class="lgs" src="${esc(x.logo)}" alt=""><span><span style="display:block">${esc(x.name)}</span><small class="meta">${x.status === "ready" ? esc(x.pattern) : "Coming soon"}${staleChip(x)}</small></span><span class="r">›</span></a>`; }).join(""); });
@@ -248,15 +254,16 @@
     const anyTick = D.checklists.some(c => ticks(c.slug).some(Boolean)), first = D.checklists.find(c => !(S[c.slug] || {}).stale) || D.checklists[0];
     const empty = anyTick ? "" : `<section class="card" style="margin-bottom:16px"><div class="empty"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M10 6h10M10 12h10M10 18h10"/><path d="M4 6l1.2 1.2L7 5.2M4 12l1.2 1.2L7 11.2M4 18l1.2 1.2L7 17.2"/></svg><h3>No ticks yet</h3><p>Each breakdown ends with a short checklist. Tick a step there and it shows up here.</p><a class="btn btn-s" href="${first.href}#todo"><img src="${esc(first.logo)}" alt="" width="18" height="18" style="border-radius:4px">Open the ${esc(first.name)} checklist</a></div></section>`;
     cls.innerHTML = empty + order.map((c, i) => { const n = ticks(c.slug).filter(Boolean).length;
-      return `<details class="clgrp" ${n || i === 0 ? "open" : ""}><summary class="gh" style="cursor:pointer;list-style:none;min-height:44px"><img src="${esc(c.logo)}" alt="" width="20" height="20" style="border-radius:4px"><h2>${esc(c.name)} <small>· What you could do at 15 to 20</small></h2><a class="tl" href="${c.href}">Open breakdown</a></summary>${ckListHTML(c)}</details>`; }).join("");
+      return `<details class="clgrp" ${n ? "open" : ""}><summary class="gh" style="cursor:pointer;list-style:none;min-height:44px"><img src="${esc(c.logo)}" alt="" width="20" height="20" style="border-radius:4px"><h2>${esc(c.name)} <small>· What you could do at 15 to 20</small></h2><a class="tl" href="${c.href}">Open breakdown</a></summary>${ckListHTML(c)}</details>`; }).join("");
     const soon = D.stories.filter(s => s.status === "soon");
-    const cs = $("[data-clsoon]"); if (cs) cs.innerHTML = soon.map(s => `<a class="soonrow" href="${s.href}">${logo(s, 20)}<span class="nm" style="color:#6B7280">${esc(s.name)}</span><span class="meta">Checklist arrives with the breakdown</span></a>`).join("");
+    const cs = $("[data-clsoon]"); if (cs) cs.innerHTML = soon.map(s => `<a class="soonrow" href="${s.href}">${logo(s, 20)}<span class="nm" style="color:var(--muted)">${esc(s.name)}</span><span class="meta">Checklist arrives with the breakdown</span></a>`).join("");
   }
 
   // ---------- account ----------
   const agesel = $("#agesel");
   if (agesel) {
-    agesel.value = ls.get("lv-age", "") || ""; const note = () => { const a = agesel.value; $("[data-agenote]").textContent = !a ? "Set your age range so the right rules apply." : (a === "13 to 15" || a === "16 to 17") ? a + " · a parent pays for paid plans" : a; };
+    agesel.value = ls.get("lv-age", "") || ""; const note = () => { const a = agesel.value; $("[data-agenote]").textContent = !a ? "Set your age range so the right rules apply." : (a === "13 to 15" || a === "16 to 17") ? a + " · a parent pays for paid plans" : a === "21 or older" ? a + " · LaunchVault is built for 15 to 20, but anyone is welcome to read" : a;
+      const minor = !a || a === "13 to 15" || a === "16 to 17"; const ps = $("#parent"); if (ps) ps.hidden = !minor; const pl = $('.anav a[href="#parent"]'); if (pl) pl.hidden = !minor; };
     note(); agesel.addEventListener("change", () => { ls.set("lv-age", agesel.value || null); note(); toast("Saved on this device."); });
     const bill = y => { $$("[data-bill]").forEach(b => b.setAttribute("aria-pressed", (b.dataset.bill === "y") === y));
       $('[data-pr="pro"]').textContent = y ? "$4" : "$5"; $('[data-pr="builder"]').textContent = y ? "$10" : "$12";
@@ -287,10 +294,14 @@
     while (ans.length < D.quiz.length) ans.push(null);
     const H = $("[data-obh]"), P = $("[data-obp]");
     const opt = (t, on, i) => `<button class="opt" type="button" role="radio" aria-checked="${on}" data-o="${i}"><i></i>${esc(t)}</button>`;
-    const score = () => { const sc = {}; ans.forEach((a, qi) => { if (a == null) return; const w = D.quiz[qi].w[a] || {}; for (const k in w) sc[k] = (sc[k] || 0) + w[k]; });
-      const base = ["postiz", "stencil-ai", "gojiberry", "windmill-growth", "dm-champ"]; return base.filter(k => S[k]).sort((a, b) => (sc[b] || 0) - (sc[a] || 0) || base.indexOf(a) - base.indexOf(b)).slice(0, 3); };
-    const summary = () => [age, ...[0, 1, 2].map(i => ans[i] == null ? null : D.quiz[i].o[ans[i]])].filter(Boolean).join(" · ");
-    const save = () => ls.set("lv-quiz-app", {answers: ans, matches: score(), summary: summary(), date: today()});
+    const scores = () => { const sc = {}; ans.forEach((a, qi) => { if (a == null) return; const w = D.quiz[qi].w[a] || {}; for (const k in w) sc[k] = (sc[k] || 0) + w[k]; }); return sc; };
+    const score = () => { const sc = scores(), base = ["postiz", "stencil-ai", "gojiberry", "windmill-growth", "dm-champ"];
+      return base.filter(k => S[k]).sort((a, b) => (sc[b] || 0) - (sc[a] || 0) || base.indexOf(a) - base.indexOf(b)).slice(0, 3); };
+    // a real match needs a clear lead; a tie at the top (or no answers) is said plainly
+    const topOf = () => { const sc = scores(), v = Object.values(sc).sort((a, b) => b - a); if (!v.length || v[0] === v[1]) return null; return score()[0]; };
+    const summary = () => [age, ...ans.map((a, i) => a == null ? null : D.quiz[i].o[a])].filter(Boolean).join(" · ");
+    const why = t => t ? ans.map((a, i) => a != null && (D.quiz[i].w[a] || {})[t] ? D.quiz[i].o[a] : null).filter(Boolean) : [];
+    const save = () => { const t = topOf(); ls.set("lv-quiz-app", {answers: ans, matches: score(), top: t, why: why(t), summary: summary(), date: today()}); D.path = t ? pathFor(score()) : D.path; };
     const render = () => {
       if (step === -1) { H.innerHTML = "You're in. <em>One quick question.</em>"; P.textContent = "We ask your age range so the right rules apply. It's the only personal detail we keep, and it stays on this device.";
         obc.innerHTML = `<h2>How old are you?</h2><div class="opts" role="radiogroup" aria-label="Age range">${AGES.map((a, i) => opt(a, age === a, i)).join("")}</div><p class="fine">We keep the range, not your birthday. Under 18: a parent pays if you upgrade.</p><div class="obnav"><span class="sp"></span><button class="btn btn-p" type="button" data-next ${age ? "" : "disabled"}>Continue</button></div>`; }
@@ -301,7 +312,10 @@
         obc.innerHTML = `<div class="qp"><span class="bar v"><i style="--w:${step / D.quiz.length * 100}%"></i></span><span>${step + 1} of ${D.quiz.length}</span></div><h2 id="qh">${esc(Q.q)}</h2><div class="opts" role="radiogroup" aria-labelledby="qh">${Q.o.map((o, i) => opt(o, ans[step] === i, i)).join("")}</div>
           <div class="obnav"><button class="bk" type="button" data-back>Back</button><span class="sp"></span><button class="sk" type="button" data-skip>Skip</button><button class="btn btn-p" type="button" data-next>${step === D.quiz.length - 1 ? "See my path" : "Next"}</button></div><a class="tl obskip" href="/app/" data-skipall>Skip the quiz for now</a>`; }
       else { save(); ls.set("lv-pathnote", "new"); const m = score();
-        H.innerHTML = `Your path: <em>${esc(D.path.title.toLowerCase().replace(/^./, c => c.toUpperCase()))}.</em>`; P.innerHTML = `${D.path.steps.length + 1} steps, each with a small task. Step 1 is waiting on Home.<small>Matched on: ${esc(summary())} · <a class="tl" href="/app/start/?quiz=1">Edit answers</a></small>`;
+        H.innerHTML = `Your path: <em>${esc(D.path.title.toLowerCase().replace(/^./, c => c.toUpperCase()))}.</em>`; const qq = quiz();
+        P.innerHTML = `${D.path.steps.length + 1} steps${ADULT() ? "" : " that fit around school"}, from the ${esc(D.path.name || "Postiz")} breakdown. Step 1 is waiting on Home.`
+          + (qq.top ? `<small>Matched on: ${esc(qq.why.join(" · "))}</small>` : `<small>Your answers didn't point to one story more than the others, so this is the general path. The 3 stories below are the closest.</small>`)
+          + `<small>Your answers: ${esc(summary())} · <a class="tl" href="/app/start/?quiz=1">Edit answers</a></small>`;
         obc.innerHTML = `<h2>Stories like yours</h2><div style="margin-top:8px">${m.map(s => { const x = S[s];
           return `<div class="mrow"><span class="logo">${logo(x, 22)}</span><span style="flex:1;min-width:0"><b>${esc(x.name)}</b><small>${esc(x.pattern)}</small><span class="nm"><b>${esc(x.hv)}</b>${esc(x.hu)}${chip(x.hl)}${esc(x.hd)}${staleChip(x)}</span></span><span class="r">${x.status === "ready" ? `<a href="${x.href}">Read now</a>` : "Breakdown soon"}</span></div>`; }).join("")}</div>
           <a class="btn btn-p" style="width:100%;margin-top:16px" href="/app/">Go to Home</a><p class="fine">Saved on this device. Pro saves your path to your account and updates it as stories land.</p>`; }

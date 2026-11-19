@@ -363,7 +363,7 @@ def reader(E, S, gate=True):
           + '</div><p class="fnote">If we get a number wrong, we fix it here and note the change.</p></section>')
     ckey = f"lv-{slug}-checks"
     cl = [c if isinstance(c, dict) else {"id": f"c{i + 1}", "text": c, "from": ""} for i, c in enumerate(S["checklist"])]
-    ck = (f'<section class="rsec" id="todo"><div class="sh"><h2>What you could do at 15 to 20</h2><span class="meta">Low cost, fits around school</span></div>'
+    ck = (f'<section class="rsec" id="todo"><div class="sh"><h2>What you could do at 15 to 20</h2><span class="meta" data-school="Low cost">Low cost, fits around school</span></div>'
           f'<div class="ckl" data-store="{ckey}" data-slug="{slug}"><div class="ckh"><span class="ckp">0 of {len(cl)}</span><span class="bar"><i></i></span><span class="dev">{ic(I["dev"], 14)}On this device</span></div>'
           + "".join(f'<button class="ck" type="button" role="checkbox" aria-checked="false"><span class="bx">{CHK}</span><span class="ct">{esc(c["text"])}</span><span class="cf">{esc(c.get("from", ""))}</span></button>' for c in cl)
           + '<div class="ckf"><span>Ticks stay on this device. Pro saves them to your account.</span><a href="/app/account/#plan">See Pro</a></div></div></section>')

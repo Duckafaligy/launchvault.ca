@@ -552,6 +552,7 @@ button.row{width:100%;border:0;border-top:1px solid var(--line2);background:none
   .lrow .num{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}.lrow .num small{display:inline}
   .clrow{flex-wrap:wrap;row-gap:8px}.clrow .mid{flex-basis:calc(100% - 40px)}.clrow .bar{max-width:none;margin-left:34px}
   .soonrow{display:grid;grid-template-columns:28px minmax(0,1fr);column-gap:12px;row-gap:4px;align-items:center}
+  .soonrow .meta{grid-column:2}
   .soonrow .nv{grid-column:2;justify-content:flex-start;text-align:left}
   .ck{grid-template-columns:22px minmax(0,1fr)}.ck .cf{grid-column:2;white-space:normal}
   .pstp{grid-template-columns:28px minmax(0,1fr)}.pstp .dt{grid-column:2}
