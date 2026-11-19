@@ -64,10 +64,13 @@
         let b = 0; all.forEach((p, i) => { if (Math.abs(X(p.x) - mx) < Math.abs(X(all[b].x) - mx)) b = i; }); showPoint(all[b]); });
       hit.addEventListener("pointerleave", () => showDefault());
       G = {X, Y, cross, hl, mks, area, ln, H, B};
-      if (!reduce && !root.dataset.drawn) { root.dataset.drawn = 1; const len = ln.getTotalLength();
-        ln.style.strokeDasharray = len; ln.style.strokeDashoffset = len; area.style.opacity = 0;
-        const go = () => { ln.style.transition = "stroke-dashoffset 1.4s cubic-bezier(.65,0,.35,1)"; ln.style.strokeDashoffset = 0; area.style.transition = "opacity .6s ease .8s"; area.style.opacity = 1; };
-        if ("IntersectionObserver" in window) { const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); go(); } }, {threshold: .3}); io.observe(plot); } else go(); }
+      // the line is visible by default (print, screenshots, no IntersectionObserver); it only replays a draw-in once, when first scrolled into view
+      if (!reduce && !root.dataset.drawn && "IntersectionObserver" in window) { root.dataset.drawn = 1;
+        const io = new IntersectionObserver(es => { if (!es[0].isIntersecting) return; io.disconnect(); const l = G.ln, a = G.area, len = l.getTotalLength(); if (!len) return;
+          l.style.transition = "none"; l.style.strokeDasharray = len; l.style.strokeDashoffset = len; a.style.transition = "none"; a.style.opacity = 0;
+          requestAnimationFrame(() => requestAnimationFrame(() => { l.style.transition = "stroke-dashoffset 1.2s cubic-bezier(.65,0,.35,1)"; l.style.strokeDashoffset = 0;
+            a.style.transition = "opacity .6s ease .7s"; a.style.opacity = 1; setTimeout(() => { l.style.strokeDasharray = ""; }, 1400); })); }, {threshold: .35});
+        io.observe(plot); }
       showDefault();
     };
     const setRO = (a, b, c) => { ro.innerHTML = `<b>${a}</b><span class="rd-d">${b}</span><span class="rd-s">${c}</span>`; };

@@ -160,12 +160,12 @@
     $$("[data-likeyou]").forEach(n => n.innerHTML = likeYouHTML());
     const cl = $("[data-homecl]");
     if (cl) { const rows = D.checklists.map(c => { const t = ticks(c.slug), k = t.filter(Boolean).length; return {c, t, k}; }).filter(x => x.k > 0 && x.k < x.t.length);
-      const pr = D.checklists[0], prT = ticks(pr.slug);
+      const wk = D.stories.find(x => x.status === "ready" && !x.stale) || {}, pr = CL[wk.slug] || D.checklists[0], prT = ticks(pr.slug);
       const list = rows.length ? rows : [{c: pr, t: prT, k: prT.filter(Boolean).length}];
       cl.innerHTML = list.slice(0, 3).map(({c, t, k}) => { const i = t.indexOf(false);
         return `<a class="clrow" href="${c.href}#todo"><img src="${esc(c.logo)}" alt="" width="20" height="20" style="border-radius:4px"><span class="mid"><b>${esc(c.name)} · What you could do at 15 to 20</b><small>${i < 0 ? "All done." : "Next: " + esc(c.items[i].text)}</small></span><span class="bar"><i style="--w:${k / t.length * 100}%"></i></span><span class="ct">${k} of ${t.length}</span></a>`; }).join("")
         + (q ? `<a class="clrow" href="/app/path/"><span style="color:var(--violet)">●</span><span class="mid"><b>Your path · ${esc(D.path.title)}</b><small>${(() => { const s = pathSteps().find(x => !x.done); return s ? "Next: " + esc(s.text) : "All done."; })()}</small></span><span class="bar v"><i data-pathbar></i></span><span class="ct" data-pathcount2></span></a>` : ""); }
-    const w = D.stories.find(s => s.status === "ready"), r = ls.get("lv-read-" + w.slug, {}) || {};
+    const w = D.stories.find(s => s.status === "ready" && !s.stale) || D.stories[0], r = ls.get("lv-read-" + w.slug, {}) || {};
     if (r.pct > 0 && r.pct < 98) { $("#contcard").hidden = false; const sub = $("[data-contsub]"); if (sub) sub.textContent = r.ph ? `Phase ${r.ph} of ${r.n} · ${r.name || ""}` : ""; }
     const pn = $("#pathnote"); if (pn && q && ls.get("lv-pathnote") === "new") { pn.hidden = false; $("[data-closenote]", pn).addEventListener("click", () => { pn.hidden = true; ls.set("lv-pathnote", "seen"); }); }
   }
@@ -181,9 +181,9 @@
     const ctl = () => { $("#lq").value = st.q; $("#lpat").value = st.pat; $("#lstat").value = st.stat; $("#lsort").value = st.sort; $("#lver").setAttribute("aria-checked", st.ver);
       $$("[data-tab]").forEach(b => b.setAttribute("aria-pressed", b.dataset.tab === st.tab)); $$("[data-view]").forEach(b => b.setAttribute("aria-pressed", b.dataset.view === st.view));
       $$("[data-grp]").forEach(b => b.setAttribute("aria-pressed", b.dataset.grp === st.grp)); };
-    const status = s => { if (s.status === "ready") { const p = readPct(s.slug); return `<span class="st ok">Ready${p ? ` <em>${p}%</em>` : ""}</span>`; } return `<span class="st">${s.stale ? "Stale" : "Coming soon"}</span>`; };
-    const row = s => `<a class="lrow${s.status === "soon" ? " soon" : ""}" href="${s.href}"><span class="co">${logo(s, 22)}<span><b>${esc(s.name)}</b><small>${esc(s.what)}</small></span></span><span class="tp">${esc(s.type)}</span><span class="tr">${s.spark}</span><span class="num"><b>${esc(s.hv)}</b>${esc(s.hu)} · ${esc(s.hd)}</span><span class="lbc">${chip(s.hl)}</span>${status(s)}<span class="go" aria-hidden="true">›</span></a>`;
-    const card = s => `<a class="lcard" href="${s.href}"><span class="top2">${logo(s, 28)}<b style="color:#0B1220">${esc(s.name)}</b><span class="meta" style="margin-left:auto">${esc(s.type)}</span></span><span class="what">${esc(s.what)}</span>${s.spark}<span class="nl"><b>${esc(s.hv)}</b>${esc(s.hu)}${chip(s.hl)}<span>${esc(s.hd)}</span></span><span class="st"><span>${s.status === "ready" ? (s.read ? s.read + " min read" : "Ready") : "Coming soon"}</span>${s.status === "ready" && readPct(s.slug) ? `<span style="color:var(--brand)">${readPct(s.slug)}%</span>` : ""}</span></a>`;
+    const status = s => { if (s.status === "ready") { const p = readPct(s.slug); return `<span class="st ok">Ready${p ? ` <em>${p}%</em>` : ""}${s.stale ? ' <span class="lb n" title="' + esc(s.stale) + '">Stale</span>' : ""}</span>`; } return `<span class="st">${s.stale ? '<span class="lb n">Stale</span>' : "Coming soon"}</span>`; };
+    const row = s => `<a class="lrow${s.status === "soon" ? " soon" : ""}" href="${s.href}"><span class="co">${logo(s, 22)}<span><b>${esc(s.name)}</b><small>${esc(s.what)}</small></span></span><span class="tp">${esc(s.type)}</span><span class="tr">${s.spark}</span><span class="num"><b>${esc(s.hv)}</b>${esc(s.hu)}<small>${esc(s.sub || "Read " + s.hd)}</small><span class="lbm">${chip(s.hl)}${s.stale ? '<span class="lb n">Stale</span>' : ""}</span></span><span class="lbc">${chip(s.hl)}</span>${status(s)}<span class="go" aria-hidden="true">›</span></a>`;
+    const card = s => `<a class="lcard" href="${s.href}"><span class="top2">${logo(s, 28)}<b style="color:#0B1220">${esc(s.name)}</b><span class="meta" style="margin-left:auto">${esc(s.type)}</span></span><span class="what">${esc(s.what)}</span>${s.spark}<span class="nl"><b>${esc(s.hv)}</b>${esc(s.hu)}${chip(s.hl)}<span>${esc(s.sub || s.hd)}</span></span><span class="st"><span>${s.status === "ready" ? (s.read ? s.read + " min read" : "Ready") : "Coming soon"}</span>${s.status === "ready" && readPct(s.slug) ? `<span style="color:var(--brand)">${readPct(s.slug)}%</span>` : ""}</span></a>`;
     const draw = () => {
       ls.set("lv-lib", st); ctl();
       const q = st.q.trim().toLowerCase();

@@ -542,3 +542,21 @@ button.row{width:100%;border:0;border-top:1px solid var(--line2);background:none
 @media (max-width:720px){.hide-m{display:none !important}.nb{flex-wrap:wrap}.soonrow .src{display:none}}
 @media (pointer:coarse){.lsearch{min-height:46px}}
 .lkic{display:inline-flex;vertical-align:-1px;color:#9CA3AF}
+
+.lrow .num small{display:block;font:400 12px var(--fn);color:var(--muted)}
+.lrow .st .lb{margin-left:4px}
+@media (max-width:720px){
+  .lrow .co small{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .lrow{grid-template-columns:minmax(0,1fr);row-gap:6px}
+  .lrow .num,.lrow .lbc{grid-column:1;grid-row:auto;justify-self:start;text-align:left}
+  .lrow .num{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}.lrow .num small{display:inline}
+  .clrow{flex-wrap:wrap;row-gap:8px}.clrow .mid{flex-basis:calc(100% - 40px)}.clrow .bar{max-width:none;margin-left:34px}
+  .soonrow{display:grid;grid-template-columns:28px minmax(0,1fr);column-gap:12px;row-gap:4px;align-items:center}
+  .soonrow .nv{grid-column:2;justify-content:flex-start;text-align:left}
+  .ck{grid-template-columns:22px minmax(0,1fr)}.ck .cf{grid-column:2;white-space:normal}
+  .pstp{grid-template-columns:28px minmax(0,1fr)}.pstp .dt{grid-column:2}
+  .srcl .sr2 small{white-space:normal}
+  .arow .v{flex-basis:100%}
+}
+.lrow .lbm{display:none}
+@media (max-width:720px){.lrow .lbc{display:none}.lrow .lbm{display:inline-flex;gap:6px}}

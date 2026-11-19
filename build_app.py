@@ -133,8 +133,9 @@ def norm_soon(s):
     m = (s.get("monthly") or {}).get("months") or {}
     return {"slug": s["slug"], "name": s["company"], "tab": s["category"], "type": CAT1[s["category"]], "what": s.get("what", ""),
             "logo": "/" + s["logo"].replace("site/", ""), "pattern": PATTERN.get(s["company"], "Pattern not checked yet"), "lessons": [],
-            "hv": hv, "hu": hu, "hl": h["label"], "hd": hd, "hsrc": s.get("trustmrr_url", ""), "status": "soon", "stale": bool(s.get("stale")),
+            "hv": hv, "hu": hu, "hl": h["label"], "hd": hd, "hsrc": s.get("trustmrr_url", ""), "status": "soon", "stale": f'Stale · last synced {dlab(s["mrr"]["date"])}' if s.get("stale") and s.get("mrr") else "",
             "href": f"/app/story/{s['slug']}/", "read": 0, "published": "", "mrr": (s.get("mrr") or {}).get("value", 0),
+            "sub": f'MRR {money(s["mrr"]["value"])} · {dlab(s["mrr"]["date"])}' if s.get("mrr") else "",
             "series": [[k, m[k]] for k in sorted(m)], "raw": s}
 # patterns for coming-soon companies come from the homepage story cards (one line each, already public)
 PATTERN = {"Stencil AI": "Start with a problem someone close to you has", "Windmill Growth": "Sell a service before you build an app",
@@ -145,10 +146,17 @@ def norm_ready(S, legacy):
     k0 = h.get("k") or S["numbers"][0]["k"]
     hu = " MRR" if k0 == "MRR" else (" in " + k0[len("Revenue in "):]) if k0.startswith("Revenue in ") else " · " + k0
     mrr = h.get("value", 0) if h.get("k") == "MRR" else ((legacy.get("mrr") or {}).get("value", 0) if legacy else 0)
+    hl, hd = h.get("label", S["numbers"][0]["label"]), h.get("date", S["numbers"][0]["date"])
+    sub = ""
+    if legacy and legacy.get("headline", {}).get("measure") == "revenue in month":
+        lh = legacy["headline"]; hv, hu, hl = money(lh["value"]), f' in {mlab(lh["month"])}', lh["label"]
+        hd = dlab(legacy["monthly"]["read_on"]) if legacy.get("monthly") else hd
+        if legacy.get("mrr"): sub = f'MRR {money(legacy["mrr"]["value"])} · {dlab(legacy["mrr"]["date"])}'
+    stale = f'Stale · last synced {dlab(legacy["mrr"]["date"])}' if legacy and legacy.get("stale") and legacy.get("mrr") else ""
     tab = S.get("tab") if "tab" in S else {"AI tool": "ai", "Mobile app": "mobile", "Service": "services"}.get(S["category"])
     return {"slug": S["slug"], "name": S["name"], "tab": tab, "type": S.get("type_label") or S["category"], "what": S["what"], "logo": S["logo"],
-            "pattern": S["pattern"], "lessons": [p["lesson"] for p in S["phases"]], "hv": hv, "hu": hu, "hl": h.get("label", S["numbers"][0]["label"]),
-            "hd": h.get("date", S["numbers"][0]["date"]), "hsrc": h.get("source", S["numbers"][0].get("source", "")), "status": "ready", "stale": False,
+            "pattern": S["pattern"], "lessons": [p["lesson"] for p in S["phases"]], "hv": hv, "hu": hu, "hl": hl, "sub": sub,
+            "hd": hd, "hsrc": h.get("source", S["numbers"][0].get("source", "")), "status": "ready", "stale": stale,
             "href": "/app/postiz/" if S["slug"] == "postiz" else f"/app/story/{S['slug']}/", "read": S["read_min"], "published": S["published"],
             "mrr": mrr, "series": [[p[0], p[1]] for p in S["series"]["points"]], "title": S["title"], "S": S}
 def growth(series):
@@ -184,7 +192,7 @@ def head(title, desc, extra=""):
 </head>
 '''
 def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts=""):
-    ready = [e for e in E if e["status"] == "ready"]; week = ready[0]
+    ready = [e for e in E if e["status"] == "ready"]; week = next((e for e in ready if not e["stale"]), ready[0])
     byslug = {e["slug"]: e for e in E}
     nav = [("home", "/app/", "Home", ""), ("lib", "/app/library/", "Library", ""), ("path", "/app/path/", "My path", '<span class="cnt" data-cnt="path"></span>'),
            ("ck", "/app/checklists/", "Checklists", '<span class="cnt" data-cnt="ck"></span>')]
@@ -263,6 +271,7 @@ def set_srcmap(S):
     SRCMAP.clear(); SRCMAP.update({x["url"]: x["name"] for x in S["sources"] if x.get("url")})
 def reader(E, S, gate=True):
     set_srcmap(S); slug = S["slug"]; n = len(S["phases"])
+    me = next((e for e in E if e["slug"] == slug), {}); stale_chip = f'<span class="lb n">{esc(me["stale"])}</span>' if me.get("stale") else ""
     nums = "".join(f'<div><span class="k">{esc(x["k"])}</span><span class="val">{esc(x["v"])}</span><span class="m">{lb(x["label"])}{esc(x["date"])}</span></div>' for x in S["numbers"][:5])
     hl = ""
     if S.get("highlights"):
@@ -326,7 +335,7 @@ def reader(E, S, gate=True):
     title = S["title"]; em = S.get("title_em")
     t_html = esc(title[:-len(em.rstrip("."))]) + f'<em class="em">{esc(em.rstrip("."))}</em>' if em and title.endswith(em.rstrip(".")) else esc(title)
     art = (f'{mph}<div class="rh"><span class="logo big"><img src="{S["logo"]}" alt="" width="36" height="36"></span><div><h1>{t_html}</h1><p class="dek">{esc(S["dek"])}</p>'
-           f'<div class="rmeta"><span>By LaunchVault</span><span>{len(S["sources"])} sources</span><span>{S["read_min"]} min</span><span>Last checked {esc(S["numbers"][0]["date"])}</span><a href="mailto:?subject=LaunchVault%20report%3A%20{esc(slug)}">Report a mistake</a></div></div></div>'
+           f'<div class="rmeta">{stale_chip}<span>By LaunchVault</span><span>{len(S["sources"])} sources</span><span>{S["read_min"]} min</span><span>Last checked {esc(S["numbers"][0]["date"])}</span><a href="mailto:?subject=LaunchVault%20report%3A%20{esc(slug)}">Report a mistake</a></div></div></div>'
            f'<section class="rsec" id="numbers" style="margin-top:20px"><div class="nums5">{nums}</div></section>'
            f'<section class="rsec" id="chart"><div class="sh"><h2>Why the line moved</h2><span class="meta">{esc(S["series"]["what"])}</span></div>{chart_block(S)}</section>'
            f'{hl}<section class="rsec" id="phases"><div class="sh"><h2>Phase by phase</h2><span class="meta">{n} phases · each ends with one lesson</span></div>{phases_free}{teaser if gate else ""}</section>'
@@ -367,7 +376,7 @@ def soon_page(E, e):
 
 # ============================================================ home, library and the static pages
 def home(E):
-    ready = [e for e in E if e["status"] == "ready"]; W = ready[0]; S = W["S"]; byslug = {e["slug"]: e for e in E}
+    ready = [e for e in E if e["status"] == "ready"]; W = next((e for e in ready if not e["stale"]), ready[0]); S = W["S"]; byslug = {e["slug"]: e for e in E}
     stats = "".join(f'<div><span class="k">{esc(x["k"])}</span><span class="val">{esc(x["v"])}</span><span class="m">{lb(x["label"])}{esc(x["date"])}</span></div>' for x in S["numbers"][1:4]) \
         + f'<div><span class="k">Sources</span><span class="val">{len(S["sources"])}</span><span class="m">each dated</span></div>'
     tags = "".join(f'<span class="tag">{esc(t)}</span>' for t in dict.fromkeys([S.get("type_label") or S["category"], S["category"], f'{S["read_min"]} min']) if t)
@@ -472,7 +481,7 @@ def card(S, feat=False):
                 '          <span class="bgo">Read the breakdown <span aria-hidden="true">→</span></span></div></a>')
     return (f'<a class="post" href="/blog/{S["slug"]}/"><div class="cv cover">{pic}</div>\n        <div class="bd"><span class="cat">Breakdowns</span><h3>{esc(S["title"])}</h3><p>{esc(S["dek"])}</p>'
             f'<span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · {S["read_min"]} min read<span class="go" aria-hidden="true">→</span></span></div></a>')
-def update_cards(ready):
+def update_cards(ready, stale=()):
     p = os.path.join(SRC, "index.body.html"); s = rd(p)
     a = s.index('<div class="posts'); b = s.index('</div><!-- end posts -->', a)
     block = s[a:b]; head_ = block[:block.index(">") + 1]
@@ -484,9 +493,10 @@ def update_cards(ready):
     if new != block: wr(p, s[:a] + new + s[b:])
     p = os.path.join(SRC, "blog.body.html"); s = rd(p)
     a = s.index('<div class="blog-feat">'); b = s.index("{{POSTS}}", a)
-    feat = f'<div class="blog-feat">\n      {card(ready[0], True)}\n    </div>\n    '
+    top = next((S for S in ready if S["slug"] not in stale), ready[0])
+    feat = f'<div class="blog-feat">\n      {card(top, True)}\n    </div>\n    '
     s2 = s[:a] + feat + s[b:]
-    s2 = re.sub(r"(\{\{POSTS\}\}\s*<script>document\.currentScript\.previousElementSibling\.querySelectorAll\('a\.post\[href=\")[^\"]+(\"\]'\))", r"\g<1>/blog/" + ready[0]["slug"] + r"/\2", s2)
+    s2 = re.sub(r"(\{\{POSTS\}\}\s*<script>document\.currentScript\.previousElementSibling\.querySelectorAll\('a\.post\[href=\")[^\"]+(\"\]'\))", r"\g<1>/blog/" + top["slug"] + r"/\2", s2)
     if s2 != s: wr(p, s2)
 
 # ============================================================ covers for new stories
@@ -553,7 +563,7 @@ def main():
     pz_ck = [c for c in pz["checklist"]]
     steps = [{"id": c["id"], "text": c["text"], "from": c["from"], "n": int(c["id"][1:]), "task": TASKS.get(c["id"], "")} for c in [pz_ck[i] for i in (0, 1, 5, 3, 2)]]
     APPDATA = {
-        "stories": [{k: e[k] for k in ("slug", "name", "tab", "type", "what", "logo", "pattern", "lessons", "hv", "hu", "hl", "hd", "status", "stale", "href", "read", "published", "mrr", "growth")}
+        "stories": [{k: e[k] for k in ("slug", "name", "tab", "type", "what", "logo", "pattern", "lessons", "hv", "hu", "hl", "hd", "sub", "status", "stale", "href", "read", "published", "mrr", "growth")}
                     | {"spark": spark(e["series"])} for e in E],
         "tabs": TABS,
         "checklists": [{"slug": S["slug"], "name": S["name"], "logo": S["logo"], "href": next(e["href"] for e in E if e["slug"] == S["slug"]), "key": f"lv-{S['slug']}-checks",
@@ -589,7 +599,7 @@ def main():
         make_cover(S)
         if not any(p[0] == f"blog/{S['slug']}/index.html" for p in build.PAGES):
             build.PAGES.insert(2, (f"blog/{S['slug']}/index.html", f"post-{S['slug']}.body.html", f"{S['title']} · LaunchVault", S["dek"], "blog", False, False, ""))
-    update_cards(ready)
+    update_cards(ready, {e["slug"] for e in E if e["stale"]})
     build.main()
     # the public posts load the shared chart renderer
     for S in ready:
