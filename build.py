@@ -112,7 +112,7 @@ def nav(active):
   <div class="links">{links}</div>
   <button class="mbtn" id="menubtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mega"><span class="mic" aria-hidden="true"><i></i><i></i><i></i></span></button>
   <div class="right">
-    <a class="btn btn-p cta" href="/welcome/"><span class="long">Read your first success story</span><span class="short">Read a story</span></a>
+    <a class="btn btn-p cta" href="/app/"><span class="long">Read your first success story</span><span class="short">Read a story</span></a>
   </div>
   {MEGA}
 </nav>'''

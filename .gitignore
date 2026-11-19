@@ -2,3 +2,4 @@ __pycache__/
 .vercel/
 *.log
 _review/
+_covers_tmp/

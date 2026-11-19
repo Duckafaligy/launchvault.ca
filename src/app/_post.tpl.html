@@ -1,0 +1,136 @@
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-devdotto" viewBox="0 0 24 24"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6l.02 2.44.04 2.45.56-.02c.41 0 .63-.07.83-.26.24-.24.26-.36.26-2.2 0-1.91-.02-1.96-.29-2.18zM0 4.94v14.12h24V4.94H0zM8.56 15.3c-.44.58-1.06.77-2.53.77H4.71V8.53h1.4c1.67 0 2.16.18 2.6.9.27.43.29.6.32 2.57.05 2.23-.02 2.73-.47 3.3zm5.09-5.47h-2.47v1.77h1.52v1.28l-.72.04-.75.03v1.77l1.22.03 1.2.04v1.28h-1.6c-1.53 0-1.6-.01-1.87-.3l-.3-.28v-3.16c0-3.02.01-3.18.25-3.48.23-.31.25-.31 1.88-.31h1.64v1.3zm4.68 5.45c-.17.43-.64.79-1 .79-.18 0-.45-.15-.67-.39-.32-.32-.45-.63-.82-2.08l-.9-3.39-.45-1.67h.76c.4 0 .75.02.75.05 0 .06 1.16 4.54 1.26 4.83.04.15.32-.7.73-2.3l.66-2.52.74-.04c.4-.02.73 0 .73.04 0 .14-1.67 6.38-1.8 6.68z"/></symbol></svg>
+<article class="pz" data-read>
+<section class="phero tight">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog/">Blog</a><span aria-hidden="true">/</span><span>Breakdowns</span></nav>
+    <div class="bkh">
+      <div class="bkt"><img class="pzlogo" src="{{LOGO}}" alt="" width="52" height="52">
+        <div><h1>{{H1}}</h1>
+          <p class="lede">{{DEK}}</p></div></div>
+    </div>
+    <div class="pmeta"><span class="cat">Breakdowns</span><span class="by"><i><svg width="12" height="12" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault</span><span>{{READ}} min read</span><span>{{NSRC}} sources</span><span>Numbers read {{DATE}}</span></div>
+    <figure class="post-hero wide"><div class="ph-img"><picture><source srcset="/assets/covers/{{SLUG}}.webp" type="image/webp"><img src="/assets/covers/{{SLUG}}.png" width="1600" height="900" fetchpriority="high" decoding="async" alt="{{NAME}} breakdown cover"></picture></div></figure>
+    <nav class="bk-toc" id="bktoc" aria-label="On this page"><a href="#chart-sec">Why the line moved</a><a href="#moves-two">Two moves that mattered</a><a href="#story">Phase by phase</a><a href="#then-now">Then and now</a><a href="#facts">Fact check</a><a href="#todo">What you could do</a><a href="#sources">Sources</a></nav>
+
+    <div class="kpis5" data-stagger>
+      {{KPIS}}
+    </div>
+
+    <div class="pzchart" id="chart-sec">{{CHART}}</div>
+  </div>
+</section>
+
+<!--HL--><section class="sec-alt" id="moves-two">
+  <div class="wrap">
+    <div class="shead"><div><h2>The {{NHL}} moves that mattered.</h2><p class="lede">Everything else on the timeline supports these two.</p></div></div>
+    <div class="two-moves">
+      {{HL}}
+    </div>
+
+    <!--/HL--><div class="shead" id="story" style="margin-top:72px"><div><h2>The story, phase by phase.</h2><p class="lede">Each phase ends with one lesson you can use.</p></div></div>
+    <div class="phases" id="phases">
+      {{PHASES}}
+    </div>
+  </div>
+</section>
+
+<section class="dk" id="facts">
+  <div class="wrap">
+    <div class="shead"><div><h2>Fact check. <em class="em">Where the sources agree, and where they don't.</em></h2></div></div>
+    <div class="fcsum" id="fcsum"><div class="fcbar" aria-hidden="true"><i class="v" style="--w:1"></i><i class="x" style="--w:1"></i><i class="n" style="--w:2"></i><i class="c" style="--w:2"></i></div>
+      <p><b>6</b> claims checked: <span class="lb v">Verified</span> 1 · <span class="lb x">Sources differ</span> 1 · <span class="lb n">Couldn't verify</span> 2 · <span class="lb c">Claimed</span> 2</p></div>
+    <div class="fc" id="fct" role="table" aria-label="Fact check, {{NAME}}">
+      <div class="hd"><b>Fact check · {{NAME}}</b><span>Read {{FCREAD}} · {{NFC}} claims</span></div>
+      <div class="fr th" role="row"><span>Claim</span><span>What we found</span><span>Label</span></div>
+      {{FC}}
+      <div class="ft"><span>If we get a number wrong, we fix it here and note the change.</span><a class="tlink" href="/#sources">How we check numbers <span class="arr" aria-hidden="true">→</span></a></div>
+    </div>
+  </div>
+</section>
+
+{{TN}}
+<section id="todo-sec">
+  <div class="wrap">
+    <div class="shead" id="todo" style="margin-top:72px"><div><h2>What you could do with this at 15 to 20.</h2><p class="lede">The parts that cost little money and fit around school. Your ticks stay on this device.</p></div></div>
+    <div class="ckl big" data-store="lv-{{SLUG}}-checks" data-word="done">
+      <div class="hd"><b>Your checklist</b><span class="prog">0 of {{NCK}} done</span><span class="pbar" aria-hidden="true"><i></i></span></div>
+      {{CKS}}
+    </div>
+  </div>
+</section>
+
+<section class="sec-alt" id="sources">
+  <div class="wrap">
+    <div class="shead"><div><h2>Sources. <em class="em">Each one with its date.</em></h2></div>
+      <a class="tlink" href="/#sources">How we check numbers <span class="arr" aria-hidden="true">→</span></a></div>
+    <div class="srcs-list logos" data-stagger>
+      <div class="sl-row th" aria-hidden="true"><span></span><span>Source and what we took</span><span>Date</span><span>Label</span></div>
+      {{SRC}}
+    </div>
+    <p class="disc">LaunchVault breakdowns are written from public sources. Every number is labelled: Verified (read from Stripe or a live source), Claimed (said by the founder or an interviewer), or Sources differ. Nothing here is financial or investment advice.</p>
+  </div>
+</section>
+
+<section class="appcta"><div class="wrap"><div class="acta"><div><h2>Read it in the app.</h2><p class="lede">The same breakdown with your checklist, your path and progress saved on this device.</p></div><a class="btn btn-p btn-lg" href="{{APP}}">Open in the app <span class="arr" aria-hidden="true">→</span></a></div></div></section>
+</article>
+
+<section class="sec-alt post-more">
+  <div class="wrap">
+    <div class="shead"><div><h2>Keep reading.</h2></div><a class="tlink" href="/blog/">All posts <span class="arr" aria-hidden="true">→</span></a></div>
+    {{POSTS}}
+    <script>document.currentScript.previousElementSibling.querySelectorAll('a.post[href="/blog/{{SLUG}}/"]').forEach(a => a.remove())</script>
+  </div>
+</section>
+<nav class="ptoc" id="ptoc" aria-label="Contents (sticky)" hidden><span class="ind" aria-hidden="true"></span><span class="pr" aria-hidden="true"><i></i></span></nav>
+<script>
+/* Story page: sticky contents with the active section, chart line draws in, phases light up as you read,
+   fact-check labels stamp in, checklist progress bar. Shared reveal/count-up/checklist logic lives in site.js. */
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, $ = s => document.querySelector(s);
+  const once = (el, fn, t) => { if (!el) return; if (!("IntersectionObserver" in window)) return fn();
+    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); fn(); } }, {threshold: t || .3}); io.observe(el); };
+
+  // sticky contents (desktop only by CSS): shows once the in-page list has scrolled away
+  const toc = $("#ptoc"), src = $("#bktoc"), ind = toc.querySelector(".ind"), bar = toc.querySelector(".pr i"), ph = $("#phases");
+  toc.insertAdjacentHTML("afterbegin", src.innerHTML); toc.hidden = false;
+  const links = [...toc.querySelectorAll("a")], secs = links.map(a => document.getElementById(a.hash.slice(1)));
+  let cur = -2;
+  const spy = () => {
+    const on = src.getBoundingClientRect().bottom < 60; toc.classList.toggle("on", on); toc.inert = !on;
+    let i = -1; secs.forEach((s, k) => { if (s && s.getBoundingClientRect().top < innerHeight * .35) i = k; });
+    if (i !== cur) { cur = i; links.forEach((a, k) => a.toggleAttribute("aria-current", k === i));
+      if (i >= 0) { const a = links[i]; ind.style.width = a.offsetWidth + "px"; ind.style.transform = `translateX(${a.offsetLeft}px)`; ind.style.opacity = 1; } else ind.style.opacity = 0; }
+    const h = document.documentElement; bar.style.transform = `scaleX(${Math.min(1, scrollY / Math.max(1, h.scrollHeight - innerHeight)).toFixed(4)})`;
+    const r = ph.getBoundingClientRect();
+    ph.style.setProperty("--p", Math.max(0, Math.min(1, (innerHeight * .5 - r.top) / r.height)).toFixed(3));
+    ph.querySelectorAll(".phase").forEach(x => { const q = x.getBoundingClientRect(); x.classList.toggle("on", q.top < innerHeight * .55 && q.bottom > innerHeight * .35); });
+  };
+  addEventListener("scroll", spy, {passive: true}); addEventListener("resize", () => { cur = -2; spy(); }); spy();
+  if (document.fonts) document.fonts.ready.then(() => { cur = -2; spy(); });
+
+  // chart: site.js draws the svg; the line draws in the first time it is seen
+  addEventListener("DOMContentLoaded", () => {
+    const svg = $("#chart"); if (!svg || reduce) return;
+    const ln = svg.querySelector('path[stroke="#2563EB"]'), rest = [...svg.querySelectorAll('path[fill^="url"], circle, rect[transform]')];
+    if (!ln || ln.getBoundingClientRect().top < innerHeight * .8) return;   // already on screen: leave it drawn
+    ln.setAttribute("pathLength", 1); ln.style.strokeDasharray = 1; ln.style.strokeDashoffset = 1; rest.forEach(e => e.style.opacity = 0);
+    once($("#plot"), () => { ln.style.transition = "stroke-dashoffset 1.6s cubic-bezier(.65,0,.35,1)"; ln.style.strokeDashoffset = 0;
+      rest.forEach((e, i) => { e.style.transition = `opacity .45s ease ${.4 + i * .07}s`; e.style.opacity = 1; }); }, .4);
+  });
+
+  once($("#fct"), () => $("#fct").classList.add("seen"), .15);
+  once($("#fcsum"), () => $("#fcsum").classList.add("seen"), .6);
+
+  // checklist progress bar (site.js toggles and saves the ticks; this draws the bar)
+  const ck = $(".ckl.big"), fill = ck.querySelector(".pbar i"), all = [...ck.querySelectorAll(".ck")];
+  const prog = () => { const n = all.filter(c => c.getAttribute("aria-pressed") === "true").length; fill.style.transform = `scaleX(${n / all.length})`; ck.classList.toggle("done", n === all.length); };
+  ck.addEventListener("click", () => requestAnimationFrame(prog)); addEventListener("DOMContentLoaded", prog);
+})();
+</script>
+<div class="readbar" aria-hidden="true"><i></i></div>
+<script>
+/* reading progress for the article */
+(() => { const i = document.querySelector(".readbar i"), a = document.querySelector("[data-read]"); if (!i || !a) return;
+  const f = () => { const r = a.getBoundingClientRect(); i.style.transform = `scaleX(${Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - innerHeight))).toFixed(4)})`; };
+  addEventListener("scroll", f, {passive: true}); addEventListener("resize", f); f(); })();
+</script>

@@ -2,3 +2,9 @@ src
 build.py
 _review/
 COMPONENTS.md
+PUBLISHING.md
+publish_story.py
+build_app.py
+scripts
+_gen
+_covers_tmp

@@ -1,0 +1,43 @@
+/* Story chart (assets/chart.js). Shared by the app (app.css has the same rules) and the generated blog posts. */
+:root{--line2:#EEF0F3;--alt:#F8FAFC;--okd:#10B981}
+/* the story chart in public posts (same renderer as the app reader) */
+.pzchart .chartc{background:#fff}
+.pzchart .lb.c{color:#7C3AED;background:rgba(124,58,237,.09)}
+.chartc{border:1px solid #E5E7EB;border-radius:12px;padding:16px 18px}
+.chartc .hd{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.chartc .big{font:600 26px/32px var(--fn);color:#0B1220;letter-spacing:-.02em}
+.chartc .big small{font:400 14px var(--fd);color:#6B7280;margin-left:8px;letter-spacing:0}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12.5px;color:#6B7280}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:8px;height:8px;border-radius:50%;flex:none}
+.legend .lv{background:var(--okd)}.legend .lc{box-shadow:inset 0 0 0 1.5px #2563EB}.legend .lx{background:#E5533D;border-radius:1px;transform:rotate(45deg);width:7px;height:7px}
+.legend .lm{width:14px;height:14px;border-radius:3px;box-shadow:inset 0 0 0 1px #94A3B8;font:600 9px/14px var(--fn);text-align:center;color:#374151}
+.readout{display:flex;align-items:center;gap:10px;height:44px;margin-top:10px;padding:0 12px;border:1px solid var(--line2);border-radius:8px;background:var(--alt);font-size:13px;color:#4B5563;overflow:hidden;white-space:nowrap}
+.readout b{font:600 15px var(--fn);color:#0B1220;min-width:76px}
+.readout .rd-d{min-width:92px;color:#6B7280}
+.readout .rd-s{overflow:hidden;text-overflow:ellipsis}
+.plot{position:relative;margin-top:10px}
+.plot svg{display:block;width:100%;overflow:visible;touch-action:pan-y}
+.plot .gl{stroke:#EEF0F3}.plot .ax{font:500 11px var(--fn);fill:#6B7280}
+.plot .area{fill:rgba(37,99,235,.08)}.plot .line{fill:none;stroke:#2563EB;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.plot .pt{fill:#fff;stroke:#2563EB;stroke-width:1.5}.plot .pt.v{fill:var(--okd);stroke:#fff;stroke-width:2}.plot .pt.x{fill:#E5533D;stroke:none}
+.plot .cross{stroke:#94A3B8;stroke-dasharray:3 3;opacity:0}
+.plot .hl{fill:none;stroke:#0B1220;stroke-width:1.5;opacity:0}
+.plot .mk rect{fill:#fff;stroke:#94A3B8;stroke-width:1}.plot .mk text{font:600 10px var(--fn);fill:#374151}
+.plot .mk.on rect,.plot .mk.turn rect{fill:#2563EB;stroke:#2563EB}.plot .mk.on text,.plot .mk.turn text{fill:#fff}
+.plot .mk{cursor:pointer}
+.plot .note{font:400 11px var(--fd);fill:#6B7280}
+.pband{display:flex;gap:2px;margin-top:10px;overflow-x:auto;scrollbar-width:none}
+.pband::-webkit-scrollbar{display:none}
+.pband button{flex:1 1 0;min-width:72px;min-height:36px;padding:0 8px;border:0;border-radius:6px;background:#F1F3F6;font:500 13px var(--fd);color:#374151;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pband button[aria-pressed=true]{background:#2563EB;color:#fff}
+.moves{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px;margin-top:14px;padding:0;list-style:none}
+.moves button{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;min-height:36px;padding:4px 8px;border:0;border-radius:6px;background:none;text-align:left;cursor:pointer;font-size:14px;color:#0B1220}
+.moves button:hover,.moves button.on{background:#EEF3FE}
+.moves .n{width:20px;height:20px;border-radius:4px;box-shadow:inset 0 0 0 1px #CBD5E1;font:600 11px/20px var(--fn);text-align:center;color:#374151}
+.moves .on .n,.moves .turn .n{background:#2563EB;box-shadow:none;color:#fff}
+.moves .w{font:400 12.5px var(--fn);color:#6B7280;white-space:nowrap}
+.cprov{margin-top:12px;font-size:12.5px;color:#6B7280}
+.pzchart{margin-top:16px}
+@media (max-width:720px){.moves{grid-template-columns:1fr}}
+@media (pointer:coarse){.pband button,.moves button{min-height:44px}}
