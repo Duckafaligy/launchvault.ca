@@ -19,6 +19,10 @@
         <li>Every page works with a keyboard, and there's a "Skip to content" link at the top.</li>
         <li>Focus is easy to see when you move through the page with Tab.</li>
         <li>Every number has a text label (Verified, Claimed and so on), not just a colour.</li>
+        <li>Every chart has a "Show as table" button or a data table that screen readers can read. Small trend lines read out their numbers.</li>
+        <li>On revenue charts, you can reach each founder move with the keyboard from the moves list, and screen readers announce the readout as it changes.</li>
+        <li>Text colours passed an automated contrast check against WCAG AA on 12 pages.</li>
+        <li>Phone menus and the search panel keep keyboard focus inside while they're open. Esc closes them and puts focus back where you were.</li>
         <li>Animations calm down or stop when your device asks for reduced motion.</li>
         <li>Pages are built and checked for phone, tablet and desktop screens.</li>
         <li>The cookie card can be used with a keyboard and closes with Esc.</li>
@@ -26,8 +30,9 @@
 
       <h2 id="gaps">Known gaps</h2>
       <ul>
+        <li>We haven't tested by hand with a screen reader like NVDA or VoiceOver yet.</li>
         <li>We haven't had an outside accessibility audit yet. [Planned date.]</li>
-        <li>Revenue charts don't yet have a text version for screen readers. The key numbers are in the text around them, and we're adding a full text version.</li>
+        <li>The contrast check was automated and covered 12 pages, not every page or every state.</li>
         <li>Company logos come from their owners and may not have strong contrast.</li>
       </ul>
 
