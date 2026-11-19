@@ -598,3 +598,4 @@ button.row{width:100%;border:0;border-top:1px solid var(--line2);background:none
 }
 table.sr{display:block}
 @media (pointer:coarse){.snap .ft a{min-height:44px;display:inline-flex;align-items:center}}
+.snap .prt{font-size:13px;color:#374151}.snap .prt b{font-weight:600;color:var(--ink);margin-right:6px}

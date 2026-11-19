@@ -30,7 +30,7 @@
 
   window.LVChart = function (root, D, hooks = {}) {
     const plot = root.querySelector(".plot"), svg = plot.querySelector("svg"), ro = root.querySelector(".readout");
-    const S = D.series, pts = S.points.map(p => ({x: mi(p[0]), v: p[1], l: p[2] || S.label, s: p[3] || "", d: (S.point_dates || {})[p[0]] || mlab(mi(p[0]))}));
+    const S = D.series, pts = S.points.map(p => ({x: mi(p[0]), v: p[1], l: p[2] || S.label, s: p[3] || "", d: ((S.kind || {})[p[0]] ? S.kind[p[0]] + " · " : "") + ((S.point_dates || {})[p[0]] || mlab(mi(p[0]))), k: (S.kind || {})[p[0]]}));
     const alt = (S.alt || []).map(p => ({x: mi(p[0]) + .4, v: p[1], l: p[2] || "Sources differ", s: p[3] || "", d: mlab(mi(p[0])) + ", second source", alt: 1}));
     const x0 = Math.min(S.start ? mi(S.start) : Infinity, pts[0].x), x1 = pts.at(-1).x;
     // only moves inside the chart's months get an axis marker (earlier moves stay in the list)
@@ -53,7 +53,8 @@
       const all = pts.concat(alt);
       all.forEach(p => { const k = LBC[p.l] || "c", cx = X(p.x), cy = Y(p.v);
         if (k === "x") el("rect", {x: cx - 4, y: cy - 4, width: 8, height: 8, class: "pt x", transform: `rotate(45 ${cx} ${cy})`}, svg);
-        else el("circle", {cx, cy, r: k === "v" ? 5 : 3.2, class: "pt" + (k === "v" ? " v" : "")}, svg); });
+        else el("circle", {cx, cy, r: k === "v" ? 5 : 3.2, class: "pt" + (k === "v" ? " v" : "") + (p.k ? " kd" : "")}, svg);
+        if (p.k) el("text", {x: cx - 8, y: cy - 10, "text-anchor": "end", class: "ax kdl"}, svg).textContent = p.k; });
       const hl = el("circle", {r: 7, class: "hl"}, svg);
       const mks = moves.map((m, i) => { const g = el("g", {class: "mk" + (m.turn ? " turn" : ""), tabindex: "-1", "aria-hidden": "true"}, svg);
         const cx = Math.min(Math.max(X(m.x), L + 9), W - R - 9) + (moves[i - 1] && Math.abs(X(moves[i - 1].x) - X(m.x)) < 18 ? 9 : 0);

@@ -57,3 +57,4 @@
 .srcic{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:5px;background:#F1F3F6;color:#374151;flex:none}
 table.sr{display:block}
 .ctab table{display:block;overflow-x:auto}
+.plot .pt.kd{fill:#fff;stroke:#2563EB;stroke-width:3}.plot .kdl{font-weight:600;fill:#0B1220}

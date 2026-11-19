@@ -12,7 +12,7 @@ Outputs:
 Then runs build.py (public pages) with the generated blog posts added.
 Run:  python build_app.py            (publish one story: python publish_story.py <slug>)
 """
-import json, os, re, html, glob, sys, shutil, subprocess
+import json, math, os, re, html, glob, sys, shutil, subprocess
 ROOT = os.path.dirname(os.path.abspath(__file__)); SRC = os.path.join(ROOT, "src")
 DATA = os.path.join(ROOT, "..", "design", "data")
 sys.path.insert(0, ROOT)
@@ -29,6 +29,27 @@ def money(v): return "${:,}".format(v)
 def mlab(ym): y, m = ym.split("-"); return f"{MON[int(m) - 1]} {y}"
 def dlab(d): y, m, dd = d.split("-"); return f"{MON[int(m) - 1]} {int(dd)} {y}"
 def lb(l): return f'<span class="lb {LBC[l]}">{esc(l)}</span>' if l else ""
+def prices(v):
+    """Wayback prices: a list renders as chips, a string as one line of text."""
+    if not v: return ""
+    if isinstance(v, list): return '<div class="pr">' + "".join(f"<span>{esc(x)}</span>" for x in v) + "</div>"
+    return f'<p class="prt"><b>Pricing</b> {esc(v)}</p>'
+def latest_date(ds):
+    """Newest 'Nov 18 2026' / 'Jan 2026' style date in ds, as written."""
+    best = None
+    for d in ds:
+        for m in re.finditer(r"\b(" + "|".join(MON) + r")[a-z]*\.?\s+(?:(\d{1,2}),?\s+)?(\d{4})", d or ""):
+            k = (int(m.group(3)), MON.index(m.group(1)), int(m.group(2) or 0))
+            if not best or k > best[0]: best = (k, m.group(0))
+    return best[1] if best else ""
+def fc_summary(fcs):
+    order = ["Verified", "Sources differ", "Couldn't verify", "Claimed", "Estimate", "Live", "Wayback"]
+    n = {l: sum(f["label"] == l for f in fcs) for l in order}
+    used = [l for l in order if n[l]]
+    bar = "".join(f'<i class="{LBC[l]}" style="--w:{n[l]}"></i>' for l in used)
+    txt = " · ".join(f"{lb(l)} {n[l]}" for l in used)
+    return (f'<div class="fcsum" id="fcsum"><div class="fcbar" aria-hidden="true">{bar}</div>' + NL
+            + f'      <p><b>{len(fcs)}</b> claim{"s" if len(fcs) != 1 else ""} checked: {txt}</p></div>')
 def rd(p): return open(p, encoding="utf-8").read()
 def wr(p, t):
     os.makedirs(os.path.dirname(p), exist_ok=True); tmp = p + ".tmp"
@@ -153,6 +174,7 @@ def norm_ready(S, legacy):
         hd = dlab(legacy["monthly"]["read_on"]) if legacy.get("monthly") else hd
         if legacy.get("mrr"): sub = f'MRR {money(legacy["mrr"]["value"])} · {dlab(legacy["mrr"]["date"])}'
     stale = f'Stale · last synced {dlab(legacy["mrr"]["date"])}' if legacy and legacy.get("stale") and legacy.get("mrr") else ""
+    if stale: hd = dlab(legacy["mrr"]["date"])   # a stale headline carries the last sync date everywhere (quiz, Library, reader)
     tab = S.get("tab") if "tab" in S else {"AI tool": "ai", "Mobile app": "mobile", "Service": "services"}.get(S["category"])
     return {"slug": S["slug"], "name": S["name"], "tab": tab, "type": S.get("type_label") or S["category"], "what": S["what"], "logo": S["logo"],
             "pattern": S["pattern"], "lessons": [p["lesson"] for p in S["phases"]], "hv": hv, "hu": hu, "hl": hl, "sub": sub,
@@ -256,16 +278,25 @@ def src_name(f):
         d = re.sub(r"^https?://(www\.)?", "", s).split("/")[0]
         return {"trustmrr.com": "TrustMRR", "github.com": "GitHub", "web.archive.org": "Wayback Machine"}.get(d, d)
     return s
+def mark_mrr(S):
+    """A series point that is really the MRR headline (not that month's revenue) gets kind 'MRR', so the chart and table say so."""
+    mrr = {re.sub(r"[^0-9]", "", n["v"]) for n in S.get("numbers", []) if re.search(r"MRR|recurring", n.get("k", "") + n.get("long", ""), re.I)}
+    if re.search(r"MRR|recurring", S["series"].get("what", ""), re.I): return
+    kind = {p[0]: "MRR" for p in S["series"]["points"] if str(p[1]) in mrr}
+    if kind: S["series"]["kind"] = kind
 def chart_table(S):
-    rows = [(p[0], p[1], p[2] if len(p) > 2 else S["series"].get("label", ""), p[3] if len(p) > 3 else "") for p in S["series"]["points"]]
+    mark_mrr(S); kd = S["series"].get("kind") or {}
+    dsrc = S["series"].get("source", "")
+    rows = [(p[0], p[1], p[2] if len(p) > 2 else S["series"].get("label", ""), (p[3] if len(p) > 3 else "") or dsrc) for p in S["series"]["points"]]
     rows += [(p[0], p[1], p[2] if len(p) > 2 else "Sources differ", (p[3] if len(p) > 3 else "") + " (second source)") for p in S["series"].get("alt", [])]
     rows.sort(key=lambda r: r[0])
     pd = S["series"].get("point_dates") or {}
     return ('<details class="ctab"><summary>Show as table</summary><table><caption class="sr">' + esc(S["name"]) + ": " + esc(S["series"]["what"].lower()) + '</caption>'
             '<thead><tr><th scope="col">Month</th><th scope="col">Value</th><th scope="col">Label</th><th scope="col">Source</th></tr></thead><tbody>'
-            + "".join(f'<tr><th scope="row">{esc(pd.get(m) or mlab(m))}</th><td>{money(v)}</td><td>{lb(l)}</td><td>{esc(src_name({"source": sr}) if sr else "")}</td></tr>' for m, v, l, sr in rows)
+            + "".join(f'<tr><th scope="row">{esc(pd.get(m) or mlab(m))}{(" (" + kd[m] + ")") if m in kd else ""}</th><td>{money(v)}</td><td>{lb(l)}</td><td>{esc(src_name({"source": sr}) if sr else "")}</td></tr>' for m, v, l, sr in rows)
             + "</tbody></table></details>")
 def chart_block(S, moves_list=True, band=True):
+    mark_mrr(S)
     data = {"series": S["series"], "moves": [m for m in S["moves"]]}
     for i, p in enumerate(S["phases"]):
         for n in p.get("moves", []):
@@ -318,14 +349,14 @@ def reader(E, S, gate=True):
     if S.get("wayback"):
         def snap(w):
             img = f'<picture><source srcset="{w["image"].replace(".png", ".webp")}" type="image/webp"><img src="{w["image"]}" alt="{esc(S["name"])} homepage, {esc(w["date"])}" width="800" height="450" loading="lazy" decoding="async"></picture>' if w.get("image") else ""
-            pr = '<div class="pr">' + "".join(f"<span>{esc(x)}</span>" for x in (w.get("prices") or [])) + "</div>" if w.get("prices") else ""
+            pr = prices(w.get("prices"))
             link = "Open snapshot" if "archive.org" in w["source"] else "Open site"
             return (f'<div class="snap"><div class="sb"><img src="{S["logo"]}" alt="" width="16" height="16"><span>{esc(re.sub(r"^https?://(www\.)?", "", S.get("site", "")).strip("/"))} · {esc(w["date"])}</span>{lb(w.get("label", "Wayback"))}</div>'
                     f'{img}<p class="hl">"{esc(w["headline"])}"</p><p class="sp">{esc(w.get("sub", ""))}</p>{pr}<div class="ft"><span>{esc(w.get("prices_date", ""))}</span><a href="{esc(w["source"])}" target="_blank" rel="noopener">{link} ↗</a></div></div>')
         tn = f'<section class="rsec" id="then"><div class="sh"><h2>Then and now</h2><span class="meta">{esc(S.get("wayback_note", ""))}</span></div><div class="tnow">' + "".join(snap(w) for w in S["wayback"]) + "</div></section>"
     cnt = {}
     for f in S["fact_checks"]: cnt[f["label"]] = cnt.get(f["label"], 0) + 1
-    fc = (f'<section class="rsec" id="facts"><div class="sh"><h2>Fact check</h2><span class="meta">{len(S["fact_checks"])} claims · Read {esc(S.get("fact_checks_read") or S["fact_checks"][0]["date"])} · '
+    fc = (f'<section class="rsec" id="facts"><div class="sh"><h2>Fact check</h2><span class="meta">{len(S["fact_checks"])} claims · Checked {esc(S.get("fact_checks_read") or latest_date(s["date"] for s in S["sources"]))} · '
           + " · ".join(f"{k} {v}" for k, v in cnt.items()) + '</span></div><div class="fct" role="table" aria-label="Fact check">'
           + '<div class="fr th" role="row"><span>Claim</span><span>What we found</span><span>Label</span></div>'
           + "".join(f'<div class="fr" role="row"><span class="c1">{esc(f["claim"])}</span><span>{esc(f["found"])}<span class="src">{esc(f.get("who") or src_name(f))} · {esc(f["date"])}</span></span><span>{lb(f["label"])}</span></div>' for f in S["fact_checks"])
@@ -471,10 +502,12 @@ def static_page(E, name, title, desc, active, crumbs=None):
 def blog_post(S, E):
     set_srcmap(S); tpl = rd(os.path.join(SRC, "app", "_post.tpl.html"))
     kpis = "".join(f'<div class="kpi"><span class="k">{esc(x.get("long") or x["k"])}</span><span class="kv">{esc(x["v"])}</span><span class="m">{lb(x["label"])}{esc(x["date"])}</span></div>' for x in S["numbers"][:5])
+    bymove = any(p.get("moves") for p in S["phases"])
     def ph(i, p):
         notes = p.get("number") or []
         nt = "".join(f'<div class="note">{esc(n["v"])} {lb(n["label"])}</div>' for n in (notes if isinstance(notes, list) else [notes]))
-        ks = ", ".join(str(k) for k in p.get("moves", [])) or str(i)
+        # stories keyed to chart moves (Postiz) show the move numbers; the rest number phases from 1
+        ks = (", ".join(str(k) for k in p.get("moves") or []) or "0") if bymove else str(i + 1)
         return (f'<div class="phase"><div class="w"><span class="k{" turn" if p.get("turn") else ""}">{ks}</span><b>{esc(p["name"])}</b><span>{esc(p["when"])}</span></div><div>\n        '
                 + "\n        ".join(f"<p>{esc(t)}</p>" for t in p["story"].split("\n\n")) + (f"\n        {nt}" if nt else "") + f'\n        <p class="lesson">{esc(p["lesson"])}</p></div></div>')
     hl = "".join(f'<div class="mcard"><span class="no">Move {h["move"]}</span><h3>{esc(h["title"])}</h3>\n        <p>{esc(h["text"])}</p>' + (f'\n        <p class="q">{esc(h["quote"])}</p>' if h.get("quote") else "")
@@ -485,14 +518,23 @@ def blog_post(S, E):
     src = "".join(f'<div class="sl-row"><span class="slogo">{src_logo(s, cls=" class=" + chr(34) + "blogo" + chr(34))}</span><span class="sn"><b>{esc(s["name"])}</b><span class="d">{esc(s.get("what", ""))}</span></span><span class="sd">{esc(s["date"])}</span>{lb(s["label"])}</div>' for s in S["sources"])
     tn = ""
     if S.get("wayback"):
-        tn = '<section id="then-now"><div class="wrap"><div class="shead"><div><h2>Then and now. <em class="em">' + esc(S.get("wayback_note", "")) + '.</em></h2></div></div><div class="tn">' + '<div class="arrow"></div>'.join(
-            f'<div class="snap"><div class="sb"><span>{esc(re.sub(r"^https?://(www[.])?", "", S.get("site", "")).strip("/"))} · {esc(w["date"])}{(" / " + esc(w["prices_date"])) if w.get("prices_date") else ""}</span>{lb(w.get("label", "Wayback"))}</div><div class="sc"><p class="hl">"{esc(w["headline"])}"</p><p class="sp">{esc(w.get("sub", ""))}</p>'
-            + ('<div class="pr">' + "".join(f"<span>{esc(x)}</span>" for x in w.get("prices") or []) + "</div>" if w.get("prices") else "") + "</div></div>" for w in S["wayback"]) + "</div></div></section>"
+        note = (S.get("wayback_note") or "What the homepage said, and when").rstrip(".")
+        host = esc(re.sub(r"^https?://(www[.])?", "", S.get("site", "")).strip("/"))
+        head_ = f'<section id="then-now"><div class="wrap"><div class="shead"><div><h2>Then and now. <em class="em">{esc(note)}.</em></h2></div></div>'
+        if any(w.get("image") for w in S["wayback"]):   # screenshots: side-by-side cards (Postiz)
+            tn = head_ + '<div class="tn">' + '<div class="arrow"></div>'.join(
+                f'<div class="snap"><div class="sb"><span>{host} · {esc(w["date"])}{(" / " + esc(w["prices_date"])) if w.get("prices_date") else ""}</span>{lb(w.get("label", "Wayback"))}</div><div class="sc"><p class="hl">"{esc(w["headline"])}"</p><p class="sp">{esc(w.get("sub", ""))}</p>'
+                + prices(w.get("prices")) + "</div></div>" for w in S["wayback"]) + "</div></div></section>"
+        else:                                            # text only: a compact vertical timeline
+            tn = head_ + '<ol class="wbtl">' + "".join(
+                f'<li><div class="wd"><time>{esc(w["date"])}</time>{lb(w.get("label", "Wayback"))}<span class="wh">{host}</span></div>'
+                f'<div class="wc"><p class="hl">"{esc(w["headline"])}"</p>' + (f'<p class="sp">{esc(w["sub"])}</p>' if w.get("sub") else "") + prices(w.get("prices")) + "</div></li>"
+                for w in S["wayback"]) + "</ol></div></section>"
     title = S["title"]; em = (S.get("title_em") or "").rstrip(".")
     h1 = (esc(title[:-len(em)]) + f'<em class="em">{esc(em)}.</em>') if em and title.endswith(em) else esc(title)
     rep = {"{{SLUG}}": S["slug"], "{{H1}}": h1, "{{DEK}}": esc(S["dek"]), "{{LOGO}}": S["logo"], "{{NAME}}": esc(S["name"]), "{{READ}}": str(S["read_min"]), "{{NSRC}}": str(len(S["sources"])),
            "{{DATE}}": esc(S["numbers"][0]["date"]), "{{KPIS}}": kpis, "{{CHART}}": chart_block(S, moves_list=True, band=False), "{{HL}}": hl, "{{NHL}}": str(len(S.get("highlights", []))),
-           "{{PHASES}}": "\n      ".join(ph(i, p) for i, p in enumerate(S["phases"])), "{{FC}}": fc, "{{NFC}}": str(len(S["fact_checks"])), "{{FCREAD}}": esc(S.get("fact_checks_read") or S["fact_checks"][0]["date"]),
+           "{{PHASES}}": "\n      ".join(ph(i, p) for i, p in enumerate(S["phases"])), "{{FC}}": fc, "{{NFC}}": str(len(S["fact_checks"])), "{{FCREAD}}": esc(S.get("fact_checks_read") or latest_date(s["date"] for s in S["sources"])), "{{FCSUM}}": fc_summary(S["fact_checks"]),
            "{{TN}}": tn, "{{CKS}}": cks, "{{NCK}}": str(len(cl)), "{{SRC}}": src, "{{APP}}": f"/app/story/{S['slug']}/"}
     for k, v in rep.items(): tpl = tpl.replace(k, v)
     if not S.get("highlights"):
@@ -557,8 +599,25 @@ def write_sitemap():
 def make_cover(S):
     png = os.path.join(ROOT, "assets", "covers", S["slug"] + ".png")
     if os.path.exists(png): return "kept"
-    pts = S["series"]["points"]; vs = [p[1] for p in pts]; top = max(vs) or 1
-    xs = [i * 1180 / max(1, len(vs) - 1) for i in range(len(vs))]; line = "M" + " L".join(f"{110 + x:.0f} {720 - v / top * 380:.0f}" for x, v in zip(xs, vs))
+    pts = S["series"]["points"]; vs = [p[1] for p in pts]
+    # y axis scaled to the data: nice ticks from just under the low to just over the high
+    raw = (max(vs) - min(vs)) or max(vs) or 1; mag = 10 ** math.floor(math.log10(raw / 3))
+    step = next(m * mag for m in (1, 2, 2.5, 5, 10) if raw / (m * mag) <= 4)
+    lo = math.floor(min(vs) / step) * step; hi = math.ceil(max(vs) / step) * step
+    if hi == lo: hi = lo + step
+    X0, X1, Y0, Y1 = 250, 1460, 760, 330   # plot box (y0 = baseline)
+    sx = lambda i: X0 + i * (X1 - X0) / max(1, len(vs) - 1); sy = lambda v: Y0 - (v - lo) / (hi - lo) * (Y0 - Y1)
+    line = "M" + " L".join(f"{sx(i):.0f} {sy(v):.0f}" for i, v in enumerate(vs))
+    def kfmt(v): return f"${v / 1e6:,.1f}M" if v >= 1e6 else (f"${v / 1e3:,.0f}k" if v >= 1e3 else f"${v:,.0f}")
+    def xl(t): return mlab(t) if re.fullmatch(r"\d{4}-\d{2}", str(t)) else str(t)
+    ticks = [lo + k * step for k in range(int(round((hi - lo) / step)) + 1)]
+    grid = "".join(f'<line x1="{X0}" x2="{X1}" y1="{sy(t):.0f}" y2="{sy(t):.0f}" stroke="{"#94A3B8" if t == lo else "#E5E9F0"}" stroke-width="2"/>'
+                   f'<text x="{X0 - 22}" y="{sy(t) + 9:.0f}" text-anchor="end">{kfmt(t)}</text>' for t in ticks)
+    xlab = (f'<text x="{X0}" y="{Y0 + 46}" text-anchor="start">{esc(xl(pts[0][0]))}</text><text x="{X1}" y="{Y0 + 46}" text-anchor="end">{esc(xl(pts[-1][0]))}</text>'
+            f'<text x="{X0 + 18}" y="{Y1 - 26}" text-anchor="start" class="cap">{esc(S["series"].get("what", "Revenue each month"))}</text>')
+    dot = f'<circle cx="{sx(len(vs) - 1):.0f}" cy="{sy(vs[-1]):.0f}" r="11" fill="#2563EB" stroke="#fff" stroke-width="5"/>'
+    chart = (f'<svg width="1600" height="900"><style>text{{font:600 24px "Inter Tight";fill:#64748B}}.cap{{font:600 22px "Schibsted Grotesk";fill:#475569}}</style>{grid}{xlab}'
+             f'<path d="{line} L{X1} {Y0} L{X0} {Y0} Z" fill="rgba(37,99,235,.07)"/><path d="{line}" fill="none" stroke="#2563EB" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>{dot}</svg>')
     num = S["numbers"][0]
     page = f'''<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700&family=Inter+Tight:wght@600&display=block">
 <style>*{{margin:0;box-sizing:border-box}}body{{width:1600px;height:900px;background:#F1F4F9;font-family:"Schibsted Grotesk";color:#0B1220;position:relative;overflow:hidden}}
@@ -567,7 +626,7 @@ def make_cover(S):
 .n{{position:absolute;right:110px;top:92px;text-align:right}}.n b{{display:block;font:600 72px/1 "Inter Tight";letter-spacing:-.03em}}.n span{{display:inline-flex;align-items:center;gap:10px;margin-top:14px;font:600 24px "Schibsted Grotesk";color:#047857;background:rgba(16,185,129,.12);border-radius:10px;padding:6px 14px}}
 .n small{{display:block;margin-top:10px;font:600 22px "Schibsted Grotesk";color:#64748B}}svg{{position:absolute;left:0;top:0}}</style></head><body><div class="c"></div>
 <div class="t"><img src="{ROOT.replace(os.sep, "/")}/{S["logo"].lstrip("/")}">{esc(S["name"])}</div><div class="n"><b>{esc(num["v"])}</b><span>{esc(num["label"])}</span><small>{esc(num["k"])} · {esc(num["date"])}</small></div>
-<svg width="1600" height="900"><path d="{line} L1290 760 L110 760 Z" fill="rgba(37,99,235,.08)"/><path d="{line}" fill="none" stroke="#2563EB" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/></svg></body></html>'''
+{chart}</body></html>'''
     tmpdir = os.path.join(ROOT, "_covers_tmp"); os.makedirs(tmpdir, exist_ok=True)
     hp = os.path.join(tmpdir, S["slug"] + ".html"); wr(hp, page)
     js = os.path.join(ROOT, "scripts", "cover.js")
@@ -627,6 +686,10 @@ def main():
         "checklists": [{"slug": S["slug"], "name": S["name"], "logo": S["logo"], "href": next(e["href"] for e in E if e["slug"] == S["slug"]), "key": f"lv-{S['slug']}-checks",
                         "items": [c if isinstance(c, dict) else {"text": c, "from": ""} for c in S["checklist"]], "phases": len(S["phases"]),
                         "phase_names": [p["name"] for p in S["phases"]]} for S in ready],
+        # one path per story: the quiz's top match picks it (app.js pathFor); the next match adds the path-only step
+        "paths": {S["slug"]: {"title": "Ship something small first" if S["slug"] == "postiz" else S["pattern"], "source": S["slug"], "name": S["name"],
+                              "steps": steps if S["slug"] == "postiz" else [{"id": f"s{i + 1}", "text": c["text"] if isinstance(c, dict) else c, "from": (c.get("from") if isinstance(c, dict) else "") or S["name"] + " breakdown", "n": i + 1, "task": ""} for i, c in enumerate(S["checklist"][:5])],
+                              "lead": {"id": "x1", "text": (S["checklist"][0]["text"] if isinstance(S["checklist"][0], dict) else S["checklist"][0]), "from": "Pattern from " + S["name"], "href": f"/app/story/{S['slug']}/"}} for S in ready},
         "path": {"title": "Ship something small first", "source": "postiz", "steps": steps,
                  "extra": {"id": "x1", "text": "Ask for money early: offer the easy paid version to your 5 most active users.", "from": "Pattern from Gojiberry", "href": "/app/story/gojiberry/" if "gojiberry" in rslugs else ""}},
         "quiz": [{"q": q, "o": o, "w": w} for (q, o), w in zip(QUIZ, QW)],

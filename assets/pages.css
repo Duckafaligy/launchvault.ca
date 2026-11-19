@@ -608,3 +608,18 @@ main .tlink{min-height:44px}
 .win input:focus-visible{outline:2px solid #2563EB;outline-offset:2px}
 table.sr{display:block}
 @media (pointer:coarse){#win .mv,.win .mv{min-height:44px !important}}
+
+/* Then and now, text-only Wayback entries: a compact vertical timeline */
+.wbtl{list-style:none;margin:0;padding:0;position:relative;max-width:760px}
+.wbtl::before{content:"";position:absolute;left:5px;top:10px;bottom:10px;width:2px;background:var(--line)}
+.wbtl li{position:relative;padding:0 0 22px 32px}
+.wbtl li:last-child{padding-bottom:0}
+.wbtl li::before{content:"";position:absolute;left:0;top:5px;width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2px var(--brand)}
+.wbtl li:last-child::before{background:var(--brand)}
+.wbtl .wd{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;font:600 14px var(--fn);color:var(--ink)}
+.wbtl .wh{font:500 12.5px var(--fn);color:var(--muted)}
+.wbtl .wc{margin-top:8px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.wbtl .hl{font:700 17px/1.3 var(--fd);color:var(--ink);letter-spacing:-.01em}
+.wbtl .sp{font-size:13.5px;color:var(--muted);margin-top:4px}
+.prt{margin-top:10px;font-size:13px;color:#374151}
+.prt b{font:600 12px var(--fn);color:var(--ink);margin-right:6px}
