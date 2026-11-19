@@ -56,7 +56,7 @@ def wr(p, t):
     with open(tmp, "w", encoding="utf-8") as f: f.write(t)
     os.replace(tmp, p)
 def ic(d, w=18): return f'<svg width="{w}" height="{w}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{d}</svg>'
-I = {"home": '<path d="M4 11l8-7 8 7v9H4z"/>', "lib": '<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+I = {"saved": '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>', "home": '<path d="M4 11l8-7 8 7v9H4z"/>', "lib": '<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
      "path": '<circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 6h7a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h7"/>',
      "ck": '<path d="M10 6h10M10 12h10M10 18h10"/><path d="M4 6l1.2 1.2L7 5.2M4 12l1.2 1.2L7 11.2M4 18l1.2 1.2L7 17.2"/>',
      "acct": '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
@@ -115,6 +115,7 @@ def validate(S, path=""):
     if logo.startswith("/") and not os.path.exists(os.path.join(ROOT, logo.lstrip("/"))): err.append(f"logo file not found: {logo}")
     for w in S.get("wayback") or []:
         if w.get("image") and not os.path.exists(os.path.join(ROOT, w["image"].lstrip("/"))): err.append(f"wayback image not found: {w['image']}")
+    err += ["links: " + b for b in links_ok(S)]
     return err
 
 MONI = {m: i + 1 for i, m in enumerate(MON)}
@@ -232,7 +233,7 @@ def head(title, desc, extra="", og_slug=""):
 def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_slug=""):
     ready = [e for e in E if e["status"] == "ready"]; week = next((e for e in ready if not e["stale"]), ready[0])
     byslug = {e["slug"]: e for e in E}
-    nav = [("home", "/app/", "Home", ""), ("lib", "/app/library/", "Library", ""), ("path", "/app/path/", "My path", '<span class="cnt" data-cnt="path"></span>'),
+    nav = [("home", "/app/", "Home", ""), ("lib", "/app/library/", "Library", ""), ("saved", "/app/saved/", "Saved", '<span class="cnt" data-cnt="saved"></span>'), ("path", "/app/path/", "My path", '<span class="cnt" data-cnt="path"></span>'),
            ("ck", "/app/checklists/", "Checklists", '<span class="cnt" data-cnt="ck"></span>')]
     cur = lambda k: ' aria-current="page"' if k == active else ""
     side = "".join(f'<a class="si" href="{h}"{cur(k)}>{ic(I[k])}<span class="t">{t}</span>{c}</a>' for k, h, t, c in nav)
@@ -248,7 +249,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
   <a class="brand" href="/app/" aria-label="LaunchVault app home">{LV}<span>LaunchVault</span></a>
   <nav aria-label="Main">{side}</nav>
   <p class="sgrp">This week</p>{wk}
-  <div class="soonlist"><p class="sgrp">Coming soon</p>{soon}</div>
+  
   <div class="foot"><div class="plan">Free plan <a href="/app/account/#plan">Upgrade</a></div><a class="si" href="/app/account/"{cur("acct")}>{ic(I["acct"])}<span class="t">Account</span></a></div>
 </aside>
 <div class="main">
@@ -337,79 +338,140 @@ def src_logo(s, cls="", w=20):
     return f'<img{cls} src="/assets/logos/{f}" alt="" width="{w}" height="{w}" loading="lazy" decoding="async">' if f else LINK_ICON
 def set_srcmap(S):
     SRCMAP.clear(); SRCMAP.update({x["url"]: x["name"] for x in S["sources"] if x.get("url")})
+# official company links (story JSON "links"): validated to https + a known platform domain
+SOCIAL = {"x": ("X", r"(x|twitter)\.com", '<path d="M4 4l16 16M20 4L4 20" stroke-width="2.2"/>'),
+          "linkedin": ("LinkedIn", r"linkedin\.com", '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/>'),
+          "youtube": ("YouTube", r"youtube\.com", '<rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10 9.5l5 2.5-5 2.5z" fill="currentColor"/>'),
+          "instagram": ("Instagram", r"instagram\.com", '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/>'),
+          "tiktok": ("TikTok", r"tiktok\.com", '<path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.5 2.5 2.3 4.2 5 4.5"/>'),
+          "github": ("GitHub", r"github\.com", '<path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>'),
+          "producthunt": ("Product Hunt", r"producthunt\.com", '<circle cx="12" cy="12" r="9"/><path d="M10 16V8h3a2.5 2.5 0 0 1 0 5h-3"/>'),
+          "discord": ("Discord", r"discord\.(gg|com)", '<path d="M8 8.5a12 12 0 0 1 8 0M7 16c3 1.5 7 1.5 10 0M5.5 7.5C4 10 3.5 13 4 16c1.5 1.2 3 1.8 4.5 2l1-1.8M18.5 7.5C20 10 20.5 13 20 16c-1.5 1.2-3 1.8-4.5 2l-1-1.8"/><circle cx="9.5" cy="12.5" r="1" fill="currentColor"/><circle cx="14.5" cy="12.5" r="1" fill="currentColor"/>')}
+def links_ok(S):
+    L = S.get("links") or {}; bad = []
+    for k, v in L.items():
+        if k == "other": bad += [o["url"] for o in v if not str(o.get("url", "")).startswith("https://")]; continue
+        if k == "site": ok = str(v).startswith("https://")
+        else: ok = k in SOCIAL and re.match(r"https://(www\.)?" + SOCIAL[k][1] + r"/", str(v))
+        if not ok: bad.append(f"{k}: {v}")
+    return bad
+def link_row(S, cls="srow"):
+    L = S.get("links") or {}; site = L.get("site") or S.get("site")
+    btn = f'<a class="btn btn-s visit" href="{esc(site)}" target="_blank" rel="noopener">Visit {esc(S["name"])} <span aria-hidden="true">↗</span></a>' if site else ""
+    soc = "".join(f'<a class="soc" href="{esc(L[k])}" target="_blank" rel="noopener" aria-label="{esc(S["name"])} on {nm}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{d}</svg></a>'
+                  for k, (nm, _, d) in SOCIAL.items() if L.get(k))
+    soc += "".join(f'<a class="soc txt" href="{esc(o["url"])}" target="_blank" rel="noopener">{esc(o["name"])} ↗</a>' for o in L.get("other", []))
+    return f'<div class="{cls}">{btn}{soc}</div>'
+
 def reader(E, S, gate=True):
     set_srcmap(S); slug = S["slug"]; n = len(S["phases"])
     me = next((e for e in E if e["slug"] == slug), {}); stale_chip = f'<span class="lb n">{esc(me["stale"])}</span>' if me.get("stale") else ""
-    nums = "".join(f'<div><span class="k">{esc(x["k"])}</span><span class="val">{esc(x["v"])}</span><span class="m">{lb(x["label"])}{esc(x["date"])}</span></div>' for x in S["numbers"][:5])
-    hl = ""
-    if S.get("highlights"):
-        hl = (f'<section class="rsec" id="two"><div class="sh"><h2>The {len(S["highlights"])} moves that mattered</h2></div><div class="hl2">' + "".join(
-            f'<div class="hlc"><h3><i>{h["move"]}</i>{esc(h["title"])}</h3><p>{esc(h["text"])}</p>' + (f'<p class="q">{esc(h["quote"])}</p>' if h.get("quote") else "")
-            + f'<span class="src">{lb(h["label"])}{esc(h.get("source", ""))}{(" · " + esc(h["date"])) if h.get("date") else ""}</span></div>' for h in S["highlights"]) + "</div></section>")
+    tmr = lambda x: "trustmrr" in (x.get("source") or "")
+    # key numbers: TrustMRR ones carry no Verified chip (one line below says where they come from); anything else keeps its label
+    nums = "".join(f'<div class="ktile"><span class="k">{esc(x["k"])}</span><span class="val">{esc(x["v"])}</span><span class="m">{"" if tmr(x) and x["label"] == "Verified" else lb(x["label"])}{esc(x["date"])}</span></div>' for x in S["numbers"][:3])
+    synced = next((x["date"] for x in S["numbers"] if tmr(x)), "")
+    intro = lambda t: f'<p class="sint">{t}</p>'
+    sec = lambda id_, h, t, body, extra="": f'<section class="rsec rcard" id="{id_}"{extra}><div class="sh"><h2>{h}</h2></div>{intro(t)}{body}</section>'
     def phase(i, p):
-        mv = "".join(f'<i class="{"turn" if p.get("turn") else ""}">{k}</i>' for k in p.get("moves", []))
         body = "".join(f"<p>{esc(t)}</p>" for t in p["story"].split("\n\n"))
-        return (f'<div class="ph" id="ph{i + 1}" data-ph="{i + 1}"><span class="pn">{i + 1}</span><div><div class="phh"><h3>{esc(p["name"])}</h3><span class="when">{esc(p["when"])}</span><span class="mvn">{mv}</span></div>'
-                f'<div class="body">{body}</div>{nbox(p.get("number") or [])}<p class="lesson"><b>Lesson.</b> {esc(p["lesson"])}</p></div></div>')
-    phases_free = phase(0, S["phases"][0])
-    phases_rest = "".join(phase(i, p) for i, p in enumerate(S["phases"]) if i)
+        return (f'<details class="ph" id="ph{i + 1}" data-ph="{i + 1}" open><summary><span class="pn">{i + 1}</span><span class="phh"><b>{esc(p["name"])}</b><span class="when">{esc(p["when"])}</span></span><span class="chev" aria-hidden="true"></span></summary>'
+                f'<div class="phb"><div class="body">{body}</div>{nbox(p.get("number") or [])}<p class="lesson"><b>Lesson</b>{esc(p["lesson"])}</p></div></details>')
+    phases_free = phase(0, S["phases"][0]); phases_rest = "".join(phase(i, p) for i, p in enumerate(S["phases"]) if i)
+    kmoves = ""
+    if S.get("highlights"):
+        kmoves = sec("two", "Key moves", f"The {len(S['highlights'])} decisions that changed the line most, each with its source.", '<div class="hl2">' + "".join(
+            f'<div class="hlc"><h3><i>{h["move"]}</i>{esc(h["title"])}</h3><p>{esc(h["text"])}</p>' + (f'<p class="q">{esc(h["quote"])}</p>' if h.get("quote") else "")
+            + f'<span class="src">{lb(h["label"])}{esc(h.get("source", ""))}{(" · " + esc(h["date"])) if h.get("date") else ""}</span></div>' for h in S["highlights"]) + "</div>")
     tn = ""
     if S.get("wayback"):
         def snap(w):
             img = f'<picture><source srcset="{w["image"].replace(".png", ".webp")}" type="image/webp"><img src="{w["image"]}" alt="{esc(S["name"])} homepage, {esc(w["date"])}" width="800" height="450" loading="lazy" decoding="async"></picture>' if w.get("image") else ""
-            pr = prices(w.get("prices"))
             link = "Open snapshot" if "archive.org" in w["source"] else "Open site"
-            return (f'<div class="snap"><div class="sb"><img src="{S["logo"]}" alt="" width="16" height="16"><span>{esc(re.sub(r"^https?://(www\.)?", "", S.get("site", "")).strip("/"))} · {esc(w["date"])}</span>{lb(w.get("label", "Wayback"))}</div>'
-                    f'{img}<p class="hl">"{esc(w["headline"])}"</p><p class="sp">{esc(w.get("sub", ""))}</p>{pr}<div class="ft"><span>{esc(w.get("prices_date", ""))}</span><a href="{esc(w["source"])}" target="_blank" rel="noopener">{link} ↗</a></div></div>')
-        tn = f'<section class="rsec" id="then"><div class="sh"><h2>Then and now</h2><span class="meta">{esc(S.get("wayback_note", ""))}</span></div><div class="tnow">' + "".join(snap(w) for w in S["wayback"]) + "</div></section>"
-    cnt = {}
-    for f in S["fact_checks"]: cnt[f["label"]] = cnt.get(f["label"], 0) + 1
-    fc = (f'<section class="rsec" id="facts"><div class="sh"><h2>Fact check</h2><span class="meta">{len(S["fact_checks"])} claims · Checked {esc(S.get("fact_checks_read") or latest_date(s["date"] for s in S["sources"]))} · '
-          + " · ".join(f"{k} {v}" for k, v in cnt.items()) + '</span></div><div class="fct" role="table" aria-label="Fact check">'
-          + '<div class="fr th" role="row"><span>Claim</span><span>What we found</span><span>Label</span></div>'
-          + "".join(f'<div class="fr" role="row"><span class="c1">{esc(f["claim"])}</span><span>{esc(f["found"])}<span class="src">{esc(f.get("who") or src_name(f))} · {esc(f["date"])}</span></span><span>{lb(f["label"])}</span></div>' for f in S["fact_checks"])
-          + '</div><p class="fnote">If we get a number wrong, we fix it here and note the change.</p></section>')
+            return (f'<li class="snap"><div class="sb"><b>{esc(w["date"])}</b>{lb(w.get("label", "Wayback"))}</div>'
+                    f'{img}<p class="hl">"{esc(w["headline"])}"</p>' + (f'<p class="sp">{esc(w["sub"])}</p>' if w.get("sub") else "") + f'{prices(w.get("prices"))}<div class="ft"><span>{esc(w.get("prices_date", ""))}</span><a href="{esc(w["source"])}" target="_blank" rel="noopener">{link} ↗</a></div></li>')
+        tn = sec("then", "Then and now", "What the company's homepage said at different times, from saved copies of the page.", '<ol class="tnow">' + "".join(snap(w) for w in S["wayback"]) + "</ol>")
+    fc = sec("facts", "Fact checks", f'Claims people made about {esc(S["name"])}, and what the sources actually show. Checked {esc(S.get("fact_checks_read") or latest_date(x["date"] for x in S["sources"]))}.',
+             '<div class="fcards">' + "".join(f'<div class="fcard"><div class="fh">{lb(f["label"])}<span class="src">{esc(f.get("who") or src_name(f))} · {esc(f["date"])}</span></div>'
+                                            f'<p class="said"><span>What was said</span>{esc(f["claim"])}</p><p class="found"><span>What we found</span>{esc(f["found"])}</p></div>' for f in S["fact_checks"])
+             + '</div><p class="fnote">If we get a number wrong, we fix it here and note the change.</p>')
     ckey = f"lv-{slug}-checks"
     cl = [c if isinstance(c, dict) else {"id": f"c{i + 1}", "text": c, "from": ""} for i, c in enumerate(S["checklist"])]
-    ck = (f'<section class="rsec" id="todo"><div class="sh"><h2>What you could do at 15 to 20</h2><span class="meta" data-school="Low cost">Low cost, fits around school</span></div>'
-          f'<div class="ckl" data-store="{ckey}" data-slug="{slug}"><div class="ckh"><span class="ckp">0 of {len(cl)}</span><span class="bar"><i></i></span><span class="dev">{ic(I["dev"], 14)}On this device</span></div>'
-          + "".join(f'<button class="ck" type="button" role="checkbox" aria-checked="false"><span class="bx">{CHK}</span><span class="ct">{esc(c["text"])}</span><span class="cf">{esc(c.get("from", ""))}</span></button>' for c in cl)
-          + '<div class="ckf"><span>Ticks stay on this device. Pro saves them to your account.</span><a href="/app/account/#plan">See Pro</a></div></div></section>')
-    src = (f'<section class="rsec" id="sources"><div class="sh"><h2>Sources</h2><span class="meta">Free for everyone</span></div><div class="srcl">'
-           + "".join((f'<a class="sr2" href="{esc(s["url"])}" target="_blank" rel="noopener">' if s.get("url") else '<div class="sr2">')
-                     + src_logo(s) + f'<span><b>{esc(s["name"])}</b><small>{esc(s.get("what", ""))}</small></span><span class="dt">{esc(s["date"])}</span>{lb(s["label"])}'
-                     + (f'<span class="ext">{ic(I["ext"], 14)}</span></a>' if s.get("url") else '<span class="ext"></span></div>') for s in S["sources"])
-           + f'</div><div class="rfoot"><span>Breakdowns by LaunchVault. Not financial advice.</span><span>Last checked {esc(S["numbers"][0]["date"])}</span></div></section>')
+    ck = sec("todo", "Your checklist", '<span data-school="Small steps that copy what worked here, at low cost.">Small steps that copy what worked here, at low cost and around school.</span> Tick them as you go; star one to keep it in Saved.',
+             f'<div class="ckl" data-store="{ckey}" data-slug="{slug}"><div class="ckh"><span class="ckp">0 of {len(cl)}</span><span class="bar"><i></i></span><span class="dev">{ic(I["dev"], 14)}On this device</span></div>'
+             + "".join(f'<div class="ckw"><button class="ck" type="button" role="checkbox" aria-checked="false"><span class="bx">{CHK}</span><span class="ct">{esc(c["text"])}</span><span class="cf">{esc(c.get("from", ""))}</span></button><button class="ckstar" type="button" data-staritem="{slug}:{i}" aria-pressed="false" aria-label="Save this item">{ic(I["saved"], 16)}</button></div>' for i, c in enumerate(cl))
+             + '<div class="ckf"><span>Ticks stay on this device. Pro saves them to your account.</span><a href="/app/account/#plan">See Pro</a></div></div>')
+    grp = {"Revenue data": [], "Interviews and posts": [], "Archives": []}
+    for x in S["sources"]:
+        u = (x.get("url") or "") + " " + x["name"]
+        grp["Revenue data" if re.search(r"trustmrr|stripe|revenuecat", u, re.I) else "Archives" if re.search(r"archive\.org|wayback", u, re.I) else "Interviews and posts"].append(x)
+    srow = lambda x: ((f'<a class="sr2" href="{esc(x["url"])}" target="_blank" rel="noopener">' if x.get("url") else '<div class="sr2">') + src_logo(x)
+                      + f'<span><b>{esc(x["name"])}</b><small>{esc(x.get("what", ""))}</small></span><span class="dt">{esc(x["date"])}</span>{lb(x["label"])}'
+                      + (f'<span class="ext">{ic(I["ext"], 14)}</span></a>' if x.get("url") else '<span class="ext"></span></div>'))
+    src = sec("sources", "Sources", "Everywhere a number or quote in this breakdown comes from, with the date we read it.",
+              "".join(f'<h3 class="sgh">{g}</h3><div class="srcl">' + "".join(srow(x) for x in L) + "</div>" for g, L in grp.items() if L)
+              + f'<div class="rfoot"><span>Breakdowns by LaunchVault. Not financial advice.</span><span>Last checked {esc(S["numbers"][0]["date"])}</span></div>')
     gate_html = (f'<div class="gate" id="gate"><h3>{ic(I["lock"], 18)}The rest of this breakdown is on Pro</h3><p>Phase 1, the numbers, the chart and the Sources stay free.</p>'
-                 f'<div class="lk"><small>Locked on Free</small>Phases 2 to {n} · Then and now · Fact check</div>'
+                 f'<div class="lk"><small>Locked on Free</small>Phases 2 to {n} · Then and now · Fact checks</div>'
                  '<div class="acts"><a class="btn btn-p" href="/app/account/#plan">Get Pro</a><a class="btn btn-s" href="/app/account/#parent">Under 18? Send a parent link</a></div>'
                  '<p class="fine">$7.99 a month · $6.49 a month billed yearly. Payments open with accounts.</p></div>')
-    rest = f'<div id="locked" data-locked="1" hidden>{phases_rest}{tn}{fc}</div>'
-    teaser = f'<div class="gatewrap"><div class="fade" aria-hidden="true">{phase(1, S["phases"][1])}</div>{gate_html}</div>' if n > 1 else ""
-    L = lambda h: "#gate" if gate and h != "#ph1" else h   # locked parts point at the Pro gate
-    lk = lambda h: f' <span class="lkic" title="On Pro"><span class="sr">on Pro</span>{ic(I["lock"], 11)}</span>' if L(h) == "#gate" else ""
-    rail_ph = "".join(f'<a class="sub" href="{L(f"#ph{i + 1}")}" data-r="ph{i + 1}">{i + 1} {esc(p.get("short") or p["name"])}{lk(f"#ph{i + 1}")}</a>' for i, p in enumerate(S["phases"]))
-    rail = (f'<aside class="rail" aria-label="In this breakdown"><div><div class="rh2">In this breakdown<span data-readpct>0% read</span></div><div class="rbar"><i data-readbar></i></div>'
-            f'<nav><a href="#numbers" data-r="numbers">Numbers</a><a href="#chart" data-r="chart">Why the line moved</a>' + ('<a href="#two" data-r="two">The 2 moves</a>' if hl else "")
-            + f'<a href="#phases" data-r="phases">Phase by phase</a>{rail_ph}' + (f'<a href="{L("#then")}" data-r="then">Then and now{lk("#then")}</a>' if tn else "")
-            + f'<a href="{L("#facts")}" data-r="facts">Fact check{lk("#facts")}</a><a href="#sources" data-r="sources">Sources</a><a href="#todo" data-r="todo">What you could do</a></nav></div>'
-            f'<div class="rbox"><div class="rh2">Your checklist<span data-ckc="{slug}">0 of {len(cl)}</span></div><div class="bar" style="margin-top:8px"><i data-ckbar="{slug}"></i></div><p data-cknext="{slug}"></p></div></aside>')
-    mph = (f'<div class="mph"><button class="phb" type="button" data-sheet="phsheet"><em>Phase <span data-curph>1</span></em> · <span data-curname>{esc(S["phases"][0]["name"])}</span> <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>'
-           f'<button class="ckb" type="button" data-sheet="cksheet">Checklist <b data-ckc="{slug}">0/{len(cl)}</b></button></div>')
-    sheets = (f'<div class="sheet" id="phsheet" role="dialog" aria-modal="true" aria-label="Phases" hidden><div class="grab"></div><h2>Phases</h2><div class="sbody phl">'
-              + "".join(f'<button type="button" data-goph="{i + 1}"><span class="i">{i + 1}</span>{esc(p["name"])}<span class="r"></span></button>' for i, p in enumerate(S["phases"]))
-              + '<div class="jumps">' + (f'<a class="btn btn-s sm" href="{L("#then")}" data-close>Then and now</a>' if tn else "") + f'<a class="btn btn-s sm" href="{L("#facts")}" data-close>Fact check</a><a class="btn btn-s sm" href="#sources" data-close>Sources</a></div></div></div>'
-              f'<div class="sheet" id="cksheet" role="dialog" aria-modal="true" aria-label="Checklist" hidden><div class="grab"></div><h2>What you could do at 15 to 20</h2><div class="sbody" data-ckmirror="{slug}"></div></div>')
+    teaser = f'<div class="gatewrap"><div class="fade" aria-hidden="true">{phase(1, S["phases"][1]).replace(" open>", ">")}</div>{gate_html}</div>' if n > 1 and gate else ""
+    phs = sec("phases", "How it happened", f"The story in {n} steps, in order. Each one ends with a lesson you can use.", f'<div class="ptl">{phases_free}' + (teaser + f'<div id="locked" data-locked="1" hidden>{phases_rest}</div>' if gate else phases_rest) + "</div>")
+    locked = lambda h: f'<div data-locked="1" hidden>{h}</div>' if gate and h else h
+    chk = check_html(S, E)
+    nav_items = [("overview", "Overview"), ("chart", "The numbers"), ("phases", "How it happened")] + ([("two", "Key moves")] if kmoves else []) + ([] if gate else [("facts", "Fact checks")] + ([("then", "Then and now")] if tn else [])) + [("todo", "Checklist")] + ([("check", "Story check")] if chk else []) + [("sources", "Sources")]
+    nav = (f'<nav class="snav" aria-label="Sections"><div class="snav-in">' + "".join(f'<a href="#{k}" data-r="{k}">{t}</a>' for k, t in nav_items)
+           + f'</div><span class="snph">Phase <b data-curph>1</b> of {n}</span><div class="rprog"><i data-readbar2></i></div></nav>')
     title = S["title"]; em = S.get("title_em")
     t_html = esc(title[:-len(em.rstrip("."))]) + f'<em class="em">{esc(em.rstrip("."))}</em>' if em and title.endswith(em.rstrip(".")) else esc(title)
-    art = (f'{mph}<div class="rh"><span class="logo big"><img src="{S["logo"]}" alt="" width="36" height="36"></span><div><h1>{t_html}</h1><p class="dek">{esc(S["dek"])}</p>'
-           f'<div class="rmeta">{stale_chip}<span>By LaunchVault</span><span>{len(S["sources"])} sources</span><span>{S["read_min"]} min</span><span>Last checked {esc(S["numbers"][0]["date"])}</span><button type="button" class="rpt" data-report="{esc(slug)}">Report a mistake</button></div></div></div>'
-           f'<section class="rsec" id="numbers" style="margin-top:20px"><div class="nums5">{nums}</div></section>'
-           f'<section class="rsec" id="chart"><div class="sh"><h2>Why the line moved</h2><span class="meta">{esc(S["series"]["what"])}</span></div>{chart_block(S)}</section>'
-           f'{hl}<section class="rsec" id="phases"><div class="sh"><h2>Phase by phase</h2><span class="meta">{n} phases · each ends with one lesson</span></div>{phases_free}{teaser if gate else ""}</section>'
-           + (rest if gate else f'<div>{phases_rest}{tn}{fc}</div>') + f'{src}{ck}')
-    body = f'<div class="rprog"><i data-readbar2></i></div><div class="rd" data-reader="{slug}" data-phases="{n}"><article>{art}</article>{rail}</div>{sheets}'
+    over = (f'<section class="rsec rcard sumc" id="overview"><div class="rh"><span class="logo big"><img src="{S["logo"]}" alt="" width="44" height="44"></span><div class="rhm">'
+            f'<p class="co"><b>{esc(S["name"])}</b><span class="tag">{esc(S.get("type_label") or S["category"])}</span>{stale_chip}</p><p class="what">{esc(S["what"])}</p></div>'
+            f'<button type="button" class="star" data-star="{slug}" aria-pressed="false">{ic(I["saved"], 18)}<span>Save</span></button></div>'
+            f'<h1>{t_html}</h1><p class="dek">{esc(S["dek"])}</p>{link_row(S)}'
+            f'<div class="ktiles">{nums}</div>' + (f'<p class="synced">Revenue numbers from TrustMRR, synced {esc(synced)}.</p>' if synced else "")
+            + f'<div class="rmeta"><span>By LaunchVault</span><span>{len(S["sources"])} sources</span><span>{S["read_min"]} min read</span><button type="button" class="rpt" data-report="{esc(slug)}">Report a mistake</button></div></section>')
+    art = (over + sec("chart", "The numbers", f'This chart shows {esc(S["series"]["what"].lower())}. Numbered markers are the founder\'s moves; tap one to see what happened then.', chart_block(S))
+           + phs + kmoves + locked(fc) + locked(tn) + ck + chk + src)
+    body = f'{nav}<div class="rd rd2" data-reader="{slug}" data-phases="{n}"><article>{art}</article></div>'
     return shell(E, S["name"], S["dek"], "story-" + slug, body, crumbs=[("/app/library/", "Library"), ("", S["name"])], scripts='\n<script src="/assets/chart.js" defer></script>', og_slug=slug)
+
+def story_check(S, E):
+    """4-5 multiple-choice questions, each answer traced to a field in the story JSON. Order is deterministic (hash), not random."""
+    import hashlib
+    def mix(key, right, wrong):
+        opts = list(dict.fromkeys([right] + [w for w in wrong if w != right]))[:4]
+        opts.sort(key=lambda o: hashlib.md5((S["slug"] + key + o).encode()).hexdigest())
+        return opts, opts.index(right)
+    Q = []
+    ph = S["phases"]
+    if len(ph) >= 3:
+        o, a = mix("ph", ph[0]["name"], [p["name"] for p in ph[1:]][-3:])
+        Q.append({"q": "Which phase came first?", "o": o, "a": a, "e": f'Phase 1 is "{ph[0]["name"]}" ({ph[0]["when"]}).'})
+    whens = [m.get("when") for m in S["moves"]]
+    mv = next((m for m in S["moves"] if m.get("when") and whens.count(m["when"]) == 1), None)
+    if mv and len(S["moves"]) >= 4:
+        o, a = mix("mv", mv["text"], [m["text"] for m in S["moves"] if m is not mv][:3])
+        Q.append({"q": f'Which move happened in {mv["when"]}?', "o": o, "a": a, "e": f'In {mv["when"]}: {mv["text"]}.' + (f' Labelled {mv["label"]}.' if mv.get("label") else "")})
+    num = next((x for x in S["numbers"] if x["label"] == "Verified" and "MRR" in x["k"]), None) or next((x for x in S["numbers"] if x["label"] == "Verified"), None)
+    if num and re.fullmatch(r"\$[\d,]+", num["v"]):
+        v = int(num["v"][1:].replace(",", ""))
+        def r3(x): d = max(0, len(str(int(x))) - 3); return int(round(x / 10 ** d) * 10 ** d)
+        o, a = mix("num", num["v"], [money(r3(v * f)) for f in (0.5, 2, 10)])
+        Q.append({"q": f'What was the verified {"MRR" if "MRR" in num["k"] else num["k"]} on {num["date"]}?', "o": o, "a": a, "e": f'{num["v"]}, labelled Verified, read {num["date"]}.'})
+    pats = [e["pattern"] for e in E if e["status"] == "ready" and e["slug"] != S["slug"] and e["pattern"] != S["pattern"]]
+    if len(set(pats)) >= 3:
+        o, a = mix("pat", S["pattern"], sorted(set(pats), key=lambda t: hashlib.md5((S["slug"] + t).encode()).hexdigest())[:3])
+        Q.append({"q": "Which pattern does this story follow?", "o": o, "a": a, "e": f'The pattern is "{S["pattern"]}".'})
+    fcs = [f for f in S["fact_checks"] if f["label"] in ("Verified", "Claimed", "Sources differ", "Couldn't verify")]
+    if fcs:
+        f = next((f for f in fcs if f["label"] == "Claimed"), fcs[0])
+        o, a = mix("lab", f["label"], ["Verified", "Claimed", "Sources differ", "Couldn't verify"])
+        Q.append({"q": f'How is this claim labelled: "{f["claim"]}"?', "o": o, "a": a, "e": f'Labelled {f["label"]}. {f["found"]}'})
+    return Q[:5]
+def check_html(S, E):
+    Q = story_check(S, E)
+    if len(Q) < 3: return ""
+    return (f'<section class="rsec rcard" id="check"><div class="sh"><h2>Story check</h2></div><p class="sint">{len(Q)} quick questions, all answered in this breakdown. See how much stuck.</p>'
+            f'<div class="scheck" data-check="{S["slug"]}"><script type="application/json">{json.dumps(Q).replace("</", "<\\/")}</script><div data-checkbody></div></div></section>')
 
 # ============================================================ coming-soon story page
 def soon_page(E, e):
@@ -444,61 +506,45 @@ def soon_page(E, e):
 
 # ============================================================ home, library and the static pages
 def home(E):
-    ready = [e for e in E if e["status"] == "ready"]; W = next((e for e in ready if not e["stale"]), ready[0]); S = W["S"]; byslug = {e["slug"]: e for e in E}
-    stats = "".join(f'<div><span class="k">{esc(x["k"])}</span><span class="val">{esc(x["v"])}</span><span class="m">{lb(x["label"])}{esc(x["date"])}</span></div>' for x in S["numbers"][1:4]) \
-        + f'<div><span class="k">Sources</span><span class="val">{len(S["sources"])}</span><span class="m">each dated</span></div>'
-    tags = "".join(f'<span class="tag">{esc(t)}</span>' for t in dict.fromkeys([S.get("type_label") or S["category"], S["category"], f'{S["read_min"]} min']) if t)
-    week = (f'<section class="card"><div class="ch"><h2>This week\'s breakdown</h2><span class="meta">Published {esc(dlab(S["published"]))}</span></div>'
-            f'<a class="nb" href="{W["href"]}" style="align-items:flex-start"><span class="logo"><img src="{W["logo"]}" alt="" width="28" height="28"></span><span style="flex:1;min-width:0"><h3>{esc(S["title"])}</h3><p class="what">{esc(S["what"])}</p><span class="fchips" style="margin-top:10px">{tags}</span></span>'
-            f'<span style="width:240px;flex:none" class="hide-m"><span class="nums" style="display:flex;justify-content:space-between;align-items:center"><b style="font:600 18px var(--fn);color:#0B1220">{W["hv"]}</b>{lb(W["hl"])}</span>{spark(W["series"])}<span class="meta">{esc(W["hd"])}</span></span></a>'
-            f'<div class="stat">{stats}</div></section>')
-    cont = (f'<section class="card" id="contcard" hidden><div class="cont"><span class="logo"><img src="{W["logo"]}" alt="" width="28" height="28"></span><div class="mid"><h2>Continue reading: {esc(W["name"])}</h2><span class="sub" data-contsub></span>'
-            f'<div class="pr"><span class="bar"><i data-pctbar="{W["slug"]}"></i></span><span data-pct="{W["slug"]}"></span></div></div><a class="btn btn-p" href="{W["href"]}" data-resume>Resume <span class="arr" aria-hidden="true">→</span></a></div></section>')
-    nx = byslug.get("dm-champ")
-    nxt = ""
-    if nx and nx["status"] == "soon":
-        r = nx["raw"]
-        nxt = (f'<section class="card"><div class="ch"><h2>Next breakdown</h2><span class="meta">Numbers checked, story in progress</span></div><a class="nb" href="{nx["href"]}"><span class="logo"><img src="{nx["logo"]}" alt="" width="28" height="28"></span><span style="flex:1;min-width:0"><h3>{esc(nx["name"])}</h3><p class="what">{esc(nx["what"])}</p>'
-               f'<span class="nums"><span><b>{nx["hv"]}</b>{esc(nx["hu"].strip())}{lb(nx["hl"])}</span>' + (f'<span>MRR {money(r["mrr"]["value"])} · {dlab(r["mrr"]["date"])} · TrustMRR</span>' if r.get("mrr") else "")
-               + (f'<span>{lb(r["claim"]["label"])}"{esc(r["claim"]["text"])}" · {esc(r["claim"]["source"])} · {mlab(r["claim"]["date"])}</span>' if r.get("claim") else "") + '</span></span></a>'
-               '<div class="prog3"><span class="d"><i></i>Numbers checked</span><span class="c"><i></i>Story in progress</span><span class="t"><i></i>Fact check</span></div></section>')
-    soonrows = "".join(f'<a class="soonrow" href="{e["href"]}"><span class="logo" style="width:28px;height:28px;border-radius:7px"><img src="{e["logo"]}" alt="" width="20" height="20" loading="lazy"></span><span class="nm">{esc(e["name"])} <small>· {esc(e["type"])}</small></span>'
-                       f'<span class="nv"><b>{e["hv"]}</b>{esc(e["hu"].strip())}{lb(e["hl"])}</span><span class="src">TrustMRR · {esc(e["hd"])}</span></a>' for e in [e for e in E if e["status"] == "soon"])
-    body = f'''<div class="pg"><h1 class="sr">Home</h1>
-<div class="pathnote" id="pathnote" hidden><span><b>Your path is ready:</b> <span data-pathname></span>. Step 1 of 6 is below this week's breakdown.</span><a class="tl" href="/app/path/">Open My path</a><button type="button" aria-label="Close" data-closenote>✕</button></div>
+    ready = [e for e in E if e["status"] == "ready"]
+    body = f'''<div class="pg home2"><h1 class="sr">Home</h1>
+<div class="pathnote" id="pathnote" hidden><span><b>Your path is ready:</b> <span data-pathname></span>.</span><a class="tl" href="/app/path/">Open My path</a><button type="button" aria-label="Close" data-closenote>✕</button></div>
+<section class="hgreet"><h2>Welcome back</h2><p data-hsum>{len(ready)} breakdowns ready. Your progress stays on this device.</p></section>
+<div class="hstats" data-hstats></div>
+<div class="hrow"><div data-hcont></div><section class="card" data-hquiz></section></div>
+<section class="card hsec"><div class="ch"><h2>Stories</h2><span class="meta" data-hcount>{len(ready)} ready</span></div>
+  <div class="hfilt" role="group" aria-label="Show">{"".join(f'<button type="button" data-hf="{k}" aria-pressed="{str(k == "all").lower()}">{t}</button>' for k, t in (("all", "All"), ("new", "Not started"), ("prog", "In progress"), ("done", "Done"), ("saved", "Saved")))}</div>
+  <div class="scards" data-hcards><noscript>{"".join(f'<a class="scard" href="{e["href"]}"><b>{esc(e["name"])}</b></a>' for e in ready)}</noscript></div></section>
 <div class="grid2"><div>
-{cont}
-{week}
-{nxt}
 <section class="card"><div class="ch"><h2>Open checklists</h2><a class="tl" href="/app/checklists/">All checklists</a></div><div data-homecl></div></section>
-<section class="card"><div class="ch"><h2>Coming soon</h2><span class="meta">Numbers read from TrustMRR. Breakdown not written yet.</span></div>{soonrows}</section>
-</div><div>
 <section class="card"><div class="ch"><h2>Your path</h2><a class="tl" href="/app/start/?quiz=1" data-pathcta>Take the quiz</a></div><div class="cb" data-homepath></div><div data-likeyou></div></section>
-<section class="card"><div class="ch"><h2>Free plan</h2><a class="tl" href="/app/account/#plan">Compare plans</a></div><div class="cb"><p>This week's breakdown, all sources, and checklists on this device. Pro saves ticks and your path to your account.</p></div></section>
+</div><div>
+<section class="card"><div class="ch"><h2>Recent activity</h2></div><ol class="hact" data-hact></ol></section>
 </div></div></div>'''
     return shell(E, "Home", "Your LaunchVault home.", "home", body)
 
+def saved(E):
+    body = '''<div class="pg"><h1 class="sr">Saved</h1>
+<section class="card hsec"><div class="ch"><h2>Saved stories</h2><span class="meta" data-savedcount></span></div><div class="scards" data-savedcards></div></section>
+<section class="card"><div class="ch"><h2>Saved checklist items</h2></div><div data-saveditems></div></section></div>'''
+    return shell(E, "Saved", "Stories and checklist items you starred.", "saved", body)
+
 def library(E):
+    ready = [e for e in E if e["status"] == "ready"]
     body = f'''<div class="pg">
 <h1 class="sr">Library</h1>
-<div class="lbar">
-  <label class="lsearch">{ic(I["srch"], 16)}<input type="search" id="lq" placeholder="Search companies, patterns or lessons" aria-label="Search the library"></label>
-  <div class="seg" role="group" aria-label="Grouping"><button type="button" data-grp="all" aria-pressed="true">All stories</button><button type="button" data-grp="pattern" aria-pressed="false">By pattern</button></div>
-  <div class="seg view" role="group" aria-label="View"><button type="button" data-view="list" aria-pressed="true" aria-label="List">{ic('<path d="M4 6h16M4 12h16M4 18h16"/>', 16)}</button><button type="button" data-view="cards" aria-pressed="false" aria-label="Cards">{ic(I["lib"], 16)}</button></div>
-</div>
+<div class="lbar"><label class="lsearch">{ic(I["srch"], 16)}<input type="search" id="lq" placeholder="Search companies, patterns or lessons" aria-label="Search the library"></label></div>
 <div class="fchips">
   <div class="seg" role="group" aria-label="Type"><button type="button" data-tab="all" aria-pressed="true">All</button>{"".join(f'<button type="button" data-tab="{k}" aria-pressed="false">{v}</button>' for k, v in TABS.items())}</div>
   <select class="sel" id="lpat" aria-label="Pattern"><option value="">Any pattern</option></select>
-  <select class="sel" id="lstat" aria-label="Status"><option value="">Ready and coming soon</option><option value="ready">Ready</option><option value="soon">Coming soon</option></select>
   <select class="sel" id="lsort" aria-label="Sort"><option value="new">Newest</option><option value="mrr">Biggest MRR</option><option value="growth">Fastest growth</option></select>
-  <span class="vdiv"></span>
-  <button class="tgl" type="button" role="switch" aria-checked="false" id="lver"><span class="sw"></span>Verified only</button>
+  <div class="seg" role="group" aria-label="Progress"><button type="button" data-lp="" aria-pressed="true">Any</button><button type="button" data-lp="prog" aria-pressed="false">In progress</button><button type="button" data-lp="done" aria-pressed="false">Done</button><button type="button" data-lp="saved" aria-pressed="false">Saved</button></div>
   <button class="tl clear" type="button" id="lclear">Clear filters</button>
 </div>
-<div id="lout"></div>
-<div class="note dash" style="margin-top:12px"><b style="color:#0B1220">New every week</b><span>Numbers are checked before the story goes out. The weekly email tells you when.</span></div>
-<p class="lfoot">Revenue read from Stripe by TrustMRR; each number keeps the date it was read. Fastest growth is the average monthly growth between the first and last point of each series. Coming-soon rows open when the breakdown is out.</p>
-<noscript><div class="ltab">{"".join(f'<a class="lrow" href="{e["href"]}"><span class="co"><b>{esc(e["name"])}</b></span><span class="num"><b>{e["hv"]}</b>{esc(e["hu"])}</span></a>' for e in E)}</div></noscript>
+<p class="lcount" data-lcount>{len(ready)} breakdowns</p>
+<div id="lout" class="scards"></div>
+<p class="lfoot">Revenue read from Stripe by TrustMRR; each number keeps the date it was read. Fastest growth is the average monthly growth between the first and last point of each series.</p>
+<noscript><div>{"".join(f'<a class="scard" href="{e["href"]}"><b>{esc(e["name"])}</b> {e["hv"]}{esc(e["hu"])}</a>' for e in ready)}</div></noscript>
 </div>'''
     return shell(E, "Library", "Every LaunchVault story, with its numbers labelled and dated.", "lib", body)
 
@@ -543,7 +589,7 @@ def blog_post(S, E):
     rep = {"{{SLUG}}": S["slug"], "{{H1}}": h1, "{{DEK}}": esc(S["dek"]), "{{LOGO}}": S["logo"], "{{NAME}}": esc(S["name"]), "{{READ}}": str(S["read_min"]), "{{NSRC}}": str(len(S["sources"])),
            "{{DATE}}": esc(S["numbers"][0]["date"]), "{{KPIS}}": kpis, "{{CHART}}": chart_block(S, moves_list=True, band=False), "{{HL}}": hl, "{{NHL}}": str(len(S.get("highlights", []))),
            "{{PHASES}}": "\n      ".join(ph(i, p) for i, p in enumerate(S["phases"])), "{{FC}}": fc, "{{NFC}}": str(len(S["fact_checks"])), "{{FCREAD}}": esc(S.get("fact_checks_read") or latest_date(s["date"] for s in S["sources"])), "{{FCSUM}}": fc_summary(S["fact_checks"]),
-           "{{TN}}": tn, "{{CKS}}": cks, "{{NCK}}": str(len(cl)), "{{SRC}}": src, "{{APP}}": f"/app/story/{S['slug']}/"}
+           "{{TN}}": tn, "{{LINKS}}": link_row(S, "srow post-links"), "{{CKS}}": cks, "{{NCK}}": str(len(cl)), "{{SRC}}": src, "{{APP}}": f"/app/story/{S['slug']}/"}
     for k, v in rep.items(): tpl = tpl.replace(k, v)
     if not S.get("highlights"):
         tpl = re.sub(r"<!--HL-->.*?<!--/HL-->", lambda m: '<section class="sec-alt" id="moves-two"><div class="wrap">', tpl, flags=re.S)
@@ -688,8 +734,8 @@ def main():
     pz_ck = [c for c in pz["checklist"]]
     steps = [{"id": c["id"], "text": c["text"], "from": c["from"], "n": int(c["id"][1:]), "task": TASKS.get(c["id"], "")} for c in [pz_ck[i] for i in (0, 1, 5, 3, 2)]]
     APPDATA = {
-        "stories": [{k: e[k] for k in ("slug", "name", "tab", "type", "what", "logo", "pattern", "lessons", "hv", "hu", "hl", "hd", "sub", "status", "stale", "href", "read", "published", "mrr", "growth")}
-                    | {"spark": spark(e["series"], name=e["name"])} for e in E],
+        "stories": [{k: e[k] for k in ("slug", "name", "title", "tab", "type", "what", "logo", "pattern", "lessons", "hv", "hu", "hl", "hd", "sub", "status", "stale", "href", "read", "published", "mrr", "growth")}
+                    | {"spark": spark(e["series"], name=e["name"]), "phases": len(e["S"]["phases"]), "site": (e["S"].get("links") or {}).get("site") or e["S"].get("site", "")} for e in E if e["status"] == "ready"],
         "tabs": TABS,
         "checklists": [{"slug": S["slug"], "name": S["name"], "logo": S["logo"], "href": next(e["href"] for e in E if e["slug"] == S["slug"]), "key": f"lv-{S['slug']}-checks",
                         "items": [c if isinstance(c, dict) else {"text": c, "from": ""} for c in S["checklist"]], "phases": len(S["phases"]),
@@ -707,7 +753,7 @@ def main():
                             + [{"t": f"{S['name']} · {so['name']}", "k": so["name"] + " " + so.get("what", ""), "h": f"/app/story/{S['slug']}/#sources", "g": "Sources"} for so in S["sources"]])],
     }
     out = lambda rel, t: wr(os.path.join(ROOT, "app", rel, "index.html") if rel else os.path.join(ROOT, "app", "index.html"), t)
-    out("", home(E)); out("library", library(E))
+    out("", home(E)); out("library", library(E)); out("saved", saved(E))
     for S in ready:
         # this week's breakdown (newest story whose data isn't stale) is free; every other story keeps the Pro gate after phase 1
         page = reader(E, S, gate=S["slug"] != WEEK)

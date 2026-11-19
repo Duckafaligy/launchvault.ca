@@ -60,3 +60,15 @@ A scheduled job publishes a new story by adding one file here and pushing. Nothi
 ```
 - Aim for 4–6 `phases`, 4–8 `moves`, 2–4 `fact_checks` and 6 `checklist` items.
 - `wayback` is optional. Fill it in when real captures exist.
+
+## links (optional)
+
+```json
+"links": {"site": "https://...", "x": "https://x.com/...", "linkedin": "https://www.linkedin.com/company/...", "youtube": "https://www.youtube.com/@...",
+          "instagram": "...", "tiktok": "...", "github": "...", "producthunt": "https://www.producthunt.com/products/...", "discord": "https://discord.gg/...",
+          "other": [{"name": "Reddit", "url": "https://..."}]}
+```
+- Only official company accounts that the company's own website links to (footer, header, or its Organization `sameAs` data). Never a founder's or employee's personal account, and never a single post or video.
+- Every URL is https and must load (HTTP 200/3xx; a 403/429/999 bot wall from X, LinkedIn or Instagram is fine if the site links that exact URL).
+- The build rejects a link that isn't https or isn't on the platform's own domain. Leave a platform out rather than guess.
+- Shown as "Visit <name>" plus icon buttons in the app reader header and the blog post.

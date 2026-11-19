@@ -69,6 +69,7 @@
     const t = ticks(slug), before = t.slice(); t[i] = !t[i]; setTicks(slug, t);
     const dates = tickDates(slug); if (t[i]) dates[i] = today(); else delete dates[i]; ls.set("lv-" + slug + "-checkdates", dates);
     syncChecklists(); paint(); renderPath();
+    if (t[i] && CL[slug]) logAct(`Ticked "${CL[slug].items[i].text.slice(0, 48)}${CL[slug].items[i].text.length > 48 ? "…" : ""}" in ${CL[slug].name}`);
     toast(t[i] ? "Ticked. Saved on this device." : "Unticked.", () => { setTicks(slug, before); syncChecklists(); paint(); renderPath(); });
   };
   const syncChecklists = () => $$(".ckl[data-slug]").forEach(box => { const s = box.dataset.slug, t = ticks(s);
@@ -139,7 +140,7 @@
   const rd = $("[data-reader]");
   if (rd) {
     const slug = rd.dataset.reader, art = $("article", rd), n = +rd.dataset.phases;
-    const links = $$(".rail [data-r]"), secs = links.map(a => document.getElementById(a.dataset.r)).filter(Boolean);
+    const links = $$(".snav [data-r]"), secs = links.map(a => document.getElementById(a.dataset.r)).filter(Boolean);
     const names = (CL[slug] || {}).phase_names || [];
     let saved = ls.get("lv-read-" + slug, {}) || {}, lastSave = 0;
     const onScroll = () => {
@@ -157,70 +158,170 @@
     if (location.hash) setTimeout(() => { const t = document.getElementById(location.hash.slice(1)); if (t && !t.closest("[hidden]")) t.scrollIntoView(); }, 50);
   }
 
+  // ---------- progress: lessons seen, saved, story checks, activity (all on this device) ----------
+  const READY = D.stories.filter(s => s.status === "ready");
+  const arr = (k, d = []) => { const v = ls.get(k, d); return Array.isArray(v) ? v : d; };
+  const nph = s => s.phases || (CL[s.slug] || {}).phases || 1;
+  const seen = slug => arr("lv-seen-" + slug);
+  const stateOf = s => { const k = seen(s.slug).length; return k >= nph(s) ? "done" : k || readPct(s.slug) ? "prog" : "new"; };
+  const savedList = () => arr("lv-saved");
+  const savedItems = () => arr("lv-saved-items");
+  const checkRes = slug => { const r = ls.get("lv-check-" + slug); return r && r.n ? r : null; };
+  function logAct(m) { ls.set("lv-activity", [{m, t: Date.now()}, ...arr("lv-activity")].slice(0, 20)); }
+  const ago = t => { const m = Math.round((Date.now() - t) / 6e4); return m < 1 ? "just now" : m < 60 ? m + " min ago" : m < 1440 ? Math.round(m / 60) + " h ago" : Math.round(m / 1440) + " d ago"; };
+  const STAR = '<svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>';
+  const WEEKS = (READY.find(s => !s.stale) || READY[0] || {}).slug;
+  const bar = (f, cls = "") => `<span class="bar${cls}"><i style="--w:${Math.round(Math.max(0, Math.min(1, f)) * 100)}%"></i></span>`;
+  const storyCard = s => { const st = stateOf(s), k = Math.min(seen(s.slug).length, nph(s)), sv = savedList().includes(s.slug), wk = s.slug === WEEKS;
+    return `<article class="scard${wk ? " wk" : ""}"><a class="scl" href="${s.href}"><span class="sct">${logo(s, 32)}<span class="nm"><b>${esc(s.name)}</b><small>${esc(s.type)}</small></span></span>`
+      + `<span class="num"><b>${esc(s.hv)}</b>${esc(s.hu)}${s.hl && s.hl !== "Verified" ? " " + chip(s.hl) : ""}<small>${esc(s.hd)}${staleChip(s)}</small></span>${s.spark}`
+      + `<span class="tags">${wk ? '<span class="tag wkc">This week</span>' : ""}<span class="tag">${esc(s.pattern)}</span><span class="tag">${s.read} min</span></span>`
+      + (st === "new" ? "" : `<span class="sp">${bar(k / nph(s))}${st === "done" ? '<span class="done">Done</span>' : `<span>${k} of ${nph(s)} phases</span>`}</span>`)
+      + `</a>${s.site ? `<a class="web" href="${esc(s.site)}" target="_blank" rel="noopener" aria-label="${esc(s.name)} website"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></a>` : ""}<button class="star" type="button" data-star="${s.slug}" aria-pressed="${sv}" aria-label="${sv ? "Remove" : "Save"} ${esc(s.name)}">${STAR}</button></article>`; };
+  const syncStars = () => { const L = savedList(), I = savedItems();
+    $$("[data-star]").forEach(b => { const on = L.includes(b.dataset.star); b.setAttribute("aria-pressed", on); const t = b.querySelector("span"); if (t) t.textContent = on ? "Saved" : "Save"; });
+    $$("[data-staritem]").forEach(b => b.setAttribute("aria-pressed", I.includes(b.dataset.staritem)));
+    $$('[data-cnt="saved"]').forEach(n => n.textContent = (L.length + I.length) || ""); };
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-star]");
+    if (b) { e.preventDefault(); const slug = b.dataset.star, L = savedList(), on = !L.includes(slug), x = S[slug] || {};
+      ls.set("lv-saved", on ? [slug, ...L] : L.filter(k => k !== slug)); if (on) logAct(`Saved ${x.name || slug}`); toast(on ? "Saved" : "Removed"); renderAll(); return; }
+    const it = e.target.closest("[data-staritem]");
+    if (it) { const k = it.dataset.staritem, L = savedItems(), on = !L.includes(k);
+      ls.set("lv-saved-items", on ? [k, ...L] : L.filter(x => x !== k)); toast(on ? "Saved" : "Removed"); renderAll(); }
+  });
+
   // ---------- home ----------
   const homePath = $("[data-homepath]");
   const matches = () => { const q = quiz(); return (q && q.matches && q.matches.length ? q.matches : ["postiz", "stencil-ai", "gojiberry"]).filter(s => S[s]); };
-  const likeYouHTML = () => '<div class="ch" style="border-top:1px solid var(--line2)"><h3 style="font:500 13.5px var(--fd);color:var(--muted)">Stories like yours</h3></div>' + matches().map(s => { const x = S[s];
-    return `<a class="mini${x.status === "soon" ? " soon" : ""}" href="${x.href}"><img class="lgs" src="${esc(x.logo)}" alt="">${esc(x.name)}<span class="r">${x.status === "ready" ? esc(x.pattern) : "Soon"}${staleChip(x)}</span></a>`; }).join("");
+  const likeYouHTML = () => '<div class="ch" style="border-top:1px solid var(--line2)"><h3 style="font:500 13.5px var(--fd);color:var(--text)">Stories like yours</h3></div>' + matches().map(s => { const x = S[s];
+    return `<a class="mini" href="${x.href}"><img class="lgs" src="${esc(x.logo)}" alt="">${esc(x.name)}<span class="r">${esc(x.pattern)}${staleChip(x)}</span></a>`; }).join("");
   if (homePath) {
     const q = quiz(), st = pathSteps(), nx = st.find(s => !s.done);
     const cta = $("[data-pathcta]");
     if (q) { if (cta) { cta.textContent = "Retake quiz"; }
-      homePath.innerHTML = `<p class="meta">${esc(q.summary || "")} <a class="tl" href="/app/start/?quiz=1" style="float:right">Edit</a></p><h3 style="font:600 18px var(--fd);margin-top:6px">${esc(D.path.title)}</h3><div class="pr" style="display:flex;align-items:center;gap:10px;margin-top:8px;font:500 13px var(--fn)"><span class="bar v"><i data-pathbar></i></span><span data-pathcount2></span></div>` +
+      homePath.innerHTML = `<h3 style="font:600 18px var(--fd)">${esc(D.path.title)}</h3><div class="pr" style="display:flex;align-items:center;gap:10px;margin-top:8px;font:500 13px var(--fn)"><span class="bar v"><i data-pathbar></i></span><span data-pathcount2></span></div>` +
         (nx ? `<div class="pstep"><span class="k">${st.indexOf(nx) + 1}</span><b>${esc(nx.text)}</b>${nx.task ? `<small>Task: ${esc(nx.task)}</small>` : ""}${nx.n ? `<a class="tl" href="${CL[D.path.source].href}#todo">Checklist item ${nx.n} · ${esc(nx.from)}</a>` : ""}</div>` : '<p class="pstep">Every step is done. New steps land with new stories.</p>');
     } else homePath.innerHTML = `<p>Eight quick questions match you with 3 stories that started a lot like you, and a ${st.length}-step path.</p><a class="btn btn-p" style="margin-top:12px" href="/app/start/?quiz=1">Take the 2-minute quiz</a>`;
     $$("[data-likeyou]").forEach(n => n.innerHTML = likeYouHTML());
-    const cl = $("[data-homecl]");
-    if (cl) { const rows = D.checklists.map(c => { const t = ticks(c.slug), k = t.filter(Boolean).length; return {c, t, k}; }).filter(x => x.k > 0 && x.k < x.t.length);
-      const wk = D.stories.find(x => x.status === "ready" && !x.stale) || {}, pr = CL[wk.slug] || D.checklists[0], prT = ticks(pr.slug);
-      const list = rows.length ? rows : [{c: pr, t: prT, k: prT.filter(Boolean).length}];
-      cl.innerHTML = list.slice(0, 3).map(({c, t, k}) => { const i = t.indexOf(false);
-        return `<a class="clrow" href="${c.href}#todo"><img src="${esc(c.logo)}" alt="" width="20" height="20" style="border-radius:4px"><span class="mid"><b>${esc(c.name)} · What you could do at 15 to 20</b><small>${i < 0 ? "All done." : "Next: " + esc(c.items[i].text)}</small></span><span class="bar"><i style="--w:${k / t.length * 100}%"></i></span><span class="ct">${k} of ${t.length}</span></a>`; }).join("")
-        + (q ? `<a class="clrow" href="/app/path/"><span style="color:var(--violet)">●</span><span class="mid"><b>Your path · ${esc(D.path.title)}</b><small>${(() => { const s = pathSteps().find(x => !x.done); return s ? "Next: " + esc(s.text) : "All done."; })()}</small></span><span class="bar v"><i data-pathbar></i></span><span class="ct" data-pathcount2></span></a>` : ""); }
-    const w = D.stories.find(s => s.status === "ready" && !s.stale) || D.stories[0], r = ls.get("lv-read-" + w.slug, {}) || {};
-    if (r.pct > 0 && r.pct < 98) { $("#contcard").hidden = false; const sub = $("[data-contsub]"); if (sub) sub.textContent = r.ph ? `Phase ${r.ph} of ${r.n} · ${r.name || ""}` : ""; }
     const pn = $("#pathnote"); if (pn && q && ls.get("lv-pathnote") === "new") { pn.hidden = false; $("[data-closenote]", pn).addEventListener("click", () => { pn.hidden = true; ls.set("lv-pathnote", "seen"); }); }
   }
+  const homeCL = () => { const cl = $("[data-homecl]"); if (!cl) return; const q = quiz();
+    const rows = D.checklists.map(c => { const t = ticks(c.slug), k = t.filter(Boolean).length; return {c, t, k}; }).filter(x => x.k > 0 && x.k < x.t.length);
+    const pr = CL[WEEKS] || D.checklists[0], prT = ticks(pr.slug);
+    const list = rows.length ? rows : [{c: pr, t: prT, k: prT.filter(Boolean).length}];
+    cl.innerHTML = list.slice(0, 3).map(({c, t, k}) => { const i = t.indexOf(false);
+      return `<a class="clrow" href="${c.href}#todo"><img src="${esc(c.logo)}" alt="" width="20" height="20" style="border-radius:4px"><span class="mid"><b>${esc(c.name)}</b><small>${i < 0 ? "All done." : "Next: " + esc(c.items[i].text)}</small></span>${bar(k / t.length)}<span class="ct">${k} of ${t.length}</span></a>`; }).join("")
+      + (q ? `<a class="clrow" href="/app/path/"><span style="color:var(--violet)">●</span><span class="mid"><b>Your path · ${esc(D.path.title)}</b><small>${(() => { const s = pathSteps().find(x => !x.done); return s ? "Next: " + esc(s.text) : "All done."; })()}</small></span><span class="bar v"><i data-pathbar></i></span><span class="ct" data-pathcount2></span></a>` : ""); };
+  let hf = "all";
+  const hcards = $("[data-hcards]");
+  const renderHome = () => {
+    if (!hcards) return;
+    const started = READY.filter(s => stateOf(s) !== "new"), done = READY.filter(s => stateOf(s) === "done");
+    const totPh = READY.reduce((a, s) => a + nph(s), 0), seenPh = READY.reduce((a, s) => a + Math.min(nph(s), seen(s.slug).length), 0);
+    const tk = D.checklists.reduce((a, c) => { const t = ticks(c.slug); return [a[0] + t.filter(Boolean).length, a[1] + t.length]; }, [0, 0]);
+    const sc = READY.map(s => checkRes(s.slug)).filter(Boolean);
+    const avg = sc.length ? Math.round(sc.reduce((a, r) => a + r.last / r.n, 0) / sc.length * 100) : 0, best = sc.length ? Math.max(...sc.map(r => Math.round(r.best / r.n * 100))) : 0;
+    const tile = (k, v, sub, f) => `<div class="htile"><span class="k">${k}</span><b>${v}</b>${bar(f)}<small>${sub}</small></div>`;
+    $("[data-hstats]").innerHTML = tile("Stories started", `${started.length}<small> of ${READY.length}</small>`, `${done.length} finished`, started.length / READY.length)
+      + tile("Lessons seen", `${seenPh}<small> of ${totPh}</small>`, "Phases you've read", seenPh / totPh)
+      + tile("Checklist ticks", `${tk[0]}<small> of ${tk[1]}</small>`, "Across every story", tk[0] / Math.max(1, tk[1]))
+      + tile("Story check", sc.length ? `${avg}%` : "None yet", sc.length ? `Average of ${sc.length} · best ${best}%` : "Take one at the end of a story", avg / 100);
+    const adult = ls.get("lv-age") === "21 or older";
+    $("[data-hsum]").textContent = started.length ? `You've started ${started.length} of ${READY.length} breakdowns and seen ${seenPh} lessons.${tk[0] ? ` ${tk[0]} checklist ticks so far.` : ""}`
+      : `${READY.length} breakdowns ready. Start with this week's${adult ? "." : ": each one ends with steps that fit around school."}`;
+    const last = ls.get("lv-last"), L = last && S[last.slug] && S[last.slug].status === "ready" ? S[last.slug] : S[WEEKS];
+    if (L) { const n = nph(L), k = Math.min(n, seen(L.slug).length), ph = Math.min(n, (last && last.slug === L.slug && last.ph) || 1), fresh = !last;
+      $("[data-hcont]").innerHTML = `<section class="card hcont"><span class="logo big">${logo(L, 40)}</span><div class="mid"><span class="k">${fresh ? "This week's breakdown" : "Continue reading"}</span><h2>${esc(L.title || L.name)}</h2>${bar(k / n)}<span class="pm">${fresh ? `${n} phases · ${L.read} min` : `Phase ${ph} of ${n} · ${k} of ${n} seen`}</span></div><a class="btn btn-p" href="${L.href}#ph${ph}">${fresh ? "Start" : "Resume"} <span class="arr" aria-hidden="true">→</span></a></section>`; }
+    const q = quiz(), hq = $("[data-hquiz]");
+    if (hq) hq.innerHTML = q ? (() => { const t = q.top && S[q.top] ? S[q.top] : S[(q.matches || [])[0]];
+        return `<div class="ch"><h2>Your quiz</h2><a class="tl" href="/app/start/?quiz=1">Retake</a></div><div class="cb">${t ? `<a class="mini" href="${t.href}">${logo(t, 24)}<span><b>${esc(t.name)}</b><small>${esc(t.pattern)}</small></span><span class="r">Top match</span></a>` : ""}<p class="qm">${q.top && q.why && q.why.length ? "Matched on: " + esc(q.why.join(" · ")) : "No single story matched your answers, so you got the general path."}</p></div>`; })()
+      : `<div class="ch"><h2>Your quiz</h2></div><div class="cb"><p>Eight quick questions match you with 3 stories that started a lot like you.</p><a class="btn btn-p" style="margin-top:12px" href="/app/start/?quiz=1">Take the 2-minute quiz</a></div>`;
+    $$("[data-hf]").forEach(b => b.setAttribute("aria-pressed", b.dataset.hf === hf));
+    const sv = savedList(), list = READY.filter(s => hf === "all" || (hf === "saved" ? sv.includes(s.slug) : stateOf(s) === hf)).sort((a, b) => (b.slug === WEEKS) - (a.slug === WEEKS));
+    hcards.innerHTML = list.length ? list.map(storyCard).join("") : `<div class="empty"><p>${hf === "saved" ? "Nothing saved yet. Tap the star on a story to keep it here." : "No stories here yet."}</p></div>`;
+    const act = arr("lv-activity");
+    $("[data-hact]").innerHTML = act.length ? act.map(a => `<li><span>${esc(a.m)}</span><time>${ago(a.t)}</time></li>`).join("") : '<li class="empty">Read a phase, tick an item or take a story check, and it shows up here.</li>';
+    homeCL();
+  };
+  $$("[data-hf]").forEach(b => b.addEventListener("click", () => { hf = b.dataset.hf; renderHome(); syncStars(); }));
 
-  // ---------- library ----------
+  // ---------- saved ----------
+  const renderSaved = () => { const sc = $("[data-savedcards]"); if (!sc) return;
+    const L = savedList().map(k => S[k]).filter(Boolean);
+    $("[data-savedcount]").textContent = L.length ? `${L.length} saved` : "";
+    sc.innerHTML = L.length ? L.map(storyCard).join("") : '<div class="empty"><p>No saved stories yet. Tap the star on any story to keep it here.</p><a class="btn btn-s" href="/app/library/">Open the Library</a></div>';
+    const I = savedItems().map(k => { const [slug, i] = k.split(":"), c = CL[slug]; return c && c.items[+i] ? {k, c, i: +i, it: c.items[+i]} : null; }).filter(Boolean);
+    $("[data-saveditems]").innerHTML = I.length ? I.map(({k, c, i, it}) => `<div class="sitem"><a href="${c.href}#todo">${logo(c, 20)}<span><b>${esc(it.text)}</b><small>${esc(c.name)} · item ${i + 1}${ticks(c.slug)[i] ? " · ticked" : ""}</small></span></a><button class="ckstar" type="button" data-staritem="${k}" aria-pressed="true" aria-label="Remove this item">${STAR}</button></div>`).join("")
+      : '<div class="empty"><p>Star a checklist item at the end of a story to keep it here.</p></div>'; };
+
+  // ---------- library: cards only, ready stories only ----------
   const lout = $("#lout");
+  const drawLib = () => {};
+  let libDraw = drawLib;
   if (lout) {
     const qs = new URLSearchParams(location.search);
-    const st = Object.assign({q: "", tab: "all", pat: "", stat: "", sort: "new", ver: false, view: "list", grp: "all"}, ls.get("lv-lib", {}),
-      qs.get("group") ? {grp: qs.get("group")} : {}, qs.get("pattern") ? {pat: qs.get("pattern")} : {}, qs.get("tab") ? {tab: qs.get("tab")} : {});
-    const pats = [...new Set(D.stories.map(s => s.pattern))].sort((a, b) => (a === "Pattern not checked yet") - (b === "Pattern not checked yet") || a.localeCompare(b));
+    const st = Object.assign({q: "", tab: "all", pat: "", sort: "new", lp: ""}, ls.get("lv-lib", {}), qs.get("pattern") ? {pat: qs.get("pattern")} : {}, qs.get("tab") ? {tab: qs.get("tab")} : {});
+    const pats = [...new Set(READY.map(s => s.pattern))].sort((a, b) => a.localeCompare(b));
     $("#lpat").insertAdjacentHTML("beforeend", pats.map(p => `<option>${esc(p)}</option>`).join(""));
-    const ctl = () => { $("#lq").value = st.q; $("#lpat").value = st.pat; $("#lstat").value = st.stat; $("#lsort").value = st.sort; $("#lver").setAttribute("aria-checked", st.ver);
-      $$("[data-tab]").forEach(b => b.setAttribute("aria-pressed", b.dataset.tab === st.tab)); $$("[data-view]").forEach(b => b.setAttribute("aria-pressed", b.dataset.view === st.view));
-      $$("[data-grp]").forEach(b => b.setAttribute("aria-pressed", b.dataset.grp === st.grp)); };
-    const status = s => { if (s.status === "ready") { const p = readPct(s.slug); return `<span class="st ok">Ready${p ? ` <em>${p}%</em>` : ""}${s.stale ? ' <span class="lb n" title="' + esc(s.stale) + '">Stale</span>' : ""}</span>`; } return `<span class="st">${s.stale ? '<span class="lb n">Stale</span>' : "Coming soon"}</span>`; };
-    const row = s => `<a class="lrow${s.status === "soon" ? " soon" : ""}" href="${s.href}"><span class="co">${logo(s, 22)}<span><b>${esc(s.name)}</b><small>${esc(s.what)}</small></span></span><span class="tp">${esc(s.type)}</span><span class="tr">${s.spark}</span><span class="num"><b>${esc(s.hv)}</b>${esc(s.hu)}<small>${esc(s.sub || "Read " + s.hd)}</small><span class="lbm">${chip(s.hl)}${s.stale ? '<span class="lb n">Stale</span>' : ""}</span></span><span class="lbc">${chip(s.hl)}</span>${status(s)}<span class="go" aria-hidden="true">›</span></a>`;
-    const card = s => `<a class="lcard" href="${s.href}"><span class="top2">${logo(s, 28)}<b style="color:#0B1220">${esc(s.name)}</b><span class="meta" style="margin-left:auto">${esc(s.type)}</span></span><span class="what">${esc(s.what)}</span>${s.spark}<span class="nl"><b>${esc(s.hv)}</b>${esc(s.hu)}${chip(s.hl)}<span>${esc(s.sub || s.hd)}</span></span><span class="st"><span>${s.status === "ready" ? (s.read ? s.read + " min read" : "Ready") : "Coming soon"}</span>${s.status === "ready" && readPct(s.slug) ? `<span style="color:var(--brand)">${readPct(s.slug)}%</span>` : ""}</span></a>`;
-    const draw = () => {
+    if (!pats.includes(st.pat)) st.pat = "";
+    const ctl = () => { $("#lq").value = st.q; $("#lpat").value = st.pat; $("#lsort").value = st.sort;
+      $$("[data-tab]").forEach(b => b.setAttribute("aria-pressed", b.dataset.tab === st.tab)); $$("[data-lp]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lp === (st.lp || ""))); };
+    libDraw = () => {
       ls.set("lv-lib", st); ctl();
-      const q = st.q.trim().toLowerCase();
-      let L = D.stories.filter(s => (st.tab === "all" || s.tab === st.tab) && (!st.pat || s.pattern === st.pat) && (!st.stat || s.status === st.stat) && (!st.ver || s.hl === "Verified")
+      const q = st.q.trim().toLowerCase(), sv = savedList();
+      let L = READY.filter(s => (st.tab === "all" || s.tab === st.tab) && (!st.pat || s.pattern === st.pat)
+        && (!st.lp || (st.lp === "saved" ? sv.includes(s.slug) : stateOf(s) === st.lp))
         && (!q || [s.name, s.what, s.pattern, ...(s.lessons || [])].join(" ").toLowerCase().includes(q)));
-      const key = {new: s => (s.status === "ready" ? "1" : "0") + (s.published || "") + (s.stale ? "0" : "1") + String(1e9 - D.stories.indexOf(s)).padStart(10, "0"), mrr: s => s.mrr || 0, growth: s => s.growth == null ? -1e9 : s.growth}[st.sort];
+      const key = {new: s => (s.published || "") + (s.stale ? "0" : "1") + String(1e9 - D.stories.indexOf(s)).padStart(10, "0"), mrr: s => s.mrr || 0, growth: s => s.growth == null ? -1e9 : s.growth}[st.sort] || (s => s.published || "");
       L.sort((a, b) => key(b) > key(a) ? 1 : key(b) < key(a) ? -1 : 0);
-      if (!L.length) { lout.innerHTML = `<div class="card" style="margin-top:16px"><div class="empty"><h3>No stories match these filters</h3><p>One new breakdown arrives each week.</p><button class="btn btn-s" type="button" data-clearall>Clear filters</button></div></div>`; return; }
-      const groups = st.grp === "pattern" ? pats.map(p => [p, L.filter(s => s.pattern === p)]).filter(g => g[1].length) : [["", L]];
-      if (st.view === "cards") lout.innerHTML = groups.map(([g, l]) => (g ? `<h2 class="lgroup" style="margin-top:20px;border:1px solid var(--line);border-radius:10px">${esc(g)}</h2>` : "") + `<div class="lcards">${l.map(card).join("")}</div>`).join("");
-      else lout.innerHTML = `<div class="ltab"><div class="lhead"><span>Company</span><span class="c-tp">Type</span><span>Trend</span><span class="r">Latest number</span><span>Label</span><span class="c-st">Status</span><span></span></div>` +
-        groups.map(([g, l]) => (g ? `<div class="lgroup">${esc(g)}</div>` : "") + l.map(row).join("")).join("") + "</div>";
+      $("[data-lcount]").textContent = L.length === READY.length ? `${READY.length} breakdowns` : `${L.length} of ${READY.length} breakdowns`;
+      lout.innerHTML = L.length ? L.map(storyCard).join("") : `<div class="card empty"><h3>No stories match these filters</h3><p>One new breakdown arrives each week.</p><button class="btn btn-s" type="button" data-clearall>Clear filters</button></div>`;
     };
-    $("#lq").addEventListener("input", e => { st.q = e.target.value; draw(); });
-    $("#lpat").addEventListener("change", e => { st.pat = e.target.value; draw(); });
-    $("#lstat").addEventListener("change", e => { st.stat = e.target.value; draw(); });
-    $("#lsort").addEventListener("change", e => { st.sort = e.target.value; draw(); });
-    $("#lver").addEventListener("click", () => { st.ver = !st.ver; draw(); });
-    $$("[data-tab]").forEach(b => b.addEventListener("click", () => { st.tab = b.dataset.tab; draw(); }));
-    $$("[data-view]").forEach(b => b.addEventListener("click", () => { st.view = b.dataset.view; draw(); }));
-    $$("[data-grp]").forEach(b => b.addEventListener("click", () => { st.grp = b.dataset.grp; draw(); }));
-    const clear = () => { Object.assign(st, {q: "", tab: "all", pat: "", stat: "", ver: false}); draw(); };
+    $("#lq").addEventListener("input", e => { st.q = e.target.value; libDraw(); });
+    $("#lpat").addEventListener("change", e => { st.pat = e.target.value; libDraw(); });
+    $("#lsort").addEventListener("change", e => { st.sort = e.target.value; libDraw(); });
+    $$("[data-tab]").forEach(b => b.addEventListener("click", () => { st.tab = b.dataset.tab; libDraw(); }));
+    $$("[data-lp]").forEach(b => b.addEventListener("click", () => { st.lp = b.dataset.lp; libDraw(); }));
+    const clear = () => { Object.assign(st, {q: "", tab: "all", pat: "", lp: ""}); libDraw(); };
     $("#lclear").addEventListener("click", clear); lout.addEventListener("click", e => { if (e.target.closest("[data-clearall]")) clear(); });
-    draw();
   }
+
+  // ---------- reader: lessons seen (a phase counts after 1 s at half visible), story check ----------
+  if (rd && "IntersectionObserver" in window) {
+    const slug = rd.dataset.reader, nm = (S[slug] || {}).name || slug, tmr = new Map();
+    if (S[slug]) { const l = ls.get("lv-last"); if (!l || l.slug !== slug) ls.set("lv-last", {slug, ph: 1, t: Date.now()}); }
+    const mark = p => { const v = seen(slug); ls.set("lv-last", {slug, ph: p, t: Date.now()}); if (v.includes(p)) return;
+      ls.set("lv-seen-" + slug, [...v, p].sort((a, b) => a - b)); logAct(`Saw phase ${p} of ${nm}`); if (v.length + 1 === +rd.dataset.phases) logAct(`Finished ${nm}`); };
+    const io = new IntersectionObserver(es => es.forEach(e => { const p = +e.target.dataset.ph;
+      if (e.isIntersecting && e.target.open !== false && (e.intersectionRatio >= .5 || e.intersectionRect.height >= innerHeight * .5)) { if (!tmr.has(p)) tmr.set(p, setTimeout(() => mark(p), 1000)); }
+      else { clearTimeout(tmr.get(p)); tmr.delete(p); } }), {threshold: [0, .25, .5, .75, 1]});
+    $$(".ph[data-ph]", rd).forEach(p => { if (!p.closest(".fade")) io.observe(p); });
+  }
+  if (rd) {   // phases fold on phones (first open); the section chips follow the scroll
+    if (innerWidth < 600) $$("details.ph", rd).forEach((d, i) => { if (i && !(location.hash === "#" + d.id)) d.open = false; });
+    const hp = location.hash && document.getElementById(location.hash.slice(1)); if (hp && hp.tagName === "DETAILS") hp.open = true;
+    const nav = $(".snav-in"); let lastOn = null;
+    addEventListener("scroll", () => { const on = nav && $("a.on", nav); if (on && on !== lastOn) { lastOn = on; nav.scrollTo({left: on.offsetLeft - nav.clientWidth / 2 + on.clientWidth / 2, behavior: reduce ? "auto" : "smooth"}); } }, {passive: true});
+  }
+  $$("[data-check]").forEach(box => {
+    const slug = box.dataset.check, nm = (S[slug] || {}).name || slug, body = $("[data-checkbody]", box); let Q;
+    try { Q = JSON.parse($("script", box).textContent); } catch { return; }
+    const form = () => { const r = checkRes(slug);
+      body.innerHTML = `<form class="ckform">${Q.map((q, i) => `<fieldset><legend><span class="qn">${i + 1}</span>${esc(q.q)}</legend>${q.o.map((o, j) => `<label class="opt2"><input type="radio" name="q${i}" value="${j}" required><span>${esc(o)}</span></label>`).join("")}</fieldset>`).join("")}`
+        + `<div class="ckact"><button class="btn btn-p" type="submit">Check my answers</button>${r ? `<span>Best so far: ${r.best} of ${r.n}</span>` : ""}</div></form>`;
+      $("form", body).addEventListener("submit", ev => { ev.preventDefault(); const fd = new FormData(ev.target), got = Q.map((q, i) => +fd.get("q" + i)), score = got.filter((g, i) => g === Q[i].a).length;
+        const prev = checkRes(slug) || {best: 0}; ls.set("lv-check-" + slug, {best: Math.max(prev.best, score), last: score, n: Q.length, t: Date.now()}); logAct(`Scored ${score}/${Q.length} on the ${nm} check`);
+        body.innerHTML = `<div class="ckres" tabindex="-1"><p class="sc"><b>${score} of ${Q.length}</b> right${score === Q.length ? ". Every one." : ""}</p>${bar(score / Q.length)}<ol>${Q.map((q, i) => { const ok = got[i] === q.a;
+          return `<li class="${ok ? "ok" : "no"}"><b>${esc(q.q)}</b><span>${ok ? "Right" : "Not quite"}: ${esc(q.o[q.a])}${ok ? "" : ` (you picked ${esc(q.o[got[i]])})`}</span><small>${esc(q.e)}</small></li>`; }).join("")}</ol><button class="btn btn-s" type="button" data-retake>Retake</button></div>`;
+        $(".ckres", body).focus(); $("[data-retake]", body).addEventListener("click", form); }); };
+    form();
+  });
+
+  const renderAll = () => { renderHome(); renderSaved(); libDraw(); syncStars(); paint(); };
+  addEventListener("storage", renderAll);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) renderAll(); });
+  addEventListener("lv:changed", () => { clearTimeout(renderAll.t); renderAll.t = setTimeout(() => { renderHome(); renderSaved(); syncStars(); }, 50); });
 
   // ---------- my path ----------
   const stepsEl = $("[data-steps]");
@@ -361,5 +462,5 @@
     d.showModal(); $("#rwhat", d).focus();
   });
 
-  syncChecklists(); paint();
+  syncChecklists(); renderAll();
 })();

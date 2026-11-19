@@ -359,5 +359,6 @@
       "date": "Nov 19 2026",
       "label": "Live"
     }
-  ]
+  ],
+  "links": {"site": "https://windmillgrowth.com", "x": "https://x.com/WindmillGrowth", "linkedin": "https://www.linkedin.com/company/windmill-growth/"}
 }

@@ -122,5 +122,6 @@
     {"name": "Reddit r/IAmA thread", "url": "https://www.reddit.com/r/IAmA/comments/dwaa36/", "what": "The founder's 2019 AMA", "date": "Nov 14 2019", "label": "Claimed"},
     {"name": "We Are Founders article", "url": "https://www.wearefounders.uk/from-resume-template-to-5m-saas-how-jacob-built-rezi/", "what": "3M+ users and $5M+ lifetime revenue", "date": "Mar 15 2025", "label": "Claimed"},
     {"name": "Wayback Machine: rezi.ai", "url": "https://web.archive.org/web/20230105083310/https://rezi.ai/", "what": "Homepage headlines and prices in 2021, 2023 and 2026", "date": "Jan 5 2023", "label": "Wayback"}
-  ]
+  ],
+  "links": {"site": "https://www.rezi.ai", "x": "https://x.com/rezi_ai", "linkedin": "https://www.linkedin.com/company/reziresume", "youtube": "https://www.youtube.com/@reziAI", "instagram": "https://www.instagram.com/rezi.resume", "tiktok": "https://www.tiktok.com/@rezi.ai", "other": [{"name": "Reddit r/Rezi", "url": "https://www.reddit.com/r/Rezi"}]}
 }

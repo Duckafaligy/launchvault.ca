@@ -6,6 +6,8 @@ Run:  python build.py      (no dependencies; output is plain HTML next to this f
 """
 import os, re, shutil
 ROOT = os.path.dirname(os.path.abspath(__file__))
+# ready stories = story files; the footer count follows them
+NREADY = len([f for f in os.listdir(os.path.join(ROOT, 'data', 'stories')) if f.endswith('.json')])
 SRC = os.path.join(ROOT, "src")
 read = lambda n: open(os.path.join(SRC, n), encoding="utf-8").read()
 
@@ -146,7 +148,7 @@ FOOTER = '''<footer class="foot">
     <div class="ftop">
       <div class="fbrand"><a class="logo" href="/">''' + LV + '''LaunchVault</a>
         <p class="tl">Real startup stories, checked and cut down to the part you can use.</p>
-        <p class="fstat"><b>13 stories tracked.</b> Revenue read from Stripe and RevenueCat through TrustMRR, last read Nov 17 to 18 2026. <em>Under 18? A parent pays for Pro.</em></p>
+        <p class="fstat"><b>''' + str(NREADY) + ''' stories tracked.</b> Revenue read from Stripe and RevenueCat through TrustMRR, last read Nov 17 to 18 2026. <em>Under 18? A parent pays for Pro.</em></p>
         <!-- SOCIAL URLS TBC: no accounts yet. When they exist, give each .soc an href, drop aria-disabled, role and data-tip. -->
         <div class="socs">''' + SOCIAL_HTML + '''</div></div>
       ''' + FCOLS_HTML + '''

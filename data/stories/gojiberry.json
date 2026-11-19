@@ -120,5 +120,6 @@
     {"name": "Y Combinator: Gojiberry AI", "url": "https://ycombinator.com/companies/gojiberry-ai", "what": "Spring 2026 batch, team of 7, $112K MRR and $2.5M ARR claims", "date": "Nov 19 2026", "label": "Claimed"},
     {"name": "ARR Club: Gojiberry ARR hit $2M", "url": "https://www.arr.club/gojiberryai/gojiberryai-arr-hit-2m", "what": "$2M ARR claim, citing the co-founder's X post", "date": "Apr 25 2026", "label": "Claimed"},
     {"name": "Wayback Machine: gojiberry.ai", "url": "https://web.archive.org/web/20250401134826/https://gojiberry.ai/", "what": "Homepage headlines and customer counts, Apr 2025 to Nov 2026", "date": "Apr 1 2025", "label": "Wayback"}
-  ]
+  ],
+  "links": {"site": "https://gojiberry.ai", "x": "https://x.com/gojiberryai", "producthunt": "https://www.producthunt.com/products/gojiberry", "other": [{"name": "Y Combinator", "url": "https://www.ycombinator.com/companies/gojiberry-ai"}, {"name": "G2", "url": "https://www.g2.com/products/gojiberryai/reviews"}]}
 }

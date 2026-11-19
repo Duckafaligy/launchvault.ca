@@ -353,5 +353,6 @@
       "date": "Nov 19 2026",
       "label": "Live"
     }
-  ]
+  ],
+  "links": {"site": "https://www.stencilai.app", "instagram": "https://www.instagram.com/stencil_ai_app", "tiktok": "https://www.tiktok.com/@stencil_ai_app", "youtube": "https://www.youtube.com/@stencil_ai_app", "producthunt": "https://www.producthunt.com/products/stencil-ai", "other": [{"name": "Facebook", "url": "https://www.facebook.com/profile.php?id=61581445628912"}]}
 }

@@ -117,5 +117,6 @@
     {"name": "Mixergy interview", "url": null, "what": "The OpenClaw turning point, the command-line tool, \"$45,000 per month\".", "date": "Mar 11 2026", "label": "Claimed", "logo": "/assets/logos/mixergy.png"},
     {"name": "Superframeworks case study", "url": null, "what": "Gitroom, the SEO spend, stars, monthly revenue through July 2026.", "date": "Jul 2026", "label": "Claimed", "logo": "/assets/logos/superframeworks.png"},
     {"name": "Postiz blog", "url": null, "what": "The X content system, short-video creators, a $186,713 Stripe chart.", "date": "Sep 2026", "label": "Claimed", "logo": "/assets/logos/postiz.svg"}
-  ]
+  ],
+  "links": {"site": "https://postiz.com", "x": "https://x.com/getpostiz", "linkedin": "https://www.linkedin.com/company/postiz", "youtube": "https://www.youtube.com/@getpostiz", "github": "https://github.com/gitroomhq/postiz-app", "producthunt": "https://www.producthunt.com/products/postiz", "discord": "https://discord.gg/sf7QjTcX37"}
 }

@@ -119,5 +119,6 @@
     {"name": "FounderBase: AEO Engine", "url": "https://founderbase.ai/interviews/aeo-engine", "what": "$65,000/mo, 70% margin, $1,000 startup cost", "date": "Apr 10 2026", "label": "Claimed"},
     {"name": "Wayback: fosterfba.com", "url": "https://web.archive.org/web/20190121171201/http://fosterfba.com/", "what": "2019, 2023 and 2025 homepages of the older agency", "date": "Jan 21 2019", "label": "Wayback"},
     {"name": "Wayback: aeoengine.ai", "url": "https://web.archive.org/web/20251030213942/https://aeoengine.ai/", "what": "First archived AEO Engine homepage", "date": "Oct 30 2025", "label": "Wayback"}
-  ]
+  ],
+  "links": {"site": "https://aeoengine.ai", "linkedin": "https://www.linkedin.com/company/aeo-engine", "youtube": "https://www.youtube.com/@aeo-engine"}
 }
