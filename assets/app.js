@@ -163,7 +163,8 @@
   const arr = (k, d = []) => { const v = ls.get(k, d); return Array.isArray(v) ? v : d; };
   const nph = s => s.phases || (CL[s.slug] || {}).phases || 1;
   const seen = slug => arr("lv-seen-" + slug);
-  const stateOf = s => { const k = seen(s.slug).length; return k >= nph(s) ? "done" : k || readPct(s.slug) ? "prog" : "new"; };
+  const doneOf = slug => { const d = ls.get("lv-done-" + slug); return d && d.how ? d : null; };   // logged complete: passed the check or answered the feedback questions
+  const stateOf = s => doneOf(s.slug) ? "done" : seen(s.slug).length || readPct(s.slug) ? "prog" : "new";
   const savedList = () => arr("lv-saved");
   const savedItems = () => arr("lv-saved-items");
   const checkRes = slug => { const r = ls.get("lv-check-" + slug); return r && r.n ? r : null; };
@@ -292,7 +293,7 @@
     const slug = rd.dataset.reader, nm = (S[slug] || {}).name || slug, tmr = new Map();
     if (S[slug]) { const l = ls.get("lv-last"); if (!l || l.slug !== slug) ls.set("lv-last", {slug, ph: 1, t: Date.now()}); }
     const mark = p => { const v = seen(slug); ls.set("lv-last", {slug, ph: p, t: Date.now()}); if (v.includes(p)) return;
-      ls.set("lv-seen-" + slug, [...v, p].sort((a, b) => a - b)); logAct(`Saw phase ${p} of ${nm}`); if (v.length + 1 === +rd.dataset.phases) logAct(`Finished ${nm}`); };
+      ls.set("lv-seen-" + slug, [...v, p].sort((a, b) => a - b)); logAct(`Saw phase ${p} of ${nm}`); if (v.length + 1 === +rd.dataset.phases) logAct(`Saw every phase of ${nm}`); };
     const io = new IntersectionObserver(es => es.forEach(e => { const p = +e.target.dataset.ph;
       if (e.isIntersecting && e.target.open !== false && (e.intersectionRatio >= .5 || e.intersectionRect.height >= innerHeight * .5)) { if (!tmr.has(p)) tmr.set(p, setTimeout(() => mark(p), 1000)); }
       else { clearTimeout(tmr.get(p)); tmr.delete(p); } }), {threshold: [0, .25, .5, .75, 1]});
@@ -304,18 +305,43 @@
     const nav = $(".snav-in"); let lastOn = null;
     addEventListener("scroll", () => { const on = nav && $("a.on", nav); if (on && on !== lastOn) { lastOn = on; nav.scrollTo({left: on.offsetLeft - nav.clientWidth / 2 + on.clientWidth / 2, behavior: reduce ? "auto" : "smooth"}); } }, {passive: true});
   }
+  // story check + logging a story complete: pass the check (all but one right) OR answer the feedback questions
+  const FBQ = [["clarity", "How clear was this breakdown?", ["Very clear", "Mostly clear", "Confusing in places", "Hard to follow"]],
+    ["useful", "Will you use anything from it?", ["Yes, soon", "Maybe later", "Not really"]],
+    ["best_part", "Which part helped most?", ["The numbers and chart", "The phases and lessons", "The checklist", "Fact checks and sources"]]];
   $$("[data-check]").forEach(box => {
     const slug = box.dataset.check, nm = (S[slug] || {}).name || slug, body = $("[data-checkbody]", box); let Q;
     try { Q = JSON.parse($("script", box).textContent); } catch { return; }
+    const need = Math.max(1, Q.length - 1), cbox = document.createElement("div"); cbox.className = "cdone"; box.after(cbox);
+    const logDone = how => { if (doneOf(slug)) return; ls.set("lv-done-" + slug, {how, t: Date.now()}); logAct(`Completed ${nm}`); toast("Story logged as complete"); renderAll(); };
+    const paintDone = () => { const d = doneOf(slug);
+      cbox.innerHTML = d ? `<p class="cok" tabindex="-1"><b>Logged complete</b> ${new Date(d.t).toLocaleDateString()} · ${d.how === "check" ? "passed the story check" : "answered the feedback questions"}</p>`
+        : `<h3>Log this story as complete</h3><p>Two ways: get ${need} of ${Q.length} right on the check above, or answer a few quick questions that help us make LaunchVault better.</p><button class="btn btn-s" type="button" data-fb>Answer questions instead</button>`;
+      const fb = $("[data-fb]", cbox); if (fb) fb.addEventListener("click", feedback); };
+    const feedback = () => {
+      cbox.innerHTML = `<form class="ckform fbform"><h3>Help us improve this breakdown</h3>${FBQ.map(([k, q, o], i) => `<fieldset><legend><span class="qn">${i + 1}</span>${esc(q)}</legend>${o.map(t => `<label class="opt2"><input type="radio" name="${k}" value="${esc(t)}" required><span>${esc(t)}</span></label>`).join("")}</fieldset>`).join("")}
+        <label class="fbl" for="fbmiss"><span class="qn">4</span>What was confusing, missing or wrong?</label><textarea id="fbmiss" name="missing" required minlength="5" maxlength="2000"></textarea>
+        <label class="fbl" for="fbnext"><span class="qn">5</span>Which app or company should we break down next? (optional)</label><input id="fbnext" name="next_idea" maxlength="200" autocomplete="off">
+        <p class="rmsg" role="status" aria-live="polite"></p><div class="ckact"><button class="btn btn-p" type="submit">Send and log complete</button><button class="btn btn-s" type="button" data-fbx>Cancel</button></div></form>`;
+      const f = $("form", cbox), msg = $(".rmsg", cbox), send = $('[type="submit"]', cbox);
+      $("[data-fbx]", cbox).addEventListener("click", paintDone); $("input", f).focus();
+      f.addEventListener("submit", async ev => { ev.preventDefault(); const v = Object.fromEntries(new FormData(f));
+        v.missing = (v.missing || "").trim(); v.next_idea = (v.next_idea || "").trim() || null;
+        if (v.missing.length < 5) { msg.className = "rmsg err"; msg.textContent = "Please write at least a few words."; $("#fbmiss", f).focus(); return; }
+        send.disabled = true; msg.className = "rmsg"; msg.textContent = "Sending…";
+        try { const r = await fetch(SB_URL + "/rest/v1/feedback", {method: "POST", headers: {apikey: SB_KEY, "Content-Type": "application/json", Prefer: "return=minimal"}, body: JSON.stringify({story_slug: slug, ...v})});
+          if (!r.ok) throw new Error(r.status); logDone("feedback"); paintDone(); $(".cok", cbox).focus();
+        } catch (err) { send.disabled = false; msg.className = "rmsg err"; msg.textContent = "Sorry, that didn't send (" + err.message + "). Please try again in a minute."; } }); };
     const form = () => { const r = checkRes(slug);
       body.innerHTML = `<form class="ckform">${Q.map((q, i) => `<fieldset><legend><span class="qn">${i + 1}</span>${esc(q.q)}</legend>${q.o.map((o, j) => `<label class="opt2"><input type="radio" name="q${i}" value="${j}" required><span>${esc(o)}</span></label>`).join("")}</fieldset>`).join("")}`
         + `<div class="ckact"><button class="btn btn-p" type="submit">Check my answers</button>${r ? `<span>Best so far: ${r.best} of ${r.n}</span>` : ""}</div></form>`;
       $("form", body).addEventListener("submit", ev => { ev.preventDefault(); const fd = new FormData(ev.target), got = Q.map((q, i) => +fd.get("q" + i)), score = got.filter((g, i) => g === Q[i].a).length;
         const prev = checkRes(slug) || {best: 0}; ls.set("lv-check-" + slug, {best: Math.max(prev.best, score), last: score, n: Q.length, t: Date.now()}); logAct(`Scored ${score}/${Q.length} on the ${nm} check`);
-        body.innerHTML = `<div class="ckres" tabindex="-1"><p class="sc"><b>${score} of ${Q.length}</b> right${score === Q.length ? ". Every one." : ""}</p>${bar(score / Q.length)}<ol>${Q.map((q, i) => { const ok = got[i] === q.a;
+        const pass = score >= need; if (pass) logDone("check");
+        body.innerHTML = `<div class="ckres" tabindex="-1"><p class="sc"><b>${score} of ${Q.length}</b> right${score === Q.length ? ". Every one." : ""}${pass || doneOf(slug) ? "" : ` · ${need} needed to log it complete`}</p>${bar(score / Q.length)}<ol>${Q.map((q, i) => { const ok = got[i] === q.a;
           return `<li class="${ok ? "ok" : "no"}"><b>${esc(q.q)}</b><span>${ok ? "Right" : "Not quite"}: ${esc(q.o[q.a])}${ok ? "" : ` (you picked ${esc(q.o[got[i]])})`}</span><small>${esc(q.e)}</small></li>`; }).join("")}</ol><button class="btn btn-s" type="button" data-retake>Retake</button></div>`;
-        $(".ckres", body).focus(); $("[data-retake]", body).addEventListener("click", form); }); };
-    form();
+        paintDone(); $(".ckres", body).focus(); $("[data-retake]", body).addEventListener("click", form); }); };
+    form(); paintDone();
   });
 
   const renderAll = () => { renderHome(); renderSaved(); libDraw(); syncStars(); paint(); };

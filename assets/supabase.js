@@ -19,16 +19,17 @@ window.LVSync = (() => {
       const sv = ls.get("lv-saved") || [], si = ls.get("lv-saved-items") || [], ck = ls.get("lv-check-" + c.slug) || {};
       return {story_slug: c.slug, ticks: t.map((v, i) => v ? i + 1 : 0).filter(Boolean), read_pct: Math.min(100, Math.round(r.pct || 0)),
         seen_phases: (ls.get("lv-seen-" + c.slug) || []).filter(Number.isInteger), saved: sv.includes(c.slug),
-        saved_items: si.filter(k => k.startsWith(c.slug + ":")).map(k => +k.split(":")[1]), check_best: ck.n ? ck.best : null, check_last: ck.n ? ck.last : null, check_n: ck.n || null}; });
+        saved_items: si.filter(k => k.startsWith(c.slug + ":")).map(k => +k.split(":")[1]), check_best: ck.n ? ck.best : null, check_last: ck.n ? ck.last : null, check_n: ck.n || null, done_how: (ls.get("lv-done-" + c.slug) || {}).how || null, done_at: (ls.get("lv-done-" + c.slug) || {}).t ? new Date(ls.get("lv-done-" + c.slug).t).toISOString() : null}; });
     if (rows.length) await sb.from("progress").upsert(rows);
     const q = ls.get("lv-quiz-app"); if (q) await sb.from("quiz_results").upsert({answers: q, path: ls.get("lv-path-done") || []});
   };
   const pull = async () => {
-    const {data} = await sb.from("progress").select("story_slug,ticks,read_pct,seen_phases,saved,saved_items,check_best,check_last,check_n"); if (!data) return;
+    const {data} = await sb.from("progress").select("story_slug,ticks,read_pct,seen_phases,saved,saved_items,check_best,check_last,check_n,done_how,done_at"); if (!data) return;
     const sv = new Set(ls.get("lv-saved") || []), si = new Set(ls.get("lv-saved-items") || []);
     data.forEach(r => { if (r.saved) sv.add(r.story_slug); (r.saved_items || []).forEach(i => si.add(r.story_slug + ":" + i));
       const seen = new Set([...(ls.get("lv-seen-" + r.story_slug) || []), ...(r.seen_phases || [])]); if (seen.size) ls.set("lv-seen-" + r.story_slug, [...seen].sort((a, b) => a - b));
-      const ck = ls.get("lv-check-" + r.story_slug); if (r.check_n && (!ck || (ck.best || 0) < r.check_best)) ls.set("lv-check-" + r.story_slug, {best: r.check_best, last: r.check_last, n: r.check_n, t: Date.now()}); });
+      const ck = ls.get("lv-check-" + r.story_slug); if (r.check_n && (!ck || (ck.best || 0) < r.check_best)) ls.set("lv-check-" + r.story_slug, {best: r.check_best, last: r.check_last, n: r.check_n, t: Date.now()});
+      if (r.done_how && !ls.get("lv-done-" + r.story_slug)) ls.set("lv-done-" + r.story_slug, {how: r.done_how, t: Date.parse(r.done_at) || Date.now()}); });
     ls.set("lv-saved", [...sv]); ls.set("lv-saved-items", [...si]);
     const D = JSON.parse(document.getElementById("lvapp").textContent);
     data.forEach(r => { const c = D.checklists.find(x => x.slug === r.story_slug); if (!c) return;

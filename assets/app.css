@@ -609,7 +609,7 @@ dialog.rdlg::backdrop{background:rgba(11,18,32,.45)}
 .rdlg textarea,.rdlg input{width:100%;margin-top:6px;font:inherit;font-size:15px;border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--ink)}
 .rdlg textarea{min-height:110px;resize:vertical}
 .rdlg .rb{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}.rdlg .rb .btn{min-height:44px}
-.rdlg .rmsg{margin-top:10px;font-size:14px}.rdlg .rmsg.err{color:#B91C1C}.rdlg .rmsg.ok{color:#047857}
+.rdlg .rmsg,.fbform .rmsg{margin-top:10px;font-size:14px}.rdlg .rmsg.err,.fbform .rmsg.err{color:#B91C1C}.rdlg .rmsg.ok{color:#047857}
 
 /* ---------- Home 2: greeting, stats, continue, story cards, activity; Saved; Story check ---------- */
 .hgreet h2{font:700 28px/1.15 var(--fd);letter-spacing:-.02em;color:var(--ink)}
@@ -685,6 +685,12 @@ dialog.rdlg::backdrop{background:rgba(11,18,32,.45)}
 .ckres ol{margin:14px 0;padding-left:20px;display:flex;flex-direction:column;gap:12px}
 .ckres li b{display:block;font:600 14.5px var(--fd);color:var(--ink)}
 .ckres li span{display:block;margin-top:2px;font-size:14px;font-weight:600}.ckres li.ok span{color:var(--ok)}.ckres li.no span{color:var(--pop)}
+.cdone{margin-top:18px;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:#F7F9FF}
+.cdone h3{font:600 16px var(--fd);color:var(--ink);margin:0 0 6px}.cdone p{font-size:14.5px;color:var(--text);margin:0 0 12px}
+.cdone .cok{margin:0;color:var(--ok);font-size:14.5px;outline:none}.cdone .cok b{font-weight:700}
+.fbform .fbl{display:flex;gap:10px;align-items:center;font:600 15.5px/1.4 var(--fd);color:var(--ink);margin:4px 0 8px}
+.fbform textarea,.fbform input:not([type=radio]){width:100%;box-sizing:border-box;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:15px;color:var(--ink);background:#fff;margin-bottom:16px}
+.fbform textarea{min-height:96px;resize:vertical}
 .ckres li small{display:block;margin-top:2px;font-size:13.5px;color:var(--text)}
 @media (max-width:1100px){.scards{grid-template-columns:repeat(2,minmax(0,1fr))}.hstats{grid-template-columns:repeat(2,minmax(0,1fr))}.hrow{grid-template-columns:1fr}}
 @media (max-width:600px){.scards{grid-template-columns:1fr}.hsec .scards{padding:0 16px 16px}.hfilt{padding:0 16px 12px}.hcont{flex-wrap:wrap}.hcont .btn{width:100%}.hgreet h2{font-size:24px}.htile b{font-size:22px}}
