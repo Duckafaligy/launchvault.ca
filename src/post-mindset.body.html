@@ -90,7 +90,7 @@
   <div class="wrap">
     <div class="shead"><div><h2>Keep reading.</h2></div><a class="tlink" href="/blog/">All posts <span class="arr" aria-hidden="true">→</span></a></div>
     {{POSTS}}
-    <script>document.currentScript.previousElementSibling.querySelectorAll('a.post[href="/blog/mindset/"]').forEach(a => a.remove())</script>
+    <script>(s => { const g = s.previousElementSibling; g.querySelectorAll('a.post[href="/blog/mindset/"]').forEach(a => a.remove()); [...g.querySelectorAll('a.post')].slice(3).forEach(a => a.remove()); })(document.currentScript)</script>
   </div>
 </section>
 <nav class="ptoc" id="ptoc" aria-label="Contents (sticky)" hidden><span class="ind" aria-hidden="true"></span><span class="pr" aria-hidden="true"><i></i></span></nav>

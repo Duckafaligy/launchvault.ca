@@ -297,8 +297,9 @@
         obc.innerHTML = `<h2>Stories like yours</h2><div style="margin-top:8px">${m.map(s => { const x = S[s];
           return `<div class="mrow"><span class="logo">${logo(x, 22)}</span><span style="flex:1;min-width:0"><b>${esc(x.name)}</b><small>${esc(x.pattern)}</small><span class="nm"><b>${esc(x.hv)}</b>${esc(x.hu)}${chip(x.hl)}${esc(x.hd)}</span></span><span class="r">${x.status === "ready" ? `<a href="${x.href}">Read now</a>` : "Breakdown soon"}</span></div>`; }).join("")}</div>
           <a class="btn btn-p" style="width:100%;margin-top:16px" href="/app/">Go to Home</a><p class="fine">Saved on this device. Pro saves your path to your account and updates it as stories land.</p>`; }
-      obc.focus({preventScroll: true});
+      if (render.n++) obc.focus({preventScroll: true});
     };
+    render.n = 0;
     obc.addEventListener("click", e => {
       const o = e.target.closest(".opt");
       if (o) { const i = +o.dataset.o; if (step === -1) { age = AGES[i]; } else { ans[step] = ans[step] === i ? null : i; } $$(".opt", obc).forEach(x => x.setAttribute("aria-checked", +x.dataset.o === i && (step === -1 || ans[step] === i))); const nx = $("[data-next]", obc); if (nx) nx.disabled = false; return; }

@@ -595,3 +595,4 @@ main .tlink{min-height:44px}
 .ecode{display:grid;gap:10px;margin-top:4px}
 .ec-msg{font-size:13.5px;color:#374151;min-height:1.2em}
 .welcome .acard .note{margin-top:16px;font-size:13px;color:#4B5563}
+.pz .pmeta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}

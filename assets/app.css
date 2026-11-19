@@ -560,3 +560,4 @@ button.row{width:100%;border:0;border-top:1px solid var(--line2);background:none
 }
 .lrow .lbm{display:none}
 @media (max-width:720px){.lrow .lbc{display:none}.lrow .lbm{display:inline-flex;gap:6px}}
+.obc:focus{outline:none}
