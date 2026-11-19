@@ -13,7 +13,7 @@ permissions:
 concurrency: { group: publish, cancel-in-progress: false }
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -26,12 +26,11 @@ jobs:
           npm i --no-save --prefix /tmp/pw playwright@1.56.1
           npx --prefix /tmp/pw playwright install --with-deps chromium-headless-shell
           echo "LV_PLAYWRIGHT=/tmp/pw/node_modules/playwright-core" >> $GITHUB_ENV
-          echo "LV_CHROME=$(node -e "console.log(require('/tmp/pw/node_modules/playwright-core').chromium.executablePath().replace('chrome-linux/chrome','chrome-headless-shell-linux64/chrome-headless-shell'))")" >> $GITHUB_ENV
           ls -d ~/.cache/ms-playwright/*
       - name: Build
         env: { TZ: America/Toronto }
         run: |
-          [ -x "$LV_CHROME" ] || export LV_CHROME=$(ls ~/.cache/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux*/chrome-headless-shell | head -1)
+          export LV_CHROME=$(ls ~/.cache/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux*/chrome-headless-shell | head -1)
           echo "LV_CHROME=$LV_CHROME"
           python build_app.py
       - name: Commit if anything changed
