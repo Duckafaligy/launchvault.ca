@@ -584,3 +584,14 @@ main .tlink{min-height:44px}
 /* blog source lists: real logos */
 .slogo .blogo{width:20px;height:20px}
 .sd-l .sr-n .blogo{width:18px;height:18px;border-radius:4px;display:inline-block;vertical-align:-3px;margin-right:8px}
+
+/* welcome: sign-in options (Clerk). Google is the one primary button. */
+.oauth{display:grid;gap:10px;margin-top:18px}
+.oauth .btn{width:100%;justify-content:center;gap:10px}
+.oauth .btn img{flex:none}
+.ob-g .obi{display:grid;place-items:center;width:26px;height:26px;border-radius:6px;background:#fff}
+.ob-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ob-sm{min-height:44px;font-size:14px}
+.ecode{display:grid;gap:10px;margin-top:4px}
+.ec-msg{font-size:13.5px;color:#374151;min-height:1.2em}
+.welcome .acard .note{margin-top:16px;font-size:13px;color:#4B5563}

@@ -32,3 +32,6 @@ Each file is the company's own site icon or logo, fetched from its official site
 | upscaleb2b.png | Upscale B2B's icon on its TrustMRR profile (files.stripe.com link in trustmrr.com/startup/upscale-system-llc.md, 128px PNG) | Nov 18 2026 |
 | windmillgrowth.png | Windmill Growth's icon on its TrustMRR profile (files.stripe.com link in trustmrr.com/startup/windmill-growth-llc.md, 128px PNG) | Nov 18 2026 |
 | whiteglovecontent.png | White Glove Content's icon on its TrustMRR profile (files.stripe.com link in trustmrr.com/startup/white-glove-content.md, 128px PNG) | Nov 18 2026 |
+| google.svg | Google's standard multicolour "G" sign-in mark (Google Identity branding guidelines, developers.google.com/identity/branding-guidelines) | Nov 19 2026 |
+| apple.svg | Simple Icons v16.38.0 `apple` (CC0), black as in Apple's sign-in button guidelines | Nov 19 2026 |
+| discord.svg | Simple Icons v16.38.0 `discord` (CC0), Discord blurple #5865F2 | Nov 19 2026 |

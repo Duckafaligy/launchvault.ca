@@ -4,7 +4,7 @@
       <a class="wl-back" href="/"><span aria-hidden="true">←</span> Back to the homepage</a>
       <h1>Welcome to LaunchVault. <em class="em">Glad you're here.</em></h1>
       <p class="lede">Real startup stories, checked and cut down to the part you can use. One a week, free.</p>
-      <ul class="aget"><li>The weekly breakdown, free</li><li>Checklists saved to your account</li><li>Every number labelled and dated</li></ul>
+      <ul class="aget"><li>The weekly breakdown, free</li><li>Checklists and your path, saved</li><li>Every number labelled and dated</li></ul>
     </div>
 
     <div class="acard">
@@ -12,51 +12,66 @@
         <button type="button" role="tab" id="signin" aria-selected="true" aria-controls="p-signin">Sign in</button>
         <button type="button" role="tab" id="signup" aria-selected="false" aria-controls="p-signup">Sign up</button>
       </div>
-
       <div class="wpanel" id="p-signin" role="tabpanel" aria-labelledby="signin">
         <h2>Welcome back</h2>
         <p class="sub">Sign in to see your checklists and your path.</p>
-        <form class="pv" novalidate>
-          <div class="fld"><label for="si-email">Email</label><input id="si-email" type="email" autocomplete="email" placeholder="you@email.com" required></div>
-          <div class="fld"><label for="si-pass">Password</label><span class="pw"><input id="si-pass" type="password" autocomplete="current-password" required><button class="pwt" type="button" aria-label="Show password" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></span></div>
-          <button class="btn btn-p btn-lg" type="submit">Sign in <span class="arr" aria-hidden="true">→</span></button>
-        </form>
-        <p class="alt">New here? <a href="#signup">Make a free account</a></p>
       </div>
-
       <div class="wpanel" id="p-signup" role="tabpanel" aria-labelledby="signup" hidden>
         <h2>Make your free account</h2>
         <p class="sub">One breakdown a week, the quiz and your saved checklists.</p>
-        <p class="draft" id="plannote" hidden style="margin-top:16px"><span><b>You picked Pro.</b> $5 a month, or $4 a month billed yearly, through Stripe. Start with a free account; you can upgrade from there.</span></p>
-        <form class="pv" novalidate>
-          <div class="fld"><label for="su-email">Email</label><input id="su-email" type="email" autocomplete="email" placeholder="you@email.com" required></div>
-          <div class="fld"><label for="su-pass">Password</label><span class="pw"><input id="su-pass" type="password" autocomplete="new-password" required aria-describedby="su-hint"><button class="pwt" type="button" aria-label="Show password" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></span>
-            <span class="hint" id="su-hint"><span class="pwm" aria-hidden="true"><i></i></span><span class="pwl">At least 10 characters.</span></span></div>
-          <label class="chk"><input type="checkbox" required> <span>I'm 13 or older. If I'm under 18, a parent will pay for Pro or Builder.</span></label>
-          <button class="btn btn-p btn-lg" type="submit">Create free account <span class="arr" aria-hidden="true">→</span></button>
-        </form>
-        <p class="note">By signing up you agree to the <a href="/legal/terms/">terms</a> and <a href="/legal/privacy/">privacy policy</a> (drafts).</p>
-        <p class="alt">Already have an account? <a href="#signin">Sign in</a></p>
+        <p class="draft" id="plannote" hidden style="margin-top:16px"><span><b>You picked a paid plan.</b> Start with a free account; you can upgrade from there. Prices are placeholders until launch.</span></p>
       </div>
+
+      <div class="oauth" id="oauth">
+        <button class="btn btn-p btn-lg ob-g" type="button" data-strategy="oauth_google"><span class="obi"><img src="/assets/logos/google.svg" alt="" width="18" height="18"></span>Continue with Google</button>
+        <button class="btn btn-s btn-lg" type="button" data-strategy="oauth_github"><img src="/assets/logos/github.svg" alt="" width="18" height="18">Continue with GitHub</button>
+        <button class="btn btn-s btn-lg" type="button" data-strategy="oauth_apple"><img src="/assets/logos/apple.svg" alt="" width="18" height="18">Continue with Apple</button>
+        <div class="ob-row">
+          <button class="btn btn-s ob-sm" type="button" data-strategy="oauth_discord"><img src="/assets/logos/discord.svg" alt="" width="16" height="16">Discord</button>
+          <button class="btn btn-s ob-sm" type="button" data-strategy="email_code" aria-expanded="false" aria-controls="ecode"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email me a code</button>
+        </div>
+        <form class="ecode" id="ecode" hidden novalidate>
+          <div class="fld" data-step="addr"><label for="ec-email">Email</label><input id="ec-email" type="email" autocomplete="email" placeholder="you@email.com" required></div>
+          <div class="fld" data-step="code" hidden><label for="ec-code">The 6-digit code we emailed you</label><input id="ec-code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" placeholder="123456"></div>
+          <button class="btn btn-s btn-lg" type="submit" id="ec-go">Send the code</button>
+          <p class="ec-msg" id="ec-msg" role="status"></p>
+        </form>
+        <p class="fmsg on l" id="authoff" hidden>Accounts open soon. You can use the app now; your progress stays on this device.</p>
+      </div>
+      <p class="note">We only keep your email address. By continuing you agree to the <a href="/legal/terms/">terms</a> and <a href="/legal/privacy/">privacy policy</a> (drafts).</p>
     </div>
   </div>
 </section>
+<script src="/assets/auth.js"></script>
 <script>
-/* Welcome: #signup (or ?plan=full) opens the sign-up tab. This runs before site.js, which wires the tabs and slides the indicator. */
+/* Welcome: one set of sign-in options for both tabs (Clerk decides new vs returning; new users land on /app/start/).
+   #signup opens the sign-up tab. While accounts are off (LV_AUTH false) every option just opens the app. */
 (() => {
-  const want = () => location.hash === "#signup" || new URLSearchParams(location.search).get("plan") === "full" ? "signup" : location.hash === "#signin" ? "signin" : null;
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const want = () => location.hash === "#signup" || /^(pro|builder|full)$/.test(new URLSearchParams(location.search).get("plan") || "") ? "signup" : location.hash === "#signin" ? "signin" : null;
   const set = id => ["signin", "signup"].forEach(k => { const on = k === id; document.getElementById(k).setAttribute("aria-selected", on); document.getElementById("p-" + k).hidden = !on; });
   const w = want(); if (w) set(w);
+  if (/^(pro|builder|full)$/.test(new URLSearchParams(location.search).get("plan") || "")) $("#plannote").hidden = false;
   addEventListener("hashchange", () => { const w = want(); if (w) document.getElementById(w).click(); });
-  document.querySelectorAll(".wtabs [role=tab]").forEach(t => t.addEventListener("click", () => history.replaceState(null, "", "#" + t.id)));
-  // links to the other tab switch in place and keep the page where it is
-  document.querySelectorAll('.wpanel .alt a[href^="#"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); const t = document.getElementById(a.hash.slice(1)); t.click(); t.focus(); }));
-  // show / hide the password
-  document.querySelectorAll(".pwt").forEach(b => b.addEventListener("click", () => { const i = b.previousElementSibling, show = i.type === "password";
-    i.type = show ? "text" : "password"; b.setAttribute("aria-pressed", show); b.setAttribute("aria-label", show ? "Hide password" : "Show password"); }));
-  // the bar fills toward the 10-character minimum
-  const i = document.getElementById("su-pass"), m = document.querySelector(".pwm"), l = document.querySelector(".pwl");
-  i.addEventListener("input", () => { const n = i.value.length; m.style.setProperty("--p", Math.min(1, n / 10)); m.classList.toggle("ok", n >= 10);
-    l.textContent = n >= 10 ? "Long enough." : n ? (10 - n) + " more character" + (10 - n === 1 ? "" : "s") + "." : "At least 10 characters."; });
+  $$(".wtabs [role=tab]").forEach(t => t.addEventListener("click", () => history.replaceState(null, "", "#" + t.id)));
+  const isNew = () => document.getElementById("signup").getAttribute("aria-selected") === "true";
+  const A = window.LVAuth;
+  if (!A || !A.live) { $("#authoff").hidden = false; $("#ecode").remove(); }
+  else A.load().then(() => { const on = A.enabled(); $$("[data-strategy]").forEach(b => { b.hidden = !on.has(b.dataset.strategy); }); }).catch(() => {});
+  $("#oauth").addEventListener("click", e => {
+    const b = e.target.closest("[data-strategy]"); if (!b) return;
+    if (!A || !A.live) { location.href = isNew() ? "/app/start/" : "/app/"; return; }
+    if (b.dataset.strategy === "email_code") { const f = $("#ecode"); f.hidden = !f.hidden; b.setAttribute("aria-expanded", !f.hidden); if (!f.hidden) $("#ec-email").focus(); return; }
+    b.disabled = true; A.signInWith(b.dataset.strategy, {isNew: isNew()}).catch(() => { b.disabled = false; $("#authoff").textContent = "That didn't work. Try again, or pick another option."; $("#authoff").hidden = false; });
+  });
+  const f = $("#ecode");
+  if (f) f.addEventListener("submit", async e => {
+    e.preventDefault(); const msg = $("#ec-msg"), codeStep = !$('[data-step="code"]').hidden;
+    try {
+      if (!codeStep) { const address = $("#ec-email").value.trim(); if (!/.+@.+\..+/.test(address)) { msg.textContent = "Enter your email address."; return; }
+        await A.signInWith("email_code", {address}); $('[data-step="code"]').hidden = false; $("#ec-go").textContent = "Continue"; $("#ec-code").focus(); msg.textContent = "Check your email for a 6-digit code."; }
+      else { const st = await A.signInWith("email_code", {code: $("#ec-code").value.trim()}); if (st !== "complete") msg.textContent = "That code didn't work. Check it and try again."; }
+    } catch (err) { msg.textContent = (err && err.errors && err.errors[0] && err.errors[0].longMessage) || "Something went wrong. Try again."; }
+  });
 })();
 </script>

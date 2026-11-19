@@ -19,6 +19,7 @@ sys.path.insert(0, ROOT)
 import build  # public shell: HEAD, nav, footer, og, PAGES
 
 esc = html.escape
+NL = chr(10)
 MON = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
 LABELS = ["Verified", "Live", "Wayback", "Claimed", "Sources differ", "Couldn't verify", "Estimate"]
 LBC = {"Verified": "v", "Live": "l", "Wayback": "w", "Claimed": "c", "Sources differ": "x", "Couldn't verify": "n", "Estimate": "e"}
@@ -578,6 +579,8 @@ def main():
     out("not-found", static_page(E, "notfound", "Not found", "This page isn't in the app.", ""))
     wr(os.path.join(ROOT, "app", "start", "index.html"), head("Welcome · LaunchVault", "Set up your LaunchVault path.") + "<body>\n" + rd(os.path.join(SRC, "app", "start.body.html"))
        + f'\n<script type="application/json" id="lvapp">{json.dumps(APPDATA, separators=(",", ":"))}</script>\n<script src="/assets/auth.js" defer></script>\n<script src="/assets/app.js" defer></script>\n</body>\n</html>\n')
+    # Clerk OAuth lands here, then goes on to /app/ (returning) or /app/start/ (new). Unused while LV_AUTH is false.
+    wr(os.path.join(ROOT, "welcome", "callback", "index.html"), head("Signing you in · LaunchVault", "Finishing sign-in.") + '<body><main class="pg narrow" id="main"><p class="note" role="status">Signing you in…</p></main>' + NL + '<script src="/assets/auth.js"></script>' + NL + '<script>window.LVAuth && LVAuth.callback().catch(() => location.replace("/welcome/"));</script>' + NL + '</body>' + NL + '</html>' + NL)
     # public side: generated blog posts (Postiz keeps its hand-made post; its generated twin goes to _gen for the parity check)
     for S in ready:
         post = blog_post(S, E)
