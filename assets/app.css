@@ -756,3 +756,4 @@ ol.tnow .snap .sb b{font:600 14px var(--fd);color:var(--ink)}
 @media (max-width:600px){.snav{padding:6px 12px 0;gap:6px}.snph{display:none}.rd.rd2{padding:12px 12px 64px}.rcard{padding:16px;border-radius:14px}.sumc h1{font-size:22px}.ktile .val{font-size:21px}
   .ptl details.ph{margin-left:13px;padding-left:20px}.ptl .pn{left:-14px;width:26px;height:26px;font-size:13px}.sumc .star span{display:none}}
 @media (prefers-reduced-motion:reduce){.ptl .chev,.snav-in a{transition:none}}
+.sumc .rh .logo.big{display:inline-flex;flex:none}

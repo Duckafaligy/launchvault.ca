@@ -51,6 +51,7 @@ import sys; sys.path.insert(0, SITE); from build_app import TODAY
 _SD = os.path.join(SITE, "data", "stories")
 READY = {os.path.splitext(f)[0] for f in os.listdir(_SD) if f.endswith(".json") and json.load(open(os.path.join(_SD, f), encoding="utf-8")).get("published", "") <= TODAY}
 NSOON = len([s for s in SOON if s["slug"] not in READY]); NREADY = 1 + len([s for s in SOON if s["slug"] in READY])
+SOON = [s for s in SOON if s["slug"] in READY]   # the public demo shows ready stories only; unpublished companies stay off the homepage
 st_txt = lambda s: "Ready" if s["slug"] in READY else ("Stale" if s.get("stale") else "Soon")
 SIDE_SOON = [ST[n] for n in ("DM Champ", "Stencil AI", "Windmill Growth", "Gojiberry")]
 
@@ -115,7 +116,7 @@ def lrow(s):
     return (f'<div class="lset" data-cat="{s["category"]}"><button class="lrow vrow" type="button" data-go="soon" data-co="{s["slug"]}" data-st="{s["category"]}"><span class="lc"><span class="lg">{logo(s, 18)}</span><b>{esc(s["company"])}</b></span>'
             f'<span class="ltp">{CAT[s["category"]]}</span><span class="ltr">{trend}</span><span class="lnum"><b>{hv}</b>{hu}</span>{lb(s["headline"]["label"])}{status}</button></div>')
 TABS = D["tabs"]
-lib_rows = lrow(PZ) + "".join(lrow(ST[next(s["company"] for s in SOON if s["slug"] == slug)]) for cat in ("ai", "mobile", "services") for slug in TABS[cat])
+lib_rows = lrow(PZ) + "".join(lrow(ST[next(s["company"] for s in SOON if s["slug"] == slug)]) for cat in ("ai", "mobile", "services") for slug in TABS[cat] if slug in READY)
 read_on = sorted({s["monthly"]["read_on"] for s in SOON if s.get("monthly")})
 # Home: biggest months on the list (same month for a fair comparison)
 octs = sorted([s for s in SOON if s["headline"]["measure"] == "revenue in month" and s["headline"]["month"] == "2026-10"], key=lambda s: -s["headline"]["value"])[:3]
@@ -211,7 +212,7 @@ H = f'''    <div class="winfit" id="winfit">
           </div>
           <div class="view vx" data-view="breakdowns" hidden>
             <div class="vtool"><div class="vfilt seg" role="group" aria-label="Filter stories"><button type="button" aria-pressed="true" data-vf="all">All {len(SOON) + 1}</button><button type="button" aria-pressed="false" data-vf="ai">AI tools</button><button type="button" aria-pressed="false" data-vf="mobile">Mobile apps</button><button type="button" aria-pressed="false" data-vf="services">Services</button></div>
-              <span class="vnote">{NREADY} ready · {NSOON} coming soon</span></div>
+              <span class="vnote">{NREADY} ready</span></div>
             <div class="ltab" id="bdlist">
               <div class="lt-h" aria-hidden="true"><span>Company</span><span>Type</span><span>Trend</span><span>Latest number</span><span>Label</span><span>Status</span></div>
               <div class="lbody">{lib_rows}</div>
@@ -267,6 +268,6 @@ H = f'''    <div class="winfit" id="winfit">
 '''
 p = os.path.join(HERE, "index.body.html"); s = open(p, encoding="utf-8").read()
 a = s.index('    <div class="winfit" id="winfit">'); b = s.index('    <p class="prov">')
-open(p, "w", encoding="utf-8").write(s[:a] + H + s[b:])
+open(p, "w", encoding="utf-8", newline=chr(10)).write(s[:a] + H + s[b:])
 for s_ in SOON: assert os.path.exists(os.path.join(SITE, s_["logo"].replace("site/", ""))), s_["logo"]
-print("hero written:", len(SOON), "coming-soon stories,", len(LESSONS), "lessons")
+print("hero written:", len(SOON) + 1, "ready stories,", len(LESSONS), "lessons")
