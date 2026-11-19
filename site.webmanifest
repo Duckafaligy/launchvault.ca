@@ -1,0 +1,15 @@
+{
+  "name": "LaunchVault",
+  "short_name": "LaunchVault",
+  "description": "Real startup stories, checked. Every number labelled and dated.",
+  "start_url": "/app/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#2563EB",
+  "icons": [
+    {"src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "/assets/favicon.svg", "sizes": "any", "type": "image/svg+xml"}
+  ]
+}

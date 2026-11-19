@@ -175,7 +175,9 @@ def spark(series, cls="spark"):
 
 # ============================================================ shell
 SIDE_SOON = ["dm-champ", "stencil-ai", "windmill-growth", "gojiberry"]
-def head(title, desc, extra=""):
+def head(title, desc, extra="", og_slug=""):
+    og = (NL + f'<meta property="og:title" content="{esc(title)}">' + NL + f'<meta property="og:description" content="{esc(desc)}">' + NL
+          + f'<meta property="og:image" content="https://launchvault-site.vercel.app/assets/covers/{og_slug}.png">') if og_slug else ""
     return f'''<!doctype html>
 <html lang="en">
 <head>
@@ -183,15 +185,19 @@ def head(title, desc, extra=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
-<meta name="robots" content="noindex">
+<meta name="robots" content="noindex">{og}
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#2563EB">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,600;1,700&family=Inter+Tight:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="/assets/app.css">{extra}
 </head>
 '''
-def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts=""):
+def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_slug=""):
     ready = [e for e in E if e["status"] == "ready"]; week = next((e for e in ready if not e["stale"]), ready[0])
     byslug = {e["slug"]: e for e in E}
     nav = [("home", "/app/", "Home", ""), ("lib", "/app/library/", "Library", ""), ("path", "/app/path/", "My path", '<span class="cnt" data-cnt="path"></span>'),
@@ -203,7 +209,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts=""):
     wk = f'<a class="si week" href="{week["href"]}"{cur("story-" + week["slug"])}><img class="lgo" src="{week["logo"]}" alt="" width="16" height="16"><span class="t">{esc(week["name"])}</span><span class="cnt pc" data-pct="{week["slug"]}"></span></a>'
     tabs = "".join(f'<a href="{h}"{cur(k)}>{ic(I[k], 22)}<span>{t}</span></a>' for k, h, t, _ in nav) + f'<a href="/app/account/"{cur("acct")}>{ic(I["acct"], 22)}<span>Account</span></a>'
     ttl = (" ".join(f'<a href="{h}">{esc(t)}</a><span class="sep">/</span>' for h, t in crumbs[:-1]) + f'<span>{esc(crumbs[-1][1])}</span>') if crumbs else f"<span>{esc(title)}</span>"
-    return (head(title + " · LaunchVault", desc, '\n<link rel="stylesheet" href="/assets/chart.css">' if "chart.js" in scripts else "") + f'''<body>
+    return (head(title + " · LaunchVault", desc, '\n<link rel="stylesheet" href="/assets/chart.css">' if "chart.js" in scripts else "", og_slug) + f'''<body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="shell">
 <aside class="side" aria-label="App">
@@ -341,7 +347,7 @@ def reader(E, S, gate=True):
            f'{hl}<section class="rsec" id="phases"><div class="sh"><h2>Phase by phase</h2><span class="meta">{n} phases · each ends with one lesson</span></div>{phases_free}{teaser if gate else ""}</section>'
            + (rest if gate else f'<div>{phases_rest}{tn}{fc}</div>') + f'{src}{ck}')
     body = f'<div class="rprog"><i data-readbar2></i></div><div class="rd" data-reader="{slug}" data-phases="{n}"><article>{art}</article>{rail}</div>{sheets}'
-    return shell(E, S["name"], S["dek"], "story-" + slug, body, crumbs=[("/app/library/", "Library"), ("", S["name"])], scripts='\n<script src="/assets/chart.js" defer></script>')
+    return shell(E, S["name"], S["dek"], "story-" + slug, body, crumbs=[("/app/library/", "Library"), ("", S["name"])], scripts='\n<script src="/assets/chart.js" defer></script>', og_slug=slug)
 
 # ============================================================ coming-soon story page
 def soon_page(E, e):
@@ -499,6 +505,30 @@ def update_cards(ready, stale=()):
     s2 = re.sub(r"(\{\{POSTS\}\}\s*<script>document\.currentScript\.previousElementSibling\.querySelectorAll\('a\.post\[href=\")[^\"]+(\"\]'\))", r"\g<1>/blog/" + top["slug"] + r"/\2", s2)
     if s2 != s: wr(p, s2)
 
+def update_story_cards(ready):
+    """Homepage #stories: a company with a story file becomes a ready card (read time + a link to its post). Numbers are untouched."""
+    p = os.path.join(SRC, "index.body.html"); s = rd(p)
+    a = s.index('<section id="stories"'); b = s.index("</section>", a); sec = s[a:b]
+    byname = {S["name"]: S for S in ready}
+    def one(m):
+        art, name = m.group(0), m.group(1); S = byname.get(name)
+        if not S: return art
+        art = art.replace('<article class="bcard soon"', '<article class="bcard live"', 1)
+        art = re.sub(r"(<small>[^<·]*)· coming soon</small>", lambda k: f'{k.group(1)}· {S["read_min"]} min read</small>', art, count=1)
+        if 'class="go"' not in art:
+            art = art.replace("</div>\n      </article>", f'<a class="go" href="/blog/{S["slug"]}/">Read <span class="arr" aria-hidden="true">→</span><span class="sr"> the {esc(name)} breakdown</span></a></div>' + NL + "      </article>", 1)
+        return art
+    sec2 = re.sub(r'<article class="bcard[^"]*" data-cat="[^"]*" data-story="([^"]+)">.*?</article>', one, sec, flags=re.S)
+    if sec2 != sec: wr(p, s[:a] + sec2 + s[b:])
+
+def write_sitemap():
+    """Public pages and posts. The preview stays noindex (robots.txt Disallow + X-Robots-Tag); the sitemap is ready for launch."""
+    urls = ["/"] + ["/" + out[:-len("index.html")] for out, *_ in build.PAGES if out.endswith("index.html") and out != "index.html"]
+    body = "".join(f"  <url><loc>https://launchvault-site.vercel.app{u}</loc></url>{NL}" for u in sorted(set(urls), key=lambda u: (u != "/", u)))
+    wr(os.path.join(ROOT, "sitemap.xml"), '<?xml version="1.0" encoding="UTF-8"?>' + NL
+       + "<!-- Preview build: robots.txt says Disallow and every page sends noindex, on purpose, until launch. This sitemap lists the public pages for then. -->" + NL
+       + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + NL + body + "</urlset>" + NL)
+
 # ============================================================ covers for new stories
 def make_cover(S):
     png = os.path.join(ROOT, "assets", "covers", S["slug"] + ".png")
@@ -600,7 +630,9 @@ def main():
         if not any(p[0] == f"blog/{S['slug']}/index.html" for p in build.PAGES):
             build.PAGES.insert(2, (f"blog/{S['slug']}/index.html", f"post-{S['slug']}.body.html", f"{S['title']} · LaunchVault", S["dek"], "blog", False, False, ""))
     update_cards(ready, {e["slug"] for e in E if e["stale"]})
+    update_story_cards(ready)
     build.main()
+    write_sitemap()
     # the public posts load the shared chart renderer
     for S in ready:
         if S["slug"] == "postiz": continue

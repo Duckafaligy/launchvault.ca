@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Preview build: robots.txt says Disallow and every page sends noindex, on purpose, until launch. This sitemap lists the public pages for then. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://launchvault-site.vercel.app/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/aeo-engine/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/boothie/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/dm-champ/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/gojiberry/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/how-to-read-a-revenue-chart/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/mindset/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/postiz/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/rezi/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/stencil-ai/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/three-ways-to-start-small/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/upscale-b2b/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/what-verified-means/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/blog/windmill-growth/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/legal/accessibility/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/legal/cookies/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/legal/privacy/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/legal/terms/</loc></url>
+  <url><loc>https://launchvault-site.vercel.app/welcome/</loc></url>
+</urlset>

@@ -42,6 +42,10 @@ def logo(s, w):
     if s["company"] == "Postiz": return f'<img src="/assets/logos/postiz.svg" alt="" width="{w}" height="{round(w * 160 / 145)}">'
     return f'<img src="/{s["logo"].replace("site/", "")}" alt="" width="{w}" height="{w}" loading="lazy" decoding="async">'
 SOON = [s for s in D["stories"] if s["status"] == "coming soon"]
+# a company with a story file (design/data/stories/<slug>.json) has a breakdown now: the window shows it as Ready
+READY = {os.path.splitext(f)[0] for f in os.listdir(os.path.join(SITE, "..", "design", "data", "stories")) if f.endswith(".json")}
+NSOON = len([s for s in SOON if s["slug"] not in READY]); NREADY = 1 + len([s for s in SOON if s["slug"] in READY])
+st_txt = lambda s: "Ready" if s["slug"] in READY else ("Stale" if s.get("stale") else "Soon")
 SIDE_SOON = [ST[n] for n in ("DM Champ", "Stencil AI", "Windmill Growth", "Gojiberry")]
 
 # ---- data for the in-window views (JS reads #lvdata) ----
@@ -79,7 +83,7 @@ CHK = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="curre
 CK = PZ["checklist"]
 
 # sidebar
-side_soon = "".join(f'<button class="si co" type="button" data-go="soon" data-co="{s["slug"]}"><i class="plg">{logo(s, 16)}</i>{esc(s["company"])}<span class="cnt">{"Stale" if s.get("stale") else "Soon"}</span></button>' for s in SIDE_SOON)
+side_soon = "".join(f'<button class="si co" type="button" data-go="soon" data-co="{s["slug"]}"><i class="plg">{logo(s, 16)}</i>{esc(s["company"])}<span class="cnt">{st_txt(s)}</span></button>' for s in SIDE_SOON)
 # Postiz KPIs
 def kpi(k, v, f, src):
     return f'<button class="kpi" type="button" aria-pressed="false"><span class="k">{k}</span><span class="kv">{v}</span><span class="m">{lb(f["label"])}{dlab(f["date"])}</span><span class="ksrc" title="{esc(src)}">{esc(src)}</span></button>'
@@ -101,7 +105,7 @@ def lrow(s):
         return (f'<div class="lset" data-cat="ready"><button class="lrow vrow" type="button" data-go="postiz" data-st="ready"><span class="lc"><span class="lg">{logo(s, 18)}</span><b>Postiz</b></span>'
                 f'<span class="ltp">Open source</span><span class="ltr">{PZ_SPARK}</span><span class="lnum"><b>{money(s["headline"]["value"])}</b> MRR · {dshort(s["headline"]["date"])}</span>{lb("Verified")}<span class="ls ok">Ready</span></button></div>')
     hv, hu = headline(s); trend = spark(s) if s.get("monthly") else '<span class="noser">No monthly series</span>'
-    status = f'<span class="ls st">Stale · {dshort(s["mrr"]["date"])}</span>' if s.get("stale") else '<span class="ls">Coming soon</span>'
+    status = '<span class="ls ok">Ready</span>' if s["slug"] in READY else f'<span class="ls st">Stale · {dshort(s["mrr"]["date"])}</span>' if s.get("stale") else '<span class="ls">Coming soon</span>'
     return (f'<div class="lset" data-cat="{s["category"]}"><button class="lrow vrow" type="button" data-go="soon" data-co="{s["slug"]}" data-st="{s["category"]}"><span class="lc"><span class="lg">{logo(s, 18)}</span><b>{esc(s["company"])}</b></span>'
             f'<span class="ltp">{CAT[s["category"]]}</span><span class="ltr">{trend}</span><span class="lnum"><b>{hv}</b>{hu}</span>{lb(s["headline"]["label"])}{status}</button></div>')
 TABS = D["tabs"]
@@ -147,7 +151,7 @@ H = f'''    <div class="winfit" id="winfit">
           <button class="si" type="button" data-go="checklists">{CKS}Checklists<span class="cnt">1</span></button>
           <div class="grp">This week</div>
           <button class="si co on" type="button" data-go="postiz" aria-current="page"><i class="plg">{logo(PZ, 14)}</i>Postiz<span class="cnt rd" aria-hidden="true"><i></i></span></button>
-          <div class="grp">Coming soon</div>
+          <div class="grp">{"New breakdowns" if all(x["slug"] in READY for x in SIDE_SOON) else "Coming soon"}</div>
           {side_soon}
           <button class="si more" type="button" data-go="breakdowns">{len(SOON) - len(SIDE_SOON)} more in the library</button>
           <div class="splan"><span>Free plan</span><a href="/#pricing">Upgrade</a></div>
@@ -201,7 +205,7 @@ H = f'''    <div class="winfit" id="winfit">
           </div>
           <div class="view vx" data-view="breakdowns" hidden>
             <div class="vtool"><div class="vfilt seg" role="group" aria-label="Filter stories"><button type="button" aria-pressed="true" data-vf="all">All {len(SOON) + 1}</button><button type="button" aria-pressed="false" data-vf="ai">AI tools</button><button type="button" aria-pressed="false" data-vf="mobile">Mobile apps</button><button type="button" aria-pressed="false" data-vf="services">Services</button></div>
-              <span class="vnote">1 ready · {len(SOON)} coming soon</span></div>
+              <span class="vnote">{NREADY} ready · {NSOON} coming soon</span></div>
             <div class="ltab" id="bdlist">
               <div class="lt-h" aria-hidden="true"><span>Company</span><span>Type</span><span>Trend</span><span>Latest number</span><span>Label</span><span>Status</span></div>
               <div class="lbody">{lib_rows}</div>
@@ -216,7 +220,7 @@ H = f'''    <div class="winfit" id="winfit">
               <div class="ckf"><span>Ticks stay on this device. Pro saves them to your account.</span></div>
             </div>
             <button class="ckpath" type="button" data-go="path"><span class="pi">{PATH}</span><span class="hk-t"><b>My path · from your checklist</b><span>Steps 1 to 5 share ticks with this checklist</span></span><span class="hk-b vi"><i style="width:33%"></i></span><span class="hk-n">2 of 6</span></button>
-            <button class="cksoon" type="button" data-go="breakdowns"><span class="cks-t">{"".join(f'<span class="lg">{logo(s, 18)}</span>' for s in SIDE_SOON)}</span><span>{len(SOON)} stories coming soon</span><em>Each checklist arrives with its breakdown</em></button>
+            <button class="cksoon" type="button" data-go="breakdowns"><span class="cks-t">{"".join(f'<span class="lg">{logo(s, 18)}</span>' for s in SIDE_SOON)}</span><span>{NREADY - 1} more checklists in the app</span><em>Every breakdown ends with one</em></button>
           </div>
           <div class="view vx" data-view="path" hidden>
             <div class="pgrid">
@@ -227,7 +231,7 @@ H = f'''    <div class="winfit" id="winfit">
                   <div class="pst"><span class="pdot">6</span><div><p>Ask for money early.</p><span class="pmeta">Pattern from Gojiberry · {esc(fact(GJ["first_customers"])["t"].split(". ")[0])} {lb(GJ["first_customers"]["label"])}</span></div></div></div>
                 <div class="hcard2 pside"><div class="hc-h"><b>Stories behind these steps</b></div>
                   <button class="hlike" type="button" data-go="postiz"><span class="lg">{logo(PZ, 18)}</span><b>Postiz</b><span class="hl-n">Steps 1 to 5</span><span class="hl-s ok">Ready</span></button>
-                  <button class="hlike" type="button" data-go="soon" data-co="{GJ["slug"]}"><span class="lg">{logo(GJ, 18)}</span><b>Gojiberry</b><span class="hl-n">Step 6</span><span class="hl-s">Soon</span></button></div>
+                  <button class="hlike" type="button" data-go="soon" data-co="{GJ["slug"]}"><span class="lg">{logo(GJ, 18)}</span><b>Gojiberry</b><span class="hl-n">Step 6</span><span class="hl-s{" ok" if GJ["slug"] in READY else ""}">{st_txt(GJ)}</span></button></div>
               </div>
             </div>
           </div>
@@ -236,7 +240,7 @@ H = f'''    <div class="winfit" id="winfit">
               <div class="so-b"><div class="so-h"><b id="soname"></b><span id="socat"></span></div>
                 <p class="so-w" id="sowhat"></p>
                 <p class="so-n"><b id="sonum"></b><small id="sounit"></small> <span class="lb v" id="solb">Verified</span><span class="so-s" id="sosub"></span></p></div>
-              <div class="so-a"><button class="btn btn-s btn-sm" type="button" data-go="postiz">Back to Postiz</button><a class="btn btn-p btn-sm" href="/welcome/">Get the weekly breakdown</a></div></div>
+              <div class="so-a"><button class="btn btn-s btn-sm" type="button" data-go="postiz">Back to Postiz</button><a class="btn btn-p btn-sm" href="/app/library/">Open the Library</a></div></div>
             <div class="so-row">
               <div class="so-chart"><div class="hc-h"><b>Revenue each month</b><span id="sorange"></span></div><div class="so-spk" id="sospark"></div><div class="so-ax"><span id="soax0"></span><span id="soax1"></span></div></div>
               <div class="so-know"><div class="hc-h"><b>What we know so far</b><span id="sosrc"></span></div><ul id="soknow"></ul></div>
