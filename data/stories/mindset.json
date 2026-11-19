@@ -1,0 +1,384 @@
+{
+  "slug": "mindset",
+  "name": "Mindset",
+  "category": "Mobile app",
+  "what": "A daily motivation app that wakes you up with famous speeches, with streaks and leaderboards.",
+  "logo": "/assets/logos/mindset.png",
+  "site": "https://mindsetapp.com",
+  "published": "2026-11-19",
+  "read_min": 8,
+  "title": "Mindset reached $24K a month by building on its team's YouTube audience first",
+  "dek": "The people behind some of YouTube's biggest motivation channels built an app for the same audience. It took years, not months, and the YouTube audience did the heavy lifting.",
+  "pattern": "Build the audience first, then the app",
+  "numbers": [
+    {
+      "k": "Revenue in Oct 2026",
+      "v": "$30,780",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/mindset-app"
+    },
+    {
+      "k": "MRR (money coming in each month from subscriptions)",
+      "v": "$24,251",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/mindset-app"
+    },
+    {
+      "k": "Revenue, all-time (since connected)",
+      "v": "$781,426",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/mindset-app"
+    },
+    {
+      "k": "Active subscriptions",
+      "v": "5,861",
+      "label": "Verified",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/mindset-app"
+    },
+    {
+      "k": "App Store rating (US)",
+      "v": "4.8 from 2,809 ratings",
+      "label": "Live",
+      "date": "Nov 19 2026",
+      "source": "https://itunes.apple.com/lookup?id=1487761500&country=us"
+    },
+    {
+      "k": "Price",
+      "v": "$4.99/week, $9.99/month or $59.99/year",
+      "label": "Claimed",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/mindset-app.md"
+    }
+  ],
+  "series": {
+    "what": "Revenue each month",
+    "label": "Verified",
+    "source": "https://trustmrr.com/startup/mindset-app",
+    "points": [
+      [
+        "Dec 2025",
+        17629
+      ],
+      [
+        "Jan 2026",
+        33176
+      ],
+      [
+        "Feb 2026",
+        19282
+      ],
+      [
+        "Mar 2026",
+        23386
+      ],
+      [
+        "Apr 2026",
+        18239
+      ],
+      [
+        "May 2026",
+        18458
+      ],
+      [
+        "Jun 2026",
+        16224
+      ],
+      [
+        "Jul 2026",
+        23223
+      ],
+      [
+        "Aug 2026",
+        22017
+      ],
+      [
+        "Sep 2026",
+        35034
+      ],
+      [
+        "Oct 2026",
+        30780
+      ]
+    ]
+  },
+  "facts": {
+    "cost_to_start": {
+      "text": "Not public. The company called itself \"a self-funded Canadian startup\" at launch.",
+      "label": "Claimed",
+      "date": "Nov 15 2020",
+      "source": "https://www.pr.com/press-release/825405"
+    },
+    "first_revenue": {
+      "text": "Not public. Speeches were free to play at launch in 2020. TrustMRR's verified numbers start in December 2025 at $17,629.",
+      "label": "Claimed",
+      "date": "Nov 15 2020",
+      "source": "https://www.pr.com/press-release/825405"
+    },
+    "first_customers": {
+      "text": "Listeners of the founders' own YouTube motivation channels. \"Thousands of listeners\" tested the app for months before the official launch.",
+      "label": "Claimed",
+      "date": "Nov 15 2020",
+      "source": "https://www.pr.com/press-release/825405"
+    },
+    "team": {
+      "text": "1 founder listed on TrustMRR. The 2020 launch announcement names three co-founders: two YouTube channel owners and a university lecturer. TrustMRR's founder-provided team size is 6–10.",
+      "label": "Sources differ",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/mindset-app"
+    }
+  },
+  "phases": [
+    {
+      "name": "YouTube first",
+      "when": "2016 to 2019",
+      "story": "One of the co-founders started a motivational speech channel on YouTube in 2016 as a side hobby. One of his first videos got a million views in its first month. He built more channels after that, including one for students.",
+      "number": {
+        "v": "1 million views in the first month",
+        "label": "Claimed",
+        "date": "Feb 14 2024",
+        "source": "https://joelhuculak.com/articles/mystory/"
+      },
+      "lesson": "An audience you build for free can become the first customers of anything you make later."
+    },
+    {
+      "name": "Testing quietly",
+      "when": "Jan to Nov 2020",
+      "story": "The app went on the App Store in January 2020, but the team didn't announce it yet. Thousands of listeners tested it for months first. By then the team had deals with more than 20 YouTube channels to use their speeches, and a royalty system to pay those creators.",
+      "number": {
+        "v": "500+ audios at launch",
+        "label": "Claimed",
+        "date": "Nov 15 2020",
+        "source": "https://www.pr.com/press-release/825405"
+      },
+      "lesson": "Let real users test before the big launch. Fix what they hate while few people are watching."
+    },
+    {
+      "name": "The official launch",
+      "when": "Nov 2020",
+      "story": "On November 15, 2020, the team announced Mindset as an app from \"the world's biggest motivational YouTube network\". They said the partner channels had over 13 million subscribers combined. At first, the speeches were free to play.",
+      "number": {
+        "v": "13 million+ subscribers across partner channels",
+        "label": "Claimed",
+        "date": "Nov 15 2020",
+        "source": "https://www.pr.com/press-release/825405"
+      },
+      "lesson": "If you already have an audience, a launch is just telling them where to go next."
+    },
+    {
+      "name": "Slow, steady growth",
+      "when": "2021 to 2022",
+      "story": "In March 2022 the app added Skills: you earn points and level up in eight life areas. By May 2022 it had passed 100,000 users and about 300,000 audio plays a month. That's roughly a year and a half after launch, even with a huge YouTube audience.",
+      "number": {
+        "v": "100,000 users",
+        "label": "Claimed",
+        "date": "May 31 2022",
+        "source": "https://web.archive.org/web/20220717134612/https://mindsetnews.medium.com/mindset-app-reaches-100-000-user-milestone-on-its-path-to-becoming-the-go-to-motivation-e331eaa7a208"
+      },
+      "lesson": "Even with a head start, expect years of building, not weeks."
+    },
+    {
+      "name": "Alarms, streaks and subscriptions",
+      "when": "2023 to now",
+      "story": "Today the app leads with an alarm clock that wakes you to a famous speech, plus streaks, widgets and leaderboards. It charges $4.99 a week, $9.99 a month or $59.99 a year. MRR means monthly recurring revenue: money that comes in every month from subscriptions. Mindset's is $24,251. A month's revenue can be higher, because it counts all money collected that month, including yearly plans paid up front. Revenue moves between about $16,000 and $35,000 a month.",
+      "number": {
+        "v": "$35,034 in Sep 2026, the best month shown",
+        "label": "Verified",
+        "date": "Nov 18 2026",
+        "source": "https://trustmrr.com/startup/mindset-app"
+      },
+      "lesson": "Features that bring people back every day, like an alarm or a streak, are what keep a subscription alive."
+    }
+  ],
+  "moves": [
+    {
+      "when": "2016",
+      "text": "Started a motivational speech channel on YouTube as a side project",
+      "label": "Claimed",
+      "source": "https://joelhuculak.com/articles/mystory/"
+    },
+    {
+      "when": "Jan 15 2020",
+      "text": "Put the app on the App Store and let listeners test it for months",
+      "label": "Live",
+      "source": "https://itunes.apple.com/lookup?id=1487761500&country=us"
+    },
+    {
+      "when": "2020",
+      "text": "Signed content deals with 20+ YouTube channels and set up a royalty system to pay them",
+      "label": "Claimed",
+      "source": "https://www.pr.com/press-release/825405"
+    },
+    {
+      "when": "Nov 15 2020",
+      "text": "Officially launched with a press release, speeches free to play",
+      "label": "Claimed",
+      "source": "https://www.pr.com/press-release/825405"
+    },
+    {
+      "when": "Mar 2022",
+      "text": "Added Skills: points and levels across eight life areas",
+      "label": "Claimed",
+      "source": "https://web.archive.org/web/20220717134612/https://mindsetnews.medium.com/mindset-app-reaches-100-000-user-milestone-on-its-path-to-becoming-the-go-to-motivation-e331eaa7a208"
+    },
+    {
+      "when": "By 2026",
+      "text": "Added a motivational alarm clock, streaks, widgets and global leaderboards",
+      "label": "Live",
+      "source": "https://apps.apple.com/us/app/id1487761500"
+    },
+    {
+      "when": "2026",
+      "text": "Uses YouTube, Facebook, Instagram and TikTok for marketing, plus paid ads",
+      "label": "Claimed",
+      "source": "https://trustmrr.com/startup/mindset-app.md"
+    }
+  ],
+  "fact_checks": [
+    {
+      "claim": "When Mindset started",
+      "who": "TrustMRR listing, Medium press release, App Store",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/mindset-app.md",
+      "found": "TrustMRR says founded March 2018 and \"launched 2018\", and the same listing says \"live since 2020\". A 2022 press release says the company was founded in 2019 and the app officially launched in November 2020. The App Store shows a release date of January 15, 2020.",
+      "label": "Sources differ"
+    },
+    {
+      "claim": "\"1M+ users\"",
+      "who": "TrustMRR listing and App Store description",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/mindset-app.md",
+      "found": "The same TrustMRR listing estimates 600,000 users, and the app's own website said \"350,000+ Users\" in August 2026.",
+      "label": "Sources differ"
+    },
+    {
+      "claim": "\"$1M+ lifetime revenue (pre-integration)\"",
+      "who": "TrustMRR listing (founder-provided)",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/mindset-app.md",
+      "found": "TrustMRR can only verify revenue since the payment data was connected: $781,426 all-time on Nov 18 2026. Earlier revenue isn't public.",
+      "label": "Couldn't verify"
+    },
+    {
+      "claim": "\"Multiple seven figures of revenue each year\"",
+      "who": "Podcast episode description about a co-founder's YouTube company",
+      "date": "Apr 1 2026",
+      "source": "https://shows.acast.com/the-icons/episodes/49-how-to-build-a-7-figure-motivational-youtube-channel-busi",
+      "found": "This is about the YouTube media company, not the app. The app's verified revenue for the last 12 months is $280,879.",
+      "label": "Claimed"
+    }
+  ],
+  "wayback": [
+    {
+      "date": "Dec 31 2020",
+      "headline": "The Ultimate Source for Motivation",
+      "sub": "Listen to your favorite motivational speeches and get ready for the day.",
+      "prices": "Not shown",
+      "source": "https://web.archive.org/web/20201231072012/https://mindsetapp.com/"
+    },
+    {
+      "date": "Jul 5 2023",
+      "headline": "The Ultimate Source for Motivation",
+      "sub": "Page title: \"The #1 Best Motivation App to Start Your Day\"",
+      "prices": "Not shown",
+      "source": "https://web.archive.org/web/20230705203912/https://mindsetapp.com/"
+    },
+    {
+      "date": "Aug 5 2026",
+      "headline": "Motivational Speeches to Transform Your Life",
+      "sub": "4.9 Stars on the App Store · 6,000+ Motivational Audios · 350,000+ Users",
+      "prices": "Not shown",
+      "source": "https://web.archive.org/web/20260805122735/https://mindsetapp.com/"
+    }
+  ],
+  "checklist": [
+    "Pick one topic you could post about every week for a year, and post the first one this week.",
+    "Look at which of your posts or videos people save or share the most. That's the thing they'd pay for.",
+    "Ask five people who follow you what they'd want in an app or tool about that topic.",
+    "Give early testers free access and ask them one question: what almost made you stop using it?",
+    "If you use other people's content, get permission and agree how they get paid before you launch.",
+    "Add one reason to open your app every day (an alarm, a streak, a daily pick) and see if people come back."
+  ],
+  "sources": [
+    {
+      "name": "TrustMRR: Mindset App",
+      "url": "https://trustmrr.com/startup/mindset-app",
+      "what": "MRR, revenue, monthly series, subscriptions",
+      "date": "Nov 18 2026",
+      "label": "Verified"
+    },
+    {
+      "name": "TrustMRR: Mindset App (Markdown profile)",
+      "url": "https://trustmrr.com/startup/mindset-app.md",
+      "what": "Founder-provided description, founding date, team size, pricing, users, channels",
+      "date": "Nov 19 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "App Store: Mindset: Daily Motivation App",
+      "url": "https://apps.apple.com/us/app/id1487761500",
+      "what": "Features, alarm clock",
+      "date": "Nov 19 2026",
+      "label": "Live"
+    },
+    {
+      "name": "Apple lookup API",
+      "url": "https://itunes.apple.com/lookup?id=1487761500&country=us",
+      "what": "Release date Jan 15 2020, 2,809 ratings",
+      "date": "Nov 19 2026",
+      "label": "Live"
+    },
+    {
+      "name": "PR.com: launch press release",
+      "url": "https://www.pr.com/press-release/825405",
+      "what": "Official launch, co-founders' backgrounds, partner channels, self-funded",
+      "date": "Nov 15 2020",
+      "label": "Claimed"
+    },
+    {
+      "name": "Mindset App on Medium (Wayback copy)",
+      "url": "https://web.archive.org/web/20220717134612/https://mindsetnews.medium.com/mindset-app-reaches-100-000-user-milestone-on-its-path-to-becoming-the-go-to-motivation-e331eaa7a208",
+      "what": "100,000 users, Skills feature, founded 2019",
+      "date": "May 31 2022",
+      "label": "Claimed"
+    },
+    {
+      "name": "Co-founder's site: My Story",
+      "url": "https://joelhuculak.com/articles/mystory/",
+      "what": "How the YouTube channels started in 2016",
+      "date": "Feb 14 2024",
+      "label": "Claimed"
+    },
+    {
+      "name": "The Icons podcast episode",
+      "url": "https://shows.acast.com/the-icons/episodes/49-how-to-build-a-7-figure-motivational-youtube-channel-busi",
+      "what": "YouTube company revenue claim",
+      "date": "Apr 1 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "Wayback Machine: mindsetapp.com, Dec 31 2020",
+      "url": "https://web.archive.org/web/20201231072012/https://mindsetapp.com/",
+      "what": "Homepage headline",
+      "date": "Dec 31 2020",
+      "label": "Wayback"
+    },
+    {
+      "name": "Wayback Machine: mindsetapp.com, Jul 5 2023",
+      "url": "https://web.archive.org/web/20230705203912/https://mindsetapp.com/",
+      "what": "Homepage headline",
+      "date": "Jul 5 2023",
+      "label": "Wayback"
+    },
+    {
+      "name": "Wayback Machine: mindsetapp.com, Aug 5 2026",
+      "url": "https://web.archive.org/web/20260805122735/https://mindsetapp.com/",
+      "what": "Homepage headline and user claims",
+      "date": "Aug 5 2026",
+      "label": "Wayback"
+    }
+  ]
+}

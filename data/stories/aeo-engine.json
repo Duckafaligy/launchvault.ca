@@ -1,0 +1,123 @@
+{
+  "slug": "aeo-engine",
+  "name": "AEO Engine",
+  "category": "Service",
+  "what": "An agency (a company hired to do work for clients) that gets brands to show up in AI answers like ChatGPT and Google AI Overviews.",
+  "logo": "/assets/logos/aeoengine.png",
+  "site": "https://aeoengine.ai",
+  "published": "2026-11-19",
+  "read_min": 8,
+  "title": "AEO Engine turned an old Amazon ad agency into a $204K month by renaming itself for the AI search wave",
+  "dek": "It did not start from zero. An Amazon marketing agency from 2018 re-launched as an 'answer engine' agency in January 2026, just as brands started asking how to show up in ChatGPT. Its MRR (monthly recurring revenue: what clients pay every month) is $190,513, read straight from Stripe. A month's revenue is the money actually collected that month, so it doesn't match MRR exactly.",
+  "pattern": "Ride a wave",
+  "numbers": [
+    {"k": "MRR", "v": "$190,513", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/aeo-engine"},
+    {"k": "Revenue in Oct 2026", "v": "$204,043", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/aeo-engine"},
+    {"k": "Revenue, all-time", "v": "$2,787,226", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/aeo-engine"},
+    {"k": "Active subscriptions", "v": "63", "label": "Verified", "date": "Nov 19 2026", "source": "https://trustmrr.com/startup/aeo-engine.md"},
+    {"k": "Starting price", "v": "$1,597/mo", "label": "Live", "date": "Nov 19 2026", "source": "https://aeoengine.ai/pricing"}
+  ],
+  "series": {
+    "what": "Revenue each month",
+    "label": "Verified",
+    "source": "https://trustmrr.com/startup/aeo-engine",
+    "points": [
+      ["Dec 2025", 62797],
+      ["Jan 2026", 65126],
+      ["Feb 2026", 67223],
+      ["Mar 2026", 98264],
+      ["Apr 2026", 76847],
+      ["May 2026", 75188],
+      ["Jun 2026", 76832],
+      ["Jul 2026", 108658],
+      ["Aug 2026", 80169],
+      ["Sep 2026", 164301],
+      ["Oct 2026", 204043]
+    ]
+  },
+  "facts": {
+    "cost_to_start": {"text": "$1,000, as told to a founder-story site.", "label": "Claimed", "date": "Apr 10 2026", "source": "https://founderbase.ai/interviews/aeo-engine"},
+    "first_revenue": {"text": "Not public. The business says its roots go back to an Amazon marketing agency started in 2018, so it already had paying clients before the AEO Engine name.", "label": "Claimed", "date": "Nov 19 2026", "source": "https://aeoengine.ai/about"},
+    "first_customers": {"text": "Not public. The company says the older agency served 100+ Amazon and Shopify brands, and the team is closely tied to Amazon seller communities and events.", "label": "Claimed", "date": "Nov 19 2026", "source": "https://aeoengine.ai/llm-info"},
+    "team": {"text": "1 founder listed on TrustMRR. The company's own About page also lists a co-founder.", "label": "Sources differ", "date": "Nov 19 2026", "source": "https://aeoengine.ai/about"}
+  },
+  "phases": [
+    {
+      "name": "An Amazon agency",
+      "when": "2018 to 2024",
+      "story": "The business began as FosterFBA, which helped people sell on Amazon. FBA means Fulfilled by Amazon: Amazon stores and ships the seller's products. In January 2019 its homepage offered product research, listing optimization and free tools. By 2023 it called itself a 'Data Driven Amazon Advertising Agency' and offered a free audit to get calls booked.",
+      "number": {"v": "\"Research, Optimize & Scale your Amazon FBA Business\"", "label": "Wayback", "date": "Jan 21 2019", "source": "https://web.archive.org/web/20190121171201/http://fosterfba.com/"},
+      "lesson": "A small service business can run for years and build skills you can carry into the next thing."
+    },
+    {
+      "name": "Spotting the new search",
+      "when": "2025",
+      "story": "People started asking ChatGPT and Google's AI answers instead of clicking search results. The company says it was already doing AI search work through 2025. By October 2025 aeoengine.ai was live, promising to get brands 'featured in ChatGPT, Google AI & Perplexity answers' and offering a free audit.",
+      "number": {"v": "aeoengine.ai first archived Oct 30 2025", "label": "Wayback", "date": "Oct 30 2025", "source": "https://web.archive.org/web/20251030213942/https://aeoengine.ai/"},
+      "lesson": "When the way people search changes, the people who already know the old way have a head start on the new one."
+    },
+    {
+      "name": "A new name",
+      "when": "Jan 2026",
+      "story": "The company says it 'formalized' the AEO Engine brand around January 2026. AEO means answer engine optimization: making sure an AI recommends you when someone asks a question. It is like SEO (getting found on Google), but for AI answers. That month a founder-story site listed it at $65,000 a month, which matches the Stripe numbers.",
+      "number": {"v": "$65,126 in Jan 2026", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/aeo-engine"},
+      "lesson": "A clear name for what you do can matter as much as the work itself."
+    },
+    {
+      "name": "Showing up everywhere",
+      "when": "Mar to Apr 2026",
+      "story": "In March 2026 it started a podcast about AI search, now billed as a daily show. In April the founder gave the AEO talk at a big Amazon seller conference in Nashville, where the agency's old clients gather. Revenue jumped to $98K in March, then settled around $75K to $77K a month.",
+      "number": {"v": "$98,264 in Mar 2026", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/aeo-engine"},
+      "lesson": "Go where your existing customers already are and teach them something new."
+    },
+    {
+      "name": "The jump",
+      "when": "Sep to Oct 2026",
+      "story": "Revenue went from about $80K in August to $164K in September and $204K in October. Plans are public: $1,597 or $2,997 a month, or custom from $10,000. In November it published an 'Answer Index' ranking how visible 100 law firms are in AI answers. We couldn't find a public reason for the September jump.",
+      "number": {"v": "$204,043 in Oct 2026", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/aeo-engine"},
+      "lesson": "Public prices and free reports let buyers say yes faster."
+    }
+  ],
+  "moves": [
+    {"when": "2018", "text": "Started an Amazon seller marketing agency (FosterFBA)", "label": "Claimed", "source": "https://aeoengine.ai/pr"},
+    {"when": "2019", "text": "Gave away free tools and a free product audit to bring in Amazon sellers", "label": "Wayback", "source": "https://web.archive.org/web/20190121171201/http://fosterfba.com/"},
+    {"when": "Oct 2025", "text": "Launched aeoengine.ai with a free AI-visibility audit", "label": "Wayback", "source": "https://web.archive.org/web/20251030213942/https://aeoengine.ai/"},
+    {"when": "Jan 2026", "text": "Re-launched the business under the AEO Engine name", "label": "Claimed", "source": "https://aeoengine.ai/about"},
+    {"when": "Mar 2026", "text": "Started a podcast about AI search (episode 3 is dated Mar 12 2026), now daily", "label": "Live", "source": "https://aeoengine.ai/podcast/dominating-ai-search-why-first-movers-win-with-aeo-engine"},
+    {"when": "Apr 2026", "text": "Gave the main AEO talk at an Amazon seller conference in Nashville", "label": "Claimed", "source": "https://aeoengine.ai/about"},
+    {"when": "Nov 2026", "text": "Published a free 'Answer Index' ranking 100 law firms' AI visibility", "label": "Live", "source": "https://aeoengine.ai/"}
+  ],
+  "fact_checks": [
+    {"claim": "$65,000 a month in revenue", "who": "Founder-story profile on FounderBase (first archived Apr 10 2026)", "date": "Apr 10 2026", "source": "https://founderbase.ai/interviews/aeo-engine", "found": "Stripe shows $65,126 in January 2026 and $67,223 in February 2026. The claim matches.", "label": "Verified"},
+    {"claim": "Founded in 2018", "who": "TrustMRR profile and company PR page", "date": "Nov 19 2026", "source": "https://aeoengine.ai/pr", "found": "True for the older Amazon agency; the AEO Engine name dates from about January 2026. All-time revenue is $2.79M, but only $1.08M of it falls in the monthly chart (Dec 2025 to Oct 2026). We couldn't verify how much of the rest came from the old Amazon agency work.", "label": "Couldn't verify"},
+    {"claim": "One founder", "who": "TrustMRR listing", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/aeo-engine", "found": "The company's About page lists a founder and CEO plus a co-founder and CMO.", "label": "Sources differ"},
+    {"claim": "Serves 50+ brands worldwide", "who": "Company About page", "date": "Nov 19 2026", "source": "https://aeoengine.ai/about", "found": "Stripe shows 63 active subscriptions on Nov 19 2026. One brand can hold more than one subscription, so this fits but doesn't prove the number.", "label": "Claimed"}
+  ],
+  "wayback": [
+    {"date": "Jan 21 2019", "headline": "Research, Optimize & Scale your Amazon FBA Business", "sub": "Product research, listing optimization, free tools and a free product audit", "prices": "Not captured", "source": "https://web.archive.org/web/20190121171201/http://fosterfba.com/"},
+    {"date": "Feb 3 2023", "headline": "SCALE YOUR ADVERTISING SALES ON AMAZON", "sub": "Get Your Free Audit + Strategy Session", "prices": "Not shown", "source": "https://web.archive.org/web/20230203155149/http://fosterfba.com/"},
+    {"date": "Jan 25 2025", "headline": "Profitably Scale with Our Amazon Advertising Agency Services", "sub": "Get Your Free Audit + Strategy Session", "prices": "Not shown", "source": "https://web.archive.org/web/20250125181133/http://fosterfba.com/"},
+    {"date": "Oct 30 2025", "headline": "Best Results-Oriented Answer Engine Optimization, AI SEO Company - AEO Engine", "sub": "Own AI search results. AEO Engine helps ambitious brands dominate ChatGPT, Google AI, and Perplexity. 920% average AI traffic growth. Start your free audit.", "prices": "Not captured", "source": "https://web.archive.org/web/20251030213942/https://aeoengine.ai/"},
+    {"date": "Nov 19 2026", "headline": "The AI SEO agency that makes you the answer in AI Overviews, ChatGPT, and Google.", "sub": "Live site, not an archive", "label": "Live", "prices": "$1,597/mo, $2,997/mo, from $10,000/mo", "source": "https://aeoengine.ai/pricing"}
+  ],
+  "checklist": [
+    "Write down one skill you already have (editing, design, a game, a sport) and one new tool or trend it connects to.",
+    "Ask ChatGPT a question your favourite local shop's customers would ask, and see whether the shop shows up in the answer.",
+    "Make a free one-page 'audit' you could give a business, like a list of 5 fixes for their Instagram or website.",
+    "Pick one place your target customers already gather (a Discord, a club, a subreddit) and post one useful tip there.",
+    "Put a real price on your offer before anyone asks, even if it's small.",
+    "Rank 10 local businesses on one thing you can check (reviews, menu online, opening hours right) and share the list."
+  ],
+  "sources": [
+    {"name": "TrustMRR: AEO Engine", "url": "https://trustmrr.com/startup/aeo-engine", "what": "MRR, revenue, monthly series, founder count", "date": "Nov 18 2026", "label": "Verified"},
+    {"name": "TrustMRR: AEO Engine (markdown profile)", "url": "https://trustmrr.com/startup/aeo-engine.md", "what": "Active subscriptions, founded date, daily revenue", "date": "Nov 19 2026", "label": "Verified"},
+    {"name": "AEO Engine: About", "url": "https://aeoengine.ai/about", "what": "Team, founding history, brands served, Nashville keynote", "date": "Nov 19 2026", "label": "Claimed"},
+    {"name": "AEO Engine: PR and newsroom", "url": "https://aeoengine.ai/pr", "what": "FosterFBA roots, 2026 re-brand, FounderBase link", "date": "Mar 21 2026", "label": "Claimed"},
+    {"name": "AEO Engine: company facts page", "url": "https://aeoengine.ai/llm-info", "what": "Founding timeline, 100+ Amazon and Shopify brands", "date": "Nov 19 2026", "label": "Claimed"},
+    {"name": "AEO Engine: Pricing", "url": "https://aeoengine.ai/pricing", "what": "Plan prices", "date": "Nov 19 2026", "label": "Live"},
+    {"name": "AEO Engine: Podcast", "url": "https://aeoengine.ai/podcast", "what": "Daily podcast", "date": "Nov 19 2026", "label": "Live"},
+    {"name": "FounderBase: AEO Engine", "url": "https://founderbase.ai/interviews/aeo-engine", "what": "$65,000/mo, 70% margin, $1,000 startup cost", "date": "Apr 10 2026", "label": "Claimed"},
+    {"name": "Wayback: fosterfba.com", "url": "https://web.archive.org/web/20190121171201/http://fosterfba.com/", "what": "2019, 2023 and 2025 homepages of the older agency", "date": "Jan 21 2019", "label": "Wayback"},
+    {"name": "Wayback: aeoengine.ai", "url": "https://web.archive.org/web/20251030213942/https://aeoengine.ai/", "what": "First archived AEO Engine homepage", "date": "Oct 30 2025", "label": "Wayback"}
+  ]
+}

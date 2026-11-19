@@ -1,0 +1,336 @@
+{
+  "slug": "upscale-b2b",
+  "name": "Upscale B2B",
+  "category": "Service",
+  "what": "Runs done-for-you outbound sales campaigns (email, calls, LinkedIn) for B2B companies (businesses that sell to other businesses), and sells the email inboxes those campaigns send from. TrustMRR lists it as \"Upscale System LLC\".",
+  "logo": "/assets/logos/upscaleb2b.png",
+  "site": "https://upscaleb2b.com",
+  "published": "2026-11-19",
+  "read_min": 7,
+  "title": "Upscale B2B sold $3 email inboxes to cold-email agencies, then became one, and now makes about $99K a month",
+  "dek": "It started by selling the 'picks and shovels' of cold email (the tools everyone doing it needs): ready-to-send inboxes for a few dollars a month. Then it started running campaigns itself, with a free-to-try pilot. Its MRR (monthly recurring revenue: what customers pay every month) is $140,324, read straight from Stripe. That is higher than October's revenue, the money actually collected that month, so the two numbers don't match.",
+  "pattern": "Sell the tools to people already in the game",
+  "numbers": [
+    {
+      "k": "MRR",
+      "v": "$140,324",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/upscale-system-llc"
+    },
+    {
+      "k": "Revenue in Oct 2026",
+      "v": "$99,409",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/upscale-system-llc"
+    },
+    {
+      "k": "Revenue, all-time",
+      "v": "$917,179",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/upscale-system-llc"
+    },
+    {
+      "k": "Active subscriptions",
+      "v": "471",
+      "label": "Verified",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/upscale-system-llc.md"
+    },
+    {
+      "k": "Inbox price",
+      "v": "$2 to $7/mo each",
+      "label": "Wayback",
+      "date": "May 19 2025",
+      "source": "https://web.archive.org/web/20250519142957/https://upscaleb2b.com/"
+    }
+  ],
+  "series": {
+    "what": "Revenue each month",
+    "label": "Verified",
+    "source": "https://trustmrr.com/startup/upscale-system-llc",
+    "points": [
+      [
+        "Dec 2025",
+        33908
+      ],
+      [
+        "Jan 2026",
+        42791
+      ],
+      [
+        "Feb 2026",
+        41794
+      ],
+      [
+        "Mar 2026",
+        39319
+      ],
+      [
+        "Apr 2026",
+        44918
+      ],
+      [
+        "May 2026",
+        46378
+      ],
+      [
+        "Jun 2026",
+        85327
+      ],
+      [
+        "Jul 2026",
+        60391
+      ],
+      [
+        "Aug 2026",
+        65648
+      ],
+      [
+        "Sep 2026",
+        84575
+      ],
+      [
+        "Oct 2026",
+        99409
+      ]
+    ]
+  },
+  "facts": {
+    "cost_to_start": {
+      "text": "Not public",
+      "label": null
+    },
+    "first_revenue": {
+      "text": "Not public. By May 2025 the site was selling ready-to-send Google and Microsoft email inboxes from $2 to $7 a month each.",
+      "label": "Wayback",
+      "date": "May 19 2025",
+      "source": "https://web.archive.org/web/20250519142957/https://upscaleb2b.com/"
+    },
+    "first_customers": {
+      "text": "Not public. The 2025 site says it was 'specially built for Lead gen Agency Owners' who send cold email for their clients.",
+      "label": "Wayback",
+      "date": "May 19 2025",
+      "source": "https://web.archive.org/web/20250519142957/https://upscaleb2b.com/"
+    },
+    "team": {
+      "text": "1 founder listed on TrustMRR",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/upscale-system-llc"
+    }
+  },
+  "phases": [
+    {
+      "name": "Fixing their own problem",
+      "when": "2023 to 2024",
+      "story": "Cold email means emailing businesses that don't know you yet. To send a lot without landing in spam, agencies (companies that do this work for clients) need many 'warmed up' inboxes: new inboxes used gently at first so email providers trust them. The company's site says it had been burned by bad inbox providers, 'That's why we started Upscale B2B'. TrustMRR lists March 2023 as the founding date.",
+      "number": {
+        "v": "Founded Mar 31 2023",
+        "label": "Claimed",
+        "date": "Nov 19 2026",
+        "source": "https://trustmrr.com/startup/upscale-system-llc.md"
+      },
+      "lesson": "A problem that annoys you at work is often a problem other people will pay to make go away."
+    },
+    {
+      "name": "Selling inboxes to agencies",
+      "when": "Dec 2024 to 2025",
+      "story": "The site sold Google Workspace and Microsoft inboxes, set up and warmed, for $2 to $7 a month each, with a free domain (a web address). Bigger buyers got lower prices: $2.50 each at 100 inboxes, $2 at 1,000. A sales calculator showed how many deals more inboxes could bring.",
+      "number": {
+        "v": "$2 to $7 per inbox per month",
+        "label": "Wayback",
+        "date": "May 19 2025",
+        "source": "https://web.archive.org/web/20250519142957/https://upscaleb2b.com/"
+      },
+      "lesson": "Selling to businesses that already spend money on a problem is easier than convincing someone they have one."
+    },
+    {
+      "name": "A separate brand for inboxes",
+      "when": "Apr to Nov 2025",
+      "story": "The inbox business got its own site, warminboxes.com, first archived in April 2025 with 'Get FREE Warmed-Up Domains'. By November 2025 its headline promised '90%+ Deliverability' (the share of emails that land in the inbox, not spam). The founder's TrustMRR account is named after it.",
+      "number": {
+        "v": "\"Get FREE Warmed-Up Domains\"",
+        "label": "Wayback",
+        "date": "Apr 18 2025",
+        "source": "https://web.archive.org/web/20250418000920/https://warminboxes.com/"
+      },
+      "lesson": "If one product sells itself, give it its own name and page so people can find it."
+    },
+    {
+      "name": "Running campaigns, try first",
+      "when": "Jan 2026 to now",
+      "story": "By January 2026 upscaleb2b.com led with done-for-you lead generation (finding possible customers for a business) and a trial: 'the only provider offering a trial for fully managed lead generation'. It runs a small pilot campaign first, then grows it if it works. Revenue went from about $34K in December 2025 to $99K in October 2026.",
+      "number": {
+        "v": "$99,409 in Oct 2026",
+        "label": "Verified",
+        "date": "Nov 18 2026",
+        "source": "https://trustmrr.com/startup/upscale-system-llc"
+      },
+      "lesson": "Letting customers try before they commit can win clients who would never sign a big contract cold."
+    }
+  ],
+  "moves": [
+    {
+      "when": "2023",
+      "text": "Started after bad experiences with other inbox providers",
+      "label": "Claimed",
+      "source": "https://web.archive.org/web/20250519142957/https://upscaleb2b.com/"
+    },
+    {
+      "when": "Apr 2025",
+      "text": "Spun the inbox product into its own brand, WarmInboxes",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20250418000920/https://warminboxes.com/"
+    },
+    {
+      "when": "May 2025",
+      "text": "Sold warmed Google and Microsoft inboxes from $2 to $7 a month, with bulk discounts",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20250519142957/https://upscaleb2b.com/"
+    },
+    {
+      "when": "May 2025",
+      "text": "Gave away a free .com domain with every inbox purchase",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20250519142957/https://upscaleb2b.com/"
+    },
+    {
+      "when": "Jan 2026",
+      "text": "Switched the main site to done-for-you lead generation with a trial",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20260122011400/https://upscaleb2b.com/"
+    },
+    {
+      "when": "2026",
+      "text": "Listed in Instantly's (a cold-email software company) expert directory",
+      "label": "Live",
+      "source": "https://instantly.ai/experts/upscale-b2b-huz-majeed"
+    }
+  ],
+  "fact_checks": [
+    {
+      "claim": "\"We sell CRM and Lead generation softwares.\"",
+      "who": "TrustMRR profile description, written by the founder",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/upscale-system-llc.md",
+      "found": "The company's own site describes it as 'a done-for-you outbound agency and email infrastructure provider'. We found no CRM product (software for tracking customers).",
+      "label": "Sources differ"
+    },
+    {
+      "claim": "Sends over 1 million cold emails every quarter",
+      "who": "Partner directory profile",
+      "date": "Nov 19 2026",
+      "source": "https://instantly.ai/experts/upscale-b2b-huz-majeed",
+      "found": "The company's own site says '1 million emails sent per month', three times as much.",
+      "label": "Sources differ"
+    },
+    {
+      "claim": "MRR of $140,324",
+      "who": "TrustMRR",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/upscale-system-llc",
+      "found": "October 2026 revenue was $99,409. MRR counts what active subscriptions will pay each month now, so it can be higher than last month's revenue if new subscriptions started in November.",
+      "label": "Verified"
+    },
+    {
+      "claim": "Founded March 31 2023",
+      "who": "TrustMRR profile",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/upscale-system-llc.md",
+      "found": "The first Wayback capture of upscaleb2b.com (Apr 16 2024) is only a redirect. The first readable homepage is from December 2024.",
+      "label": "Couldn't verify"
+    }
+  ],
+  "wayback": [
+    {
+      "date": "Dec 25 2024",
+      "headline": "Deliver-ability Simplified",
+      "sub": "Cold Email Experts, Consultant, Infrastructure",
+      "prices": "Not captured",
+      "source": "https://web.archive.org/web/20241225065451/https://upscaleb2b.com/"
+    },
+    {
+      "date": "Apr 18 2025",
+      "headline": "Get FREE Warmed-Up Domains",
+      "sub": "Launch Campaigns Now! Start sending emails in minutes not weeks with pre-warmed, high-deliverability domains – at no cost! (warminboxes.com)",
+      "prices": "$2 to $7 per inbox per month",
+      "source": "https://web.archive.org/web/20250418000920/https://warminboxes.com/"
+    },
+    {
+      "date": "May 19 2025",
+      "headline": "Build your email outreach infrastructure with Google Workspace or Office 365 Email Accounts without breaking the bank.",
+      "sub": "Upscale your deliverability",
+      "prices": "Google warmed $7/mo; Starter $3/mo; Growth $2.50/mo (100 min); Agency $2/mo (1,000 min); Microsoft $4/mo (500 min)",
+      "source": "https://web.archive.org/web/20250519142957/https://upscaleb2b.com/"
+    },
+    {
+      "date": "Jan 22 2026",
+      "headline": "Upscale B2B - B2B Growth Partners",
+      "sub": "We're redefining the game. Upscale B2B is the only provider offering a trial for fully managed lead generation, so you can see real results before committing.",
+      "prices": "Not captured",
+      "source": "https://web.archive.org/web/20260122011400/https://upscaleb2b.com/"
+    }
+  ],
+  "checklist": [
+    "List 3 tools or supplies people in a hobby you know (gaming, sneakers, music) keep complaining about.",
+    "Find one group that already pays for something (like small video editors or club organisers) and ask what breaks most often.",
+    "Price one small product per unit, and write a cheaper price for people who buy 10 or more.",
+    "Offer a free 'pilot': one small piece of work for one customer, and agree first what 'it worked' means.",
+    "Make a simple calculator in Google Sheets that shows a customer what they'd get if they bought more.",
+    "Ask one happy customer for a one-sentence review you can put on your page."
+  ],
+  "sources": [
+    {
+      "name": "TrustMRR: Upscale System LLC",
+      "url": "https://trustmrr.com/startup/upscale-system-llc",
+      "what": "MRR, revenue, monthly series, founder count",
+      "date": "Nov 18 2026",
+      "label": "Verified"
+    },
+    {
+      "name": "TrustMRR: Upscale System LLC (markdown profile)",
+      "url": "https://trustmrr.com/startup/upscale-system-llc.md",
+      "what": "Active subscriptions, founded date, description",
+      "date": "Nov 19 2026",
+      "label": "Verified"
+    },
+    {
+      "name": "Wayback: upscaleb2b.com",
+      "url": "https://web.archive.org/web/20250519142957/https://upscaleb2b.com/",
+      "what": "Inbox prices and origin story, May 2025",
+      "date": "May 19 2025",
+      "label": "Wayback"
+    },
+    {
+      "name": "Wayback: upscaleb2b.com",
+      "url": "https://web.archive.org/web/20260122011400/https://upscaleb2b.com/",
+      "what": "Switch to managed lead gen with a trial",
+      "date": "Jan 22 2026",
+      "label": "Wayback"
+    },
+    {
+      "name": "Wayback: warminboxes.com",
+      "url": "https://web.archive.org/web/20250418000920/https://warminboxes.com/",
+      "what": "Separate inbox brand",
+      "date": "Apr 18 2025",
+      "label": "Wayback"
+    },
+    {
+      "name": "Instantly expert directory: Upscale B2B",
+      "url": "https://instantly.ai/experts/upscale-b2b-huz-majeed",
+      "what": "Services, $2K to $5K pricing, claimed email volume",
+      "date": "Nov 19 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "Upscale B2B homepage",
+      "url": "https://upscaleb2b.com/",
+      "what": "Pilot-first model, '1 million emails sent per month'",
+      "date": "Nov 19 2026",
+      "label": "Live"
+    }
+  ]
+}

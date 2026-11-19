@@ -1,5 +1,5 @@
 /* LaunchVault story chart: one renderer for the app reader and the generated blog posts.
-   Data comes from the story JSON (design/data/stories/<slug>.json), embedded as <script type="application/json" class="lvchart-data">.
+   Data comes from the story JSON (data/stories/<slug>.json), embedded as <script type="application/json" class="lvchart-data">.
    Monotone curve through the REAL points (no invented values), label-styled points, numbered move markers on the axis,
    a fixed-size readout above the plot (nothing shifts on hover), keyboard + touch, reduced-motion safe. */
 (() => {

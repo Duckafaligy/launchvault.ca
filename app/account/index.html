@@ -6,6 +6,9 @@
 <title>Account · LaunchVault</title>
 <meta name="description" content="Your account, plan, email and data.">
 <meta name="robots" content="noindex">
+<meta property="og:title" content="Account · LaunchVault">
+<meta property="og:description" content="Your account, plan, email and data.">
+<meta property="og:image" content="https://launchvault-site.vercel.app/assets/covers/postiz.png">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
@@ -46,12 +49,12 @@
   <div class="card"><div class="arow" data-auth-only hidden><span class="k">Email</span><span class="v" data-auth-email></span></div>
     <div class="arow"><span class="k">Age range</span><span class="v" data-agenote>Set your age range so the right rules apply.</span>
       <select id="agesel" aria-label="Age range"><option value="">Choose</option><option>13 to 15</option><option>16 to 17</option><option>18 to 20</option><option>21 or older</option></select></div></div></section>
-<section class="asec" id="plan"><div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap"><div><h2>Plan and billing</h2><p>Prices are placeholders until launch. Cancel any time.</p></div>
+<section class="asec" id="plan"><div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap"><div><h2>Plan and billing</h2><p>Payments open with accounts. Cancel any time.</p></div>
   <div class="seg" role="group" aria-label="Billing"><button type="button" data-bill="m" aria-pressed="false">Monthly</button><button type="button" data-bill="y" aria-pressed="true">Yearly <small style="color:#2563EB">save up to 20%</small></button></div></div>
   <div class="plans">
-    <div class="plan2 cur"><div class="ph2">Free<small>Your plan</small></div><div class="pp">$0</div><p>Weekly email, this week's breakdown, the quiz and 3 matched stories, every source, checklists on this device.</p></div>
-    <div class="plan2"><div class="ph2">Pro</div><div class="pp" data-pr="pro">$4</div><div class="ps" data-ps="pro">a month, billed yearly · $5 monthly</div><p>Every breakdown, checklists saved to your account, your path saved and updated as stories land.</p></div>
-    <div class="plan2"><div class="ph2">Builder</div><div class="pp" data-pr="builder">$10</div><div class="ps" data-ps="builder">a month, billed yearly · $12 monthly</div><p>Everything in Pro, plus a worksheet per story, request a breakdown and early access. All coming soon.</p></div>
+    <div class="plan2 cur"><div class="ph2">Free<small>Your plan</small></div><div class="pp">$0</div><p>This week's breakdown plus the first phase of every other story, the quiz and 3 matched stories, every source, checklists on this device.</p></div>
+    <div class="plan2"><div class="ph2">Pro</div><div class="pp" data-pr="pro">$6.49</div><div class="ps" data-ps="pro">a month, $77.88 billed yearly · $7.99 monthly</div><p>Every breakdown, checklists saved to your account, your path saved and updated as stories land.</p></div>
+    <div class="plan2"><div class="ph2">Developer</div><div class="pp" data-pr="developer">$23.99</div><div class="ps" data-ps="developer">a month, $287.88 billed yearly · $29.99 monthly</div><p>Everything in Pro, plus templates and worksheets for every story, 2 breakdown requests a month, new breakdowns 48 hours early, CSV/JSON downloads, API access and priority mistake reports. All coming soon.</p></div>
   </div>
   <p class="note" style="margin-top:12px">Payments will run through Stripe and receipts go to whoever pays. Nothing to pay yet: plans open with accounts.</p></section>
 <section class="asec" id="parent"><h2>Parent pays</h2><p>Under 18? A parent pays and gets the receipts. Send them a link; they choose the plan.</p>

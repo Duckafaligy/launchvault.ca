@@ -17,11 +17,11 @@
     let m = f.nextElementSibling; if (!m || !m.classList.contains("fmsg")) { m = document.createElement("p"); m.className = "fmsg"; m.setAttribute("role", "status"); f.after(m); }
     m.textContent = "Sign-ups open soon. This is a preview."; m.classList.add("on");
   }));
-  // ?plan=pro|builder|full on /signup/ shows the plan note; .pname (if present) gets the plan's name
+  // ?plan=pro|developer|builder(alias)|full on /signup/ shows the plan note; .pname (if present) gets the plan's name
   const plan = new URLSearchParams(location.search).get("plan"), pn = $("#plannote");
-  if (pn && plan && /^(pro|builder|full)$/.test(plan)) { pn.hidden = false; const nm = pn.querySelector(".pname"); if (nm) nm.textContent = plan === "builder" ? "Builder" : "Pro"; }
+  if (pn && plan && /^(pro|developer|builder|full)$/.test(plan)) { pn.hidden = false; const nm = pn.querySelector(".pname"); if (nm) nm.textContent = /^(developer|builder)$/.test(plan) ? "Developer" : "Pro"; }
   $$("a.parentmail").forEach(a => { const url = location.origin + "/#pricing";
-    a.href = "mailto:?subject=" + encodeURIComponent("LaunchVault") + "&body=" + encodeURIComponent("Can you look at this? Pro is $5 a month (or $4 a month billed yearly), cancel anytime, and payments go through Stripe: " + url); });
+    a.href = "mailto:?subject=" + encodeURIComponent("LaunchVault") + "&body=" + encodeURIComponent("Can you look at this? Pro is $7.99 a month (or $6.49 a month billed yearly, $77.88 a year), cancel anytime, and payments go through Stripe: " + url); });
 
   // ---------- scroll reveal: rise + fade, staggered within each batch ----------
   if (IO && !reduce) {
@@ -252,7 +252,7 @@
   if (win) {
     const post = win.querySelector('.view[data-view="postiz"]'), views = $$(".view.vx", win), sis = $$(".side .si", win);
     const drawer = $("#sdrawer"), srcbtn = $("#srcbtn"), search = $("#wsearch"), url = $("#wurl"), sres = $("#sres"), crumb = $("#wcrumb");
-    // every company fact comes from design/data/stories.json, embedded by src/_hero_gen.py
+    // every company fact comes from data/stories.json, embedded by src/_hero_gen.py
     const LV = (() => { try { return JSON.parse($("#lvdata").textContent); } catch { return { co: {}, search: [] }; } })();
     const NAME = { postiz: "Postiz", home: "Home", breakdowns: "Library", checklists: "Checklists", path: "My path" };
     const URLS = { postiz: "/library/postiz", home: "/home", breakdowns: "/library", checklists: "/checklists", path: "/path" };

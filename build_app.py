@@ -1,8 +1,8 @@
 """Build the LaunchVault app (/app/) and every story page from data. No hand-editing of output.
 
 Inputs (nothing else):
-  ../design/data/stories/<slug>.json   one file per READY story (see SCHEMA.md); validated here
-  ../design/data/stories.json          the 13 companies' TrustMRR numbers; any company without a story file stays "Coming soon"
+  data/stories/<slug>.json   one file per READY story (see SCHEMA.md); validated here
+  data/stories.json                  the 13 companies' TrustMRR numbers; any company without a story file stays "Coming soon"
   src/app/*.body.html                  static app page bodies (tokens filled here)
 Outputs:
   app/**/index.html                    Home, Library, readers (/app/story/<slug>/, /app/postiz/ alias), coming-soon pages, path, checklists, account, start, not-found
@@ -14,7 +14,7 @@ Run:  python build_app.py            (publish one story: python publish_story.py
 """
 import json, math, os, re, html, glob, sys, shutil, subprocess
 ROOT = os.path.dirname(os.path.abspath(__file__)); SRC = os.path.join(ROOT, "src")
-DATA = os.path.join(ROOT, "..", "design", "data")
+DATA = os.path.join(ROOT, "data")
 sys.path.insert(0, ROOT)
 import build  # public shell: HEAD, nav, footer, og, PAGES
 
@@ -134,6 +134,13 @@ def normalize(S):
     for m in S.get("moves") or []:
         if not m.get("at") and ym(m.get("when", "")): m["at"] = ym(m["when"])
     return S
+def _today():
+    import datetime as dt
+    try:
+        from zoneinfo import ZoneInfo; return dt.datetime.now(ZoneInfo("America/Toronto")).date().isoformat()
+    except Exception: return (dt.datetime.utcnow() - dt.timedelta(hours=5)).date().isoformat()
+TODAY = os.environ.get("LV_TODAY") or _today()   # stories dated after today stay hidden until that day
+
 def load_ready(strict=True):
     out = []
     for p in sorted(glob.glob(os.path.join(DATA, "stories", "*.json"))):
@@ -142,6 +149,7 @@ def load_ready(strict=True):
             msg = f"{os.path.basename(p)}:\n  - " + "\n  - ".join(e)
             if strict: raise SystemExit("INVALID STORY " + msg)
             print("skipped (invalid) " + msg); continue
+        if S["published"] > TODAY: print(f"scheduled {S['slug']} for {S['published']}"); continue
         out.append(S)
     hv = lambda S: (S.get("headline") or {}).get("value") or int(re.sub(r"[^0-9]", "", S["numbers"][0]["v"]) or 0)
     return sorted(out, key=lambda s: (s["published"], hv(s)), reverse=True)   # stale ones are moved after fresh ones of the same day in main()   # newest first; same day: biggest verified number first
@@ -200,7 +208,7 @@ def spark(series, cls="spark", name=""):
 SIDE_SOON = ["dm-champ", "stencil-ai", "windmill-growth", "gojiberry"]
 def head(title, desc, extra="", og_slug=""):
     og = (NL + f'<meta property="og:title" content="{esc(title)}">' + NL + f'<meta property="og:description" content="{esc(desc)}">' + NL
-          + f'<meta property="og:image" content="https://launchvault-site.vercel.app/assets/covers/{og_slug}.png">') if og_slug else ""
+          + f'<meta property="og:image" content="https://launchvault-site.vercel.app/assets/covers/{og_slug or "postiz"}.png">')
     return f'''<!doctype html>
 <html lang="en">
 <head>
@@ -375,7 +383,7 @@ def reader(E, S, gate=True):
     gate_html = (f'<div class="gate" id="gate"><h3>{ic(I["lock"], 18)}The rest of this breakdown is on Pro</h3><p>Phase 1, the numbers, the chart and the Sources stay free.</p>'
                  f'<div class="lk"><small>Locked on Free</small>Phases 2 to {n} · Then and now · Fact check</div>'
                  '<div class="acts"><a class="btn btn-p" href="/app/account/#plan">Get Pro</a><a class="btn btn-s" href="/app/account/#parent">Under 18? Send a parent link</a></div>'
-                 '<p class="fine">$5 a month · $4 billed yearly · placeholder. Cancel any time.</p></div>')
+                 '<p class="fine">$7.99 a month · $6.49 a month billed yearly. Payments open with accounts.</p></div>')
     rest = f'<div id="locked" data-locked="1" hidden>{phases_rest}{tn}{fc}</div>'
     teaser = f'<div class="gatewrap"><div class="fade" aria-hidden="true">{phase(1, S["phases"][1])}</div>{gate_html}</div>' if n > 1 else ""
     L = lambda h: "#gate" if gate and h != "#ph1" else h   # locked parts point at the Pro gate
@@ -395,7 +403,7 @@ def reader(E, S, gate=True):
     title = S["title"]; em = S.get("title_em")
     t_html = esc(title[:-len(em.rstrip("."))]) + f'<em class="em">{esc(em.rstrip("."))}</em>' if em and title.endswith(em.rstrip(".")) else esc(title)
     art = (f'{mph}<div class="rh"><span class="logo big"><img src="{S["logo"]}" alt="" width="36" height="36"></span><div><h1>{t_html}</h1><p class="dek">{esc(S["dek"])}</p>'
-           f'<div class="rmeta">{stale_chip}<span>By LaunchVault</span><span>{len(S["sources"])} sources</span><span>{S["read_min"]} min</span><span>Last checked {esc(S["numbers"][0]["date"])}</span><a href="mailto:?subject=LaunchVault%20report%3A%20{esc(slug)}">Report a mistake</a></div></div></div>'
+           f'<div class="rmeta">{stale_chip}<span>By LaunchVault</span><span>{len(S["sources"])} sources</span><span>{S["read_min"]} min</span><span>Last checked {esc(S["numbers"][0]["date"])}</span><button type="button" class="rpt" data-report="{esc(slug)}">Report a mistake</button></div></div></div>'
            f'<section class="rsec" id="numbers" style="margin-top:20px"><div class="nums5">{nums}</div></section>'
            f'<section class="rsec" id="chart"><div class="sh"><h2>Why the line moved</h2><span class="meta">{esc(S["series"]["what"])}</span></div>{chart_block(S)}</section>'
            f'{hl}<section class="rsec" id="phases"><div class="sh"><h2>Phase by phase</h2><span class="meta">{n} phases · each ends with one lesson</span></div>{phases_free}{teaser if gate else ""}</section>'

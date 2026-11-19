@@ -1,0 +1,339 @@
+{
+  "slug": "boothie",
+  "name": "Boothie",
+  "category": "Mobile app",
+  "what": "An AI photo app for iPhone and Android that restyles your selfie as film, digicam or photobooth shots.",
+  "logo": "/assets/logos/boothie.png",
+  "site": "https://boothieapp.com",
+  "published": "2026-11-19",
+  "read_min": 7,
+  "title": "Boothie made $208K in five months by riding the digicam selfie trend on TikTok",
+  "dek": "A two-person team launched an AI selfie app in June 2026, aimed it at people already posting on TikTok, and passed $56K in a single month by October. Then they put it up for sale.",
+  "pattern": "Ride a wave",
+  "numbers": [
+    {
+      "k": "Revenue in Oct 2026",
+      "v": "$56,432",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/boothie"
+    },
+    {
+      "k": "MRR (money coming in each month from subscriptions)",
+      "v": "$54,617",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/boothie"
+    },
+    {
+      "k": "Revenue, all-time (since connected)",
+      "v": "$208,574",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/boothie"
+    },
+    {
+      "k": "Active subscriptions",
+      "v": "2,401",
+      "label": "Verified",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/boothie"
+    },
+    {
+      "k": "App Store rating (US)",
+      "v": "4.3 from 41 ratings",
+      "label": "Live",
+      "date": "Nov 19 2026",
+      "source": "https://itunes.apple.com/lookup?id=6775603987&country=us"
+    },
+    {
+      "k": "Asking price to sell the app",
+      "v": "$900,000",
+      "label": "Claimed",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/boothie.md"
+    }
+  ],
+  "series": {
+    "what": "Revenue each month",
+    "label": "Verified",
+    "source": "https://trustmrr.com/startup/boothie",
+    "points": [
+      [
+        "Jun 2026",
+        4727
+      ],
+      [
+        "Jul 2026",
+        27283
+      ],
+      [
+        "Aug 2026",
+        43716
+      ],
+      [
+        "Sep 2026",
+        43416
+      ],
+      [
+        "Oct 2026",
+        56432
+      ]
+    ]
+  },
+  "facts": {
+    "cost_to_start": {
+      "text": "\"No money, no ads\" according to a sale listing; the author of the listing isn't named.",
+      "label": "Claimed",
+      "date": "Oct 1 2026",
+      "source": "https://www.whatsthe.app/boothie"
+    },
+    "first_revenue": {
+      "text": "$4,727 in June 2026, the launch month (the app came out June 23).",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/boothie"
+    },
+    "first_customers": {
+      "text": "Not public in detail. A sale listing says growth came from TikTok carousel posts; the founder's own profile says word of mouth.",
+      "label": "Sources differ",
+      "date": "Nov 9 2026",
+      "source": "https://github.com/keremcanseker/keremcanseker/blob/main/README.md"
+    },
+    "team": {
+      "text": "1 founder listed on TrustMRR. The founder's GitHub profile says it was \"built with my partner\".",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/boothie"
+    }
+  },
+  "phases": [
+    {
+      "name": "A simpler app first?",
+      "when": "Apr 2025",
+      "story": "In April 2025 a free iPhone app also called Boothie appeared: a plain vintage photobooth that takes three shots and makes a photo strip, with no AI. It came from a different developer account, and its code is public on GitHub. We couldn't confirm it is the same team, so treat this as a maybe.",
+      "number": {
+        "v": "0 US ratings",
+        "label": "Couldn't verify",
+        "date": "Nov 19 2026",
+        "source": "https://itunes.apple.com/lookup?id=6744557942&country=us"
+      },
+      "lesson": "A small free version is a cheap way to test a name and an idea before you add the expensive part."
+    },
+    {
+      "name": "Launch into a trend",
+      "when": "Jun 2026",
+      "story": "The AI app launched on June 23, 2026. You pick a look, like a 2000s digicam flash, Kodak film or a vintage photobooth, take a selfie, and get it back in that style. The basic editor is free. The AI looks cost credits, through weekly subscriptions or credit packs. It earned $4,727 in its first week.",
+      "number": {
+        "v": "$4,727 in Jun 2026",
+        "label": "Verified",
+        "date": "Nov 18 2026",
+        "source": "https://trustmrr.com/startup/boothie"
+      },
+      "lesson": "When a look is already trending, a tool that makes that exact look in one tap is easy to explain."
+    },
+    {
+      "name": "TikTok does the selling",
+      "when": "Jul to Sep 2026",
+      "story": "The app is aimed at women 16 to 40 who post on TikTok and Instagram, and TikTok is its only listed marketing channel. A sale listing says growth came from TikTok photo carousels (posts you swipe through) posted by almost a dozen accounts in the US, Germany and Turkey. The website even tells visitors how to escape TikTok's built-in browser to reach the App Store. Revenue jumped to $27,283 in July and $43,716 in August.",
+      "number": {
+        "v": "$43,716 in Aug 2026",
+        "label": "Verified",
+        "date": "Nov 18 2026",
+        "source": "https://trustmrr.com/startup/boothie"
+      },
+      "lesson": "Show the before and after where your customer already scrolls. If your posts come from made-up characters, say so, or you risk losing trust and breaking the platform's rules."
+    },
+    {
+      "name": "Android and the best month",
+      "when": "Sep to Oct 2026",
+      "story": "An Android version came out on Google Play in September 2026, and a proper website went up by early October. October was the best month so far at $56,432.",
+      "number": {
+        "v": "$56,432 in Oct 2026",
+        "label": "Verified",
+        "date": "Nov 18 2026",
+        "source": "https://trustmrr.com/startup/boothie"
+      },
+      "lesson": "Once one platform works, the next one can add customers without new marketing."
+    },
+    {
+      "name": "Selling the business",
+      "when": "Oct 2026 to now",
+      "story": "On October 9, 2026, about 15 weeks after launch, Boothie was listed for sale on TrustMRR. The asking price there is $900,000, and it had received 32 offers. A different site lists it at $2,000,000. Trend apps can fade fast, so some founders sell while the numbers are high. In November the same developer account released a new app, a photo cleaner called Swipezy.",
+      "number": {
+        "v": "$900,000 asking price",
+        "label": "Claimed",
+        "date": "Nov 19 2026",
+        "source": "https://trustmrr.com/startup/boothie.md"
+      },
+      "lesson": "An app is an asset: if you build something that earns, someone may pay you for it."
+    }
+  ],
+  "moves": [
+    {
+      "when": "Apr 2025",
+      "text": "A free vintage photobooth app called Boothie appears on the App Store (link to this team not confirmed)",
+      "label": "Couldn't verify",
+      "source": "https://itunes.apple.com/lookup?id=6744557942&country=us"
+    },
+    {
+      "when": "Jun 23 2026",
+      "text": "Launched the AI version on iPhone with a free editor and paid AI looks",
+      "label": "Live",
+      "source": "https://itunes.apple.com/lookup?id=6775603987&country=us"
+    },
+    {
+      "when": "Summer 2026",
+      "text": "Grew through TikTok photo carousels from about a dozen accounts",
+      "label": "Claimed",
+      "source": "https://www.whatsthe.app/boothie"
+    },
+    {
+      "when": "Sep 2026",
+      "text": "Launched on Google Play",
+      "label": "Claimed",
+      "source": "https://trustmrr.com/startup/boothie.md"
+    },
+    {
+      "when": "By Oct 9 2026",
+      "text": "Put up a website with a tip for opening the App Store from TikTok's browser",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20261009231159/https://boothieapp.com/"
+    },
+    {
+      "when": "Oct 9 2026",
+      "text": "Listed the business for sale on TrustMRR",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/boothie.md"
+    },
+    {
+      "when": "Nov 4 2026",
+      "text": "The same developer account released a second app, Swipezy",
+      "label": "Live",
+      "source": "https://itunes.apple.com/lookup?id=6775603989&entity=software&country=us"
+    }
+  ],
+  "fact_checks": [
+    {
+      "claim": "\"Three months later: $38K MRR, 8,200 paying users.\"",
+      "who": "Sale listing on whatsthe.app (author not named)",
+      "date": "Oct 1 2026",
+      "source": "https://www.whatsthe.app/boothie",
+      "found": "Verified revenue was $43,416 in September 2026, so $38K MRR fits. But the same page shows 1,402 active subscriptions, and TrustMRR shows 2,401 in November. 8,200 paying users doesn't match.",
+      "label": "Sources differ"
+    },
+    {
+      "claim": "\"Grown by word of mouth\"",
+      "who": "Founder's GitHub profile",
+      "date": "Nov 9 2026",
+      "source": "https://github.com/keremcanseker/keremcanseker/blob/main/README.md",
+      "found": "TrustMRR lists TikTok as the only marketing channel, and a sale listing says growth came from TikTok carousels posted by almost a dozen accounts.",
+      "label": "Sources differ"
+    },
+    {
+      "claim": "\"A six-figure business within months of launch\"",
+      "who": "Founder's GitHub profile",
+      "date": "Nov 9 2026",
+      "source": "https://github.com/keremcanseker/keremcanseker/blob/main/README.md",
+      "found": "TrustMRR shows $208,574 all-time revenue by Nov 18 2026, about five months after the June 23 launch. The monthly numbers already passed $100,000 before November, when the claim was made.",
+      "label": "Verified"
+    },
+    {
+      "claim": "Asking price for the app",
+      "who": "TrustMRR and whatsthe.app listings",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/boothie.md",
+      "found": "TrustMRR says $900,000 (listed Oct 9 2026). whatsthe.app says $2,000,000.",
+      "label": "Sources differ"
+    }
+  ],
+  "wayback": [
+    {
+      "date": "Oct 9 2026",
+      "headline": "Turn one selfie into the photos you keep saving",
+      "sub": "Pick a look, snap a selfie, and Boothie restyles it in seconds.",
+      "prices": "Free to download; AI photos use credits (Boothie Plus and Gold include daily credits, plus credit packs)",
+      "source": "https://web.archive.org/web/20261009231159/https://boothieapp.com/"
+    }
+  ],
+  "checklist": [
+    "Scroll TikTok or Instagram for 20 minutes and write down three looks or formats you keep seeing.",
+    "Pick one and ask: could a tool make this in one tap? Sketch the before and after.",
+    "Make one free thing people can use, and one paid thing that is clearly better.",
+    "Post three before-and-after carousels from your own account and track which one gets saved most.",
+    "If people find you through TikTok, test that your link actually opens from inside the TikTok app.",
+    "Look up what similar apps sell for on TrustMRR to see what a working app can be worth."
+  ],
+  "sources": [
+    {
+      "name": "TrustMRR: Boothie",
+      "url": "https://trustmrr.com/startup/boothie",
+      "what": "MRR, revenue, monthly series, subscriptions",
+      "date": "Nov 18 2026",
+      "label": "Verified"
+    },
+    {
+      "name": "TrustMRR: Boothie (Markdown profile)",
+      "url": "https://trustmrr.com/startup/boothie.md",
+      "what": "Founder-provided description, audience, channel, Android date, sale listing",
+      "date": "Nov 19 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "App Store: Boothie: AI Photo Editor",
+      "url": "https://apps.apple.com/us/app/id6775603987",
+      "what": "App listing",
+      "date": "Nov 19 2026",
+      "label": "Live"
+    },
+    {
+      "name": "Apple lookup API: Boothie",
+      "url": "https://itunes.apple.com/lookup?id=6775603987&country=us",
+      "what": "Release date Jun 23 2026, rating count",
+      "date": "Nov 19 2026",
+      "label": "Live"
+    },
+    {
+      "name": "Apple lookup API: developer's apps",
+      "url": "https://itunes.apple.com/lookup?id=6775603989&entity=software&country=us",
+      "what": "Second app Swipezy, released Nov 4 2026",
+      "date": "Nov 19 2026",
+      "label": "Live"
+    },
+    {
+      "name": "Apple lookup API: earlier Boothie photobooth app",
+      "url": "https://itunes.apple.com/lookup?id=6744557942&country=us",
+      "what": "Released Apr 22 2025, different developer account",
+      "date": "Nov 19 2026",
+      "label": "Couldn't verify"
+    },
+    {
+      "name": "GitHub: earlier Boothie photobooth code",
+      "url": "https://github.com/esmakocak/Boothie",
+      "what": "\"Vintage photobooth app built with SwiftUI\"",
+      "date": "Apr 23 2025",
+      "label": "Couldn't verify"
+    },
+    {
+      "name": "Founder's GitHub profile",
+      "url": "https://github.com/keremcanseker/keremcanseker/blob/main/README.md",
+      "what": "\"Built with my partner, grown by word of mouth\"",
+      "date": "Nov 9 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "whatsthe.app: Boothie sale listing",
+      "url": "https://www.whatsthe.app/boothie",
+      "what": "TikTok carousel growth claim, $2M asking price",
+      "date": "Oct 1 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "Wayback Machine: boothieapp.com, Oct 9 2026",
+      "url": "https://web.archive.org/web/20261009231159/https://boothieapp.com/",
+      "what": "Headline, pricing model, TikTok browser tip",
+      "date": "Oct 9 2026",
+      "label": "Wayback"
+    }
+  ]
+}

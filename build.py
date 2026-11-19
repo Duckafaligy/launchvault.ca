@@ -74,10 +74,10 @@ def mega_html():
     # pricing
     pr = sec("pricing")
     plans = re.findall(r'<h3>([^<]+)</h3>.*?<p class="pd">([^<]+)</p>', pr, re.S)[:3]
-    amts = re.findall(r'class="amt" data-m="(\$\d+)"', pr)
-    price = {"Free": "$0 forever", "Pro": amts[0] + "/mo", "Builder": amts[1] + "/mo"}
+    amts = re.findall(r'class="amt" data-m="(\$[\d.]+)"', pr)
+    price = {"Free": "$0 forever", "Pro": amts[0] + "/mo", "Developer": amts[1] + "/mo"}
     p_pr = ('<div class="mlist">' + "".join(f'<a class="mrow" href="/#pricing" data-go="pricing"><span><b>{n}{ARR}</b><span>{d}</span></span><em>{price.get(n, "")}</em></a>' for n, d in plans)
-            + '</div><p class="mnote">Prices are placeholders until launch.</p>')
+            + '</div><p class="mnote">Payments open with accounts.</p>')
     # inside a breakdown: the 4 parts; a click selects that tab
     parts = re.findall(r'role="tab" id="(t-p\d)"[^>]*>\s*<span class="i">(\d+)</span>(.*?)</button>', sec("inside"), re.S)
     first = lambda html: strip(re.search(r">([^<>]+)<", ">" + html.strip() + "<").group(1)) if re.search(r">([^<>]+)<", ">" + html.strip() + "<") else ""

@@ -1,0 +1,363 @@
+{
+  "slug": "windmill-growth",
+  "name": "Windmill Growth",
+  "category": "Service",
+  "what": "A marketing agency (a company hired to do marketing for clients) that grows founders' personal brands, mainly on LinkedIn.",
+  "logo": "/assets/logos/windmillgrowth.png",
+  "site": "https://windmillgrowth.com",
+  "published": "2026-11-19",
+  "read_min": 8,
+  "title": "Windmill Growth started with a $500-a-month LinkedIn service and now brings in about $118K a month",
+  "dek": "It began by selling likes and comments on founders' LinkedIn posts, then sold the bigger job: writing the posts. Its MRR (monthly recurring revenue: what clients pay every month) is $119,347, read straight from Stripe.",
+  "pattern": "Start with a small, cheap service, then sell the bigger one",
+  "numbers": [
+    {
+      "k": "MRR",
+      "v": "$119,347",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/windmill-growth-llc"
+    },
+    {
+      "k": "Revenue in Oct 2026",
+      "v": "$118,047",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/windmill-growth-llc"
+    },
+    {
+      "k": "Revenue, all-time",
+      "v": "$2,365,950",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/windmill-growth-llc"
+    },
+    {
+      "k": "Active subscriptions",
+      "v": "75",
+      "label": "Verified",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/windmill-growth-llc.md"
+    },
+    {
+      "k": "First price",
+      "v": "$500/mo",
+      "label": "Wayback",
+      "date": "Aug 14 2024",
+      "source": "https://web.archive.org/web/20240814122259/https://www.windmillgrowth.com/"
+    }
+  ],
+  "series": {
+    "what": "Revenue each month",
+    "label": "Verified",
+    "source": "https://trustmrr.com/startup/windmill-growth-llc",
+    "points": [
+      [
+        "Dec 2025",
+        102899
+      ],
+      [
+        "Jan 2026",
+        94974
+      ],
+      [
+        "Feb 2026",
+        96449
+      ],
+      [
+        "Mar 2026",
+        97499
+      ],
+      [
+        "Apr 2026",
+        101149
+      ],
+      [
+        "May 2026",
+        108249
+      ],
+      [
+        "Jun 2026",
+        107187
+      ],
+      [
+        "Jul 2026",
+        115397
+      ],
+      [
+        "Aug 2026",
+        117983
+      ],
+      [
+        "Sep 2026",
+        115232
+      ],
+      [
+        "Oct 2026",
+        118047
+      ]
+    ]
+  },
+  "facts": {
+    "cost_to_start": {
+      "text": "Not public. A podcast about the founder says it was 'fully bootstrapped' (no investors).",
+      "label": "Claimed",
+      "date": "Apr 18 2025",
+      "source": "https://turningpropodcast.beehiiv.com/p/how-ben-buaron-built-a-1m-arr-startup-and-rebuilt-himself-in-the-process"
+    },
+    "first_revenue": {
+      "text": "A payment page at pay.windmillgrowth.com was archived on May 15 2024, the same day TrustMRR lists as the founding date. The first public plan was $500 a month.",
+      "label": "Wayback",
+      "date": "May 15 2024",
+      "source": "https://web.archive.org/web/20240515163101/https://pay.windmillgrowth.com/"
+    },
+    "first_customers": {
+      "text": "Not public. The August 2024 homepage only says 'Trusted by world-class founders and operators'.",
+      "label": "Wayback",
+      "date": "Aug 14 2024",
+      "source": "https://web.archive.org/web/20240814122259/https://www.windmillgrowth.com/"
+    },
+    "team": {
+      "text": "1 founder listed on TrustMRR",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/windmill-growth-llc"
+    }
+  },
+  "phases": [
+    {
+      "name": "A cheap first offer",
+      "when": "May to Aug 2024",
+      "story": "Windmill started by promoting founders' LinkedIn posts. The founder wrote the post, and Windmill made sure it got lots of likes and comments fast, so LinkedIn showed it to more people. That cost $500 a month. Writing the posts for you (ghostwriting) was the bigger plan at $1,800 a month. Don't copy the likes part: paying for likes and comments can break a platform's rules and makes people trust the post less. The useful idea is the cheap first offer.",
+      "number": {
+        "v": "$500/mo and $1,800/mo",
+        "label": "Wayback",
+        "date": "Aug 14 2024",
+        "source": "https://web.archive.org/web/20240814122259/https://www.windmillgrowth.com/"
+      },
+      "lesson": "Start with a small, cheap offer that's easy to say yes to, then offer more to the people who stay."
+    },
+    {
+      "name": "Bigger plans for bigger clients",
+      "when": "Late 2024 to early 2025",
+      "story": "By January 2025 the cheap plan was $650 a month and the top plans were $4,999 and $7,499, aimed at companies with $2M+ in yearly revenue. The homepage said 'Trusted by 100+ Founders and Executives' and '7 spots left for January'. A case studies page was archived in February 2025.",
+      "number": {
+        "v": "$650 to $7,499 a month",
+        "label": "Wayback",
+        "date": "Jan 8 2025",
+        "source": "https://web.archive.org/web/20250108214723/https://www.windmillgrowth.com/"
+      },
+      "lesson": "Once a cheap offer works, add a bigger version for customers who can pay more."
+    },
+    {
+      "name": "A free tool as bait",
+      "when": "Mar to Aug 2025",
+      "story": "In April 2025 a podcast said Windmill had gone from zero to '$1M+ ARR in under a year', fully bootstrapped. ARR means yearly recurring revenue. A free 'AI Profile Optimizer' for LinkedIn went live around March 2025, and by August it was the banner at the top of the homepage.",
+      "number": {
+        "v": "\"$1M+ ARR in under a year\"",
+        "label": "Claimed",
+        "date": "Apr 18 2025",
+        "source": "https://turningpropodcast.beehiiv.com/p/how-ben-buaron-built-a-1m-arr-startup-and-rebuilt-himself-in-the-process"
+      },
+      "lesson": "A free tool that solves a tiny problem brings in people who might buy the big solution."
+    },
+    {
+      "name": "Writing for Google too",
+      "when": "Feb to Apr 2026",
+      "story": "Windmill published dozens of guides like 'LinkedIn ghostwriter cost' and 'Best times to post on LinkedIn in 2026', the questions buyers type into Google. In April 2026 the homepage said it 'works with the top 0.1% of startup founders'. Monthly revenue stayed close to $100K.",
+      "number": {
+        "v": "$101,149 in Apr 2026",
+        "label": "Verified",
+        "date": "Nov 18 2026",
+        "source": "https://trustmrr.com/startup/windmill-growth-llc"
+      },
+      "lesson": "Write the answers to the exact questions your buyers search for."
+    },
+    {
+      "name": "Steady growth, one main plan",
+      "when": "May to Nov 2026",
+      "story": "Revenue rose slowly from about $108K to $118K a month. The site now leads with 'Your LinkedIn brand. Without the AI accent.' and the most popular plan is $3,999 a month. It says it has worked with 185+ founders and keeps 30 on the books at a time.",
+      "number": {
+        "v": "$118,047 in Oct 2026",
+        "label": "Verified",
+        "date": "Nov 18 2026",
+        "source": "https://trustmrr.com/startup/windmill-growth-llc"
+      },
+      "lesson": "When everyone uses AI to write, sounding like a real person becomes the thing you sell."
+    }
+  ],
+  "moves": [
+    {
+      "when": "May 2024",
+      "text": "Had a payment page up on the founding date",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20240515163101/https://pay.windmillgrowth.com/"
+    },
+    {
+      "when": "Aug 2024",
+      "text": "Sold a $500/mo post-promotion service as the way in, with ghostwriting as the upgrade",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20240814122259/https://www.windmillgrowth.com/"
+    },
+    {
+      "when": "Jan 2025",
+      "text": "Added $4,999 and $7,499 plans for bigger companies and used 'spots left' to create urgency",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20250108214723/https://www.windmillgrowth.com/"
+    },
+    {
+      "when": "Feb 2025",
+      "text": "Published client case studies",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20250218004236/https://www.windmillgrowth.com/case-studies"
+    },
+    {
+      "when": "Mar 2025",
+      "text": "Launched a free AI LinkedIn profile optimizer",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20250314042411/https://www.windmillgrowth.com/optimizer"
+    },
+    {
+      "when": "Apr 2025",
+      "text": "Told the story on a podcast: $1M+ ARR in under a year, bootstrapped",
+      "label": "Claimed",
+      "source": "https://turningpropodcast.beehiiv.com/p/how-ben-buaron-built-a-1m-arr-startup-and-rebuilt-himself-in-the-process"
+    },
+    {
+      "when": "Feb 2026",
+      "text": "Started publishing guides that answer what buyers search on Google about LinkedIn ghostwriting",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20260217232917/https://windmillgrowth.com/blogseo/linkedin-ghostwriter-cost"
+    },
+    {
+      "when": "Nov 2026",
+      "text": "Repositioned around human-sounding writing: 'Without the AI accent'",
+      "label": "Live",
+      "source": "https://windmillgrowth.com/"
+    }
+  ],
+  "fact_checks": [
+    {
+      "claim": "Zero to $1M+ ARR in under a year, fully bootstrapped",
+      "who": "Turning Pro podcast episode write-up (host's summary)",
+      "date": "Apr 18 2025",
+      "source": "https://turningpropodcast.beehiiv.com/p/how-ben-buaron-built-a-1m-arr-startup-and-rebuilt-himself-in-the-process",
+      "found": "Stripe's public monthly series starts in December 2025 at $102,899 (about $1.23M a year), so we can't check the first year. About $1.19M of all-time revenue was earned before December 2025.",
+      "label": "Couldn't verify"
+    },
+    {
+      "claim": "185+ founders worked with; 'We keep 30 on the books at a time'",
+      "who": "Windmill homepage",
+      "date": "Nov 19 2026",
+      "source": "https://windmillgrowth.com/",
+      "found": "Stripe shows 75 active subscriptions on Nov 19 2026. Some clients may pay for more than one thing, but 75 is well above 30.",
+      "label": "Sources differ"
+    },
+    {
+      "claim": "Founded May 15 2024",
+      "who": "TrustMRR profile",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/windmill-growth-llc.md",
+      "found": "The Wayback Machine archived pay.windmillgrowth.com on May 15 2024 and the first homepage on Aug 14 2024.",
+      "label": "Verified"
+    },
+    {
+      "claim": "'Trusted by 100+ Founders and Executives'",
+      "who": "Windmill homepage",
+      "date": "Jan 8 2025",
+      "source": "https://web.archive.org/web/20250108214723/https://www.windmillgrowth.com/",
+      "found": "Only on the company's own site. No outside source.",
+      "label": "Claimed"
+    }
+  ],
+  "wayback": [
+    {
+      "date": "Aug 14 2024",
+      "headline": "Grow your personal brand on LinkedIn – without having to do any of the heavy lifting",
+      "sub": "You post the content and we guarantee you: High volume of engagement, Quick engagement, The right 'type' of engagement",
+      "prices": "LinkedIn Growth $500 to $650/mo; Ghostwriting $1,800 to $2,200/mo",
+      "source": "https://web.archive.org/web/20240814122259/https://www.windmillgrowth.com/"
+    },
+    {
+      "date": "Jan 8 2025",
+      "headline": "LinkedIn Growth that Drives Leads, Builds your Brand, and Grows your Business",
+      "sub": "We turn founder profiles into powerful organic marketing, through strategic content and engagement optimization. Trusted by 100+ Founders and Executives. 7 spots left for January.",
+      "prices": "$650/mo, $4,999/mo, $7,499/mo, Enterprise custom",
+      "source": "https://web.archive.org/web/20250108214723/https://www.windmillgrowth.com/"
+    },
+    {
+      "date": "Aug 14 2025",
+      "headline": "The LinkedIn GTM Engine For B2B Founders",
+      "sub": "Boost profile visits by up to 76% with our new FREE AI Profile Optimizer. 5 spots available. (GTM means go-to-market: how a company gets its product to buyers. B2B means selling to other businesses.)",
+      "prices": "$650, $3,500 and $5,500 plans, with $250 and $1,000 add-ons",
+      "source": "https://web.archive.org/web/20250814172730/https://windmillgrowth.com/"
+    },
+    {
+      "date": "Apr 18 2026",
+      "headline": "Founder Personal Branding Built to Close Deals",
+      "sub": "Windmill works with the top 0.1% of startup founders. Apply to join the Wind.",
+      "prices": "Not captured",
+      "source": "https://web.archive.org/web/20260418011015/https://windmillgrowth.com/"
+    },
+    {
+      "date": "Nov 19 2026",
+      "headline": "Your LinkedIn brand. Without the AI accent.",
+      "sub": "You talk for 30 minutes. We write it, post it, work your ICP, and fill your calendar. (ICP means ideal customer profile: the kind of buyer you want.)",
+      "label": "Live",
+      "prices": "Most popular plan $3,999/mo",
+      "source": "https://windmillgrowth.com/"
+    }
+  ],
+  "checklist": [
+    "Pick one small, cheap version of a service you could do this week, like editing 3 short videos for $20.",
+    "Write down the bigger version of that service you could offer to anyone who likes the small one.",
+    "Make a simple payment link (Stripe, PayPal or Gumroad) before you have a single customer. You need a parent or guardian to set this up if you're under 18.",
+    "Help one person grow their account for free for two weeks, and ask if you can share the before and after.",
+    "Build or share one free tool or template that solves a tiny problem for the people you want to sell to.",
+    "Write one post that answers a question your buyers type into Google, in your own words, not AI's."
+  ],
+  "sources": [
+    {
+      "name": "TrustMRR: Windmill Growth",
+      "url": "https://trustmrr.com/startup/windmill-growth-llc",
+      "what": "MRR, revenue, monthly series, founder count",
+      "date": "Nov 18 2026",
+      "label": "Verified"
+    },
+    {
+      "name": "TrustMRR: Windmill Growth (markdown profile)",
+      "url": "https://trustmrr.com/startup/windmill-growth-llc.md",
+      "what": "Active subscriptions, founded date",
+      "date": "Nov 19 2026",
+      "label": "Verified"
+    },
+    {
+      "name": "Turning Pro podcast, episode 77 (write-up)",
+      "url": "https://turningpropodcast.beehiiv.com/p/how-ben-buaron-built-a-1m-arr-startup-and-rebuilt-himself-in-the-process",
+      "what": "\"$1M+ ARR in under a year, fully bootstrapped\"",
+      "date": "Apr 18 2025",
+      "label": "Claimed"
+    },
+    {
+      "name": "Wayback: windmillgrowth.com",
+      "url": "https://web.archive.org/web/20240814122259/https://www.windmillgrowth.com/",
+      "what": "Homepages and prices, Aug 2024 to Apr 2026",
+      "date": "Aug 14 2024",
+      "label": "Wayback"
+    },
+    {
+      "name": "Wayback: pay.windmillgrowth.com",
+      "url": "https://web.archive.org/web/20240515163101/https://pay.windmillgrowth.com/",
+      "what": "Payment page on the founding date",
+      "date": "May 15 2024",
+      "label": "Wayback"
+    },
+    {
+      "name": "Windmill Growth homepage",
+      "url": "https://windmillgrowth.com/",
+      "what": "Current headline, price, 185+ founders claim",
+      "date": "Nov 19 2026",
+      "label": "Live"
+    }
+  ]
+}

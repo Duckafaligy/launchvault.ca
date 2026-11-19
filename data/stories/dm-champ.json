@@ -1,0 +1,345 @@
+{
+  "slug": "dm-champ",
+  "name": "DM Champ",
+  "category": "AI tool",
+  "what": "An AI sales agent that chats with leads and books calls. Agencies (companies that do marketing for clients) can put their own brand on it (white-label it) and resell it.",
+  "logo": "/assets/logos/dmchamp.png",
+  "site": "https://dmchamp.com",
+  "published": "2026-11-19",
+  "read_min": 8,
+  "title": "DM Champ sat near $10K a month for a year, then hit $28K after it changed who it sells to",
+  "dek": "It started by waking up one clinic's old leads on WhatsApp, found customers through cold email, AppSumo (a site that sells lifetime deals on software) and a webinar (a live online talk), and then turned itself into a tool agencies resell. Its MRR (monthly recurring revenue: what subscribers pay every month) is $135,927 today. That is far above any month's revenue so far, and we couldn't find out why.",
+  "pattern": "Start with a problem you saw at work",
+  "numbers": [
+    {
+      "k": "MRR",
+      "v": "$135,927",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/dm-champ"
+    },
+    {
+      "k": "Revenue in Oct 2026",
+      "v": "$28,426",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/dm-champ"
+    },
+    {
+      "k": "Revenue, all-time",
+      "v": "$244,756",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/dm-champ"
+    },
+    {
+      "k": "Revenue claimed in interview",
+      "v": "~$10,000/mo",
+      "label": "Claimed",
+      "date": "Mar 20 2026",
+      "source": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100"
+    },
+    {
+      "k": "AppSumo price today",
+      "v": "from $59, paid once",
+      "label": "Live",
+      "date": "Nov 19 2026",
+      "source": "https://appsumo.com/products/dm-champ/"
+    }
+  ],
+  "series": {
+    "what": "Revenue each month",
+    "label": "Verified",
+    "source": "https://trustmrr.com/startup/dm-champ",
+    "points": [
+      [
+        "Dec 2025",
+        12263
+      ],
+      [
+        "Jan 2026",
+        6700
+      ],
+      [
+        "Feb 2026",
+        9117
+      ],
+      [
+        "Mar 2026",
+        10310
+      ],
+      [
+        "Apr 2026",
+        8275
+      ],
+      [
+        "May 2026",
+        7123
+      ],
+      [
+        "Jun 2026",
+        8094
+      ],
+      [
+        "Jul 2026",
+        6998
+      ],
+      [
+        "Aug 2026",
+        6241
+      ],
+      [
+        "Sep 2026",
+        9936
+      ],
+      [
+        "Oct 2026",
+        28426
+      ]
+    ]
+  },
+  "facts": {
+    "cost_to_start": {
+      "text": "Not public",
+      "label": null
+    },
+    "first_revenue": {
+      "text": "A clinic found through cold email paid about €2,000 a month after DM Champ messaged its old leads on WhatsApp.",
+      "label": "Claimed",
+      "date": "Mar 20 2026",
+      "source": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100"
+    },
+    "first_customers": {
+      "text": "Cold email brought the first customers. Later channels were AppSumo and affiliates (people paid a cut of each sale they bring in).",
+      "label": "Claimed",
+      "date": "Mar 20 2026",
+      "source": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100"
+    },
+    "team": {
+      "text": "1 founder listed on TrustMRR",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/dm-champ"
+    }
+  },
+  "phases": [
+    {
+      "name": "The problem at work",
+      "when": "Before 2023",
+      "story": "The founder ran a marketing agency and did the marketing for a hair transplant clinic. He saw clinics losing leads because nobody answered WhatsApp, Instagram and website chats fast enough. That became the idea.",
+      "number": {
+        "v": "Company founded Nov 7 2022 (AppSumo) or Jan 2023 (Starter Story)",
+        "label": "Sources differ",
+        "date": "Mar 20 2026",
+        "source": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100"
+      },
+      "lesson": "The best ideas often come from a problem you watch people have every day."
+    },
+    {
+      "name": "Wake up old leads",
+      "when": "2023 to 2024",
+      "story": "The founder cold-emailed local clinics (emailed businesses that didn't know him yet) using a tool called Instantly. Three were interested and he followed up with one. That clinic had fewer than 200 old leads; the AI messaged them on WhatsApp and the clinic started paying every month. The product was first called Whatz.ai, and in 2024 the homepage still sold exactly this.",
+      "number": {
+        "v": "€2,000 a month from the first clinic",
+        "label": "Claimed",
+        "date": "Mar 20 2026",
+        "source": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100"
+      },
+      "lesson": "Start with a result a business can see in money, like customers who come back."
+    },
+    {
+      "name": "A cheap launch with lots of refunds",
+      "when": "2024",
+      "story": "DM Champ went on AppSumo. It made about €20,000 from 300 customers, but 40% asked for refunds. The founder blames the cheapest tier, which 'attracted tire-kickers' (people who look but never really buy).",
+      "number": {
+        "v": "€20K, 300 customers, 40% refunds",
+        "label": "Claimed",
+        "date": "Mar 20 2026",
+        "source": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100"
+      },
+      "lesson": "Price too low and you attract people who were never going to use it."
+    },
+    {
+      "name": "One webinar, and ads that backfired",
+      "when": "Not public",
+      "story": "A business coach the team knew ran a 60-minute webinar for 300 people. The founder says 'we had $20K in Stripe' two minutes after the offer went live, from 80 customers. Meta ads (Facebook and Instagram ads) closed 15% of leads, but those customers cancelled after three months.",
+      "number": {
+        "v": "$20K from one webinar",
+        "label": "Claimed",
+        "date": "Mar 20 2026",
+        "source": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100"
+      },
+      "lesson": "Someone else's audience that already trusts them can sell more in an hour than months of ads."
+    },
+    {
+      "name": "Stuck around $10K",
+      "when": "2025 to Sep 2026",
+      "story": "In mid-2025 the homepage dared visitors: 'Find Us an AI Sales Agent More Human than Ours and We'll Send You $100'. In March 2026 the founder told Starter Story the business made about $10,000 a month. Stripe agrees: monthly revenue stayed between $6,241 and $12,263 from December 2025 to September 2026.",
+      "number": {
+        "v": "$10,310 in Mar 2026",
+        "label": "Verified",
+        "date": "Nov 18 2026",
+        "source": "https://trustmrr.com/startup/dm-champ"
+      },
+      "lesson": "A clever headline gets attention, but it doesn't change who your customer is."
+    },
+    {
+      "name": "Sell to agencies instead",
+      "when": "2026",
+      "story": "By July 2026 the homepage spoke to agencies: put your own logo on the AI and resell it to your clients. The founder calls the 2026 AppSumo launch its third, and says 'What we used to make in a year, we now make in a month.' Stripe revenue nearly tripled in October 2026.",
+      "number": {
+        "v": "$28,426 revenue in Oct 2026",
+        "label": "Verified",
+        "date": "Nov 18 2026",
+        "source": "https://trustmrr.com/startup/dm-champ"
+      },
+      "lesson": "Sometimes the fix is a new buyer, not a new feature: sell to the people who sell to everyone else."
+    }
+  ],
+  "moves": [
+    {
+      "when": "Early on (date not public)",
+      "text": "Cold-emailed local clinics and signed one at about €2,000 a month",
+      "label": "Claimed",
+      "source": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100"
+    },
+    {
+      "when": "Aug 2024",
+      "text": "Homepage pitch: win back lost customers on WhatsApp (renamed from Whatz.ai)",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20240809195119/https://dmchamp.com/"
+    },
+    {
+      "when": "2024",
+      "text": "First AppSumo lifetime deal: about €20K, 300 customers, 40% refunds",
+      "label": "Claimed",
+      "source": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100"
+    },
+    {
+      "when": "Not public",
+      "text": "Affiliate webinar with a business coach: $20K and 80 customers",
+      "label": "Claimed",
+      "source": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100"
+    },
+    {
+      "when": "Not public",
+      "text": "Tried Meta ads; customers cancelled after three months, so the AI was changed to turn away poor-fit leads",
+      "label": "Claimed",
+      "source": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100"
+    },
+    {
+      "when": "Jul 2025",
+      "text": "New homepage dare: find a more human AI sales agent and we'll send you $100",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20250710005549/https://dmchamp.com/"
+    },
+    {
+      "when": "2026",
+      "text": "Relaunched on AppSumo and repositioned as a white-label tool agencies resell",
+      "label": "Claimed",
+      "source": "https://appsumo.com/products/dm-champ/"
+    }
+  ],
+  "fact_checks": [
+    {
+      "claim": "The business makes about $10,000 a month",
+      "who": "Founder, Starter Story interview",
+      "date": "Mar 20 2026",
+      "source": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100",
+      "found": "True when it was said: TrustMRR shows $10,310 in March 2026. But October 2026 was $28,426, and MRR on Nov 18 2026 is $135,927, far above any single month's revenue so far. We couldn't verify why MRR is so much higher.",
+      "label": "Verified"
+    },
+    {
+      "claim": "\"Our last launch did $600K.\"",
+      "who": "Founder, AppSumo founder post",
+      "date": "Nov 4 2026",
+      "source": "https://appsumo.com/products/dm-champ/",
+      "found": "TrustMRR shows $244,756 all-time in the Stripe account it reads. AppSumo's sales numbers aren't public, so we can't check this.",
+      "label": "Couldn't verify"
+    },
+    {
+      "claim": "When the company started",
+      "who": "AppSumo listing and Starter Story",
+      "date": "Mar 20 2026",
+      "source": "https://appsumo.com/products/dm-champ/",
+      "found": "AppSumo says founded Nov 7 2022. Starter Story says January 2023.",
+      "label": "Sources differ"
+    },
+    {
+      "claim": "Team: 3 founders and 1 employee",
+      "who": "Starter Story interview",
+      "date": "Mar 20 2026",
+      "source": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100",
+      "found": "TrustMRR lists 1 founder.",
+      "label": "Sources differ"
+    }
+  ],
+  "wayback": [
+    {
+      "date": "Aug 9 2024",
+      "headline": "Win Back Lost Customers with the Power of WhatsApp and AI",
+      "sub": "Don't write off lost customers just yet. Page title: DM Champ - Formerly Whatz.ai",
+      "prices": "Not on the homepage",
+      "source": "https://web.archive.org/web/20240809195119/https://dmchamp.com/"
+    },
+    {
+      "date": "Nov 13 2024",
+      "headline": "Meet DM Champ: Your 24/7 AI Sales Assistant",
+      "sub": "Turn WhatsApp and Instagram Chats Into Qualified Leads and Booked Appointments While You Finally Get Some Rest",
+      "prices": "Not on the homepage",
+      "source": "https://web.archive.org/web/20241113181709/https://dmchamp.com/"
+    },
+    {
+      "date": "Jul 10 2025",
+      "headline": "Find Us an AI Sales Agent More Human than Ours and We'll Send You $100",
+      "sub": "Page title: The Most Human AI That Actually Sells Your Products & Services",
+      "prices": "Not on the homepage",
+      "source": "https://web.archive.org/web/20250710005549/https://dmchamp.com/"
+    },
+    {
+      "date": "Jul 13 2026",
+      "headline": "'Out of Budget' to a $40,000 Customer. Brand This AI and Resell It.",
+      "sub": "DM Champ is the white-label AI sales agent agencies resell to clients. Banner: Lifetime deal on AppSumo - pay once, resell forever",
+      "prices": "Not on the homepage",
+      "source": "https://web.archive.org/web/20260713212408/https://dmchamp.com/"
+    }
+  ],
+  "checklist": [
+    "Write down one problem you saw a business near you struggle with this month (slow replies, missed calls, no-shows).",
+    "Offer to fix it for one business by hand first, before you build anything.",
+    "Send ten short, personal emails to local businesses with that offer and follow up with anyone who replies.",
+    "Pick a result you can show in money, like old customers who came back, and measure it.",
+    "If you sell a cheap version, ask whether the cheapest buyers will actually use it before you set the price.",
+    "Find one person with an audience that trusts them and ask if they'd share your thing for a cut of each sale."
+  ],
+  "sources": [
+    {
+      "name": "TrustMRR: DM Champ",
+      "url": "https://trustmrr.com/startup/dm-champ",
+      "what": "MRR, all-time revenue, monthly series, founder count",
+      "date": "Nov 18 2026",
+      "label": "Verified"
+    },
+    {
+      "name": "Starter Story interview",
+      "url": "https://www.starterstory.com/stories/dm-champ-find-us-an-ai-sales-agent-more-human-than-ours-and-we-ll-send-you-100",
+      "what": "Origin, cold email, first clinic, AppSumo, webinar, Meta ads, ~$10K/mo, team",
+      "date": "Mar 20 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "AppSumo: DM Champ",
+      "url": "https://appsumo.com/products/dm-champ/",
+      "what": "Lifetime deal prices, founding date, founder posts ('third time on AppSumo', '$600K')",
+      "date": "Nov 4 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "Wayback Machine: dmchamp.com",
+      "url": "https://web.archive.org/web/20240809195119/https://dmchamp.com/",
+      "what": "Homepage headlines, Aug 2024 to Jul 2026",
+      "date": "Aug 9 2024",
+      "label": "Wayback"
+    }
+  ]
+}

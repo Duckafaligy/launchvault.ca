@@ -1,13 +1,13 @@
 """Generate the hero demo window (a crop of the logged-in LaunchVault app) from real data.
 
-Sources (nothing else): design/data/stories.json and src/post-postiz.body.html (Postiz lessons).
+Sources (nothing else): data/stories.json and src/post-postiz.body.html (Postiz lessons).
 Rewrites the block between <div class="winfit" id="winfit"> and <p class="prov"> in src/index.body.html,
 and embeds the company data as JSON (#lvdata) for the in-window views. Run, then `python build.py`.
     python src/_hero_gen.py
 """
 import json, os, re, html
 HERE = os.path.dirname(os.path.abspath(__file__)); SITE = os.path.dirname(HERE)
-D = json.load(open(os.path.join(SITE, "..", "design", "data", "stories.json"), encoding="utf-8"))
+D = json.load(open(os.path.join(SITE, "data", "stories.json"), encoding="utf-8"))
 ST = {s["company"]: s for s in D["stories"]}
 PZ = ST["Postiz"]
 POST = open(os.path.join(HERE, "post-postiz.body.html"), encoding="utf-8").read()
@@ -43,11 +43,13 @@ def logo(s, w):
     return f'<img src="/{s["logo"].replace("site/", "")}" alt="" width="{w}" height="{w}" loading="lazy" decoding="async">'
 SOON = [s for s in D["stories"] if s["status"] == "coming soon"]
 # screen-reader table for the hero chart (same points as the Postiz story file)
-_PZJ = json.load(open(os.path.join(SITE, "..", "design", "data", "stories", "postiz.json"), encoding="utf-8"))["series"]
+_PZJ = json.load(open(os.path.join(SITE, "data", "stories", "postiz.json"), encoding="utf-8"))["series"]
 PZ_TABLE = ('<table class="sr"><caption>Postiz monthly revenue</caption><tr><th>Month</th><th>Value</th><th>Label</th></tr>'
             + "".join(f'<tr><td>{(_PZJ.get("point_dates") or {}).get(p[0]) or mlab(p[0])}</td><td>{money(p[1])}</td><td>{p[2]}</td></tr>' for p in _PZJ["points"]) + "</table>")
-# a company with a story file (design/data/stories/<slug>.json) has a breakdown now: the window shows it as Ready
-READY = {os.path.splitext(f)[0] for f in os.listdir(os.path.join(SITE, "..", "design", "data", "stories")) if f.endswith(".json")}
+# a company with a story file (data/stories/<slug>.json) has a breakdown now: the window shows it as Ready
+import sys; sys.path.insert(0, SITE); from build_app import TODAY
+_SD = os.path.join(SITE, "data", "stories")
+READY = {os.path.splitext(f)[0] for f in os.listdir(_SD) if f.endswith(".json") and json.load(open(os.path.join(_SD, f), encoding="utf-8")).get("published", "") <= TODAY}
 NSOON = len([s for s in SOON if s["slug"] not in READY]); NREADY = 1 + len([s for s in SOON if s["slug"] in READY])
 st_txt = lambda s: "Ready" if s["slug"] in READY else ("Stale" if s.get("stale") else "Soon")
 SIDE_SOON = [ST[n] for n in ("DM Champ", "Stencil AI", "Windmill Growth", "Gojiberry")]

@@ -1,0 +1,126 @@
+{
+  "slug": "rezi",
+  "name": "Rezi",
+  "category": "AI tool",
+  "what": "An AI resume builder that helps job seekers write resumes that get past hiring software.",
+  "logo": "/assets/logos/rezi.png",
+  "site": "https://www.rezi.ai",
+  "published": "2026-11-19",
+  "read_min": 9,
+  "title": "Rezi started as a resume template on Reddit and made $216K in October 2026",
+  "dek": "A free template, four slow years, then an early bet on AI writing. October 2026 brought in $216,471, read straight from Stripe. That is about 21% less than April 2026 ($275,551), and revenue has dropped every month since. Rezi's MRR (monthly recurring revenue) is $234,707: what all current subscriptions add up to per month, while $216,471 is the money actually collected in October.",
+  "pattern": "Give it away free, charge for the easy version",
+  "numbers": [
+    {"k": "MRR", "v": "$234,707", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/rezi"},
+    {"k": "Revenue in Oct 2026", "v": "$216,471", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/rezi"},
+    {"k": "Revenue, all-time", "v": "$10,585,547", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/rezi"},
+    {"k": "Users (Rezi's homepage claim)", "v": "4.5M", "label": "Claimed", "date": "Oct 12 2026", "source": "https://web.archive.org/web/20261012004025/https://rezi.ai/"},
+    {"k": "First product price", "v": "about $9.69", "label": "Claimed", "date": "Aug 8 2024", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder"}
+  ],
+  "series": {
+    "what": "Revenue each month",
+    "label": "Verified",
+    "source": "https://trustmrr.com/startup/rezi",
+    "points": [
+      ["Dec 2025", 217472],
+      ["Jan 2026", 253340],
+      ["Feb 2026", 249561],
+      ["Mar 2026", 268415],
+      ["Apr 2026", 275551],
+      ["May 2026", 269975],
+      ["Jun 2026", 250274],
+      ["Jul 2026", 249541],
+      ["Aug 2026", 247272],
+      ["Sep 2026", 225184],
+      ["Oct 2026", 216471]
+    ]
+  },
+  "facts": {
+    "cost_to_start": {"text": "Not public. The founder says 2015 to 2018 went on looking for money and paying an agency (an outside company hired to do the work) to build the software, but gives no total.", "label": "Claimed", "date": "Aug 8 2024", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder"},
+    "first_revenue": {"text": "A Microsoft Word resume template plus a guide, sold for about $9.69.", "label": "Claimed", "date": "Aug 8 2024", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder"},
+    "first_customers": {"text": "Started after a resume template the founder posted on Reddit got used by others. The first product turned users' text into that template.", "label": "Claimed", "date": "Jul 5 2023", "source": "https://www.rezi.ai/posts/0-to-1-million-users"},
+    "team": {"text": "1 founder listed on TrustMRR", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/rezi"}
+  },
+  "phases": [
+    {
+      "name": "A template on Reddit",
+      "when": "2015",
+      "story": "The founder graduated with low grades but still got interviews at big companies, and put that down to his resume. In May 2015 he posted a resume template built to pass hiring software (called ATS) on Reddit so others could use it. The first thing he sold was that template as a Word file with a short guide.",
+      "number": {"v": "about $9.69 per template", "label": "Claimed", "date": "Aug 8 2024", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder"},
+      "lesson": "Share something genuinely useful for free first; the people who use it tell you what to build."
+    },
+    {
+      "name": "Four slow years",
+      "when": "2016 to 2019",
+      "story": "The founder moved to South Korea and taught English to pay the bills. A bare-bones tool called Rezi Instant reformatted people's text into the template, with no logins and no database. He spent 2015 to 2018 looking for money and paid an agency to build the real software, which he later called a mistake.",
+      "number": {"v": "about 3.5 years of building in Korea", "label": "Claimed", "date": "Jul 5 2023", "source": "https://www.rezi.ai/posts/0-to-1-million-users"},
+      "lesson": "A tiny version that works today beats a big version you are waiting for someone else to build."
+    },
+    {
+      "name": "Launch as a paid app",
+      "when": "Sep 2019 to 2020",
+      "story": "Rezi launched as a web app with accounts and a paid upgrade in September 2019. Two months later the founder did an AMA (ask me anything) on Reddit, which he calls 'the most authentic channel'. A deal on AppSumo, a site that sells cheap lifetime deals on software, brought in users during the pandemic. StackCommerce, another deals site, brought in revenue.",
+      "number": {"v": "Launched September 2019", "label": "Claimed", "date": "Jul 5 2023", "source": "https://www.rezi.ai/posts/0-to-1-million-users"},
+      "lesson": "Go back to the place your first users came from and talk to them in public."
+    },
+    {
+      "name": "First in line for AI writing",
+      "when": "Dec 2020 to 2022",
+      "story": "When OpenAI released GPT-3, Rezi used it to write resume lines for users, while the team was just two people. By March 2021 the homepage said 'POWERED BY GPT-3' and 'THE FIRST GTP-3 POWERED RESUME BUILDER', typo included.",
+      "number": {"v": "\"Create Your Resume With Rezi. AI-Powered ATS Resume Builder\"", "label": "Wayback", "date": "Mar 22 2021", "source": "https://web.archive.org/web/20210322084409/https://rezi.ai/"},
+      "lesson": "When a new tool appears, ask what boring part of your product it could do for the user."
+    },
+    {
+      "name": "The ChatGPT wave",
+      "when": "2023",
+      "story": "When ChatGPT made everyone curious about AI, Rezi was already an AI resume builder. The company says it hit $1M a year in recurring revenue in March 2023 and 1 million users in July 2023. In January 2023 the plans were Free, $3 a month and $29 a month.",
+      "number": {"v": "$1M ARR (yearly recurring revenue) in March 2023", "label": "Claimed", "date": "Jan 17 2024", "source": "https://www.rezi.ai/posts/year-in-review-2023"},
+      "lesson": "Be ready before the wave arrives; you can't build fast enough once it does."
+    },
+    {
+      "name": "Search, not ads",
+      "when": "2024 to now",
+      "story": "The founder says Rezi spent about $15K a month on paid ads for a year without making the money back, then stopped. Growth came from search results instead: Rezi ranks for 'AI Resume Builder'. He also removed the $3 plan, which he says made each customer worth more. But since April 2026 revenue has fallen every month, from $275,551 to $216,471 in October, about 21% less. We couldn't find a public reason.",
+      "number": {"v": "$216,471 revenue in Oct 2026", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/rezi"},
+      "lesson": "If ads don't pay for themselves after a fair test, stop and put that money into something that keeps paying off over time, like search. Then keep checking your numbers, because growth can stall."
+    }
+  ],
+  "moves": [
+    {"when": "May 2015", "text": "Posted an ATS-friendly resume template on Reddit for anyone to use", "label": "Claimed", "source": "https://www.rezi.ai/posts/0-to-1-million-users"},
+    {"when": "Before 2019", "text": "Sold the template as a Word file with a guide for about $9.69", "label": "Claimed", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder"},
+    {"when": "Sep 2019", "text": "Launched as a web app with a paid Pro upgrade", "label": "Claimed", "source": "https://www.rezi.ai/posts/0-to-1-million-users"},
+    {"when": "Nov 2019", "text": "Did an AMA on Reddit's r/IAmA", "label": "Claimed", "source": "https://www.reddit.com/r/IAmA/comments/dwaa36/"},
+    {"when": "2020", "text": "Ran a deal on AppSumo during the pandemic", "label": "Claimed", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder"},
+    {"when": "Dec 2020", "text": "Added GPT-3 to write resume content", "label": "Claimed", "source": "https://www.rezi.ai/posts/0-to-1-million-users"},
+    {"when": "Oct or Nov 2023", "text": "Gave away its most expensive plan for free; the founder says it brought just under 70,000 signups in one day", "label": "Sources differ", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder"},
+    {"when": "2024", "text": "Stopped paid ads after a year and leaned on search traffic", "label": "Claimed", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder"}
+  ],
+  "fact_checks": [
+    {"claim": "The free-plan giveaway brought just under 70,000 signups in one day in October 2023", "who": "Founder, Starter Story interview", "date": "Aug 8 2024", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder", "found": "Rezi's own 2023 review mentions 55,376 new users in less than a day in November 2023, without saying why. If it's the same day, the month and the number differ.", "label": "Sources differ"},
+    {"claim": "Team size", "who": "Founder, Starter Story interview", "date": "Aug 8 2024", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder", "found": "The same page says 15 employees in one place and 11 in another. Rezi's 2023 review says 12. TrustMRR lists 1 founder, which counts founders, not staff.", "label": "Sources differ"},
+    {"claim": "$215K revenue a month", "who": "Founder, Starter Story interview", "date": "Aug 8 2024", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder", "found": "TrustMRR's monthly series starts in Dec 2025, so we can't check Aug 2024. Since then every month has been between $216,471 and $275,551.", "label": "Couldn't verify"},
+    {"claim": "$5M+ in lifetime revenue", "who": "We Are Founders article", "date": "Mar 15 2025", "source": "https://www.wearefounders.uk/from-resume-template-to-5m-saas-how-jacob-built-rezi/", "found": "TrustMRR shows $10,585,547 all-time on Nov 18 2026, and $2,723,056 of that came in Dec 2025 to Oct 2026 alone. That is consistent with $5M+ in March 2025, but no verified number shows the total on that date, so we can't confirm it.", "label": "Couldn't verify"}
+  ],
+  "wayback": [
+    {"date": "Mar 22 2021", "headline": "Create Your Resume With Rezi. AI-Powered ATS Resume Builder", "sub": "POWERED BY GPT-3. Rezi understands what kind of skills and experience employers need, so it can help you complete your resume in minutes.", "prices": "Not on the homepage", "source": "https://web.archive.org/web/20210322084409/https://rezi.ai/"},
+    {"date": "Jan 5 2023", "headline": "Revolutionize Your Job Search with AI-Powered Resume Writing and Editing", "sub": "Rezi is the only resume platform that uses leading AI to automate every aspect of creating a hirable resume. Page title: trusted by 352,894 users.", "prices": "Free, $3 monthly, $29 monthly", "source": "https://web.archive.org/web/20230105083310/https://rezi.ai/"},
+    {"date": "Oct 12 2026", "headline": "Ranked #1 AI Resume Builder by Forbes", "sub": "Page title: The #1 AI Resume Builder, Forbes' Top Pick. Trusted by 4.5M", "prices": "Not on the homepage", "source": "https://web.archive.org/web/20261012004025/https://rezi.ai/"}
+  ],
+  "checklist": [
+    "Make one template, checklist or guide that solves a problem you just solved for yourself, and post it free in the subreddit where people ask about it.",
+    "Count how many people download or ask for it in a week. That is your first proof.",
+    "Offer a paid version that does the boring part for them, even if it's just a file and a guide.",
+    "Build the smallest tool that works (a form that fills in your template) instead of waiting to build the full app.",
+    "Pick one new AI feature and test whether it saves your user five minutes.",
+    "Write one helpful page that answers a question people search for, and check in a month whether anyone found it."
+  ],
+  "sources": [
+    {"name": "TrustMRR: Rezi", "url": "https://trustmrr.com/startup/rezi", "what": "MRR, all-time revenue, monthly series, founder count", "date": "Nov 18 2026", "label": "Verified"},
+    {"name": "Rezi blog: 0 to 1 million users", "url": "https://www.rezi.ai/posts/0-to-1-million-users", "what": "Reddit origin, Rezi Instant, 2019 launch, GPT-3, team of two", "date": "Jul 5 2023", "label": "Claimed"},
+    {"name": "Rezi blog: 2023 year in review", "url": "https://www.rezi.ai/posts/year-in-review-2023", "what": "$1M ARR in March 2023, 1M users, 55,376 signups in a day, 12 team members", "date": "Jan 17 2024", "label": "Claimed"},
+    {"name": "Starter Story interview", "url": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder", "what": "$9.69 template, agency mistake, Reddit AMA, AppSumo, paid ads, search traffic (SEO), giveaway, team size", "date": "Aug 8 2024", "label": "Claimed"},
+    {"name": "Reddit r/IAmA thread", "url": "https://www.reddit.com/r/IAmA/comments/dwaa36/", "what": "The founder's 2019 AMA", "date": "Nov 14 2019", "label": "Claimed"},
+    {"name": "We Are Founders article", "url": "https://www.wearefounders.uk/from-resume-template-to-5m-saas-how-jacob-built-rezi/", "what": "3M+ users and $5M+ lifetime revenue", "date": "Mar 15 2025", "label": "Claimed"},
+    {"name": "Wayback Machine: rezi.ai", "url": "https://web.archive.org/web/20230105083310/https://rezi.ai/", "what": "Homepage headlines and prices in 2021, 2023 and 2026", "date": "Jan 5 2023", "label": "Wayback"}
+  ]
+}

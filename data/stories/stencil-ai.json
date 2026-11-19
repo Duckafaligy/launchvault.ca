@@ -1,0 +1,357 @@
+{
+  "slug": "stencil-ai",
+  "name": "Stencil AI",
+  "category": "Mobile app",
+  "what": "An app that turns a photo, sketch or design into a print-ready tattoo stencil for tattoo artists.",
+  "logo": "/assets/logos/stencilai.png",
+  "site": "https://www.stencilai.app",
+  "published": "2026-11-19",
+  "read_min": 8,
+  "title": "Stencil AI went from $16K to $63K a month in 2026 by fixing one boring job for tattoo artists",
+  "dek": "Two brothers, one of them a tattoo artist, built a tool that skips hours of hand-tracing. They charged from day one, sold on the web first, then put it on the App Store.",
+  "pattern": "Start with a problem someone close to you has",
+  "numbers": [
+    {
+      "k": "Revenue in Oct 2026",
+      "v": "$62,976",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/stencil-ai"
+    },
+    {
+      "k": "MRR (money coming in each month from subscriptions)",
+      "v": "$48,693",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/stencil-ai"
+    },
+    {
+      "k": "Revenue, all-time (since connected)",
+      "v": "$488,648",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/stencil-ai"
+    },
+    {
+      "k": "Active subscriptions",
+      "v": "1,753",
+      "label": "Verified",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/stencil-ai"
+    },
+    {
+      "k": "App Store rating (US)",
+      "v": "4.7 from 307 ratings",
+      "label": "Live",
+      "date": "Nov 19 2026",
+      "source": "https://apps.apple.com/us/app/id6759050298"
+    },
+    {
+      "k": "Cheapest plan",
+      "v": "$14/month on the website",
+      "label": "Wayback",
+      "date": "Oct 11 2026",
+      "source": "https://web.archive.org/web/20261011204859/https://www.stencilai.app/"
+    }
+  ],
+  "series": {
+    "what": "Revenue each month",
+    "label": "Verified",
+    "source": "https://trustmrr.com/startup/stencil-ai",
+    "points": [
+      [
+        "Jan 2026",
+        16032
+      ],
+      [
+        "Feb 2026",
+        22265
+      ],
+      [
+        "Mar 2026",
+        29870
+      ],
+      [
+        "Apr 2026",
+        37825
+      ],
+      [
+        "May 2026",
+        46483
+      ],
+      [
+        "Jun 2026",
+        51793
+      ],
+      [
+        "Jul 2026",
+        62455
+      ],
+      [
+        "Aug 2026",
+        60396
+      ],
+      [
+        "Sep 2026",
+        63721
+      ],
+      [
+        "Oct 2026",
+        62976
+      ]
+    ]
+  },
+  "facts": {
+    "cost_to_start": {
+      "text": "Not public",
+      "label": null
+    },
+    "first_revenue": {
+      "text": "Already $16,032 in January 2026, the first month TrustMRR shows, before the iPhone app came out.",
+      "label": "Verified",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/stencil-ai"
+    },
+    "first_customers": {
+      "text": "Not public. The website was selling paid plans to tattoo artists before the app launched, and in Feb 2026 an Instagram bio link pointed to it.",
+      "label": "Wayback",
+      "date": "Feb 1 2026",
+      "source": "https://web.archive.org/web/20260201233421/https://www.stencilai.app/?utm_source=ig&utm_medium=social&utm_content=link_in_bio"
+    },
+    "team": {
+      "text": "TrustMRR lists 1 founder. The company's own site lists two co-founder brothers (a programmer and a tattoo artist) plus a senior artist advisor.",
+      "label": "Sources differ",
+      "date": "Oct 11 2026",
+      "source": "https://web.archive.org/web/20261011204859/https://www.stencilai.app/"
+    }
+  },
+  "phases": [
+    {
+      "name": "A problem in the family",
+      "when": "Before 2026",
+      "story": "Before every tattoo, artists trace the design by hand into a clean line drawing called a stencil, then transfer it onto skin. The team behind Stencil AI is two brothers. One is the programmer, the other is a tattoo artist, so the problem was sitting right next to the person who could code a fix.",
+      "number": {
+        "v": "\"Two passionate brothers\"",
+        "label": "Wayback",
+        "date": "Feb 1 2026",
+        "source": "https://web.archive.org/web/20260201233513/https://www.stencilai.app/"
+      },
+      "lesson": "The best problems to solve are ones a friend or family member deals with every week."
+    },
+    {
+      "name": "Web first, paid from the start",
+      "when": "Sep 2025 to Feb 2026",
+      "story": "The website was already online by September 2025. In February 2026 the homepage promised \"a perfect stencil in 30 seconds\" and there was no free plan: $14, $29 or $69 a month. The phone app was still marked \"Coming soon\". In January 2026 it already brought in about $16,000.",
+      "number": {
+        "v": "$16,032 in Jan 2026",
+        "label": "Verified",
+        "date": "Nov 18 2026",
+        "source": "https://trustmrr.com/startup/stencil-ai"
+      },
+      "lesson": "You don't need an app store listing to start charging. A simple website with a price tests whether people will pay."
+    },
+    {
+      "name": "Selling to professionals",
+      "when": "2026",
+      "story": "Stencil AI is sold to people who earn money with it. A Studio plan charges per artist, so a whole tattoo shop can pay for it. The pitch is time: the October 2026 homepage says it \"replaces hours of tracing in Procreate\", a drawing app.",
+      "number": {
+        "v": "$29/month Pro, $69/month Studio",
+        "label": "Wayback",
+        "date": "Oct 11 2026",
+        "source": "https://web.archive.org/web/20261011204859/https://www.stencilai.app/"
+      },
+      "lesson": "People pay more easily for a tool that saves them time at work than for one that is just fun."
+    },
+    {
+      "name": "The App Store launch",
+      "when": "Mar to Jul 2026",
+      "story": "The iPhone app went live on March 12, 2026, with an Android version too. Monthly revenue grew every month from January to July, from about $16,000 to about $62,000.",
+      "number": {
+        "v": "$62,455 in Jul 2026",
+        "label": "Verified",
+        "date": "Nov 18 2026",
+        "source": "https://trustmrr.com/startup/stencil-ai"
+      },
+      "lesson": "Once the website proves people pay, an app puts the tool where the customer works: on a phone or tablet at the chair."
+    },
+    {
+      "name": "Holding steady and getting found",
+      "when": "Aug 2026 to now",
+      "story": "Since July, revenue has stayed between about $60,000 and $64,000 a month. The site has a blog of how-to guides, like how to print a stencil or make one in Procreate, so artists searching Google land on it. Its MRR was $48,693 when we read it, lower than October's $62,976. Both numbers are real but measure different things: MRR only counts subscriptions active on the day it was read, as a monthly amount, while a month's revenue is all the money collected that month, which can include yearly plans paid up front. The TrustMRR listing names app store search, SEO (getting found on Google), a blog, TikTok, Instagram, Pinterest and YouTube as its channels.",
+      "number": {
+        "v": "$62,976 in Oct 2026",
+        "label": "Verified",
+        "date": "Nov 18 2026",
+        "source": "https://trustmrr.com/startup/stencil-ai"
+      },
+      "lesson": "Write the guide your customer is already searching for, and put your tool inside it."
+    }
+  ],
+  "moves": [
+    {
+      "when": "By Sep 2025",
+      "text": "Put the website online (first Wayback captures on Sep 29 2025)",
+      "label": "Wayback",
+      "source": "https://web.archive.org/cdx/search/cdx?url=stencilai.app"
+    },
+    {
+      "when": "Feb 2026",
+      "text": "Sold three paid plans on the web with no free plan, while the app was still \"Coming soon\"",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20260201233513/https://www.stencilai.app/"
+    },
+    {
+      "when": "Feb 2026",
+      "text": "Pointed an Instagram bio link at the site",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20260201233421/https://www.stencilai.app/?utm_source=ig&utm_medium=social&utm_content=link_in_bio"
+    },
+    {
+      "when": "Mar 12 2026",
+      "text": "Launched the iPhone app",
+      "label": "Live",
+      "source": "https://itunes.apple.com/lookup?id=6759050298&country=us"
+    },
+    {
+      "when": "2026",
+      "text": "Offered a per-artist Studio plan so whole tattoo shops can pay",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20261011204859/https://www.stencilai.app/"
+    },
+    {
+      "when": "2026",
+      "text": "Published how-to guides for tattoo artists on its own blog",
+      "label": "Live",
+      "source": "https://www.stencilai.app/blog"
+    },
+    {
+      "when": "By Oct 2026",
+      "text": "Added in-app editing, true-size printing and a full-screen \"Tattoo Mode\" for use during a session",
+      "label": "Wayback",
+      "source": "https://web.archive.org/web/20261011204859/https://www.stencilai.app/"
+    }
+  ],
+  "fact_checks": [
+    {
+      "claim": "Run by a solo founder, team size 1 person",
+      "who": "TrustMRR listing (founder-provided)",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/stencil-ai.md",
+      "found": "The company's own homepage shows two co-founders, brothers, one a programmer and one a tattoo artist, and later adds a senior artist advisor. The legal business is registered to one person, which may explain the 1.",
+      "label": "Sources differ"
+    },
+    {
+      "claim": "Founded January 8, 2026",
+      "who": "TrustMRR listing (founder-provided)",
+      "date": "Nov 19 2026",
+      "source": "https://trustmrr.com/startup/stencil-ai.md",
+      "found": "The Wayback Machine has captures of stencilai.app from Sep 29 2025, and verified revenue was already $16,032 in January 2026. It started before the listed date.",
+      "label": "Sources differ"
+    },
+    {
+      "claim": "1,000+ artists worldwide (Feb 2026), then 5,000+ artists (Oct 2026)",
+      "who": "Stencil AI homepage",
+      "date": "Oct 11 2026",
+      "source": "https://web.archive.org/web/20261011204859/https://www.stencilai.app/",
+      "found": "TrustMRR shows 1,753 active subscriptions on Nov 19 2026. \"Artists\" may include people who tried it without paying. We couldn't check the artist count.",
+      "label": "Claimed"
+    },
+    {
+      "claim": "$48,693 MRR",
+      "who": "TrustMRR",
+      "date": "Nov 18 2026",
+      "source": "https://trustmrr.com/startup/stencil-ai",
+      "found": "Read from RevenueCat (app payments) and Polar (web payments) through API keys (a key that lets one app read data from another).",
+      "label": "Verified"
+    }
+  ],
+  "wayback": [
+    {
+      "date": "Feb 1 2026",
+      "headline": "Turn any photo into a perfect stencil in 30 seconds",
+      "sub": "Better stencils mean better tattoos and happier clients.",
+      "prices": "Hobby $14/mo, Pro $29/mo, Studio $69/mo (2 artists, +$25 per extra artist)",
+      "source": "https://web.archive.org/web/20260201233513/https://www.stencilai.app/"
+    },
+    {
+      "date": "Oct 11 2026",
+      "headline": "Turn any photo into a perfect stencil in 30 seconds",
+      "sub": "The tattoo stencil maker that replaces hours of tracing in Procreate.",
+      "prices": "Hobby $14/mo, Pro $29/mo, Studio $69/mo",
+      "source": "https://web.archive.org/web/20261011204859/https://www.stencilai.app/"
+    }
+  ],
+  "checklist": [
+    "Ask three people you know what boring task they repeat every week at work. Write the answers down.",
+    "Pick one job with a clear before and after (a photo before, a stencil after) and sketch what a tool would do.",
+    "Make a one-page website that shows the result and a price before you build a full app.",
+    "Ask one person who does the job for real to test your output and tell you what is wrong with it.",
+    "Write one how-to guide that answers a question your customers type into Google.",
+    "Put your link in your Instagram or TikTok bio and count the clicks for a week."
+  ],
+  "sources": [
+    {
+      "name": "TrustMRR: Stencil AI",
+      "url": "https://trustmrr.com/startup/stencil-ai",
+      "what": "MRR, revenue, monthly series, subscriptions",
+      "date": "Nov 18 2026",
+      "label": "Verified"
+    },
+    {
+      "name": "TrustMRR: Stencil AI (Markdown profile)",
+      "url": "https://trustmrr.com/startup/stencil-ai.md",
+      "what": "Founder-provided description, team size, founding date, channels, pricing",
+      "date": "Nov 19 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "App Store: Stencil AI - Tattoo Stencils",
+      "url": "https://apps.apple.com/us/app/id6759050298",
+      "what": "Rating and rating count",
+      "date": "Nov 19 2026",
+      "label": "Live"
+    },
+    {
+      "name": "Apple lookup API",
+      "url": "https://itunes.apple.com/lookup?id=6759050298&country=us",
+      "what": "Release date Mar 12 2026",
+      "date": "Nov 19 2026",
+      "label": "Live"
+    },
+    {
+      "name": "Wayback Machine: stencilai.app, Feb 1 2026",
+      "url": "https://web.archive.org/web/20260201233513/https://www.stencilai.app/",
+      "what": "Headline, prices, \"two brothers\" team section, app \"Coming soon\"",
+      "date": "Feb 1 2026",
+      "label": "Wayback"
+    },
+    {
+      "name": "Wayback Machine: stencilai.app, Oct 11 2026",
+      "url": "https://web.archive.org/web/20261011204859/https://www.stencilai.app/",
+      "what": "Headline, prices, artist claims, team section",
+      "date": "Oct 11 2026",
+      "label": "Wayback"
+    },
+    {
+      "name": "Wayback Machine: Instagram bio link capture",
+      "url": "https://web.archive.org/web/20260201233421/https://www.stencilai.app/?utm_source=ig&utm_medium=social&utm_content=link_in_bio",
+      "what": "Site visited from an Instagram link in bio",
+      "date": "Feb 1 2026",
+      "label": "Wayback"
+    },
+    {
+      "name": "Wayback Machine: capture list",
+      "url": "https://web.archive.org/cdx/search/cdx?url=stencilai.app",
+      "what": "First captures on Sep 29 2025",
+      "date": "Sep 29 2025",
+      "label": "Wayback"
+    },
+    {
+      "name": "Stencil AI blog",
+      "url": "https://www.stencilai.app/blog",
+      "what": "How-to guides for tattoo artists",
+      "date": "Nov 19 2026",
+      "label": "Live"
+    }
+  ]
+}

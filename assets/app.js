@@ -266,8 +266,8 @@
       const minor = !a || a === "13 to 15" || a === "16 to 17"; const ps = $("#parent"); if (ps) ps.hidden = !minor; const pl = $('.anav a[href="#parent"]'); if (pl) pl.hidden = !minor; };
     note(); agesel.addEventListener("change", () => { ls.set("lv-age", agesel.value || null); note(); toast("Saved on this device."); });
     const bill = y => { $$("[data-bill]").forEach(b => b.setAttribute("aria-pressed", (b.dataset.bill === "y") === y));
-      $('[data-pr="pro"]').textContent = y ? "$4" : "$5"; $('[data-pr="builder"]').textContent = y ? "$10" : "$12";
-      $('[data-ps="pro"]').textContent = y ? "a month, billed yearly · $5 monthly" : "a month · $4 a month billed yearly"; $('[data-ps="builder"]').textContent = y ? "a month, billed yearly · $12 monthly" : "a month · $10 a month billed yearly"; };
+      $('[data-pr="pro"]').textContent = y ? "$6.49" : "$7.99"; $('[data-pr="developer"]').textContent = y ? "$23.99" : "$29.99";
+      $('[data-ps="pro"]').textContent = y ? "a month, $77.88 billed yearly · $7.99 monthly" : "a month · $6.49 a month billed yearly"; $('[data-ps="developer"]').textContent = y ? "a month, $287.88 billed yearly · $29.99 monthly" : "a month · $23.99 a month billed yearly"; };
     $$("[data-bill]").forEach(b => b.addEventListener("click", () => bill(b.dataset.bill === "y"))); bill(true);
     const link = location.origin + "/#pricing", flow = () => { const s = ls.get("lv-parent"); $$("[data-pflow] span").forEach((x, i) => x.className = s ? (i === 0 ? "d" : i === 1 ? "c" : "t") : "t");
       if (s) $("[data-pflow] span").innerHTML = `<i></i>Link sent ${esc(s)}`; };
@@ -334,6 +334,32 @@
       const i = Math.max(0, os.indexOf(document.activeElement)), j = (i + (e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : -1) + os.length) % os.length; os[j].focus(); os[j].click(); });
     render();
   }
+
+  // ---------- report a mistake: inserts into public.reports (insert-only RLS) with the publishable key ----------
+  const SB_URL = "https://azriqynpnbltvxucwmpo.supabase.co", SB_KEY = "sb_publishable_HuWp3C44Bd6dLqGW3DiaxA_qCSpDZZa";   // same public values as supabase.js
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-report]"); if (!b) return;
+    const d = document.createElement("dialog"); d.className = "rdlg"; d.setAttribute("aria-labelledby", "rdh");
+    d.innerHTML = `<form method="dialog"><h2 id="rdh">Report a mistake</h2><p>Tell us which number or sentence looks wrong, and why. We read every report.</p>
+      <label for="rwhat">What's wrong?</label><textarea id="rwhat" required minlength="5" maxlength="2000"></textarea>
+      <label for="rcontact">How can we reply? (optional)</label><input id="rcontact" maxlength="200" autocomplete="off" placeholder="Email or username">
+      <p class="rmsg" role="status" aria-live="polite"></p><div class="rb"><button class="btn btn-s" type="button" data-rclose>Cancel</button><button class="btn btn-p" type="submit">Send</button></div></form>`;
+    document.body.appendChild(d); d.addEventListener("close", () => { d.remove(); b.focus(); });
+    $("[data-rclose]", d).addEventListener("click", () => d.close());
+    const msg = $(".rmsg", d), send = $('[type="submit"]', d);
+    $("form", d).addEventListener("submit", async ev => { ev.preventDefault();
+      const what = $("#rwhat", d).value.trim(), contact = $("#rcontact", d).value.trim();
+      if (what.length < 5) { msg.className = "rmsg err"; msg.textContent = "Please write at least a few words."; $("#rwhat", d).focus(); return; }
+      send.disabled = true; msg.className = "rmsg"; msg.textContent = "Sending…";
+      try {
+        const r = await fetch(SB_URL + "/rest/v1/reports", {method: "POST", headers: {apikey: SB_KEY, "Content-Type": "application/json", Prefer: "return=minimal"},
+          body: JSON.stringify({story_slug: b.dataset.report || null, page: location.pathname, what, contact: contact || null})});
+        if (!r.ok) throw new Error(r.status);
+        msg.className = "rmsg ok"; msg.textContent = "Thanks, we'll check it."; send.hidden = true; $("[data-rclose]", d).textContent = "Close";
+      } catch (err) { send.disabled = false; msg.className = "rmsg err"; msg.textContent = "Sorry, that didn't send (" + err.message + "). Please try again in a minute."; }
+    });
+    d.showModal(); $("#rwhat", d).focus();
+  });
 
   syncChecklists(); paint();
 })();

@@ -2,7 +2,7 @@
 /* Round 10 FINAL: merged from A (product), B (story), C (growth) per round10/FINAL.md. PB# = research/PLAYBOOK.md rules. */
 :root{
   --brand:#2563EB; --brand-ink:#1D4ED8;
-  --ink:#0B1220; --text:#4B5563; --muted:#6B7280; --faint:#9CA3AF;
+  --ink:#0B1220; --text:#4B5563; --muted:#4B5563; --faint:#9CA3AF;
   --line:#E5E7EB; --line2:#EEF0F3; --alt:#F8FAFC; --bg:#FFFFFF; --dark:#0B1020;
   --verified:#047857; --verified-dot:#10B981; --coral:#E5533D; --slate:#64748B; --violet:#7C3AED; --sky:#0284C7; --sky-dot:#0EA5E9;
   --fd:"Schibsted Grotesk",system-ui,sans-serif; --fn:"Inter Tight",system-ui,sans-serif;

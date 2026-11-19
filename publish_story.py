@@ -36,7 +36,7 @@ def main():
     if len(sys.argv) != 2: fail("usage: python publish_story.py <slug>")
     slug = sys.argv[1]
     path = os.path.join(B.DATA, "stories", slug + ".json")
-    if not os.path.exists(path): fail(f"no story file at design/data/stories/{slug}.json")
+    if not os.path.exists(path): fail(f"no story file at data/stories/{slug}.json")
     try: S = B.normalize(json.load(open(path, encoding="utf-8")))
     except json.JSONDecodeError as e: fail(f"{slug}.json is not valid JSON: {e}")
     errs = B.validate(S, path)

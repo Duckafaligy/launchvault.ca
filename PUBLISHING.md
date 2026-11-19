@@ -1,6 +1,6 @@
 # Publishing a story
 
-One story = one file: `design/data/stories/<slug>.json` (format: `design/data/stories/SCHEMA.md`).
+One story = one file: `data/stories/<slug>.json` (format: `data/stories/SCHEMA.md`).
 
 ```
 python publish_story.py <slug>
@@ -15,7 +15,7 @@ That one command:
    - the cover `assets/covers/<slug>.png` + `.webp` (rendered once, kept after that) and its og:image
 3. upserts the story into Supabase `public.stories` when `SUPABASE_SERVICE_ROLE_KEY` is set in the environment (never put it in a file). Without it the upsert is skipped with a warning; the site still builds. Pages never need Supabase to render.
 
-Companies in `design/data/stories.json` without a story file stay "Coming soon" automatically.
+Companies in `data/stories.json` without a story file stay "Coming soon" automatically.
 
 `python build_app.py` rebuilds everything without publishing anything new.
 
