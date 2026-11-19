@@ -168,7 +168,7 @@
       tabs.forEach(t => { const f = document.createElement("span"); f.className = "pfill"; f.setAttribute("aria-hidden", "true"); t.append(f); });
       const sync = () => parts.classList.toggle("paused", hovering || !visible);
       const resume = () => { if (!stopped || hovering) return; stopped = false; parts.classList.remove("auto"); void parts.offsetWidth; parts.classList.add("auto"); };
-      const arm = () => { clearTimeout(idle); if (stopped && !hovering) idle = setTimeout(resume, 10000); };
+      const arm = () => { clearTimeout(idle); if (stopped && !hovering) idle = setTimeout(resume, 7000); };
       const stop = () => { stopped = true; parts.classList.remove("auto"); arm(); };
       parts.addEventListener("animationend", e => { if (e.animationName !== "part-fill" || stopped) return; select(tabs[(tabs.indexOf(cur) + 1) % tabs.length]); });
       box.addEventListener("pointerenter", () => { hovering = true; clearTimeout(idle); sync(); });
