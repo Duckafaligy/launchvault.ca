@@ -224,3 +224,9 @@ footer .fbot .lgl a{display:inline-flex;align-items:center;min-height:44px}
 #pricing .plan .pr small{color:inherit}
 #pricing .plan.pro .pr small{color:#fff}
 #pricing .plan.pro .tg,#pricing .plan .tg{color:#fff!important;opacity:1;background:#2563EB;border-color:#2563EB;font-weight:600}
+/* label colours (2026-11-18): Claimed = violet, Wayback = fuchsia, so no tag reads grey */
+.lb.c,.dk .cwin .lb.c{color:#6D28D9;background:rgba(139,92,246,.12)}
+.lb.w,.dk .cwin .lb.w{color:#A21CAF;background:rgba(217,70,239,.12)}.lb.w::before{background:#D946EF}
+.dk .lb.c,#pricing .dk .lb.c{color:#C4B5FD;background:rgba(139,92,246,.2)}
+.dk .lb.w{color:#F0ABFC;background:rgba(217,70,239,.18)}
+.sbg .lb{box-shadow:inset 0 0 0 1px color-mix(in srgb,currentColor 28%,transparent)}
