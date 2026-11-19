@@ -123,7 +123,7 @@ def load_ready(strict=True):
             print("skipped (invalid) " + msg); continue
         out.append(S)
     hv = lambda S: (S.get("headline") or {}).get("value") or int(re.sub(r"[^0-9]", "", S["numbers"][0]["v"]) or 0)
-    return sorted(out, key=lambda s: (s["published"], hv(s)), reverse=True)   # newest first; same day: biggest verified number first
+    return sorted(out, key=lambda s: (s["published"], hv(s)), reverse=True)   # stale ones are moved after fresh ones of the same day in main()   # newest first; same day: biggest verified number first
 
 # ============================================================ data model
 def norm_soon(s):
@@ -157,7 +157,7 @@ def norm_ready(S, legacy):
     return {"slug": S["slug"], "name": S["name"], "tab": tab, "type": S.get("type_label") or S["category"], "what": S["what"], "logo": S["logo"],
             "pattern": S["pattern"], "lessons": [p["lesson"] for p in S["phases"]], "hv": hv, "hu": hu, "hl": hl, "sub": sub,
             "hd": hd, "hsrc": h.get("source", S["numbers"][0].get("source", "")), "status": "ready", "stale": stale,
-            "href": "/app/postiz/" if S["slug"] == "postiz" else f"/app/story/{S['slug']}/", "read": S["read_min"], "published": S["published"],
+            "href": f"/app/story/{S['slug']}/", "read": S["read_min"], "published": S["published"],
             "mrr": mrr, "series": [[p[0], p[1]] for p in S["series"]["points"]], "title": S["title"], "S": S}
 def growth(series):
     """Average monthly growth between the first and last real point (compound). None when it can't be computed."""
@@ -166,12 +166,13 @@ def growth(series):
     y1, m1 = map(int, a[0].split("-")); y2, m2 = map(int, b[0].split("-")); n = (y2 - y1) * 12 + m2 - m1
     return round(((b[1] / a[1]) ** (1 / n) - 1) * 100, 1) if n > 0 else None
 
-def spark(series, cls="spark"):
+def spark(series, cls="spark", name=""):
     if len(series) < 2: return '<span class="noser">No monthly series</span>'
     vs = [v for _, v in series]; top = max(vs) or 1; n = len(vs)
+    lab = esc(f"{name} revenue each month, {mlab(series[0][0])} to {mlab(series[-1][0])}: " + ", ".join(money(v) for v in vs)) if name else ""
     pts = [(2 + i * 236 / (n - 1), 34 - v / top * 30) for i, v in enumerate(vs)]
     ln = "M" + " L".join(f"{x:.1f} {y:.1f}" for x, y in pts)
-    return f'<svg class="{cls}" viewBox="0 0 240 36" preserveAspectRatio="none" aria-hidden="true"><path class="ar" d="{ln} L{pts[-1][0]:.1f} 36 L2 36 Z"/><path class="ln" d="{ln}"/></svg>'
+    return f'<svg class="{cls}" viewBox="0 0 240 36" preserveAspectRatio="none" {f'role="img" aria-label="{lab}"' if lab else 'aria-hidden="true"'}><path class="ar" d="{ln} L{pts[-1][0]:.1f} 36 L2 36 Z"/><path class="ln" d="{ln}"/></svg>'
 
 # ============================================================ shell
 SIDE_SOON = ["dm-champ", "stencil-ai", "windmill-growth", "gojiberry"]
@@ -193,6 +194,7 @@ def head(title, desc, extra="", og_slug=""):
 <meta name="theme-color" content="#2563EB">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,600;1,700&family=Inter+Tight:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,600;1,700&family=Inter+Tight:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="/assets/app.css">{extra}
 </head>
@@ -254,6 +256,15 @@ def src_name(f):
         d = re.sub(r"^https?://(www\.)?", "", s).split("/")[0]
         return {"trustmrr.com": "TrustMRR", "github.com": "GitHub", "web.archive.org": "Wayback Machine"}.get(d, d)
     return s
+def chart_table(S):
+    rows = [(p[0], p[1], p[2] if len(p) > 2 else S["series"].get("label", ""), p[3] if len(p) > 3 else "") for p in S["series"]["points"]]
+    rows += [(p[0], p[1], p[2] if len(p) > 2 else "Sources differ", (p[3] if len(p) > 3 else "") + " (second source)") for p in S["series"].get("alt", [])]
+    rows.sort(key=lambda r: r[0])
+    pd = S["series"].get("point_dates") or {}
+    return ('<details class="ctab"><summary>Show as table</summary><table><caption class="sr">' + esc(S["name"]) + ": " + esc(S["series"]["what"].lower()) + '</caption>'
+            '<thead><tr><th scope="col">Month</th><th scope="col">Value</th><th scope="col">Label</th><th scope="col">Source</th></tr></thead><tbody>'
+            + "".join(f'<tr><th scope="row">{esc(pd.get(m) or mlab(m))}</th><td>{money(v)}</td><td>{lb(l)}</td><td>{esc(src_name({"source": sr}) if sr else "")}</td></tr>' for m, v, l, sr in rows)
+            + "</tbody></table></details>")
 def chart_block(S, moves_list=True, band=True):
     data = {"series": S["series"], "moves": [m for m in S["moves"]]}
     for i, p in enumerate(S["phases"]):
@@ -270,9 +281,21 @@ def chart_block(S, moves_list=True, band=True):
     return (f'<div class="chartc lvchart"><div class="hd"><div><div class="big">{money(last[1])}<small>{esc(S["series"]["what"].lower())}</small></div>'
             f'<div class="legend">{legend}</div></div></div><div class="readout" aria-live="polite"></div>'
             f'<div class="plot"><svg role="img" aria-label="{esc(S["name"])}: {esc(S["series"]["what"].lower())}, ' + ", ".join(f"{mlab(p[0])} {money(p[1])}" for p in S["series"]["points"]) + f'"></svg></div>'
-            f'{bd}{ml}<p class="cprov">{esc(S["series"].get("note") or "Points carry their own labels. Hover or tap the line for the month, the value and where it came from.")}</p>'
+            f'{bd}{ml}{chart_table(S)}<p class="cprov">{esc(S["series"].get("note") or "Points carry their own labels. Hover or tap the line for the month, the value and where it came from.")}</p>'
             f'<script type="application/json" class="lvchart-data">{json.dumps(data, separators=(",", ":"))}</script></div>')
 
+SRC_LOGO = [("trustmrr.com", "trustmrr.png"), ("stripe.com", "stripe.svg"), ("github.com", "github.svg"), ("web.archive.org", "internetarchive.png"), ("archive.org", "internetarchive.png"),
+            ("starterstory.com", "starterstory.png"), ("mixergy.com", "mixergy.png"), ("dev.to", "devto.png"), ("news.ycombinator.com", "hackernews.svg"), ("ycombinator.com", "hackernews.svg"),
+            ("producthunt.com", "producthunt.png"), ("reddit.com", "reddit.png"), ("youtube.com", "youtube.png"), ("youtu.be", "youtube.png"), ("x.com", "x.png"), ("twitter.com", "x.png"),
+            ("indiehackers.com", "indiehackers.png"), ("superframeworks.com", "superframeworks.png"), ("apps.apple.com", "apple.svg"), ("itunes.apple.com", "apple.svg")]
+SRC_NAME_LOGO = [("TrustMRR", "trustmrr.png"), ("Wayback", "internetarchive.png"), ("Dev.to", "devto.png"), ("DEV", "devto.png"), ("Mixergy", "mixergy.png"),
+                 ("Superframeworks", "superframeworks.png"), ("Starter Story", "starterstory.png"), ("GitHub", "github.svg"), ("Hacker News", "hackernews.svg"), ("Product Hunt", "producthunt.png")]
+LINK_ICON = '<span class="srcic" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></span>'
+def src_logo(s, cls="", w=20):
+    u = (s.get("url") or "").lower(); dom = re.sub(r"^https?://(www\.)?", "", u).split("/")[0]
+    f = next((lg for d, lg in SRC_LOGO if dom == d or dom.endswith("." + d)), None) if dom else None
+    if not f and not u: f = next((lg for k, lg in SRC_NAME_LOGO if k.lower() in s["name"].lower()), None)
+    return f'<img{cls} src="/assets/logos/{f}" alt="" width="{w}" height="{w}" loading="lazy" decoding="async">' if f else LINK_ICON
 def set_srcmap(S):
     SRCMAP.clear(); SRCMAP.update({x["url"]: x["name"] for x in S["sources"] if x.get("url")})
 def reader(E, S, gate=True):
@@ -315,7 +338,7 @@ def reader(E, S, gate=True):
           + '<div class="ckf"><span>Ticks stay on this device. Pro saves them to your account.</span><a href="/app/account/#plan">See Pro</a></div></div></section>')
     src = (f'<section class="rsec" id="sources"><div class="sh"><h2>Sources</h2><span class="meta">Free for everyone</span></div><div class="srcl">'
            + "".join((f'<a class="sr2" href="{esc(s["url"])}" target="_blank" rel="noopener">' if s.get("url") else '<div class="sr2">')
-                     + f'<img src="{s.get("logo") or S["logo"]}" alt="" width="20" height="20" loading="lazy"><span><b>{esc(s["name"])}</b><small>{esc(s.get("what", ""))}</small></span><span class="dt">{esc(s["date"])}</span>{lb(s["label"])}'
+                     + src_logo(s) + f'<span><b>{esc(s["name"])}</b><small>{esc(s.get("what", ""))}</small></span><span class="dt">{esc(s["date"])}</span>{lb(s["label"])}'
                      + (f'<span class="ext">{ic(I["ext"], 14)}</span></a>' if s.get("url") else '<span class="ext"></span></div>') for s in S["sources"])
            + f'</div><div class="rfoot"><span>Breakdowns by LaunchVault. Not financial advice.</span><span>Last checked {esc(S["numbers"][0]["date"])}</span></div></section>')
     gate_html = (f'<div class="gate" id="gate"><h3>{ic(I["lock"], 18)}The rest of this breakdown is on Pro</h3><p>Phase 1, the numbers, the chart and the Sources stay free.</p>'
@@ -459,7 +482,7 @@ def blog_post(S, E):
     fc = "".join(f'<div class="fr" role="row"><span class="c1">{esc(f["claim"])}</span><span>{esc(f["found"])}</span><span>{lb(f["label"])}</span></div>' for f in S["fact_checks"])
     cl = [c if isinstance(c, dict) else {"text": c} for c in S["checklist"]]
     cks = "".join(f'<button class="ck" type="button" aria-pressed="false"><span class="bx"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" pathLength="1"/></svg></span><span>{esc(c["text"])}</span></button>' for c in cl)
-    src = "".join(f'<div class="sl-row"><span class="slogo"><img class="blogo" src="{s.get("logo") or S["logo"]}" alt="" width="20" height="20" loading="lazy" decoding="async"></span><span class="sn"><b>{esc(s["name"])}</b><span class="d">{esc(s.get("what", ""))}</span></span><span class="sd">{esc(s["date"])}</span>{lb(s["label"])}</div>' for s in S["sources"])
+    src = "".join(f'<div class="sl-row"><span class="slogo">{src_logo(s, cls=" class=" + chr(34) + "blogo" + chr(34))}</span><span class="sn"><b>{esc(s["name"])}</b><span class="d">{esc(s.get("what", ""))}</span></span><span class="sd">{esc(s["date"])}</span>{lb(s["label"])}</div>' for s in S["sources"])
     tn = ""
     if S.get("wayback"):
         tn = '<section id="then-now"><div class="wrap"><div class="shead"><div><h2>Then and now. <em class="em">' + esc(S.get("wayback_note", "")) + '.</em></h2></div></div><div class="tn">' + '<div class="arrow"></div>'.join(
@@ -470,7 +493,7 @@ def blog_post(S, E):
     rep = {"{{SLUG}}": S["slug"], "{{H1}}": h1, "{{DEK}}": esc(S["dek"]), "{{LOGO}}": S["logo"], "{{NAME}}": esc(S["name"]), "{{READ}}": str(S["read_min"]), "{{NSRC}}": str(len(S["sources"])),
            "{{DATE}}": esc(S["numbers"][0]["date"]), "{{KPIS}}": kpis, "{{CHART}}": chart_block(S, moves_list=True, band=False), "{{HL}}": hl, "{{NHL}}": str(len(S.get("highlights", []))),
            "{{PHASES}}": "\n      ".join(ph(i, p) for i, p in enumerate(S["phases"])), "{{FC}}": fc, "{{NFC}}": str(len(S["fact_checks"])), "{{FCREAD}}": esc(S.get("fact_checks_read") or S["fact_checks"][0]["date"]),
-           "{{TN}}": tn, "{{CKS}}": cks, "{{NCK}}": str(len(cl)), "{{SRC}}": src, "{{APP}}": "/app/postiz/" if S["slug"] == "postiz" else f"/app/story/{S['slug']}/"}
+           "{{TN}}": tn, "{{CKS}}": cks, "{{NCK}}": str(len(cl)), "{{SRC}}": src, "{{APP}}": f"/app/story/{S['slug']}/"}
     for k, v in rep.items(): tpl = tpl.replace(k, v)
     if not S.get("highlights"):
         tpl = re.sub(r"<!--HL-->.*?<!--/HL-->", lambda m: '<section class="sec-alt" id="moves-two"><div class="wrap">', tpl, flags=re.S)
@@ -580,38 +603,45 @@ TASKS = {"c1": "Pick the one place and post your next small update there today."
          "c3": "List three tools growing fast right now that your idea could plug into.", "c4": "Find the five people who use your thing most and ask them one question each.",
          "c5": "Write one useful post yourself instead of paying for SEO.", "c6": "Pick one hour a week you can keep through exams and put it in your calendar."}
 APPDATA = {}
+WEEK = ""
 
 def main():
     global APPDATA
     legacy = {s.get("slug") or s["company"].lower(): s for s in json.load(open(os.path.join(DATA, "stories.json"), encoding="utf-8"))["stories"]}
     ready = load_ready()
     assert ready, "no ready stories"
+    ready.sort(key=lambda S: bool((legacy.get(S["slug"]) or {}).get("stale")))   # stable: within one publish date, stale data goes last
+    ready.sort(key=lambda S: S["published"], reverse=True)
     rslugs = {S["slug"] for S in ready}
     tabs = json.load(open(os.path.join(DATA, "stories.json"), encoding="utf-8"))["tabs"]
     E = [norm_ready(S, legacy.get(S["slug"])) for S in ready] + [norm_soon(legacy[s]) for k in ("ai", "mobile", "services") for s in tabs[k] if s not in rslugs and s in legacy]
     for e in E: e["growth"] = growth(e["series"])
+    global WEEK; WEEK = next((e["slug"] for e in E if e["status"] == "ready" and not e["stale"]), ready[0]["slug"])
     pz = next(S for S in ready if S["slug"] == "postiz")
     pz_ck = [c for c in pz["checklist"]]
     steps = [{"id": c["id"], "text": c["text"], "from": c["from"], "n": int(c["id"][1:]), "task": TASKS.get(c["id"], "")} for c in [pz_ck[i] for i in (0, 1, 5, 3, 2)]]
     APPDATA = {
         "stories": [{k: e[k] for k in ("slug", "name", "tab", "type", "what", "logo", "pattern", "lessons", "hv", "hu", "hl", "hd", "sub", "status", "stale", "href", "read", "published", "mrr", "growth")}
-                    | {"spark": spark(e["series"])} for e in E],
+                    | {"spark": spark(e["series"], name=e["name"])} for e in E],
         "tabs": TABS,
         "checklists": [{"slug": S["slug"], "name": S["name"], "logo": S["logo"], "href": next(e["href"] for e in E if e["slug"] == S["slug"]), "key": f"lv-{S['slug']}-checks",
                         "items": [c if isinstance(c, dict) else {"text": c, "from": ""} for c in S["checklist"]], "phases": len(S["phases"]),
                         "phase_names": [p["name"] for p in S["phases"]]} for S in ready],
         "path": {"title": "Ship something small first", "source": "postiz", "steps": steps,
-                 "extra": {"id": "x1", "text": "Ask for money early: offer the easy paid version to your 5 most active users.", "from": "Pattern from Gojiberry · breakdown coming soon"}},
+                 "extra": {"id": "x1", "text": "Ask for money early: offer the easy paid version to your 5 most active users.", "from": "Pattern from Gojiberry", "href": "/app/story/gojiberry/" if "gojiberry" in rslugs else ""}},
         "quiz": [{"q": q, "o": o, "w": w} for (q, o), w in zip(QUIZ, QW)],
-        "search_extra": [{"t": f"{pz['name']} move {i + 1}: {m['text']} · {m['when']}", "h": "/app/postiz/#chart", "g": "Moves"} for i, m in enumerate(pz["moves"])]
-                        + [{"t": f"{s['name']}", "h": s["url"], "g": "Sources"} for s in pz["sources"] if s.get("url")],
+        "search_extra": [x for S in ready for x in (
+                            [{"t": f"{S['name']} · phase {i + 1}: {ph['name']}", "k": " ".join([ph["name"], ph["story"], ph["lesson"]]), "h": f"/app/story/{S['slug']}/#ph{i + 1}", "g": "Phases"} for i, ph in enumerate(S["phases"])]
+                            + [{"t": f"{S['name']} move {i + 1}: {m['text']} · {m['when']}", "h": f"/app/story/{S['slug']}/#chart", "g": "Moves"} for i, m in enumerate(S["moves"])]
+                            + [{"t": f"{S['name']} · {so['name']}", "k": so["name"] + " " + so.get("what", ""), "h": f"/app/story/{S['slug']}/#sources", "g": "Sources"} for so in S["sources"]])],
     }
     out = lambda rel, t: wr(os.path.join(ROOT, "app", rel, "index.html") if rel else os.path.join(ROOT, "app", "index.html"), t)
     out("", home(E)); out("library", library(E))
     for S in ready:
-        page = reader(E, S)
+        # this week's breakdown (newest story whose data isn't stale) is free; every other story keeps the Pro gate after phase 1
+        page = reader(E, S, gate=S["slug"] != WEEK)
         out(f"story/{S['slug']}", page)
-        if S["slug"] == "postiz": out("postiz", page)
+    shutil.rmtree(os.path.join(ROOT, "app", "postiz"), ignore_errors=True)   # old alias: vercel.json redirects /app/postiz/ to /app/story/postiz/
     for e in E:
         if e["status"] == "soon": out(f"story/{e['slug']}", soon_page(E, e))
     out("path", static_page(E, "path", "My path", "Your path, built from your quiz answers.", "path"))
@@ -625,7 +655,6 @@ def main():
     # public side: generated blog posts (Postiz keeps its hand-made post; its generated twin goes to _gen for the parity check)
     for S in ready:
         post = blog_post(S, E)
-        if S["slug"] == "postiz": wr(os.path.join(ROOT, "_gen", "post-postiz.body.html"), post); continue
         wr(os.path.join(SRC, f"post-{S['slug']}.body.html"), post)
         make_cover(S)
         if not any(p[0] == f"blog/{S['slug']}/index.html" for p in build.PAGES):
@@ -636,7 +665,6 @@ def main():
     write_sitemap()
     # the public posts load the shared chart renderer
     for S in ready:
-        if S["slug"] == "postiz": continue
         p = os.path.join(ROOT, "blog", S["slug"], "index.html"); t = rd(p)
         if "chart.js" not in t: wr(p, t.replace("</body>", '<script src="/assets/chart.js" defer></script>\n</body>').replace("</head>", '<link rel="stylesheet" href="/assets/chart.css">\n</head>'))
     print(f"app: {len(E)} stories ({len(ready)} ready, {len(E) - len(ready)} coming soon)")

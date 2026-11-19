@@ -45,7 +45,7 @@ def main():
     legacy = next((s for s in json.load(open(os.path.join(B.DATA, "stories.json"), encoding="utf-8"))["stories"] if s.get("slug") == slug), None)
     up = upsert(S, legacy)
     print(f"""PUBLISHED {S['name']} ({slug})
-  app reader   /app/story/{slug}/{'  (alias /app/postiz/)' if slug == 'postiz' else ''}
+  app reader   /app/story/{slug}/
   blog post    /blog/{slug}/
   cover        /assets/covers/{slug}.png
   numbers      {len(S['numbers'])} · phases {len(S['phases'])} · moves {len(S['moves'])} · fact checks {len(S['fact_checks'])} · sources {len(S['sources'])}

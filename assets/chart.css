@@ -42,3 +42,18 @@
 @media (max-width:720px){.moves{grid-template-columns:1fr}}
 @media (pointer:coarse){.pband button,.moves button{min-height:44px}}
 .mvh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:16px;padding:10px 8px 6px;border-top:1px solid #EEF0F3;font-size:14px;color:#0B1220}.mvh span{font-size:12.5px;color:#6B7280}
+.ctab{margin-top:12px}
+.ctab summary{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid #E5E7EB;border-radius:8px;font:500 13.5px "Schibsted Grotesk",system-ui,sans-serif;color:#0B1220;cursor:pointer;list-style:none}
+.ctab summary::-webkit-details-marker{display:none}
+.ctab[open] summary{background:#F8FAFC}
+.ctab table{width:100%;margin-top:10px;border-collapse:collapse;font-size:13.5px}
+.ctab th,.ctab td{text-align:left;padding:8px 10px;border-top:1px solid #EEF0F3;color:#374151;font-weight:400}
+.ctab thead th{font-size:12.5px;color:#4B5563;border-top:0}
+.ctab tbody th{color:#0B1220;font-weight:500;white-space:nowrap}
+.ctab td:nth-child(2){font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#0B1220}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (pointer:coarse){.ctab summary{min-height:44px}}
+.pband{flex-wrap:nowrap}.pband button{flex:0 0 auto;max-width:none;overflow:visible;text-overflow:clip;padding:0 12px}
+.srcic{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:5px;background:#F1F3F6;color:#374151;flex:none}
+table.sr{display:block}
+.ctab table{display:block;overflow-x:auto}

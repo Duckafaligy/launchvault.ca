@@ -107,8 +107,7 @@
       set(i);
     };
     const unscrub = () => { const {fg, cross, tv, lv} = G; scrubbing = false; fg.removeAttribute("mask"); cross.style.opacity = 0; tv.style.opacity = 0; lv.style.opacity = ""; render(N); set(N); };
-    const tween = (node, to, pre = "") => { const from = +node.dataset.v || 0; node.dataset.v = to; if (reduce || !to || !from) { node.textContent = to ? pre + money(to) : "Not yet"; return; }
-      const t0 = performance.now(); const st = now => { const k = Math.min(1, (now - t0) / 220); node.textContent = pre + money(from + (to - from) * k); if (k < 1) requestAnimationFrame(st); }; requestAnimationFrame(st); };
+    const tween = (node, to, pre = "") => { node.dataset.v = to; node.textContent = to ? pre + money(to) : "Not yet"; };   // real values only, never in-between numbers
     const set = i => {
       if (i === shown) return; shown = i;
       const v = V[i][1], c = i >= C0 ? CLAIM : 0;

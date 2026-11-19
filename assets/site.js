@@ -44,7 +44,9 @@
   }
 
   // ---------- count-up: 0 -> the number already in the text, on first view ----------
+  // labelled numbers (Verified, Live, Claimed...) are never animated: a count-up would show values that were never true
   const countUp = el => {
+    for (let p = el.parentElement, i = 0; p && i < 3; p = p.parentElement, i++) if (p.querySelector(".lb")) return;
     const txt = el.textContent, m = txt.match(/^(\D*?)(\d[\d,]*(?:\.\d+)?)(.*)$/s);
     if (!m || el.children.length) return;
     const [, pre, num, post] = m, dec = (num.split(".")[1] || "").length, val = parseFloat(num.replace(/,/g, "")), comma = num.includes(",");

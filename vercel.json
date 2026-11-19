@@ -88,12 +88,16 @@
    "source": "/breakdowns/",
    "destination": "/#stories",
    "permanent": true
-  }
- ],
- "rewrites": [
+  },
   {
-   "source": "/app/:path*",
-   "destination": "/app/not-found/"
+   "source": "/app/postiz",
+   "destination": "/app/story/postiz/",
+   "permanent": true
+  },
+  {
+   "source": "/app/postiz/",
+   "destination": "/app/story/postiz/",
+   "permanent": true
   }
  ]
 }

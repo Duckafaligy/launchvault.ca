@@ -42,6 +42,10 @@ def logo(s, w):
     if s["company"] == "Postiz": return f'<img src="/assets/logos/postiz.svg" alt="" width="{w}" height="{round(w * 160 / 145)}">'
     return f'<img src="/{s["logo"].replace("site/", "")}" alt="" width="{w}" height="{w}" loading="lazy" decoding="async">'
 SOON = [s for s in D["stories"] if s["status"] == "coming soon"]
+# screen-reader table for the hero chart (same points as the Postiz story file)
+_PZJ = json.load(open(os.path.join(SITE, "..", "design", "data", "stories", "postiz.json"), encoding="utf-8"))["series"]
+PZ_TABLE = ('<table class="sr"><caption>Postiz monthly revenue</caption><tr><th>Month</th><th>Value</th><th>Label</th></tr>'
+            + "".join(f'<tr><td>{(_PZJ.get("point_dates") or {}).get(p[0]) or mlab(p[0])}</td><td>{money(p[1])}</td><td>{p[2]}</td></tr>' for p in _PZJ["points"]) + "</table>")
 # a company with a story file (design/data/stories/<slug>.json) has a breakdown now: the window shows it as Ready
 READY = {os.path.splitext(f)[0] for f in os.listdir(os.path.join(SITE, "..", "design", "data", "stories")) if f.endswith(".json")}
 NSOON = len([s for s in SOON if s["slug"] not in READY]); NREADY = 1 + len([s for s in SOON if s["slug"] in READY])
@@ -177,7 +181,7 @@ H = f'''    <div class="winfit" id="winfit">
                   <div class="dtabs seg" role="tablist" aria-label="Chart range"><button type="button" role="tab" aria-selected="false" data-range="12">1Y</button><button type="button" role="tab" aria-selected="true" data-range="all">All</button></div>
                 </div>
                 <div class="legend"><span><i class="lg-l"></i>MRR</span><span><i class="lg-v"></i>Verified</span><span><i class="lg-c"></i>Claimed</span><span><i class="lg-x"></i>Sources differ</span><span><i class="lg-m">1</i>Founder's move</span></div>
-                <div class="plot" id="plot"><svg id="chart" role="img" aria-label="Postiz monthly revenue, Sep 2024 to Nov 2026: under $15K for over a year, then rising to {money(PZ["headline"]["value"])} verified on {dlab(PZ["headline"]["date"])}."></svg><div class="tip" id="tip" role="status"></div></div>
+                <div class="plot" id="plot"><svg id="chart" role="img" aria-label="Postiz monthly revenue, Sep 2024 to Nov 2026: under $15K for over a year, then rising to {money(PZ["headline"]["value"])} verified on {dlab(PZ["headline"]["date"])}."></svg>{PZ_TABLE}<div class="tip" id="tip" role="status"></div></div>
                 <div class="pband" id="pband" role="group" aria-label="Phases on the same time axis">{band}<span class="ptip" id="ptip" role="status"></span></div>
               </div>
               <div class="panel moves"><div class="hd"><b>The founder's moves</b><span>8 moves</span></div><ol id="moves"></ol><button class="mvall" type="button" aria-expanded="false" aria-controls="moves">See all 8 moves</button></div>

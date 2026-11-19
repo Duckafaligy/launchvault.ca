@@ -21,6 +21,7 @@
   const today = () => { const d = new Date(); return MON[d.getMonth()] + " " + d.getDate(); };
   const LBC = {"Verified": "v", "Live": "l", "Wayback": "w", "Claimed": "c", "Sources differ": "x", "Couldn't verify": "n", "Estimate": "e"};
   const chip = l => l ? `<span class="lb ${LBC[l] || "n"}">${esc(l)}</span>` : "";
+  const staleChip = s => s.stale ? ` <span class="lb n" title="${esc(s.stale)}">Stale</span>` : "";
   const logo = (s, w = 20) => `<img src="${esc(s.logo)}" alt="" width="${w}" height="${w}" loading="lazy">`;
   if (window.LVAuth) LVAuth.app();
 
@@ -80,17 +81,18 @@
     const out = [];
     D.stories.forEach(s => out.push({g: "Breakdowns", t: s.name, r: s.status === "ready" ? s.type : "Coming soon", h: s.href, img: s.logo, k: [s.name, s.what, s.pattern, ...(s.lessons || [])].join(" ")}));
     [...new Set(D.stories.map(s => s.pattern).filter(p => p && p !== "Pattern not checked yet"))].forEach(p => out.push({g: "Patterns", t: p, h: "/app/library/?group=pattern&pattern=" + encodeURIComponent(p), k: p}));
-    (D.search_extra || []).forEach(x => out.push({g: x.g, t: x.t, h: x.h, k: x.t}));
+    (D.search_extra || []).forEach(x => out.push({g: x.g, t: x.t, h: x.h, k: x.t + " " + (x.k || "")}));
     [["Home", "/app/"], ["Library", "/app/library/"], ["My path", "/app/path/"], ["Checklists", "/app/checklists/"], ["Account", "/app/account/"], ["Retake the quiz", "/app/start/?quiz=1"]].forEach(([t, h]) => out.push({g: "Pages", t, h, k: t}));
     return out;
   };
   let cmdEl = null, idx = null, sel = 0;
   const openCmd = () => {
-    if (cmdEl) return; idx = idx || cmdIndex(); const prev = document.activeElement;
+    if (cmdEl) return; idx = idx || cmdIndex();
+    const act = document.activeElement, prev = act && act !== document.body ? act : [...document.querySelectorAll("[data-cmd]")].find(b => b.offsetParent);
     cmdEl = document.createElement("div"); cmdEl.className = "cmd"; cmdEl.setAttribute("role", "dialog"); cmdEl.setAttribute("aria-modal", "true"); cmdEl.setAttribute("aria-label", "Search");
     cmdEl.innerHTML = `<div class="box"><div class="in"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="text" placeholder="Search breakdowns, moves, patterns, sources" aria-label="Search" aria-controls="cmdres" autocomplete="off"><kbd>esc</kbd></div><div class="res" id="cmdres" role="listbox"></div><div class="ft">↑↓ to move · ↵ to open · esc to close</div></div>`;
     document.body.appendChild(cmdEl); const inp = $("input", cmdEl), res = $(".res", cmdEl);
-    const draw = () => { const q = inp.value.trim().toLowerCase(), hits = idx.filter(x => !q || x.k.toLowerCase().includes(q)).slice(0, 14);
+    const draw = () => { const q = inp.value.trim().toLowerCase(), hits = (q ? idx.filter(x => x.k.toLowerCase().includes(q)) : idx.filter(x => x.g === "Breakdowns" || x.g === "Pages")).slice(0, 14);
       sel = Math.min(sel, Math.max(0, hits.length - 1));
       let g = ""; res.innerHTML = hits.length ? hits.map((x, i) => (x.g !== g ? `<div class="grp">${g = x.g}</div>` : "") +
         `<a class="it" role="option" id="ci${i}" aria-selected="${i === sel}" href="${esc(x.h)}" ${x.h.startsWith("http") ? 'target="_blank" rel="noopener"' : ""}>${x.img ? `<img src="${esc(x.img)}" alt="">` : ""}<span>${esc(x.t)}</span>${x.r ? `<span class="r">${esc(x.r)}</span>` : ""}</a>`).join("") : '<div class="none">No matches. Try a company or a pattern.</div>';
@@ -121,7 +123,11 @@
     const g = e.target.closest("[data-goph]"); if (g) { closeSheet(); let t = document.getElementById("ph" + g.dataset.goph); if (t && t.closest("[hidden]")) t = document.getElementById("gate"); if (t) setTimeout(() => t.scrollIntoView({behavior: reduce ? "auto" : "smooth"}), 50); return; }
     if (e.target.closest("[data-close]")) closeSheet();
   });
-  addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+  addEventListener("keydown", e => {
+    if (e.key === "Escape") closeSheet();
+    if (e.key === "Tab" && openSheet) { const f = [...openSheet.querySelectorAll("a[href],button:not([disabled])")].filter(x => x.offsetParent); if (!f.length) return;   // keep focus inside the open sheet
+      const i = f.indexOf(document.activeElement); if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); } else if (i < 0) { e.preventDefault(); f[0].focus(); } }
+  });
 
   // ---------- reader ----------
   const rd = $("[data-reader]");
@@ -149,7 +155,7 @@
   const homePath = $("[data-homepath]");
   const matches = () => { const q = quiz(); return (q && q.matches && q.matches.length ? q.matches : ["postiz", "stencil-ai", "gojiberry"]).filter(s => S[s]); };
   const likeYouHTML = () => '<div class="ch" style="border-top:1px solid var(--line2)"><h3 style="font:500 13.5px var(--fd);color:var(--muted)">Stories like yours</h3></div>' + matches().map(s => { const x = S[s];
-    return `<a class="mini${x.status === "soon" ? " soon" : ""}" href="${x.href}"><img class="lgs" src="${esc(x.logo)}" alt="">${esc(x.name)}<span class="r">${x.status === "ready" ? esc(x.pattern) : "Soon"}</span></a>`; }).join("");
+    return `<a class="mini${x.status === "soon" ? " soon" : ""}" href="${x.href}"><img class="lgs" src="${esc(x.logo)}" alt="">${esc(x.name)}<span class="r">${x.status === "ready" ? esc(x.pattern) : "Soon"}${staleChip(x)}</span></a>`; }).join("");
   if (homePath) {
     const q = quiz(), st = pathSteps(), nx = st.find(s => !s.done);
     const cta = $("[data-pathcta]");
@@ -189,7 +195,7 @@
       const q = st.q.trim().toLowerCase();
       let L = D.stories.filter(s => (st.tab === "all" || s.tab === st.tab) && (!st.pat || s.pattern === st.pat) && (!st.stat || s.status === st.stat) && (!st.ver || s.hl === "Verified")
         && (!q || [s.name, s.what, s.pattern, ...(s.lessons || [])].join(" ").toLowerCase().includes(q)));
-      const key = {new: s => (s.status === "ready" ? "1" : "0") + (s.published || ""), mrr: s => s.mrr || 0, growth: s => s.growth == null ? -1e9 : s.growth}[st.sort];
+      const key = {new: s => (s.status === "ready" ? "1" : "0") + (s.published || "") + (s.stale ? "0" : "1") + String(1e9 - D.stories.indexOf(s)).padStart(10, "0"), mrr: s => s.mrr || 0, growth: s => s.growth == null ? -1e9 : s.growth}[st.sort];
       L.sort((a, b) => key(b) > key(a) ? 1 : key(b) < key(a) ? -1 : 0);
       if (!L.length) { lout.innerHTML = `<div class="card" style="margin-top:16px"><div class="empty"><h3>No stories match these filters</h3><p>One new breakdown arrives each week.</p><button class="btn btn-s" type="button" data-clearall>Clear filters</button></div></div>`; return; }
       const groups = st.grp === "pattern" ? pats.map(p => [p, L.filter(s => s.pattern === p)]).filter(g => g[1].length) : [["", L]];
@@ -216,13 +222,13 @@
     if (!stepsEl) return; const st = pathSteps(), cur = st.findIndex(s => !s.done), src = CL[D.path.source];
     const one = (s, i) => { const state = s.done ? "done" : i === cur ? "now" : "";
       return `<div class="pstp ${state}"><span class="dot">${s.done ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>' : i + 1}</span><div><p>${esc(s.text)}</p>${state === "now" && s.task ? `<p class="task">Task: ${esc(s.task)}</p>` : ""}
-        <p class="pm">${s.extra ? esc(s.from) : `Checklist item ${s.n} · <a href="${src.href}#todo">${esc(s.from)} ↗</a>`}</p>${state === "now" ? `<button class="btn btn-p" type="button" data-stepdone="${i}">Mark step done</button>` : s.done ? `<button class="tl" type="button" data-stepundo="${i}">Undo</button>` : ""}</div><span class="dt">${s.done && s.date ? "Done " + esc(s.date) : ""}</span></div>`; };
+        <p class="pm">${s.extra ? (s.href ? `<a href="${s.href}">${esc(s.from)} ↗</a>` : esc(s.from)) : `Checklist item ${s.n} · <a href="${src.href}#todo">${esc(s.from)} ↗</a>`}</p>${state === "now" ? `<button class="btn btn-p" type="button" data-stepdone="${i}">Mark step done</button>` : s.done ? `<button class="tl" type="button" data-stepundo="${i}">Undo</button>` : ""}</div><span class="dt">${s.done && s.date ? "Done " + esc(s.date) : ""}</span></div>`; };
     stepsEl.innerHTML = st.filter(s => !s.extra).map((s, i) => one(s, i)).join("");
     const ex = $("[data-extra]"); if (ex) ex.innerHTML = one(st[st.length - 1], st.length - 1);
-    const q = quiz(); const m = $("[data-matched]"); if (m) m.textContent = q ? "From your quiz: " + (q.summary || "") : "Take the quiz to match stories to you. The steps work either way.";
+    const q = quiz(); const ed = $("[data-editq]"); if (ed) ed.textContent = q ? "Edit answers" : "Take the quiz"; const m = $("[data-matched]"); if (m) m.textContent = q ? "From your quiz: " + (q.summary || "") : "Take the quiz to match stories to you. The steps work either way.";
     const ps = $("[data-pathsrc]"); if (ps) ps.innerHTML = `<img src="${esc(src.logo)}" alt="" width="16" height="16" style="vertical-align:-3px;margin-right:6px">From the ${esc(src.name)} breakdown`;
     $$("[data-likeyou]").forEach(n => { if (!n.closest("section").querySelector("[data-homepath]")) n.innerHTML = matches().map(s => { const x = S[s];
-      return `<a class="mini${x.status === "soon" ? " soon" : ""}" href="${x.href}" style="min-height:56px"><img class="lgs" src="${esc(x.logo)}" alt=""><span><span style="display:block">${esc(x.name)}</span><small class="meta">${x.status === "ready" ? esc(x.pattern) : "Coming soon"}</small></span><span class="r">›</span></a>`; }).join(""); });
+      return `<a class="mini${x.status === "soon" ? " soon" : ""}" href="${x.href}" style="min-height:56px"><img class="lgs" src="${esc(x.logo)}" alt=""><span><span style="display:block">${esc(x.name)}</span><small class="meta">${x.status === "ready" ? esc(x.pattern) : "Coming soon"}${staleChip(x)}</small></span><span class="r">›</span></a>`; }).join(""); });
     paint();
   }
   if (stepsEl) {
@@ -262,7 +268,7 @@
     $("#pcopy").addEventListener("click", async () => { try { await navigator.clipboard.writeText(link); } catch {} ls.set("lv-parent", today()); flow(); toast("Parent link copied"); });
     $("#psend").addEventListener("click", () => { const e = $("#pemail").value.trim(); if (!/.+@.+\..+/.test(e)) { $("#pemail").focus(); return; }
       ls.set("lv-parent", today()); flow(); location.href = `mailto:${encodeURIComponent(e)}?subject=${encodeURIComponent("LaunchVault")}&body=${encodeURIComponent("Could you look at LaunchVault for me? Plans and prices are here: " + link)}`; });
-    const prefs = Object.assign({new_story: true, path: false, news: false}, ls.get("lv-prefs", {}));
+    const prefs = Object.assign({new_story: false, path: false, news: false}, ls.get("lv-prefs", {}));
     $$("[data-pref]").forEach(b => { b.setAttribute("aria-checked", !!prefs[b.dataset.pref]); b.addEventListener("click", () => { prefs[b.dataset.pref] = !prefs[b.dataset.pref]; b.setAttribute("aria-checked", prefs[b.dataset.pref]); ls.set("lv-prefs", prefs); }); });
     $("#dl").addEventListener("click", () => { const o = {}; ls.keys().forEach(k => o[k] = ls.get(k)); const a = document.createElement("a");
       a.href = URL.createObjectURL(new Blob([JSON.stringify({exported: new Date().toISOString(), note: "Everything LaunchVault saved on this device.", data: o}, null, 2)], {type: "application/json"}));
@@ -297,7 +303,7 @@
       else { save(); ls.set("lv-pathnote", "new"); const m = score();
         H.innerHTML = `Your path: <em>${esc(D.path.title.toLowerCase().replace(/^./, c => c.toUpperCase()))}.</em>`; P.innerHTML = `${D.path.steps.length + 1} steps, each with a small task. Step 1 is waiting on Home.<small>Matched on: ${esc(summary())} · <a class="tl" href="/app/start/?quiz=1">Edit answers</a></small>`;
         obc.innerHTML = `<h2>Stories like yours</h2><div style="margin-top:8px">${m.map(s => { const x = S[s];
-          return `<div class="mrow"><span class="logo">${logo(x, 22)}</span><span style="flex:1;min-width:0"><b>${esc(x.name)}</b><small>${esc(x.pattern)}</small><span class="nm"><b>${esc(x.hv)}</b>${esc(x.hu)}${chip(x.hl)}${esc(x.hd)}</span></span><span class="r">${x.status === "ready" ? `<a href="${x.href}">Read now</a>` : "Breakdown soon"}</span></div>`; }).join("")}</div>
+          return `<div class="mrow"><span class="logo">${logo(x, 22)}</span><span style="flex:1;min-width:0"><b>${esc(x.name)}</b><small>${esc(x.pattern)}</small><span class="nm"><b>${esc(x.hv)}</b>${esc(x.hu)}${chip(x.hl)}${esc(x.hd)}${staleChip(x)}</span></span><span class="r">${x.status === "ready" ? `<a href="${x.href}">Read now</a>` : "Breakdown soon"}</span></div>`; }).join("")}</div>
           <a class="btn btn-p" style="width:100%;margin-top:16px" href="/app/">Go to Home</a><p class="fine">Saved on this device. Pro saves your path to your account and updates it as stories land.</p>`; }
       if (render.n++) obc.focus({preventScroll: true});
     };
