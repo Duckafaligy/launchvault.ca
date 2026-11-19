@@ -209,7 +209,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
     wk = f'<a class="si week" href="{week["href"]}"{cur("story-" + week["slug"])}><img class="lgo" src="{week["logo"]}" alt="" width="16" height="16"><span class="t">{esc(week["name"])}</span><span class="cnt pc" data-pct="{week["slug"]}"></span></a>'
     tabs = "".join(f'<a href="{h}"{cur(k)}>{ic(I[k], 22)}<span>{t}</span></a>' for k, h, t, _ in nav) + f'<a href="/app/account/"{cur("acct")}>{ic(I["acct"], 22)}<span>Account</span></a>'
     ttl = (" ".join(f'<a href="{h}">{esc(t)}</a><span class="sep">/</span>' for h, t in crumbs[:-1]) + f'<span>{esc(crumbs[-1][1])}</span>') if crumbs else f"<span>{esc(title)}</span>"
-    return (head(title + " · LaunchVault", desc, '\n<link rel="stylesheet" href="/assets/chart.css">' if "chart.js" in scripts else "", og_slug) + f'''<body>
+    return (head(title + " · LaunchVault", desc, '\n<link rel="stylesheet" href="/assets/chart.css">' if "chart.js" in scripts else "", og_slug) + f'''<body{' class="has-back"' if crumbs else ""}>
 <a class="skip" href="#main">Skip to content</a>
 <div class="shell">
 <aside class="side" aria-label="App">
@@ -222,7 +222,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
 <div class="main">
   <div class="prev" id="prevbar" role="status">Preview: accounts open soon. Your progress stays on this device.</div>
   <header class="top">
-    <a class="mlogo" href="/app/" aria-label="LaunchVault app home">{LV}</a>
+    {f'<a class="mback" href="{crumbs[0][0]}" aria-label="Back to {esc(crumbs[0][1])}">' + ic(I["back"], 22) + '</a>' if crumbs else ""}<a class="mlogo" href="/app/" aria-label="LaunchVault app home">{LV}</a>
     <div class="ttl">{ttl}</div>
     <button class="srch" type="button" data-cmd>{ic(I["srch"], 16)}<span>Search breakdowns</span><kbd>⌘K</kbd></button>
     <a class="chip" href="/app/account/#plan">Free <small>plan</small></a>
@@ -263,7 +263,7 @@ def chart_block(S, moves_list=True, band=True):
     last = S["series"]["points"][-1]
     ml = ""
     if moves_list and S["moves"]:
-        ml = '<ol class="moves">' + "".join(f'<li><button type="button" data-i="{i}" class="{"turn" if data["moves"][i].get("turn") else ""}"><span class="n">{i + 1}</span><span>{esc(m["text"])}</span><span class="w">{esc(m["when"])}</span></button></li>' for i, m in enumerate(S["moves"])) + "</ol>"
+        ml = f'<div class="mvh"><b>All {len(S["moves"])} moves</b><span>Tap one to move the chart</span></div><ol class="moves">' + "".join(f'<li><button type="button" data-i="{i}" class="{"turn" if data["moves"][i].get("turn") else ""}"><span class="n">{i + 1}</span><span>{esc(m["text"])}</span><span class="w">{esc(m["when"])}</span></button></li>' for i, m in enumerate(S["moves"])) + "</ol>"
     bd = ""
     if band:
         bd = '<div class="pband" role="group" aria-label="Phases">' + "".join(f'<button type="button" data-ph="{i + 1}" aria-pressed="false" title="{esc(p["name"])}, {esc(p["when"])}">{esc(p.get("short") or p["name"])}</button>' for i, p in enumerate(S["phases"])) + "</div>"
@@ -402,7 +402,7 @@ def home(E):
                '<div class="prog3"><span class="d"><i></i>Numbers checked</span><span class="c"><i></i>Story in progress</span><span class="t"><i></i>Fact check</span></div></section>')
     soonrows = "".join(f'<a class="soonrow" href="{e["href"]}"><span class="logo" style="width:28px;height:28px;border-radius:7px"><img src="{e["logo"]}" alt="" width="20" height="20" loading="lazy"></span><span class="nm">{esc(e["name"])} <small>· {esc(e["type"])}</small></span>'
                        f'<span class="nv"><b>{e["hv"]}</b>{esc(e["hu"].strip())}{lb(e["hl"])}</span><span class="src">TrustMRR · {esc(e["hd"])}</span></a>' for e in [e for e in E if e["status"] == "soon"])
-    body = f'''<div class="pg"><h1 class="h1" style="margin-bottom:16px">Home</h1>
+    body = f'''<div class="pg"><h1 class="sr">Home</h1>
 <div class="pathnote" id="pathnote" hidden><span><b>Your path is ready:</b> <span data-pathname></span>. Step 1 of 6 is below this week's breakdown.</span><a class="tl" href="/app/path/">Open My path</a><button type="button" aria-label="Close" data-closenote>✕</button></div>
 <div class="grid2"><div>
 {cont}
@@ -434,6 +434,7 @@ def library(E):
   <button class="tl clear" type="button" id="lclear">Clear filters</button>
 </div>
 <div id="lout"></div>
+<div class="note dash" style="margin-top:12px"><b style="color:#0B1220">New every week</b><span>Numbers are checked before the story goes out. The weekly email tells you when.</span></div>
 <p class="lfoot">Revenue read from Stripe by TrustMRR; each number keeps the date it was read. Fastest growth is the average monthly growth between the first and last point of each series. Coming-soon rows open when the breakdown is out.</p>
 <noscript><div class="ltab">{"".join(f'<a class="lrow" href="{e["href"]}"><span class="co"><b>{esc(e["name"])}</b></span><span class="num"><b>{e["hv"]}</b>{esc(e["hu"])}</span></a>' for e in E)}</div></noscript>
 </div>'''

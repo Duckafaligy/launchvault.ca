@@ -239,7 +239,9 @@
   const cls = $("[data-cllists]");
   if (cls) {
     const order = D.checklists.slice().sort((a, b) => ticks(b.slug).filter(Boolean).length - ticks(a.slug).filter(Boolean).length);
-    cls.innerHTML = order.map((c, i) => { const n = ticks(c.slug).filter(Boolean).length;
+    const anyTick = D.checklists.some(c => ticks(c.slug).some(Boolean)), first = D.checklists.find(c => !(S[c.slug] || {}).stale) || D.checklists[0];
+    const empty = anyTick ? "" : `<section class="card" style="margin-bottom:16px"><div class="empty"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M10 6h10M10 12h10M10 18h10"/><path d="M4 6l1.2 1.2L7 5.2M4 12l1.2 1.2L7 11.2M4 18l1.2 1.2L7 17.2"/></svg><h3>No ticks yet</h3><p>Each breakdown ends with a short checklist. Tick a step there and it shows up here.</p><a class="btn btn-s" href="${first.href}#todo"><img src="${esc(first.logo)}" alt="" width="18" height="18" style="border-radius:4px">Open the ${esc(first.name)} checklist</a></div></section>`;
+    cls.innerHTML = empty + order.map((c, i) => { const n = ticks(c.slug).filter(Boolean).length;
       return `<details class="clgrp" ${n || i === 0 ? "open" : ""}><summary class="gh" style="cursor:pointer;list-style:none;min-height:44px"><img src="${esc(c.logo)}" alt="" width="20" height="20" style="border-radius:4px"><h2>${esc(c.name)} <small>· What you could do at 15 to 20</small></h2><a class="tl" href="${c.href}">Open breakdown</a></summary>${ckListHTML(c)}</details>`; }).join("");
     const soon = D.stories.filter(s => s.status === "soon");
     const cs = $("[data-clsoon]"); if (cs) cs.innerHTML = soon.map(s => `<a class="soonrow" href="${s.href}">${logo(s, 20)}<span class="nm" style="color:#6B7280">${esc(s.name)}</span><span class="meta">Checklist arrives with the breakdown</span></a>`).join("");

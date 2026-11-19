@@ -561,3 +561,20 @@ button.row{width:100%;border:0;border-top:1px solid var(--line2);background:none
 .lrow .lbm{display:none}
 @media (max-width:720px){.lrow .lbc{display:none}.lrow .lbm{display:inline-flex;gap:6px}}
 .obc:focus{outline:none}
+
+/* fidelity pass: phone patterns from the boards */
+.mback{display:none}
+.mvh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:16px;padding:10px 8px 6px;border-top:1px solid var(--line2);font-size:14px;color:var(--ink)}
+.mvh span{font-size:12.5px;color:var(--muted)}
+@media (max-width:720px){
+  .has-back .mback{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin-left:-12px;color:var(--ink);flex:none}
+  .has-back .mlogo,.has-back .top .chip{display:none}
+  .has-back .ibtn{margin-left:auto}
+  .nums5{display:grid;grid-auto-flow:column;grid-auto-columns:46%;grid-template-columns:none;overflow-x:auto;gap:8px;border:0;border-radius:0;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:2px}
+  .nums5::-webkit-scrollbar{display:none}
+  .nums5>div{border:1px solid var(--line) !important;border-radius:12px;scroll-snap-align:start;grid-column:auto !important}
+  .ltab{border:0;overflow:visible;display:grid;gap:10px}
+  .ltab .lgroup{border:0;background:none;padding:12px 2px 0}
+  .lrow{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .mvh{flex-wrap:wrap}
+}
