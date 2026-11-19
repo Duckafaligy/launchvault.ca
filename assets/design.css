@@ -223,4 +223,4 @@ footer .fbot .lgl a{display:inline-flex;align-items:center;min-height:44px}
 /* pricing: "/month" in the card's own text colour (no grey); Recommended = solid brand badge */
 #pricing .plan .pr small{color:inherit}
 #pricing .plan.pro .pr small{color:#fff}
-#pricing .plan .tg{color:#fff;background:#2563EB;border-color:#2563EB;font-weight:600}
+#pricing .plan.pro .tg,#pricing .plan .tg{color:#fff!important;opacity:1;background:#2563EB;border-color:#2563EB;font-weight:600}
