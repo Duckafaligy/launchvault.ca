@@ -175,7 +175,7 @@
         if (M0 > 0 && z <= M0) { b.hidden = true; return; } b.hidden = false;
         const x0 = a < 0 ? 0 : G.X(Math.max(a, M0)), x1 = z >= 34 ? G.W : G.X(z);
         b.style.left = (x0 * sc + 1) + "px"; b.style.width = Math.max(0, (x1 - x0) * sc - 2) + "px"; }); }
-    const bandTip = b => { if (!b) { ptip.classList.remove("on"); return; } ptip.innerHTML = b.dataset.full + `<span>${b.dataset.when}</span>`; ptip.classList.add("on");
+    const bandTip = b => { if (!b) { ptip.classList.remove("on"); return; } ptip.innerHTML = b.dataset.full + `<span>${b.dataset.when}</span>` + (b.dataset.lesson ? `<em>${b.dataset.lesson}</em>` : ""); ptip.classList.add("on");
       const l = b.offsetLeft + b.offsetWidth / 2 - ptip.offsetWidth / 2; ptip.style.left = Math.max(0, Math.min(band.clientWidth - ptip.offsetWidth, l)) + "px"; };
     if (band) { band.addEventListener("pointerover", e => bandTip(e.target.closest(".pseg"))); band.addEventListener("pointerleave", () => bandTip(null));
       band.addEventListener("focusin", e => bandTip(e.target.closest(".pseg"))); band.addEventListener("focusout", () => bandTip(null));
@@ -250,21 +250,12 @@
   if (win) {
     const post = win.querySelector('.view[data-view="postiz"]'), views = $$(".view.vx", win), sis = $$(".side .si", win);
     const drawer = $("#sdrawer"), srcbtn = $("#srcbtn"), search = $("#wsearch"), url = $("#wurl"), sres = $("#sres"), crumb = $("#wcrumb");
-    const LOGO = { dm: '<img src="/assets/logos/dmchamp.png" alt="" width="44" height="44">' };
-    // numbers from design/data/stories.json: the headline is what cards show, MRR / all-time is the small line
-    const SOON = { dm: ["DM Champ", "AI tool", "$28,426", " in Oct 2026", "MRR $135,927 · Nov 18 2026 · TrustMRR"],
-                   stencil: ["Stencil AI", "Mobile app", "$62,976", " in Oct 2026", "All-time $483,794 · Nov 16 2026 · TrustMRR"],
-                   windmill: ["Windmill Growth", "Agency", "$118,047", " in Oct 2026", "MRR $118,347 · Nov 16 2026 · TrustMRR"],
-                   goji: ["Gojiberry", "AI tool", "$424,368", " MRR", "Aug 14 2026 · TrustMRR"] };
+    // every company fact comes from design/data/stories.json, embedded by src/_hero_gen.py
+    const LV = (() => { try { return JSON.parse($("#lvdata").textContent); } catch { return { co: {}, search: [] }; } })();
     const NAME = { postiz: "Postiz", home: "Home", breakdowns: "Library", checklists: "Checklists", path: "My path" };
     const URLS = { postiz: "/library/postiz", home: "/home", breakdowns: "/library", checklists: "/checklists", path: "/path" };
-    // coming soon: the homepage cards' monthly series and only facts already on the site
-    const RANGE = { dm: ["Dec 2025", "Oct 2026"], stencil: ["Jan 2026", "Oct 2026"], windmill: ["Dec 2025", "Oct 2026"] };
-    const KNOW = { dm: [["About $10K a month in an interview", "c", "Starter Story · Mar 2026"], ["First customers: an AppSumo deal", "c", ""], ["Priced for buyers instead of testers", "c", ""], ["MRR $135,927", "v", "Nov 18 2026"]],
-                   stencil: [["16 followers on X", "", ""], ["Started with one brother's tattoo-shop problem", "", ""], ["First customers: a family member's problem", "", ""], ["All-time revenue $483,794", "v", "Nov 16 2026"]],
-                   windmill: [["A $250 start, he says", "c", ""], ["Sells a service instead of building an app", "", ""], ["74 clients at about $1,600 a month", "", ""], ["MRR $118,347", "v", "Nov 16 2026"]],
-                   goji: [["2,000 sign-ups, $0 paid", "c", ""], ["Rebuilt the product within weeks", "c", ""], ["First customers: a waitlist, then a rebuild", "c", ""], ["$424,368 MRR", "v", "Aug 14 2026"]] };
-    const LBN = { v: "Verified", c: "Claimed" };
+    const LBC = { "Verified": "v", "Live": "l", "Wayback": "w", "Claimed": "c", "Sources differ": "x", "Couldn't verify": "n", "Estimate": "e" };
+    const escH = t => String(t).replace(/[&<>"]/g, ch => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[ch]));
     let view = "postiz", co = null;
     const setDrawer = (open, byUser) => {
       if (!drawer) return; const was = drawer.classList.contains("open"); drawer.classList.toggle("open", open); drawer.setAttribute("aria-hidden", !open); drawer.inert = !open;
@@ -274,21 +265,23 @@
     };
     const setCrumb = () => {
       const lib = '<button class="crumb" type="button" data-go="breakdowns">Library</button><span aria-hidden="true">/</span>';
-      crumb.innerHTML = view === "postiz" ? lib + "<b>Postiz</b>" : view === "soon" ? lib + "<b>" + SOON[co][0] + "</b>" : "<b>" + NAME[view] + "</b>"; };
+      crumb.innerHTML = view === "postiz" ? lib + "<b>Postiz</b>" : view === "soon" ? lib + "<b>" + escH((LV.co[co] || {}).name || "") + "</b>" : "<b>" + NAME[view] + "</b>"; };
     const show = (v, c) => {
       const changed = v !== view || (v === "soon" && c !== co);
       view = v; co = v === "soon" ? c : null;
       post.classList.toggle("under", v !== "postiz"); win.classList.toggle("on-postiz", v === "postiz");
       views.forEach(x => { x.hidden = x.dataset.view !== v; });
       sis.forEach(s => { const on = s.dataset.go === v && (v !== "soon" || s.dataset.co === c); s.classList.toggle("on", on); if (on) s.setAttribute("aria-current", "page"); else s.removeAttribute("aria-current"); });
-      if (v === "soon" && SOON[c]) { const d = SOON[c];
-        $("#sotile").innerHTML = LOGO[c] || `<i class="lt">${d[0][0]}</i>`; $("#soname").textContent = d[0]; $("#socat").textContent = d[1] + " · breakdown coming soon";
-        $("#sonum").textContent = d[2]; $("#sounit").textContent = d[3]; $("#sosub").textContent = d[4]; }
+      if (v === "soon" && LV.co[c]) { const d = LV.co[c];
+        $("#sotile").innerHTML = `<img src="${d.logo}" alt="" width="44" height="44">`; $("#soname").textContent = d.name; $("#socat").textContent = d.cat + " · breakdown coming soon";
+        $("#sowhat").textContent = d.what; $("#sonum").textContent = d.num; $("#sounit").textContent = d.unit; $("#sosub").textContent = d.sub;
+        $("#solb").className = "lb v"; $("#solb").textContent = "Verified"; }
       if (url) url.textContent = v === "soon" ? "/library/" + c : URLS[v];
-      if (v === "soon") { const tp = $("#so-sparks"), sp = tp && tp.content.querySelector(`[data-co="${c}"]`), r = RANGE[c];
-        $("#sospark").innerHTML = sp ? sp.innerHTML : '<span class="noser big">No public monthly series. TrustMRR shows MRR only.</span>';
+      if (v === "soon" && LV.co[c]) { const d = LV.co[c], tp = $("#so-sparks"), sp = tp && tp.content.querySelector(`[data-co="${c}"]`), r = d.range;
+        $("#sospark").innerHTML = sp ? sp.innerHTML : '<span class="noser big">No monthly series on TrustMRR</span>';
         $("#sorange").textContent = r ? r[0] + " to " + r[1] : "Not public"; $("#soax0").textContent = r ? r[0] : ""; $("#soax1").textContent = r ? r[1] : "";
-        $("#soknow").innerHTML = (KNOW[c] || []).map(([t, k, d]) => `<li><span>${t}</span>${d ? `<span class="kd">${d}</span>` : ""}${k ? `<span class="lb ${k}">${LBN[k]}</span>` : ""}</li>`).join(""); }
+        $("#sosrc").textContent = d.src;
+        $("#soknow").innerHTML = d.know.map(k => `<li><span>${escH(k.t)}</span>${k.d ? `<span class="kd">${escH(k.d)}</span>` : ""}${k.l ? `<span class="lb ${LBC[k.l]}">${escH(k.l)}</span>` : ""}</li>`).join(""); }
       if (search && search.value) search.value = "";
       setCrumb(); setDrawer(false); closeRes();
       if (v === "postiz" && redraw) redraw();
@@ -305,15 +298,14 @@
       if (e.target.closest("#srcbtn")) { const o = !drawer.classList.contains("open"); if (dash) dash.userDrawer = e.isTrusted && o; setDrawer(o, e.isTrusted); return; }
       if (e.target.closest(".sd-x")) { if (dash) dash.userDrawer = false; setDrawer(false, e.isTrusted); return; }
       const f = e.target.closest("[data-vf]");        // Library filter
-      if (f) { $$("[data-vf]", win).forEach(x => x.setAttribute("aria-pressed", x === f)); $$("#bdlist .lrow", win).forEach(r => r.closest(".lset").hidden = f.dataset.vf !== "all" && r.dataset.st !== f.dataset.vf); return; }
+      if (f) { $$("[data-vf]", win).forEach(x => x.setAttribute("aria-pressed", x === f)); $$("#bdlist .lset", win).forEach(r => r.hidden = f.dataset.vf !== "all" && r.dataset.cat !== f.dataset.vf); return; }
       const ck = e.target.closest("#wck .ck"); if (ck) { ck.setAttribute("aria-pressed", ck.getAttribute("aria-pressed") !== "true"); if (e.isTrusted) ck.dataset.u = "1"; ckUpd(); return; }
       const pd = e.target.closest(".pdone"); if (pd) { const on = pd.getAttribute("aria-pressed") !== "true"; pd.setAttribute("aria-pressed", on); pd.textContent = on ? "Done · undo" : "Mark step done";
         pd.closest(".pst").classList.toggle("done", on); pd.closest(".pst").classList.toggle("now", !on); if (e.isTrusted) pd.dataset.u = on ? "1" : ""; return; }
     });
     win.addEventListener("keydown", e => { if (e.key === "Escape" && drawer && drawer.classList.contains("open")) { e.stopPropagation(); setDrawer(false, true); } });
     // search: results drop down under the box (companies + this week's breakdown); Ctrl/Cmd K focuses it while the pointer is over the window
-    const ITEMS = [["Postiz", "postiz", "", "Ready"], ["DM Champ", "soon", "dm", "Soon"], ["Stencil AI", "soon", "stencil", "Soon"], ["Windmill Growth", "soon", "windmill", "Soon"], ["Gojiberry", "soon", "goji", "Soon"],
-                   ["My checklists", "checklists", "", "Postiz"], ["My path", "path", "", "2 of 6"], ["Library", "breakdowns", "", "5 stories"]];
+    const ITEMS = LV.search;
     function closeRes() { if (sres) { sres.hidden = true; sres.innerHTML = ""; } }
     const filter = () => { const q = search.value.trim().toLowerCase(); if (!q) { closeRes(); return; }
       const hits = ITEMS.filter(i => i[0].toLowerCase().includes(q));
