@@ -720,6 +720,22 @@ footer .fmsg,.dk .fmsg{color:#E2E8F0;justify-content:flex-start}
 .chrome .dots i:nth-child(1){background:#FF5F57}
 .chrome .dots i:nth-child(2){background:#FEBC2E}
 .chrome .dots i:nth-child(3){background:#28C840}
+/* hero pop: a thick red-to-orange streak sweeping behind the demo window (2026-11-18) */
+.hero{position:relative;isolation:isolate}
+.hero > .wrap{position:relative;z-index:1}
+.hero::before{content:"";position:absolute;z-index:0;left:-20%;right:-20%;top:56%;height:230px;pointer-events:none;
+  transform:rotate(-8deg);border-radius:999px;filter:blur(34px);opacity:.85;
+  background:linear-gradient(90deg,#E11D48 0%,#FF5A1F 22%,#FF8A00 40%,#E11D48 60%,#FF5A1F 80%,#E11D48 100%) 0 0/200% 100%;
+  -webkit-mask:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);mask:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);
+  animation:streak-flow 9s linear infinite,streak-sway 14s ease-in-out infinite alternate}
+@keyframes streak-flow{to{background-position:-200% 0}}
+@keyframes streak-sway{from{transform:rotate(-8deg) translateY(0)}to{transform:rotate(-5deg) translateY(-26px)}}
+.hero::after{content:"";position:absolute;z-index:0;left:-20%;right:-20%;top:calc(56% + 85px);height:60px;pointer-events:none;border-radius:999px;filter:blur(6px);
+  transform:rotate(-8deg);background:linear-gradient(90deg,#FF3D2E,#FF8A00 30%,#FF2D55 55%,#FF8A00 80%,#FF3D2E) 0 0/200% 100%;
+  -webkit-mask:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);mask:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);
+  animation:streak-flow 6s linear infinite reverse,streak-sway 14s ease-in-out infinite alternate}
+@media (max-width:760px){.hero::before{height:140px;top:62%}.hero::after{height:36px;top:calc(62% + 52px)}}
+@media (prefers-reduced-motion:reduce){.hero::before,.hero::after{animation:none}}
 
 /* =====================================================================
    Round 11: remodel + motion. Shared components (see COMPONENTS.md).
