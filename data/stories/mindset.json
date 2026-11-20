@@ -5,6 +5,7 @@
   "what": "A daily motivation app that wakes you up with famous speeches, with streaks and leaderboards.",
   "logo": "/assets/logos/mindset.png",
   "site": "https://mindsetapp.com",
+  "founder_photo": {"src": "/assets/founders/mindset.jpg", "name": "Brandon Azevedo", "role": "the Mindset founder listed on TrustMRR", "alt": "Brandon Azevedo, the Mindset founder listed on TrustMRR", "w": 400, "h": 400, "author": "Azevedo, B. [@brandonvedo]", "date": "n.d.", "title": "Profile photo", "publisher": "X", "url": "https://x.com/brandonvedo", "image_url": "https://pbs.twimg.com/profile_images/1633658018205405184/tHUk0565.jpg", "found_via": "https://trustmrr.com/founder/brandonvedo", "retrieved": "November 20, 2026", "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."},
   "published": "2026-11-19",
   "read_min": 8,
   "title": "Mindset reached $24K a month by building on its team's YouTube audience first",

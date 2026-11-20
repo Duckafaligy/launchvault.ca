@@ -5,6 +5,7 @@
   "what": "An app that turns a photo, sketch or design into a print-ready tattoo stencil for tattoo artists.",
   "logo": "/assets/logos/stencilai.png",
   "site": "https://www.stencilai.app",
+  "founder_photo": {"src": "/assets/founders/stencil-ai.jpg", "name": "Simon Turkovič", "role": "founder of Stencil AI", "alt": "Simon Turkovič, founder of Stencil AI", "w": 400, "h": 400, "author": "Turkovič, S. [@simon_turkovic]", "date": "n.d.", "title": "Profile photo", "publisher": "X", "url": "https://x.com/simon_turkovic", "image_url": "https://pbs.twimg.com/profile_images/2120949348125032448/KmPdGf9y.jpg", "found_via": "https://trustmrr.com/founder/simon_turkovic", "retrieved": "November 20, 2026", "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."},
   "published": "2026-11-19",
   "read_min": 8,
   "title": "Stencil AI went from $16K to $63K a month in 2026 by fixing one boring job for tattoo artists",

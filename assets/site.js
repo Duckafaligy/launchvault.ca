@@ -215,28 +215,35 @@
     function place(px, py, html) {
       tip.innerHTML = html;
       const ox = 6 + px * ((plot.clientWidth - 12) / G.W), oy = 6 + py, w = tip.offsetWidth, h = tip.offsetHeight;
-      let left = ox + 14; if (left + w > plot.clientWidth - 4) left = ox - w - 14;
-      tip.style.left = Math.max(4, left) + "px"; tip.style.top = Math.min(Math.max(24, oy - h / 2), plot.clientHeight - h - 4) + "px";
+      let left = ox + 14; if (left + w > plot.clientWidth - 4) left = ox - w - 14; left = Math.max(4, left);
+      let top = Math.min(Math.max(24, oy - h / 2), plot.clientHeight - h - 4);
+      // never cover the timestamp pill: drop below it, or (no room below) slide to its left
+      if (G.pill) { const sc = (plot.clientWidth - 12) / G.W, [px, pw] = G.pill, pl = 6 + (px - pw / 2) * sc, pr = pl + pw * sc, pb = 6 + 22 * sc + 6;
+        if (left < pr + 6 && left + w > pl - 6 && top < pb) { if (pb + h <= plot.clientHeight - 4) top = pb; else left = Math.max(4, pl - w - 8); } }
+      tip.style.left = left + "px"; tip.style.top = top + "px";
     }
     // stepping glides the guide line, pill and mask from the last checkpoint; hover jumps straight there
     let glide = false, tw = 0;
+    // while a move is pinned, the guide line, pill and mask stay on it (so they always match the stepper); hovering only moves the ring
+    const pillAt = (x, label) => { const pw = Math.max(54, label.length * 6.5 + 14); return [Math.max(pw / 2 + 2, Math.min(G.W - pw / 2 - 2, x)), pw]; };
     function mark(x, y, label) { cancelAnimationFrame(tw);
-      const fx = G.mx, fy = G.my; G.mx = x; G.my = y;
-      if (!glide || reduce || fx == null || fx === x) return markAt(x, y, label);
-      const t0 = performance.now(), f = now => { const k = Math.min(1, (now - t0) / 360), e = 1 - (1 - k) ** 3;
-        markAt(fx + (x - fx) * e, y == null || fy == null ? y : fy + (y - fy) * e, label); if (k < 1) tw = requestAnimationFrame(f); };
+      if (pinned != null) { x = G.X(EVT[pinned][0]); label = EVT[pinned][1]; }
+      const hx = arguments[0], fx = G.mx, fy = G.my; G.mx = x; G.my = y; G.pill = label ? pillAt(x, label) : null;
+      if (!glide || reduce || fx == null || fx === x) return markAt(x, hx, y, label);
+      const t0 = performance.now(), f = now => { const k = Math.min(1, (now - t0) / 360), e = 1 - (1 - k) ** 3, mx = fx + (x - fx) * e;
+        markAt(mx, mx, y == null || fy == null ? y : fy + (y - fy) * e, label); if (k < 1) tw = requestAnimationFrame(f); };
       f(t0);
     }
-    function markAt(x, y, label) {
+    function markAt(x, hx, y, label) {
       G.vline.setAttribute("x1", x); G.vline.setAttribute("x2", x); G.vline.setAttribute("opacity", 1);
       if (G.ms1 && G.ms2) { G.ms1.setAttribute("offset", Math.min(1, (x + 2) / G.W)); G.ms2.setAttribute("offset", Math.min(1, (x + 18) / G.W)); }
       if (G.tsPill && label) {
         G.tsTxt.textContent = label;
-        const pw = Math.max(54, label.length * 6.5 + 14), px = Math.max(pw / 2 + 2, Math.min(G.W - pw / 2 - 2, x));
+        const [px, pw] = pillAt(x, label);
         G.tsRect.setAttribute("x", px - pw / 2); G.tsRect.setAttribute("width", pw); G.tsTxt.setAttribute("x", px);
         G.tsPill.setAttribute("opacity", 1);
       } else if (G.tsPill) G.tsPill.setAttribute("opacity", 0);
-      if (y == null) G.hl.setAttribute("opacity", 0); else { G.hl.setAttribute("cx", x); G.hl.setAttribute("cy", y); G.hl.setAttribute("opacity", 1); }
+      if (y == null) G.hl.setAttribute("opacity", 0); else { G.hl.setAttribute("cx", hx); G.hl.setAttribute("cy", y); G.hl.setAttribute("opacity", 1); }
     }
     function setActive(i) {
       G.tags.forEach((g, k) => { g.classList.toggle("on", k === i); g.classList.toggle("past", i >= 0 && k < i); g.classList.toggle("future", i >= 0 && k > i); });
@@ -255,6 +262,7 @@
     function showDefault() { if (pinned != null) showEvent(pinned); else showEvent(TURN); syncStep(); }
     // a clicked move stays highlighted, and the list scrolls to it (inside its own panel, never the page)
     function pin(i, byUser) { pinned = pinned === i && (userPin || !byUser) ? null : i; userPin = !!byUser && pinned != null; showDefault();   // a user's click takes over a ghost's pin
+      if (byUser) dispatchEvent(new Event("lv:userpin"));   // the ghost demo bows out for good once you drive the chart yourself
       const b = movesEl.querySelectorAll(".mv")[i];
       if (pinned != null && b && movesEl.scrollHeight > movesEl.clientHeight + 2) movesEl.scrollTo({top: Math.max(0, b.parentElement.offsetTop - 8), behavior: reduce ? "auto" : "smooth"}); }
     movesEl.addEventListener("pointerover", ev => { const b = ev.target.closest(".mv"); if (b) showEvent(+b.dataset.i); });
@@ -265,7 +273,7 @@
     // Auto-play steps every 1.8s and stops at the last move (left out under reduced motion); any manual input stops it
     const mpanel = movesEl.closest(".moves"), cpanel = plot.closest(".chartp"), NE = EVT.length;
     const tri = d => `<svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="${d}" fill="currentColor"/></svg>`;
-    movesEl.insertAdjacentHTML("beforebegin", `<div class="mstep" role="group" aria-label="Step through the moves"><button type="button" class="ms-b" data-d="-1" aria-label="Previous move">${tri("M7 1 2 5l5 4z")}Prev</button><span class="ms-t" aria-live="polite"></span><button type="button" class="ms-b" data-d="1" aria-label="Next move">Next${tri("M3 1l5 4-5 4z")}</button></div>`);
+    movesEl.insertAdjacentHTML("beforebegin", `<div class="mstep" role="group" aria-label="Step through the moves"><button type="button" class="ms-b" data-d="-1" aria-label="Previous move">${tri("M7 1 2 5l5 4z")}<span class="ms-l">Prev</span></button><span class="ms-t" aria-live="polite"></span><button type="button" class="ms-b" data-d="1" aria-label="Next move"><span class="ms-l">Next</span>${tri("M3 1l5 4-5 4z")}</button></div>`);
     const mstep = movesEl.previousElementSibling, [msPv, msNx] = mstep.querySelectorAll(".ms-b"), msT = mstep.querySelector(".ms-t"), mhd = mpanel.querySelector(".hd");
     if (!reduce) { const s = mhd.querySelector("span"); if (s) s.remove(); mhd.insertAdjacentHTML("beforeend", '<button type="button" class="ms-play" aria-pressed="false">Auto-play</button>'); }
     const msPl = mhd.querySelector(".ms-play"), curEv = () => pinned ?? TURN;
@@ -688,7 +696,8 @@
     win.addEventListener("lv:view", () => { epoch++; if (!S) return; S.viewSince = performance.now(); S.stay = rnd(7000, 14000); S.changes++;
       ALL.forEach(c => { if (c.seg) { const d = c.seg.done; c.seg = null; d(); } c.hov.forEach(el => el.classList.remove("gh-hover")); c.hov.clear(); });
       $$(".gh-focus", win).forEach(e => e.classList.remove("gh-focus")); });
-    const start = () => { if (active || document.hidden || !inView || innerWidth < 760) return; active = true; gen++; const g = gen;
+    let retired = false;
+    const start = () => { if (retired || active || document.hidden || !inView || innerWidth < 760) return; active = true; gen++; const g = gen;
       S = { locks: new Set(), dirty: new Map(), typing: false, log: [], cancels: 0, aborts: 0, changes: 0, staleBlocked: 0, fired: 0, viewSince: performance.now(), stay: rnd(7000, 14000) };
       const b = box(); [[.2, .62], [.55, .9], [.88, .35]].forEach(([fx, fy], i) => { const c = ALL[i]; if (!c.x && !c.y) { c.x = b.width * fx; c.y = b.height * fy; } });
       layer.classList.add("on"); if (!raf) raf = requestAnimationFrame(tick);
@@ -698,6 +707,7 @@
       $$(".gh-focus", win).forEach(e => e.classList.remove("gh-focus"));
       if (S && S.typing && U.focus !== dash.search) { dash.search.value = ""; dash.filter(); } };
     let inView = false;
+    addEventListener("lv:userpin", () => { retired = true; stop(); if (chartAPI) chartAPI.bandTip(null); });
     new IntersectionObserver(es => { inView = es[0].isIntersecting; if (inView) start(); else stop(); }, {threshold: .3}).observe(wf);
     document.addEventListener("visibilitychange", () => document.hidden ? stop() : start());
     let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => innerWidth < 760 ? stop() : start(), 200); });

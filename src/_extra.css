@@ -328,3 +328,6 @@ main .dk .lede{background:none;box-shadow:none}
 .rfig img{display:block;width:100%;height:auto}
 .rcap{padding:10px 14px;font-size:12.5px;line-height:1.5;color:#4B5563}
 .rcap a{color:var(--brand);text-decoration:underline;text-underline-offset:2px}
+.rfig.rface{padding:12px 14px}
+.rfig.rface .rcap{padding:0}
+.post-figs:empty{display:none}

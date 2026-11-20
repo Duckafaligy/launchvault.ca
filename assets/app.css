@@ -1286,3 +1286,61 @@ html.gated body{background:var(--alt)}
 .cla .clt{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px}
 .cla .clt b{display:inline}
 @media (max-width:600px){.rstep:not(.open) .rsh .lvpill{display:none}.lvempty{padding:24px 16px}.lveact,.lveact .btn{width:100%}}
+/* Account settings (Profile, Email, Your data): section cards at the .plan2 level, icon badges, AA toggles, a clear danger row */
+.acard{border-radius:14px;box-shadow:0 1px 2px rgba(11,18,32,.04),0 8px 24px -16px rgba(11,18,32,.16);overflow:hidden}
+.acard .arow{gap:14px;min-height:72px;padding:14px 20px}
+.acard .arow .v{display:flex;flex-direction:column;gap:2px}
+.acard .arow .v b{font:600 15px/22px var(--fd);color:var(--ink)}
+.acard .arow .v small{font-size:13px;line-height:18px;color:var(--text)}
+.acard .arow .k{width:auto;min-width:72px}
+.acard .arow>.btn{min-height:44px;flex:none}
+.acard .aico{width:40px;height:40px}
+.agef legend{display:flex;align-items:center;gap:14px;font:600 15px/22px var(--fd)}
+.agef p{margin-left:54px}.agef .opt2{margin-left:54px}
+.acard .agef{padding:16px 20px 20px}
+.acard .arow+.agef{border-top:1px solid var(--line2)}
+/* toggles: 44 x 26 visible track, 44px tap target, on/off said in words too; off track border #64748B is 4.8:1 on white */
+.acard .tgl{gap:10px;min-height:44px;padding:0 2px;border-radius:999px;font:500 13px var(--fd);color:var(--text);flex:none}
+.acard .tgl::before{content:"Off";min-width:22px;text-align:right}.acard .tgl[aria-checked=true]::before{content:"On";color:var(--brand2)}
+.acard .tgl .sw{width:44px;height:26px;border-radius:13px;background:#fff;box-shadow:inset 0 0 0 1.5px #64748B;transition:background-color .2s,box-shadow .2s}
+.acard .tgl .sw::after{left:4px;top:4px;width:18px;height:18px;background:#64748B;transition:transform .2s var(--out),background-color .2s}
+.acard .tgl:hover .sw{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.acard .tgl[aria-checked=true] .sw{background:var(--brand);box-shadow:none}
+.acard .tgl[aria-checked=true] .sw::after{background:#fff;transform:translateX(18px)}
+.acard .tgl:focus-visible{outline:0}.acard .tgl:focus-visible .sw{outline:2px solid var(--brand);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.acard .tgl .sw,.acard .tgl .sw::after{transition:none}}
+/* danger row: tinted, red badge, solid red-outlined button */
+.acard .arow.dz{background:#FFF7F8}
+.aico.dzi{background:#FFE4E9;color:#BE123C}
+.acard .danger{color:#BE123C;background:#fff;box-shadow:inset 0 0 0 1.5px #E11D48}
+.acard .danger:hover{background:#E11D48;color:#fff;box-shadow:none}
+.acard .danger:focus-visible{outline:2px solid #E11D48;outline-offset:2px}
+.acard .btn:disabled{opacity:.55;cursor:default}.acard .btn:disabled:hover{background:#fff;color:#BE123C;box-shadow:inset 0 0 0 1.5px #E11D48}
+.acard .delmsg{background:#F0FDF7;padding-left:74px}
+/* side nav: the section in view is brand-tinted with a bar */
+.acc .anav a{position:relative;font-weight:500}
+.acc .anav a:hover{background:#F1F5F9}
+.acc .anav a.on{background:#EEF3FE;color:var(--brand2)}
+.acc .anav a.on::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:2px;background:var(--brand)}
+.acc .anav a:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+@media (max-width:600px){
+  .acard .arow{flex-wrap:wrap;padding:14px 16px;column-gap:12px;row-gap:10px}
+  .acard .arow .v{flex:1 1 calc(100% - 52px)}
+  .acard .arow>.btn{margin-left:52px}
+  .acard .arow:has(.tgl),.acard .arow:has(.k){flex-wrap:nowrap}.acard .arow:has(.tgl) .v,.acard .arow:has(.k) .v{flex:1 1 0}
+  .acard .agef{padding:16px}.agef p,.agef .opt2{margin-left:0}
+  .acard .delmsg{padding-left:16px}.acard .delmsg>.btn{margin-left:0}
+}
+/* home "Your path" mini rows: logo badge lines up with the name, names bolder, rows breathe */
+.hlike .mini,.likeyou .mini{align-items:flex-start;gap:12px;padding:8px 20px;line-height:20px;transition:background-color .15s}
+.hlike .mini:hover,.likeyou .mini:hover{background:#F8FAFC}
+.hlike .mini .lgs,.likeyou .mini .lgs{width:28px;height:28px;padding:4px;border:1px solid var(--line);border-radius:8px;background:#fff;flex:none}
+.hlike .mini>span:not(.r),.likeyou .mini>span:not(.r){flex:1;min-width:0}.hlike .mini>span>span,.likeyou .mini>span>span{font-weight:600}
+.hlike .mini small,.likeyou .mini small{line-height:18px;margin-top:1px}
+.hlike .mini .r,.likeyou .mini .r{align-self:center;font-size:16px}
+/* library: when the filters wrap to a second line they start at the left edge, under the search (not floating right) */
+@media (min-width:721px){dialog.lfs{margin:0}}
+/* onboarding: "Skip the quiz for now" sits centred under a full-width divider (.tl made it a short inline box) */
+.obc .tl.obskip{display:flex;justify-content:center;width:100%;border-radius:0}
+/* key moves: the number badge lines up with the first line of a two-line title */
+.hlc h3{align-items:flex-start;line-height:22px}

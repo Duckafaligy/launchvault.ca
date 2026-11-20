@@ -795,6 +795,9 @@ main .dk .lede{background:none;box-shadow:none}
 .rfig img{display:block;width:100%;height:auto}
 .rcap{padding:10px 14px;font-size:12.5px;line-height:1.5;color:#4B5563}
 .rcap a{color:var(--brand);text-decoration:underline;text-underline-offset:2px}
+.rfig.rface{padding:12px 14px}
+.rfig.rface .rcap{padding:0}
+.post-figs:empty{display:none}
 
 /* =====================================================================
    Round 11: remodel + motion. Shared components (see COMPONENTS.md).
@@ -1275,6 +1278,19 @@ html{scroll-padding-top:78px}
 .ms-play:hover{background:#DCE6FE}
 .ms-play[aria-pressed=true],.ms-play[aria-pressed=true]:hover{background:var(--brand);color:#fff}
 .moves .hd:has(.ms-play){padding-top:8px;padding-bottom:4px}
+/* scaled hero window: the hit area stays 44px on screen, but the visible pill is a compact 28px chip
+   (transparent border = invisible hit padding; the drawn edge is an inset shadow inside it) */
+.win .mstep,.win .moves .hd:has(.ms-play){--bw:calc((44px / var(--s, 1) - 28px) / 2)}
+.win .mstep{gap:2px;padding:0 2px 2px}
+.win .mstep button,.win .ms-play{min-height:calc(44px / var(--s, 1));border:var(--bw) solid transparent;background-clip:padding-box;box-shadow:inset 0 0 0 1px var(--line);transition:background-color .2s,box-shadow .2s,color .2s}
+.win .mstep .ms-l{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.win .mstep .ms-b{min-width:calc(44px / var(--s, 1));padding:0;gap:0;border-radius:calc(var(--bw) + 8px)}
+.win .mstep .ms-b svg{width:9px;height:9px}
+.win .mstep button:hover:not(:disabled){border-color:transparent;box-shadow:inset 0 0 0 1px var(--brand)}
+.win .mstep button:disabled{box-shadow:inset 0 0 0 1px #EEF0F3}
+.win .ms-play{border-width:var(--bw) 0;padding:0 11px;border-radius:calc(var(--bw) + 999px);box-shadow:none;font-size:12.5px;margin-right:-2px}
+.win .mstep button:focus-visible,.win .ms-play:focus-visible{outline-offset:calc(2px - var(--bw))}
+.win .moves .hd:has(.ms-play){padding-top:2px;padding-bottom:0}
 @media (min-width:1101px){
   .win .moves{display:flex;flex-direction:column}
   .win .moves ol{position:static;flex:1 1 0;min-height:0;contain:size;overflow:auto}

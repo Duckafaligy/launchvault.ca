@@ -5,6 +5,7 @@
   "what": "An AI resume builder that helps job seekers write resumes that get past hiring software.",
   "logo": "/assets/logos/rezi.png",
   "site": "https://www.rezi.ai",
+  "founder_photo": {"src": "/assets/founders/rezi.jpg", "name": "Jacob Jacquet", "role": "founder of Rezi", "alt": "Jacob Jacquet, founder of Rezi", "w": 400, "h": 400, "author": "Jacquet, J. [@jacob_jacquet]", "date": "n.d.", "title": "Profile photo", "publisher": "X", "url": "https://x.com/jacob_jacquet", "image_url": "https://pbs.twimg.com/profile_images/1954188628105867264/8tbnpiXD.jpg", "found_via": "https://trustmrr.com/founder/jacob_jacquet", "retrieved": "November 20, 2026", "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."},
   "published": "2026-11-19",
   "read_min": 9,
   "title": "Rezi started as a resume template on Reddit and made $216K in October 2026",

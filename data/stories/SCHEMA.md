@@ -13,7 +13,7 @@ A scheduled job publishes a new story by adding one file here and pushing. Nothi
 - **Never invent.** If something isn't public, write `"Not public"`, or leave the field out.
 - **Revenue numbers** come from TrustMRR, with the label Verified and their sync date. Copy them exactly from `design/data/stories.json` when the company is listed there.
 - **Founders' own words** are Claimed, with a link to the interview or post and its date.
-- **No founder names, faces or ages** on the site. Write "the founder" or "the team".
+- **Story text says "the founder" or "the team"**, and never gives ages. The one exception: the optional `founder_photo` figure names the founder in its credited caption, next to their published photo.
 - **Write for 15–20 year olds:** short sentences, no jargon (explain MRR once), no hype. Use "breakdown", never "debunk".
 - **No Similarweb data.**
 
@@ -73,3 +73,17 @@ A scheduled job publishes a new story by adding one file here and pushing. Nothi
 - Every URL is https and must load (HTTP 200/3xx; a 403/429/999 bot wall from X, LinkedIn or Instagram is fine if the site links that exact URL).
 - The build rejects a link that isn't https or isn't on the platform's own domain. Leave a platform out rather than guess.
 - Shown as "Visit <name>" plus icon buttons in the app reader header and the blog post.
+
+## founder_photo (optional)
+
+```json
+"founder_photo": {"src": "/assets/founders/rezi.jpg", "w": 400, "h": 400, "name": "Jacob Jacquet", "role": "founder of Rezi", "alt": "Jacob Jacquet, founder of Rezi",
+                  "author": "Jacquet, J. [@jacob_jacquet]", "date": "n.d.", "title": "Profile photo", "publisher": "X",
+                  "url": "https://x.com/jacob_jacquet", "image_url": "https://pbs.twimg.com/...", "found_via": "https://trustmrr.com/founder/jacob_jacquet",
+                  "retrieved": "November 20, 2026", "license": "CC BY-SA 4.0 | Not openly licensed: ..."}
+```
+- A real, published photo of the founder, never generated, guessed or a lookalike. Preference: openly licensed (Wikimedia Commons) > the company's own About/team page or press kit > the founder's own public profile image (X, GitHub, personal site). Only when the source page names that person.
+- File in `/assets/founders/<slug>.jpg`, square, at most 480px and about 60KB.
+- `author`/`date`/`title`/`publisher`/`url`/`retrieved` build the APA 7 caption: "Figure 1. <name>, <role>. From <author>. (<date>). *<title>* [Photograph]. <publisher>. Retrieved <retrieved>, from <url>". A `license` starting with "CC" is added to the caption.
+- Shown as Figure 1 near the top of the app reader and the blog post; the site capture (`assets/figures/<slug>-site.webp`) follows, then any Wayback figures.
+- No photo found? Leave the field out. Never use a stock image.

@@ -476,8 +476,12 @@
       say("Your device data is cleared."); msg.hidden = false; $("#del").disabled = true; $("#dl").disabled = true; $("a", msg).focus(); });
     const so = $("#so"); if (so && window.LVAuth) so.addEventListener("click", () => LVAuth.signOut());
     const nav = $$(".anav a, .anavm a"), strip = $(".anavm .snav-in");
-    addEventListener("scroll", () => { let cur = "#profile"; ["#profile", "#plan", "#parent", "#email", "#data"].forEach(h => { const t = document.querySelector(h); if (t && !t.hidden && t.getBoundingClientRect().top < 160) cur = h; });
-      nav.forEach(a => a.classList.toggle("on", a.getAttribute("href") === cur)); const on = strip && $("a.on", strip); if (on && strip.scrollWidth > strip.clientWidth) strip.scrollTo({left: on.offsetLeft - 16}); }, {passive: true});
+    // the section in view is highlighted in both navs; at the very bottom the last section wins (it may never reach the top)
+    const spy = () => { const H = ["#profile", "#plan", "#parent", "#email", "#data"]; let cur = H[0]; H.forEach(h => { const t = document.querySelector(h); if (t && !t.hidden && t.getBoundingClientRect().top < 160) cur = h; });
+      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = H.at(-1);
+      nav.forEach(a => { const on = a.getAttribute("href") === cur; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); });
+      const on = strip && $("a.on", strip); if (on && strip.scrollWidth > strip.clientWidth) strip.scrollTo({left: on.offsetLeft - 16}); };
+    addEventListener("scroll", spy, {passive: true}); spy();
   }
 
   // ---------- onboarding: 8 questions (Skip any) -> result -> Home. The age question is the gate (assets/gate.js), asked once, before this. ----------

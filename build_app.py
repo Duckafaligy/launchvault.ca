@@ -416,6 +416,27 @@ def first_block(S):
     rows = "".join(row(t, k) for t, k in (("First customers came from", "first_customers"), ("First money came from", "first_revenue"), ("Cost to start", "cost_to_start"), ("Team", "team")))
     return f'<div class="fcust"><h2>How the first customers came</h2><dl>{rows}</dl></div>' if rows else ""
 
+# figures near the top of a story: the founder's photo (story JSON "founder_photo") and the live site capture, each with an APA 7 caption
+def fig_founder(S, n):
+    p = S.get("founder_photo")
+    if not p: return ""
+    pub = f' {esc(p["publisher"])}.' if p.get("publisher") else ""
+    lic = f' Licensed under {esc(p["license"])}.' if p.get("license", "").startswith("CC") else ""
+    return (f'<figure class="rfig rface" style="display:flex;gap:14px;align-items:center"><img src="{esc(p["src"])}" width="{p["w"]}" height="{p["h"]}" alt="{esc(p["alt"])}" loading="lazy" decoding="async" style="width:96px;height:96px;flex:none;border-radius:50%;object-fit:cover">'
+            f'<figcaption class="rcap" style="margin-top:0;min-width:0;overflow-wrap:anywhere"><b>Figure {n}.</b> {esc(p["name"])}, {esc(p["role"])}. From {esc(p["author"])}. ({esc(p["date"])}). <em>{esc(p["title"])}</em> [Photograph].{pub} '
+            f'Retrieved {esc(p["retrieved"])}, from <a href="{esc(p["url"])}" target="_blank" rel="noopener">{esc(p["url"])}</a>{lic}</figcaption></figure>')
+def fig_site(S, n):
+    site_url = (S.get("links") or {}).get("site") or S.get("site") or ""; slug = S["slug"]
+    if not (site_url and os.path.exists(os.path.join(ROOT, "assets", "figures", f"{slug}-site.webp"))): return ""
+    return (f'<figure class="rfig"><picture><source srcset="/assets/figures/{slug}-site.webp" type="image/webp">'
+            f'<img src="/assets/figures/{slug}-site.png" width="800" height="450" loading="lazy" decoding="async" alt="{esc(S["name"])} live website homepage"></picture>'
+            f'<figcaption class="rcap"><b>Figure {n}.</b> {esc(S["name"])}. (2026, November 20). <em>{esc(S["name"])} official product homepage</em> [Website screenshot]. {esc(S["name"])}. '
+            f'<a href="{esc(site_url)}" target="_blank" rel="noopener">{esc(site_url)}</a></figcaption></figure>')
+def top_figs(S):
+    """Founder photo then site capture, numbered from 1. Returns (html, how many)."""
+    a = fig_founder(S, 1); b = fig_site(S, 2 if a else 1)
+    return a + b, bool(a) + bool(b)
+
 JUDGE_FORM = ('<form class="jform" data-judge novalidate><label for="jc{i}">Have a hackathon judge code?</label><div class="jrow"><input id="jc{i}" name="code" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false">'
               '<button class="btn btn-s" type="submit">Unlock</button></div><p class="jerr" role="alert" hidden>That code didn&#39;t work.</p></form>')
 def reader(E, S, gate=True):
@@ -439,11 +460,12 @@ def reader(E, S, gate=True):
         kmoves = sec("two", "Key moves", f"The {len(S['highlights'])} decisions that changed the line most, each with its source.", '<div class="hl2">' + "".join(
             f'<div class="hlc"><h3><i>{h["move"]}</i>{esc(h["title"])}</h3><p>{esc(h["text"])}</p>' + (f'<p class="q">{esc(h["quote"])}</p>' if h.get("quote") else "")
             + f'<span class="src">{lb(h["label"])}{esc(h.get("source", ""))}{(" · " + esc(h["date"])) if h.get("date") else ""}</span></div>' for h in S["highlights"]) + "</div>")
-    tn = ""
+    tn = ""; fig_html, nfig = top_figs(S)
     if S.get("wayback"):
+        wimgs = [w for w in S["wayback"] if w.get("image")]
         def snap(w):
             img = (f'<figure class="rfig" style="margin:12px 0"><picture><source srcset="{w["image"].replace(".png", ".webp")}" type="image/webp"><img src="{w["image"]}" alt="{esc(S["name"])} homepage, {esc(w["date"])}" width="800" height="450" loading="lazy" decoding="async"></picture>'
-                   f'<figcaption class="rcap">{esc(S["name"])}. ({esc(w["date"])}). <em>{esc(w["headline"])}</em> [Archived website screenshot]. Internet Archive Wayback Machine. <a href="{esc(w["source"])}" target="_blank" rel="noopener">{esc(w["source"])}</a></figcaption></figure>') if w.get("image") else ""
+                   f'<figcaption class="rcap"><b>Figure {nfig + 1 + next(i for i, v in enumerate(wimgs) if v is w)}.</b> {esc(S["name"])}. ({esc(w["date"])}). <em>{esc(w["headline"])}</em> [Archived website screenshot]. Internet Archive Wayback Machine. <a href="{esc(w["source"])}" target="_blank" rel="noopener">{esc(w["source"])}</a></figcaption></figure>') if w.get("image") else ""
             link = "Open snapshot" if "archive.org" in w["source"] else "Open site"
             return (f'<li class="snap"><div class="sb"><b>{esc(w["date"])}</b>{lb(w.get("label", "Wayback"))}</div>'
                     f'{img}<p class="hl">"{esc(w["headline"])}"</p>' + (f'<p class="sp">{esc(w["sub"])}</p>' if w.get("sub") else "") + f'{prices(w.get("prices"))}<div class="ft"><span>{esc(w.get("prices_date", ""))}</span><a href="{esc(w["source"])}" target="_blank" rel="noopener">{link} ↗</a></div></li>')
@@ -488,14 +510,6 @@ def reader(E, S, gate=True):
            + f'</div><span class="snph">Phase <b data-curph>1</b> of {n}</span><div class="rprog"><i data-readbar2></i></div></nav>')
     title = S["title"]; em = S.get("title_em")
     t_html = esc(title[:-len(em.rstrip("."))]) + f'<em class="em">{esc(em.rstrip("."))}</em>' if em and title.endswith(em.rstrip(".")) else esc(title)
-    site_url = (S.get("links") or {}).get("site") or S.get("site") or ""
-    fig_path = os.path.join(ROOT, "assets", "figures", f"{slug}-site.webp")
-    fig_html = ""
-    if os.path.exists(fig_path) and site_url:
-        fig_html = (f'<figure class="rfig"><picture><source srcset="/assets/figures/{slug}-site.webp" type="image/webp">'
-                    f'<img src="/assets/figures/{slug}-site.png" width="800" height="450" loading="lazy" decoding="async" alt="{esc(S["name"])} live website homepage"></picture>'
-                    f'<figcaption class="rcap">{esc(S["name"])}. (2026, November 20). <em>{esc(S["name"])} official product homepage</em> [Website screenshot]. {esc(S["name"])}. '
-                    f'<a href="{esc(site_url)}" target="_blank" rel="noopener">{esc(site_url)}</a></figcaption></figure>')
     over = (f'<section class="rsec rcard sumc" id="overview"><div class="rh"><span class="logo big"><img src="{S["logo"]}" alt="" width="44" height="44"></span><div class="rhm">'
             f'<p class="co"><b>{esc(S["name"])}</b><span class="tag">{esc(S.get("type_label") or S["category"])}</span>{stale_chip}</p><p class="what">{esc(S["what"])}</p><p class="what pat">Pattern: <b>{esc(S["pattern"])}</b></p></div>'
             f'<button type="button" class="star" data-star="{slug}" aria-pressed="false">{ic(I["saved"], 18)}<span>Save</span></button></div>'
@@ -647,7 +661,7 @@ def blog_post(S, E):
     rep = {"{{SLUG}}": S["slug"], "{{H1}}": h1, "{{DEK}}": esc(S["dek"]), "{{LOGO}}": S["logo"], "{{NAME}}": esc(S["name"]), "{{READ}}": str(S["read_min"]), "{{NSRC}}": str(len(S["sources"])),
            "{{DATE}}": esc(S["numbers"][0]["date"]), "{{KPIS}}": kpis, "{{CHART}}": chart_block(S, moves_list=True, band=False), "{{HL}}": hl, "{{NHL}}": str(len(S.get("highlights", []))),
            "{{PHASES}}": "\n      ".join(ph(i, p) for i, p in enumerate(S["phases"])), "{{FC}}": fc, "{{NFC}}": str(len(S["fact_checks"])), "{{FCREAD}}": esc(S.get("fact_checks_read") or latest_date(s["date"] for s in S["sources"])), "{{FCSUM}}": fc_summary(S["fact_checks"]),
-           "{{TN}}": tn, "{{FIRST}}": first_block(S), "{{LINKS}}": link_row(S, "srow post-links"), "{{CKS}}": cks, "{{NCK}}": str(len(cl)), "{{SRC}}": src, "{{APP}}": f"/app/story/{S['slug']}/"}
+           "{{TN}}": tn, "{{FIGS}}": top_figs(S)[0], "{{FIRST}}": first_block(S), "{{LINKS}}": link_row(S, "srow post-links"), "{{CKS}}": cks, "{{NCK}}": str(len(cl)), "{{SRC}}": src, "{{APP}}": f"/app/story/{S['slug']}/"}
     for k, v in rep.items(): tpl = tpl.replace(k, v)
     if not S.get("highlights"):
         tpl = re.sub(r"<!--HL-->.*?<!--/HL-->", lambda m: '<section class="sec-alt" id="moves-two"><div class="wrap">', tpl, flags=re.S)

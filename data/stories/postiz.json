@@ -7,6 +7,7 @@
   "what": "A social media scheduler built by one main developer. Free to self-host (run it on your own server), paid to use hosted.",
   "logo": "/assets/logos/postiz.svg",
   "site": "https://postiz.com",
+  "founder_photo": {"src": "/assets/founders/postiz.jpg", "name": "Nevo David", "role": "founder of Postiz", "alt": "Nevo David, founder of Postiz", "w": 400, "h": 400, "author": "David, N. [@wickedguro]", "date": "n.d.", "title": "Profile photo", "publisher": "X", "url": "https://x.com/wickedguro", "image_url": "https://pbs.twimg.com/profile_images/2089387713976041474/I8Jv6dD0.jpg", "found_via": "https://trustmrr.com/founder/wickedguro", "retrieved": "November 20, 2026", "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."},
   "published": "2026-11-17",
   "read_min": 10,
   "title": "Postiz: almost two years under $15K a month, then $431K",

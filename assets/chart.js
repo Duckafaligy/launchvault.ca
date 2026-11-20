@@ -40,7 +40,7 @@
     let G = null, cur = -1, pinned = null, glide = false, tw = 0;
     const turnI = (moves.find(m => m.turn) || {i: -1}).i;   // the move shown when nothing is pinned (-1: show the latest point)
     const draw = () => { cancelAnimationFrame(tw);
-      const W = Math.max(280, plot.clientWidth), narrow = W < 560, H = narrow ? 230 : 300, L = 48, R = 12, T = 12, B = moves.length || before ? 54 : 30;
+      const W = Math.max(280, plot.clientWidth), narrow = W < 560, H = narrow ? 230 : 300, L = 48, R = 12, T = 30, B = moves.length || before ? 54 : 30;
       const X = x => L + (x - x0) / Math.max(1, x1 - x0) * (W - L - R), Y = v => T + (1 - v / top) * (H - T - B);
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("height", H); svg.innerHTML = "";
       const defs = el("defs", {}, svg);
@@ -70,7 +70,7 @@
       all.forEach(p => { const k = LBC[p.l] || "c", cx = X(p.x), cy = Y(p.v);
         if (k === "x") el("rect", {x: cx - 4, y: cy - 4, width: 8, height: 8, class: "pt x", transform: `rotate(45 ${cx} ${cy})`}, fg);
         else el("circle", {cx, cy, r: k === "v" ? 5 : 3.2, class: "pt" + (k === "v" ? " v" : "") + (p.k ? " kd" : "")}, fg);
-        if (p.k) el("text", {x: cx - 8, y: cy - 10, "text-anchor": "end", class: "ax kdl"}, fg).textContent = p.k; });
+        if (p.k) el("text", {x: cx - (cy < 48 ? 12 : 8), y: cy < 48 ? cy + 4 : cy - 10, "text-anchor": "end", class: "ax kdl"}, fg).textContent = p.k; });
       const hl = el("circle", {r: 7, class: "hl"}, svg);
       const mks = moves.map((m, i) => { const g = el("g", {class: "mk" + (m.turn ? " turn" : ""), tabindex: "-1", "aria-hidden": "true"}, svg);
         const cx = Math.min(Math.max(X(m.x), L + (before ? 48 : 9)), W - R - 9) + (moves[i - 1] && Math.abs(X(moves[i - 1].x) - X(m.x)) < 18 ? 9 : 0);
@@ -92,14 +92,18 @@
     };
     const setRO = (a, b, c) => { ro.innerHTML = `<b>${a}</b><span class="rd-d">${b}</span><span class="rd-s">${c}</span>`; };
     // stepping glides the guide line, pill and mask from the last checkpoint; hover jumps straight there
+    // while a move is pinned, the guide line, pill and mask stay on it (they always match the stepper); hovering only moves the ring
     const mark = (x, y, label) => { cancelAnimationFrame(tw);
+      const hx = x, pm = pinned != null && moves.find(m => m.i === pinned);
+      if (pinned != null && !pm) { G.hl.setAttribute("cx", x); G.hl.style.opacity = y == null ? 0 : 1; if (y != null) G.hl.setAttribute("cy", y); return; }   // pinned move sits before the chart: no line, no pill
+      if (pm) { x = G.X(pm.x); label = pm.when; }
       const fx = G.mx, fy = G.my; G.mx = x; G.my = y;
-      if (!glide || reduce || fx == null || fx === x) return place(x, y, label);
-      const t0 = performance.now(), f = now => { const k = Math.min(1, (now - t0) / 360), e = 1 - (1 - k) ** 3;
-        place(fx + (x - fx) * e, y == null || fy == null ? y : fy + (y - fy) * e, label); if (k < 1) tw = requestAnimationFrame(f); };
+      if (!glide || reduce || fx == null || fx === x) return place(x, y, label, hx);
+      const t0 = performance.now(), f = now => { const k = Math.min(1, (now - t0) / 360), e = 1 - (1 - k) ** 3, mx = fx + (x - fx) * e;
+        place(mx, y == null || fy == null ? y : fy + (y - fy) * e, label, mx); if (k < 1) tw = requestAnimationFrame(f); };
       f(t0);
     };
-    const place = (x, y, label) => {
+    const place = (x, y, label, hx) => {
       G.cross.setAttribute("x1", x); G.cross.setAttribute("x2", x); G.cross.style.opacity = 1;
       if (G.ms1 && G.ms2) { G.ms1.setAttribute("offset", Math.min(1, (x + 2) / G.W)); G.ms2.setAttribute("offset", Math.min(1, (x + 18) / G.W)); }
       if (G.tsPill && label) {
@@ -108,7 +112,7 @@
         G.tsRect.setAttribute("x", px - pw / 2); G.tsRect.setAttribute("width", pw); G.tsTxt.setAttribute("x", px);
         G.tsPill.setAttribute("opacity", 1);
       } else if (G.tsPill) G.tsPill.setAttribute("opacity", 0);
-      if (y == null) G.hl.style.opacity = 0; else { G.hl.setAttribute("cx", x); G.hl.setAttribute("cy", y); G.hl.style.opacity = 1; }
+      if (y == null) G.hl.style.opacity = 0; else { G.hl.setAttribute("cx", hx); G.hl.setAttribute("cy", y); G.hl.style.opacity = 1; }
     };
     const activate = i => {
       cur = i;
