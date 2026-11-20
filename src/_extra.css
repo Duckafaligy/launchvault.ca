@@ -13,6 +13,8 @@
 .fmsg::before{content:"";flex:none;width:16px;height:16px;border-radius:50%;background:var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 7v6M12 16.5v.5' stroke='%23fff' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") center/12px no-repeat}
 footer .fmsg,.dk .fmsg{color:#E2E8F0;justify-content:flex-start}
 .fmsg.l{justify-content:flex-start}
+.fmsg.ok::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.fmsg.on{animation:fmsgIn .35s cubic-bezier(.16,1,.3,1)}@keyframes fmsgIn{from{opacity:0;transform:translate3d(0,4px,0)}}
 
 /* subpage header */
 .phero{padding:136px 0 56px}
@@ -255,10 +257,7 @@ footer .fmsg,.dk .fmsg{color:#E2E8F0;justify-content:flex-start}
 .chrome .dots i:nth-child(3){background:#28C840}
 /* site streak (assets/streak.js): fixed full-screen particle wave behind all content, spacefs-style (2026-11-18).
    Content sits above it; light section backgrounds are see-through so the wave carries on through them. */
-.streak{position:absolute;top:0;left:0;width:100%;height:100vh;z-index:0;pointer-events:none;
-  /* X9: the wave only lives in the top-right corner of the first screen and is gone by 560px, so it never sits behind a run of body text */
-  -webkit-mask-image:radial-gradient(ellipse 42% 560px at 100% 0,#000 30%,transparent 100%);mask-image:radial-gradient(ellipse 42% 560px at 100% 0,#000 30%,transparent 100%)}
-@media (max-width:900px){.streak{-webkit-mask-image:radial-gradient(ellipse 60% 150px at 100% 0,#000 20%,transparent 100%);mask-image:radial-gradient(ellipse 60% 150px at 100% 0,#000 20%,transparent 100%)}}
+.streak{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
 #main,footer.foot{position:relative;z-index:1}
 .sec-alt{background:rgba(248,250,252,.55)}
 .hero{position:relative}.hero > .wrap{position:relative;z-index:1}
@@ -294,8 +293,11 @@ footer.foot .lb.x{color:#FCA5A5;background:rgba(229,83,61,.16)}footer.foot .lb.n
 .hero .hcta .btn{min-height:52px}
 .hero .hcta .tlink{display:inline-flex;align-items:center;min-height:44px;margin:0}
 .hmail{max-width:520px;margin:6px auto 0;text-align:center}
-.hmail summary{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:8px;cursor:pointer;list-style:none;font:500 15px var(--fd);color:var(--ink);text-decoration:underline;text-underline-offset:3px}
-.hmail summary::-webkit-details-marker{display:none}
+.hmail .hmb{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border:0;background:none;border-radius:8px;cursor:pointer;font:500 15px var(--fd);color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.hmail .hmb svg{transition:transform .35s var(--out)}.hmail.open .hmb svg{transform:rotate(180deg)}
+.hmp{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .4s var(--out),visibility 0s .4s}
+.hmail.open .hmp{grid-template-rows:1fr;visibility:visible;transition-delay:0s}
+.hmi{min-height:0;overflow:hidden;padding:0 4px;opacity:0;transition:opacity .3s}.hmail.open .hmi{opacity:1;transition-delay:.08s}
 .hero .hmail .form{margin-top:8px}
 .hmail .hmn{margin-top:8px;font-size:14px;color:var(--text)}
 .fbot .lgl a{min-width:44px;justify-content:center}
@@ -307,3 +309,13 @@ footer.foot .lb.x{color:#FCA5A5;background:rgba(229,83,61,.16)}footer.foot .lb.n
 .appcta + .sec-alt{margin-top:0}
 /* X3: 12px minimum on the public pages (the scaled hero product mock keeps its own sizes) */
 .article .plot svg text,.article .plot .tag text,.article .fig svg text,.article .mv .n,.article .mv .w{font-size:12px}
+
+/* card hover (2026-11-20): transform-only lift, no layout change; off for reduced motion */
+@media (prefers-reduced-motion:no-preference){
+  .scell,.bcard,.ncard{will-change:transform;transition:transform .35s cubic-bezier(.16,1,.3,1),border-color .2s,box-shadow .3s}
+  .scell:hover,.bcard:hover,.ncard:hover{transform:translate3d(0,-3px,0)}
+}
+/* soft fade behind long body copy so the wave never lowers its contrast (light sections only) */
+main .lede{background:rgba(255,255,255,.82);box-shadow:0 0 14px 10px rgba(255,255,255,.82);border-radius:8px}
+main .dk .lede{background:none;box-shadow:none}
+.hmi .fmsg.on ~ .hmn{display:none}

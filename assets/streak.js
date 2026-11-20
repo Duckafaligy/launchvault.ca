@@ -42,7 +42,7 @@
 
   const foot = document.querySelector("footer.foot");
   // the background wave rests (frozen, still drawn) once the footer covers most of the screen, so only one wave animates at a time
-  const bgLive = () => scrollY < innerHeight;   // the wave sits at the top of the page (site.css masks it to the first screen), so it rests once that has scrolled away
+  const bgLive = () => !foot || foot.getBoundingClientRect().top > innerHeight * .4;
   const bg = make("streak"); document.body.prepend(bg);
   const kickBg = wave(bg, () => [innerWidth, innerHeight], small ? 9400 : 34300, bgLive); kickBg();
   addEventListener("scroll", kickBg, { passive: true });

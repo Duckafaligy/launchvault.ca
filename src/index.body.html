@@ -4,13 +4,15 @@
     <h1>How real apps got their first customers.<br> <em class="em">In 10 minutes, <span class="nw">not 100 videos.</span></em></h1>
     <p class="lede">Real startup stories, broken down from public numbers. Every number is labelled, so you know what's checked.</p>
     <div class="hcta"><a class="btn btn-p btn-lg" href="{{WEEK_HREF}}">Read this week's breakdown <span class="arr" aria-hidden="true">→</span></a><a class="tlink" href="/app/library/">See all {{NREADY}} breakdowns <span class="arr" aria-hidden="true">→</span></a></div>
-    <details class="hmail"><summary>Get one story a week by email</summary>
-      <form class="form pv">
-        <input type="email" required placeholder="you@email.com" aria-label="Email address">
-        <button class="btn btn-p btn-lg" type="submit">Tell me when it opens</button>
-      </form>
-      <p class="hmn">Sign-ups open soon. Nothing is sent or saved yet.</p>
-    </details>
+    <div class="hmail" id="hmail"><button type="button" class="hmb" aria-expanded="false" aria-controls="hmp">Get one story a week by email <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="hmp" id="hmp"><div class="hmi">
+        <form class="form pv" novalidate>
+          <input type="email" required placeholder="you@email.com" aria-label="Email address" tabindex="-1">
+          <button class="btn btn-p btn-lg" type="submit" tabindex="-1">Tell me when it opens</button>
+        </form>
+        <p class="hmn">Your address stays on this device. Emails start when sign-ups open.</p>
+      </div></div>
+    </div>
 
     <div class="winfit" id="winfit">
     <div class="win" id="win">

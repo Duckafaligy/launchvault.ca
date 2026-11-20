@@ -11,12 +11,23 @@
 
   // nav, mega menu and scroll-spy live in assets/nav.js
 
-  // ---------- preview forms: nothing is sent; say so plainly ----------
-  $$("form.pv").forEach(f => f.addEventListener("submit", e => {
+  // ---------- email forms: nothing is sent; the address is kept on this device only (lv-email-sub) ----------
+  $$("form.pv").forEach(f => { f.noValidate = true; f.addEventListener("submit", e => {
     e.preventDefault();
     let m = f.nextElementSibling; if (!m || !m.classList.contains("fmsg")) { m = document.createElement("p"); m.className = "fmsg"; m.setAttribute("role", "status"); f.after(m); }
-    m.textContent = "Sign-ups open soon. This is a preview."; m.classList.add("on");
-  }));
+    const inp = f.querySelector("input[type=email]"), v = inp.value.trim(), ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+    m.classList.remove("on", "ok"); void m.offsetWidth;
+    if (!ok) { m.textContent = "That email address doesn't look right. Check it and try again."; m.classList.add("on"); inp.setAttribute("aria-invalid", "true"); inp.focus(); return; }
+    inp.removeAttribute("aria-invalid");
+    try { localStorage.setItem("lv-email-sub", v); } catch {}
+    m.textContent = "Saved on this device. Emails start when sign-ups open."; m.classList.add("on", "ok");
+  }); });
+  // hero email bar: height animates open/closed (CSS grid rows), no jump
+  const hm = $("#hmail");
+  if (hm) { const hb = hm.querySelector(".hmb"), foc = [...hm.querySelectorAll(".hmp input,.hmp button")];
+    const set = o => { hm.classList.toggle("open", o); hb.setAttribute("aria-expanded", o); foc.forEach(x => x.tabIndex = o ? 0 : -1); if (o) setTimeout(() => foc[0].focus({ preventScroll: true }), reduce ? 0 : 120); };
+    hb.addEventListener("click", () => set(!hm.classList.contains("open")));
+    hm.addEventListener("keydown", e => { if (e.key === "Escape" && hm.classList.contains("open")) { set(false); hb.focus(); } }); }
   // ?plan=pro|developer|builder(alias)|full on /signup/ shows the plan note; .pname (if present) gets the plan's name
   const plan = new URLSearchParams(location.search).get("plan"), pn = $("#plannote");
   if (pn && plan && /^(pro|developer|builder|lifetime|full)$/.test(plan)) { pn.hidden = false; const nm = pn.querySelector(".pname"); if (nm) nm.textContent = /^(developer|builder)$/.test(plan) ? "Developer" : plan === "lifetime" ? "Lifetime (beta)" : "Pro"; }

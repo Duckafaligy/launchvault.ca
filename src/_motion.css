@@ -121,8 +121,8 @@ html.rv-on .hero .wrap > :nth-child(4){animation-delay:.16s}html.rv-on .hero .wr
 .ftag .lb{margin-left:auto}
 .feat .ft .btn{height:44px}
 .bgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.bcard{position:relative;display:flex;flex-direction:column;gap:12px;padding:18px;border:1px solid var(--line);border-radius:12px;background:#fff;color:inherit;transition:border-color .2s,box-shadow .3s,translate .35s var(--out)}
-.bcard:hover{border-color:#CBD5E1;box-shadow:var(--lift);translate:0 -3px}
+.bcard{position:relative;display:flex;flex-direction:column;gap:12px;padding:18px;border:1px solid var(--line);border-radius:12px;background:#fff;color:inherit;transition:border-color .2s,box-shadow .3s}
+.bcard:hover{border-color:#CBD5E1;box-shadow:var(--lift)}
 .bcard[hidden]{display:none}
 .bc-top{display:flex;align-items:center;gap:10px;min-width:0}
 .bc-top .tile{width:32px;height:32px;font-size:14px;border-radius:7px}
@@ -272,7 +272,7 @@ html.rv-on .bcard.rv:not(.in) .dotv{opacity:0}
 .fcol a,.fbot a{transition:color .2s}
 .nav .links a{transition:background-color .2s,color .2s}
 .sl-row,.fr,.par-list > div{transition:background-color .2s}
-.ncard,.mcard{transition:border-color .2s,box-shadow .3s,translate .35s var(--out)}
+.ncard,.mcard{transition:border-color .2s,box-shadow .3s}
 .ncard:hover,.mcard:hover{border-color:#CBD5E1;box-shadow:var(--lift)}
 
 /* ---------- responsive ---------- */
