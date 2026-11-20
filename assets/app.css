@@ -1126,3 +1126,43 @@ html.gated body{background:var(--alt)}
 /* community: phone header gets a person icon (Account) instead of an Account tab */
 .macct{display:none}
 @media (max-width:720px){.macct{display:inline-flex}}
+/* home: hero + checklists (68%) | path + community (32%) */
+.hgrid{display:grid;grid-template-columns:minmax(0,68fr) minmax(0,32fr);gap:20px;align-items:start;margin-top:16px}
+.hmain,.hrail{display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (max-width:1100px){.hgrid{grid-template-columns:minmax(0,1fr)}}
+.hhero .hh{display:flex;gap:16px;align-items:flex-start;padding:20px}
+.hhero .hh .logo{width:52px;height:52px;border-radius:12px}
+.hhm{flex:1;min-width:0}
+.hhm h3{font:600 20px/28px var(--fd);color:var(--ink)}
+.hhm p{margin-top:6px;font-size:15px;line-height:22px;color:var(--text)}
+.hhc{display:flex;flex-wrap:wrap;gap:8px}
+.hhn{flex:none;width:210px;display:flex;flex-direction:column;gap:2px;align-items:flex-start;min-width:0}
+.hhn b{font:600 28px/34px var(--fn);color:var(--ink);letter-spacing:-.02em}
+.hhn span,.hhn small{font-size:13px;line-height:18px;color:var(--text)}
+.hhn .spark{width:100%;height:40px;margin-top:6px}
+.hfc{margin:0 20px;padding:12px 16px;border-radius:10px;background:var(--alt);border:1px solid var(--line2)}
+.hfc>span{font:600 13px/18px var(--fd);color:var(--ink)}
+.hfc p{margin-top:2px;font-size:15px;line-height:22px;color:var(--ink)}
+.hhero .hact{padding:16px 20px 20px}
+.hhero .hact .btn{min-height:48px;padding:0 22px}
+@media (max-width:700px){.hhero .hh{flex-wrap:wrap;padding:16px}.hhm{flex-basis:calc(100% - 68px)}.hhn{width:100%;margin-left:0}.hfc{margin:0 16px}.hhero .hact{padding:16px}.hhero .hact .btn{width:100%}}
+.hrail .cb p{font-size:15px;line-height:22px;color:var(--text)}
+.hpt{font:600 17px/24px var(--fd);color:var(--ink)!important}
+.hps{margin-top:12px;font:600 13px/18px var(--fd);color:var(--brand)!important}
+.hpx{margin:4px 0 12px;color:var(--ink)!important}
+.hpo{display:inline-flex;align-items:center;min-height:44px;margin-left:12px}
+.hrail .hpr{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:13px;color:var(--text)}
+.hlike{border-top:1px solid var(--line2);padding:12px 0 8px}
+.hlike h3{padding:0 20px 4px;font:600 14px/20px var(--fd);color:var(--ink)}
+.hlike .mini{padding:0 20px}
+.chans{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.chans li{padding:6px 12px;border-radius:999px;background:#EEF3FE;color:#1E3A8A;font:600 14px/20px var(--fd)}
+.hck{flex:none;width:44px;height:44px;margin:-8px -6px -8px -10px;display:grid;place-items:center;border:0;background:none;cursor:pointer}
+.hck .bx{width:22px;height:22px;border-radius:6px;box-shadow:inset 0 0 0 2px #9CA3AF;display:grid;place-items:center;color:transparent;transition:background-color .15s,box-shadow .15s}
+.hck:hover .bx{box-shadow:inset 0 0 0 2px var(--brand)}
+.clrow a.mid{display:block;min-width:0;color:inherit}
+.home2 .hstrip{margin-top:12px;border:1px solid var(--line);border-radius:10px}
+.home2 .hstrip b{font-size:17px}
+.home2 .lsoon{margin-top:24px}
+@media (prefers-reduced-motion:reduce){.hck .bx{transition:none}}
+@media (min-width:834px) and (max-width:1279px){.home2 .hsec .scards .scard:nth-child(3){display:none}}
