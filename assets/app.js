@@ -267,9 +267,10 @@
     const st = pathSteps(), dn = pathDone(), nx = q ? st.find(s => !s.done) : null, hp = $("[data-hpath]");
     hp.innerHTML = q ? `<div class="ch"><h2>Your path</h2><a class="tl" href="/app/start/?quiz=1">Retake quiz</a></div><div class="cb"><p class="hpt">${esc(D.path.title)}</p><div class="hpr">${bar(dn / st.length)}<span>${dn} of ${st.length} steps</span></div>`
         + (nx ? `<p class="hps">Step ${st.indexOf(nx) + 1} of ${st.length}</p><p class="hpx">${esc(nx.task || nx.text)}</p><button class="btn btn-p" type="button" data-hdone>Mark step done</button><a class="tl hpo" href="/app/path/">Open My path</a>` : `<p class="hpx">All steps done. Nice.</p><a class="btn btn-s" href="/app/path/">Open My path</a>`) + `</div>`
-      : `<div class="ch"><h2>Your path</h2></div><div class="cb"><p>Eight quick questions match you with 3 stories that started a lot like you, and a ${st.length}-step path.</p><a class="btn btn-p" style="margin-top:12px" href="/app/start/?quiz=1">Take the 2-minute quiz</a></div><div class="hlike"><h3>Start with these</h3>${matches().map(miniRow).join("")}</div>`;
-    // 3 matched (after the quiz) or top breakdowns, this week's first
-    const pool = q ? matches() : [WEEKS, ...READY.map(s => s.slug)], pick = [...new Set(pool)].map(k => S[k]).filter(s => s && s.status === "ready").slice(0, 3);
+      : `<div class="ch"><h2>Your path</h2><a class="tl" href="/app/path/">Open My path</a></div><div class="hlike"><h3>Start with these</h3>${matches().map(miniRow).join("")}</div><div class="cb" style="padding-top:10px"><a class="btn btn-s" style="width:100%" href="/app/start/?quiz=1">Personalize with 8 quick questions</a></div>`;
+    // 3 matched (after the quiz) or top breakdowns, excluding the hero story so it isn't duplicated
+    const heroSlug = H ? H.slug : WEEKS;
+    const pool = q ? matches() : READY.map(s => s.slug).filter(k => k !== heroSlug), pick = [...new Set(pool)].map(k => S[k]).filter(s => s && s.status === "ready").slice(0, 3);
     $("[data-hrowt]").textContent = q ? "Stories matched to you" : "Top breakdowns";
     hcards.innerHTML = pick.map(storyCard).join("");
     homeCL();

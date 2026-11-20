@@ -216,7 +216,7 @@
       tip.innerHTML = html;
       const ox = 6 + px * ((plot.clientWidth - 12) / G.W), oy = 6 + py, w = tip.offsetWidth, h = tip.offsetHeight;
       let left = ox + 14; if (left + w > plot.clientWidth - 4) left = ox - w - 14;
-      tip.style.left = Math.max(4, left) + "px"; tip.style.top = Math.min(Math.max(4, oy - h / 2), plot.clientHeight - h - 4) + "px";
+      tip.style.left = Math.max(4, left) + "px"; tip.style.top = Math.min(Math.max(24, oy - h / 2), plot.clientHeight - h - 4) + "px";
     }
     // stepping glides the guide line, pill and mask from the last checkpoint; hover jumps straight there
     let glide = false, tw = 0;
