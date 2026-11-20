@@ -49,5 +49,7 @@ window.LVSync = (() => {
         sb.rpc("delete_my_data").then(({error}) => done && done(error ? "server" : null), () => done && done("server")); });
     } catch (e) { /* offline or not set up yet: local progress keeps working */ }
   };
-  return {start};
+  // community chat (assets/community.js) gets its own client with the same Clerk token; same under-13 rule applies (the age gate already blocked them)
+  const make = async clerk => { await loadLib(); return window.supabase.createClient(URL, KEY, {accessToken: async () => (await clerk.session.getToken()) || null}); };
+  return {start, make};
 })();

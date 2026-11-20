@@ -1106,3 +1106,7 @@ html.gated body{background:var(--alt)}
   .prev a,.prev button{display:inline;min-height:0;padding:14px 4px;margin:-14px 0}}   /* one sentence that wraps as text; the link keeps a 44px-tall hit area */
 
 .qhint{margin:-4px 0 14px;font-size:14.5px;line-height:1.45;color:var(--text)}
+
+/* community: phone header gets a person icon (Account) instead of an Account tab */
+.macct{display:none}
+@media (max-width:720px){.macct{display:inline-flex}}
