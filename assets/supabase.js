@@ -9,7 +9,7 @@ window.LVSync = (() => {
   const AGE = {"13 to 15": "13-15", "16 to 17": "16-17", "18 to 20": "18-20", "21 or older": "21+"};
   const ls = {get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }};
   let sb = null;
-  const loadLib = () => new Promise((res, rej) => { if (window.supabase) return res(); const s = document.createElement("script"); s.src = LIB; s.crossOrigin = "anonymous"; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+  const loadLib = () => new Promise((res, rej) => { if (window.supabase) return res(); const s = document.createElement("script"); s.src = LIB; s.crossOrigin = "anonymous"; s.integrity = "sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK"; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
   const push = async clerk => {
     const age = ls.get("lv-age"); if (age === "Under 13") return;            // never write anything for under 13
     const email = clerk.user.primaryEmailAddress && clerk.user.primaryEmailAddress.emailAddress;
@@ -41,8 +41,12 @@ window.LVSync = (() => {
     try {
       await loadLib();
       sb = window.supabase.createClient(URL, KEY, {accessToken: async () => (await clerk.session.getToken()) || null});
-      await pull(); await push(clerk);
+      await pull(); dispatchEvent(new Event("storage"));   // repaint with what came from the account (no push loop)
+      await push(clerk);
       addEventListener("lv:changed", () => { clearTimeout(start.t); start.t = setTimeout(() => push(clerk).catch(() => {}), 800); });
+      // Account -> Delete your data: also erase everything stored on the server for this account (delete_my_data RPC)
+      addEventListener("lv:delete-account", e => { const done = e.detail && e.detail.done; clearTimeout(start.t);   // never let a queued sync re-upload deleted data
+        sb.rpc("delete_my_data").then(({error}) => done && done(error ? "server" : null), () => done && done("server")); });
     } catch (e) { /* offline or not set up yet: local progress keeps working */ }
   };
   return {start};

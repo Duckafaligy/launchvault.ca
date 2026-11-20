@@ -118,3 +118,6 @@ a:hover > .ar,a:hover > b > .ar,a:focus-visible .ar{transform:translateX(3px)}
 @media (prefers-reduced-motion:reduce){
   .nav,.nav *,.nav *::after{transition:none !important;animation:none !important}
 }
+/* A closed menu must not catch clicks or Tab stops: the open pane (.mp.on) sets visibility:visible, which beats the hidden .mega around it,
+   so its invisible links sat on top of the hero buttons. Hidden again while the menu is closed (after the fade-out). */
+.nav:not(.open) .mega .mp.on{visibility:hidden;transition:visibility 0s linear .14s}

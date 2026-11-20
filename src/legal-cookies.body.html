@@ -21,7 +21,7 @@
 
       <h2 id="settings">Your choice</h2>
       <p>The first time you visit, a small card asks what you allow. You can pick "Accept all", "Only necessary", or "Choose" to set each kind yourself. We remember your choice for 12 months, then ask again.</p>
-      <p><a href="/legal/cookies/" data-consent-open>Change your cookie settings</a></p>
+      <p><a class="tl44" href="/legal/cookies/" data-consent-open>Change your cookie settings</a></p>
 
       <h2 id="necessary">Necessary (always on)</h2>
       <p>These make the features you use work. They aren't used to track you, and they never leave your device while sign-in is off.</p>
@@ -33,7 +33,15 @@
           <tr><td><code>lv-[story]-checks</code></td><td>Local storage</td><td>Your checklist ticks for each story, on breakdown pages and in the app.</td><td>Until you delete it</td></tr>
           <tr><td><code>lv-[story]-checkdates</code></td><td>Local storage</td><td>The date you ticked each checklist item.</td><td>Until you delete it</td></tr>
           <tr><td><code>lv-read-[story]</code></td><td>Local storage</td><td>How far you've read each story in the app.</td><td>Until you delete it</td></tr>
-          <tr><td><code>lv-age</code></td><td>Local storage</td><td>Your age range, so the right rules apply. Never saved for under 13s.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-age</code></td><td>Local storage</td><td>Your age range, worked out from the birth year you pick when you first open the app. The year itself is never saved. Never saved for under 13s.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-age-block</code></td><td>Local storage and cookie</td><td>Set only if the birth year you pick means you could be under 13. It keeps the app closed on this device. It doesn't hold your birth year.</td><td>12 months</td></tr>
+          <tr><td><code>lv-seen-[story]</code></td><td>Local storage</td><td>Which phases of each story you've seen in the app.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-last</code></td><td>Local storage</td><td>The story you were reading last, so Home can offer to resume it.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-saved, lv-saved-items</code></td><td>Local storage</td><td>The stories and checklist steps you starred.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-check-[story]</code></td><td>Local storage</td><td>Your story check scores.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-done-[story]</code></td><td>Local storage</td><td>That you logged a story as complete, and when.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-ck-last</code></td><td>Local storage</td><td>The checklist you ticked last, so Checklists opens on it.</td><td>Until you delete it</td></tr>
+          <tr><td><code>lv-activity</code></td><td>Local storage</td><td>Your last 20 actions in the app ("Saw phase 2 of Rezi"), shown on Home.</td><td>Until you delete it</td></tr>
           <tr><td><code>lv-quiz-app</code></td><td>Local storage</td><td>Your answers to the app's setup quiz, which build your path.</td><td>Until you delete it</td></tr>
           <tr><td><code>lv-path-extra</code></td><td>Local storage</td><td>The date you finished the extra step on your path.</td><td>Until you delete it</td></tr>
           <tr><td><code>lv-pathnote</code></td><td>Local storage</td><td>Whether you've closed the "your path is ready" note.</td><td>Until you delete it</td></tr>
@@ -57,7 +65,7 @@
       <p>We don't use any analytics right now, so there is nothing to list. The switch stays off. If we ever add analytics, we'll update this page and ask you again before anything runs.</p>
 
       <h2 id="signin">When sign-in is turned on</h2>
-      <p>Sign-in is built but switched off. When it's on, Clerk runs sign-in and sets these necessary cookies. Exact names can carry a short suffix; we'll confirm the final list when it goes live.</p>
+      <p>Clerk runs sign-in and sets these necessary cookies when you use it. Exact names can carry a short suffix; we'll confirm the final list when it goes live.</p>
       <table class="ltable">
         <thead><tr><th scope="col">Name</th><th scope="col">Set by</th><th scope="col">What it does</th><th scope="col">How long</th></tr></thead>
         <tbody>

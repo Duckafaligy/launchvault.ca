@@ -84,7 +84,7 @@ window.LVAuth = (() => {
         : e ? `Signed in as <b>${e.replace(/</g, "")}</b> <button type="button" id="soBtn">Sign out</button>`
             : `Your progress is saved on this device. <a href="/welcome/">Sign in</a> to keep it everywhere.`;
       const so = document.getElementById("soBtn"); if (so) so.addEventListener("click", signOut);
-      document.querySelectorAll("[data-auth-email]").forEach(n => { n.textContent = e || "Not signed in (preview)"; });
+      document.querySelectorAll("[data-auth-email]").forEach(n => { n.textContent = e || "Not signed in"; });
       document.querySelectorAll("[data-auth-out]").forEach(n => { n.hidden = !e; });
     };
     paint();

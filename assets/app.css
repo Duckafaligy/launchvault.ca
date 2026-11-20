@@ -1068,3 +1068,41 @@ ol.tnow .snap .sb b{font:600 14px var(--fd);color:var(--ink)}
 .nf .nfs{display:flex;width:100%;max-width:420px;margin:0 0 16px}
 .nf .nfb{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 @media (max-width:600px){.nf{padding:16px}}
+
+/* ---------- age gate (assets/gate.js): boards "First entry (a) Age" and "(b) Under 13" ---------- */
+html.gated body>:not(.agate){display:none !important}
+html.gated body{background:var(--alt)}
+.agate{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.agh{height:56px;flex:none;display:flex;align-items:center;padding:0 24px;background:#fff;border-bottom:1px solid var(--line)}
+.agh a{display:inline-flex;align-items:center;gap:8px;min-height:44px;font:700 16px var(--fd);color:var(--ink)}
+.agm{flex:1;display:flex;justify-content:center;align-items:flex-start;padding:114px 16px 48px}
+.agc{width:100%;max-width:480px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:32px}
+.agc h1{font:700 28px/34px var(--fd);letter-spacing:-.02em}.agc h1:focus{outline:none}
+.agc p{margin-top:8px;font-size:16px;line-height:24px;color:var(--text)}
+.agy{margin-top:16px;height:338px;overflow-y:auto;border:1px solid var(--line);border-radius:12px;overscroll-behavior:contain}
+.agy label{position:relative;display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 16px;font:400 17px/24px var(--fn);color:var(--ink);cursor:pointer}
+.agy label+label{border-top:1px solid var(--line2)}
+.agy input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.agy svg{color:var(--brand);visibility:hidden}
+.agy label:hover{background:var(--alt)}
+.agy label:has(:checked){background:#EFF4FF;font-weight:600}.agy label:has(:checked) svg{visibility:visible}
+.agy label:has(:focus-visible){outline:2px solid var(--brand);outline-offset:-2px;border-radius:6px}
+.agc .agn{font-size:14px;line-height:20px}
+.agc .age{color:var(--ink);font-weight:500}
+.aga{display:flex;justify-content:flex-end;margin-top:24px}.aga .btn{min-height:48px;padding:0 22px}
+.agi{display:grid;place-items:center;width:48px;height:48px;border-radius:12px;background:#EFF4FF;color:var(--brand);margin-bottom:16px}
+.agb .aga{justify-content:flex-start}
+@media (max-width:600px){html.gated body{background:#fff}.agh{padding:0 16px}.agm{padding:24px 16px 16px}
+  .agc{display:flex;flex-direction:column;flex:1;align-self:stretch;max-width:none;border:0;border-radius:0;padding:0}
+  .aga{margin-top:auto;padding-top:24px}.aga .btn{width:100%}}
+@media (max-height:700px){.agm{padding-top:24px}.agy{height:min(338px,calc(100dvh - 380px));min-height:146px}}
+
+/* ---------- launch pass 2026-11-19 ---------- */
+.skip{display:inline-flex;align-items:center;min-height:44px}
+.prev a,.prev button{min-width:44px;justify-content:center}
+.seg button small{font-size:12px}
+.delmsg p{color:var(--ink);font-weight:500}
+@media (max-width:600px){.prev{display:block;text-align:center;line-height:20px;padding:6px 16px}
+  .prev a,.prev button{display:inline;min-height:0;padding:14px 4px;margin:-14px 0}}   /* one sentence that wraps as text; the link keeps a 44px-tall hit area */
+
+.qhint{margin:-4px 0 14px;font-size:14.5px;line-height:1.45;color:var(--text)}

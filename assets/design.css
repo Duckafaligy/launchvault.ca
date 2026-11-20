@@ -29,7 +29,7 @@ main > section .shead .lede{max-width:58ch}
 .sbg.big{padding:16px;row-gap:8px;grid-template-areas:"m t" "d d"}
 .sbg.big .blogo{width:32px;height:32px}
 .sb-t{grid-area:t;display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;min-width:0}
-.sb-n{font:700 16px/1.2 var(--fd);letter-spacing:-.01em;color:var(--h);white-space:nowrap}
+.sb-n{font:700 16px/1.2 var(--fd);letter-spacing:-.01em;color:var(--h);color:color-mix(in srgb,var(--h) 72%,#000);white-space:nowrap}   /* brand hue, darkened to pass AA on white */
 .sbg.big .sb-n{font-size:18px}
 .sb-d{grid-area:d;font-size:14px;line-height:1.4;color:var(--text)}
 .sb-flow .sbg{flex:1 1 calc(50% - 5px);min-width:0}

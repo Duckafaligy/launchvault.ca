@@ -1,15 +1,17 @@
 /* LaunchVault app: storage (this device only, safe without storage), ⌘K search, Library, reader, checklists, path, account, onboarding.
    Calm by design: no magnetic buttons, no cursor effects, no particles. Respects prefers-reduced-motion. */
 (() => {
+  if (!window.LVGate || !LVGate.ok) return;   // age gate (assets/gate.js): the app does nothing, and stores nothing, until it passes
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
   // preference-type keys are only saved when cookie consent allows Preferences (necessary keys, like ticks you save, always are)
   const PREF = new Set(["lv-lib", "lv-pathnote"]);
   const prefOK = () => { try { if (window.LVConsent) return LVConsent.allowed("preferences"); const c = JSON.parse(localStorage.getItem("lv-consent")); return !!(c && c.preferences); } catch { return false; } };
+  let wiped = false;   // set by Account > Delete your data: nothing is written again on this page
   const ls = {
     get(k, d = null) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
-    set(k, v) { if (PREF.has(k) && !prefOK()) return; try { localStorage.setItem(k, JSON.stringify(v)); } catch {} dispatchEvent(new Event("lv:changed")); },
+    set(k, v) { if (wiped || (PREF.has(k) && !prefOK())) return; try { localStorage.setItem(k, JSON.stringify(v)); } catch {} dispatchEvent(new Event("lv:changed")); },
     del(k) { try { localStorage.removeItem(k); } catch {} },
     keys() { try { return Object.keys(localStorage).filter(k => k.startsWith("lv-")); } catch { return []; } }
   };
@@ -31,6 +33,11 @@
     toastEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6EE7B7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>${esc(msg)}</span>` + (undo ? '<button type="button">Undo</button>' : "");
     toastEl.classList.add("on"); if (undo) toastEl.querySelector("button").onclick = () => { undo(); toastEl.classList.remove("on"); };
     tt = setTimeout(() => toastEl.classList.remove("on"), 4200); };
+
+  // ---------- offline: everything on this device keeps working; only sending (feedback, reports) needs a connection ----------
+  const sendErr = err => navigator.onLine === false ? "You're offline, so that didn't send. What you wrote is still here. Try again when you're back online." : "Sorry, that didn't send (" + err.message + "). Please try again in a minute.";
+  addEventListener("offline", () => toast("You're offline. Your progress still saves on this device."));
+  addEventListener("online", () => toast("Back online."));
 
   // ---------- progress model ----------
   const ticks = slug => { const c = CL[slug]; if (!c) return []; const t = ls.get(c.key, []); return c.items.map((_, i) => !!(Array.isArray(t) && t[i])); };
@@ -56,7 +63,7 @@
     $$("[data-pctbar]").forEach(n => n.style.setProperty("--w", readPct(n.dataset.pctbar) + "%"));
     $$("[data-ckc]").forEach(n => { const t = ticks(n.dataset.ckc); n.textContent = t.filter(Boolean).length + (n.closest(".mph") ? "/" : " of ") + t.length; });
     $$("[data-ckbar]").forEach(n => { const t = ticks(n.dataset.ckbar); n.style.width = (t.filter(Boolean).length / Math.max(1, t.length) * 100) + "%"; });
-    $$("[data-cknext]").forEach(n => { const s = n.dataset.cknext, t = ticks(s), i = t.indexOf(false); n.textContent = i < 0 ? "All done. Nice." : "Next: " + CL[s].items[i].text; });
+    $$("[data-cknext]").forEach(n => { const s = n.dataset.cknext, t = ticks(s), i = t.indexOf(false); n.textContent = i < 0 ? "All done. Nice." : (n.closest(".rnext") ? "" : "Next: ") + CL[s].items[i].text; });
     $$("[data-pathname]").forEach(n => n.textContent = D.path.title);
     const st = pathSteps(), dn = pathDone();
     $$("[data-pathbar]").forEach(n => n.style.setProperty("--w", (dn / st.length * 100) + "%"));
@@ -200,7 +207,7 @@
   // ---------- home: next step first, then progress (or a 3-step start list), then the story cards ----------
   const matches = () => { const q = quiz(); return (q && q.matches && q.matches.length ? q.matches : ["postiz", "stencil-ai", "gojiberry"]).filter(s => S[s]); };
   const srcName = () => (CL[D.path.source] || {}).name || "";
-  const miniRow = s => { const x = S[s]; return `<a class="mini" href="${x.href}" style="min-height:56px"><img class="lgs" src="${esc(x.logo)}" alt=""><span><span style="display:block">${esc(x.name)}</span><small>${esc(x.pattern)}${staleChip(x)}</small></span><span class="r" aria-hidden="true">›</span></a>`; };
+  const miniRow = s => { const x = S[s]; return `<a class="mini" href="${x.href}" style="min-height:56px"><img class="lgs" src="${esc(x.logo)}" alt="" width="18" height="18"><span><span style="display:block">${esc(x.name)}</span><small>${esc(x.pattern)}${staleChip(x)}</small></span><span class="r" aria-hidden="true">›</span></a>`; };
   { const pn = $("#pathnote"); if (pn && quiz() && ls.get("lv-pathnote") === "new") { pn.hidden = false; $("[data-closenote]", pn).addEventListener("click", () => { pn.hidden = true; ls.set("lv-pathnote", "seen"); }); } }
   const homeCL = () => { const cl = $("[data-homecl]"); if (!cl) return; const q = quiz();
     const rows = D.checklists.map(c => { const t = ticks(c.slug), k = t.filter(Boolean).length; return {c, t, k}; }).filter(x => x.k > 0 && x.k < x.t.length);
@@ -337,7 +344,7 @@
     try { Q = JSON.parse($("script", box).textContent); } catch { return; }
     const need = Math.max(1, Q.length - 1), cbox = document.createElement("div"); cbox.className = "cdone"; box.after(cbox);
     const go = h => { const t = document.getElementById(h.slice(1)); return t && !t.closest("[hidden]") ? h : "#gate"; };   // a locked section points at the gate
-    const logDone = how => { if (doneOf(slug)) return; ls.set("lv-done-" + slug, {how, t: Date.now()}); logAct(`Completed ${nm}`); toast("Story logged as complete"); renderAll(); };
+    const logDone = how => { if (doneOf(slug)) return; ls.set("lv-done-" + slug, {how, t: Date.now()}); logAct(`Completed ${nm}`); renderAll(); };
     // read next: a quiz match first, else the newest story not started, else any story not done
     const nextStory = () => { const q = quiz(), open = s => s && s.status === "ready" && s.slug !== slug && !doneOf(s.slug);
       return ((q && q.matches) || []).map(k => S[k]).find(open) || READY.find(s => open(s) && stateOf(s) === "new") || READY.find(open); };
@@ -346,7 +353,7 @@
         $("[data-fb]", cbox).addEventListener("click", feedback); return; }
       const r = checkRes(slug), n = nph(me), k = Math.min(n, seen(slug).length), t = ticks(slug), i = t.indexOf(false), nx = nextStory();
       const row = (h, a, b) => `<a href="${h}"><span><b>${a}</b><small>${esc(b)}</small></span><i aria-hidden="true">→</i></a>`;
-      cbox.innerHTML = `<div class="cok" tabindex="-1"><span class="fck">${CKI}</span><div><h3>Story complete</h3><p>${k ? `You read ${k} of ${n} phases and ` : "You "}${d.how === "check" ? "passed the check" + (r ? ` with ${r.best} of ${r.n}` : "") : "answered the feedback questions"}. Logged ${new Date(d.t).toLocaleDateString()}.</p></div></div><div class="fnext">`
+      cbox.innerHTML = `<div class="cok" tabindex="-1"><span class="fck">${CKI}</span><div><h3>Story complete</h3><p>${k ? `You read ${k} of ${n} phases and ` : "You "}${d.how === "check" ? "passed the check" + (r ? ` with ${r.best} of ${r.n}` : "") : "answered the feedback questions"}. Logged ${(t => MON[t.getMonth()] + " " + t.getDate() + " " + t.getFullYear())(new Date(d.t))}.</p></div></div><div class="fnext">`
         + (i >= 0 ? row("#todo", `Do step ${i + 1} of the checklist`, CL[slug].items[i].text) : "") + (nx ? row(nx.href, "Read next", nx.title || nx.name) : "") + row("/app/path/", "See your path", D.path.title) + "</div>"; };
     const feedback = () => {
       cbox.innerHTML = `<form class="ckform fbform" novalidate><h3>Help us improve this breakdown</h3>${FBQ.map(([k, q, o], i) => `<fieldset><legend><span class="qn">${i + 1}</span>${esc(q)}</legend>${o.map(t => `<label class="opt2"><input type="radio" name="${k}" value="${esc(t)}" required><span>${esc(t)}</span></label>`).join("")}</fieldset>`).join("")}
@@ -363,7 +370,7 @@
         send.disabled = true; msg.className = "rmsg"; msg.textContent = "Sending…";
         try { const r = await fetch(SB_URL + "/rest/v1/feedback", {method: "POST", headers: {apikey: SB_KEY, "Content-Type": "application/json", Prefer: "return=minimal"}, body: JSON.stringify({story_slug: slug, ...v})});
           if (!r.ok) throw new Error(r.status); logDone("feedback"); paintDone(); $(".cok", cbox).focus();
-        } catch (err) { send.disabled = false; msg.className = "rmsg err"; msg.textContent = "Sorry, that didn't send (" + err.message + "). Please try again in a minute."; } }); };
+        } catch (err) { send.disabled = false; msg.className = "rmsg err"; msg.textContent = sendErr(err); } }); };
     const finish = got => { const score = got.filter((g, i) => g === Q[i].a).length, prev = checkRes(slug) || {best: 0}, best = Math.max(prev.best, score);
       ls.set("lv-check-" + slug, {best, last: score, n: Q.length, t: Date.now()}); logAct(`Scored ${score}/${Q.length} on the ${nm} check`);
       const pass = score >= need; if (pass) logDone("check");
@@ -477,19 +484,23 @@
     $("#dl").addEventListener("click", () => { const o = {}; ls.keys().forEach(k => o[k] = ls.get(k)); const a = document.createElement("a");
       a.href = URL.createObjectURL(new Blob([JSON.stringify({exported: new Date().toISOString(), note: "Everything LaunchVault saved on this device.", data: o}, null, 2)], {type: "application/json"}));
       a.download = "launchvault-data.json"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); });
-    $("#del").addEventListener("click", () => { if (!confirm("Delete everything LaunchVault saved on this device? This can't be undone.")) return; ls.keys().forEach(ls.del); location.reload(); });
+    // Delete your data: the device is cleared straight away. assets/supabase.js listens for "lv:delete-account" when someone is signed in,
+    // deletes the server copy and calls detail.done(null) (or done("server") if it couldn't). Signed out: nobody calls done.
+    $("#del").addEventListener("click", () => { if (!confirm("Delete everything LaunchVault saved on this device? This can't be undone.")) return;
+      const msg = $("[data-delmsg]"), say = t => { $("p", msg).textContent = t; };
+      dispatchEvent(new CustomEvent("lv:delete-account", {detail: {done: err => say(err ? "Your device data is cleared, but we couldn't reach the server. Try again in a minute." : "Your device data is cleared. Also removed from your account.")}}));
+      wiped = true; ls.keys().forEach(ls.del); try { Object.keys(sessionStorage).filter(k => k.startsWith("lv-")).forEach(k => sessionStorage.removeItem(k)); } catch {}
+      say("Your device data is cleared."); msg.hidden = false; $("#del").disabled = true; $("#dl").disabled = true; $("a", msg).focus(); });
     const so = $("#so"); if (so && window.LVAuth) so.addEventListener("click", () => LVAuth.signOut());
     const nav = $$(".anav a, .anavm a"), strip = $(".anavm .snav-in");
     addEventListener("scroll", () => { let cur = "#profile"; ["#profile", "#plan", "#parent", "#email", "#data"].forEach(h => { const t = document.querySelector(h); if (t && !t.hidden && t.getBoundingClientRect().top < 160) cur = h; });
       nav.forEach(a => a.classList.toggle("on", a.getAttribute("href") === cur)); const on = strip && $("a.on", strip); if (on && strip.scrollWidth > strip.clientWidth) strip.scrollTo({left: on.offsetLeft - 16}); }, {passive: true});
   }
 
-  // ---------- onboarding: age -> 8 questions (Skip any) -> result -> Home. Under 13 stops and stores nothing. ----------
+  // ---------- onboarding: 8 questions (Skip any) -> result -> Home. The age question is the gate (assets/gate.js), asked once, before this. ----------
   const obc = $("#obc");
   if (obc) {
-    const AGES = ["Under 13", "13 to 15", "16 to 17", "18 to 20", "21 or older"];
-    const params = new URLSearchParams(location.search);
-    let age = ls.get("lv-age"), step = params.get("quiz") && age ? 0 : -1, ans = ((quiz() || {}).answers || []).slice();
+    const age = ls.get("lv-age"); let step = 0, ans = ((quiz() || {}).answers || []).slice();
     while (ans.length < D.quiz.length) ans.push(null);
     const H = $("[data-obh]"), P = $("[data-obp]");
     const opt = (t, on, i) => `<button class="opt" type="button" role="radio" aria-checked="${on}" data-o="${i}"><i></i>${esc(t)}</button>`;
@@ -503,14 +514,10 @@
     const why = t => t ? ans.map((a, i) => a != null && (D.quiz[i].w[a] || {})[t] ? D.quiz[i].o[a] : null).filter(Boolean) : [];
     const save = () => { const t = topOf(), m = score(); ls.set("lv-quiz-app", {answers: ans, matches: m, top: t, why: why(t), whys: Object.fromEntries(m.map(k => [k, why(k)])), summary: summary(), date: today()}); D.path = t ? pathFor(m) : PATH0; };
     const render = () => {
-      if (step === -1) { H.innerHTML = "One quick <em>question.</em>"; P.textContent = "We ask your age range so the right rules apply. It's the only personal detail we keep, and it stays on this device.";
-        obc.innerHTML = `<h2>How old are you?</h2><div class="opts" role="radiogroup" aria-label="Age range">${AGES.map((a, i) => opt(a, age === a, i)).join("")}</div><p class="fine">We keep the range, not your birthday. Under 18: a parent pays if you upgrade.</p><div class="obnav"><span class="sp"></span><button class="btn btn-p" type="button" data-next ${age ? "" : "disabled"}>Continue</button></div>`; }
-      else if (step === -2) { H.innerHTML = "Thanks for <em>being honest.</em>"; P.textContent = "";
-        obc.innerHTML = `<div class="stop"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19.99 14.91A8.5 8.5 0 1 1 10.52 3.63"/><path d="M6.8 15.6l3.7-3.7 2.6 2.6 6.7-6.7"/><path d="M16 7.8h3.8v3.8"/></g></svg><h2>LaunchVault is for 13 and up</h2><p>We didn't save your answer or anything else. Come back when you're 13.</p><a class="btn btn-s" href="/">Back to the site</a></div>`; }
-      else if (step < D.quiz.length) { const Q = D.quiz[step];
+      if (step < D.quiz.length) { const Q = D.quiz[step];
         H.innerHTML = "Eight questions. <em>Under two minutes.</em>"; P.textContent = "Your answers pick 3 stories that started a lot like you. Skip any question you don't want to answer.";
-        obc.innerHTML = `<div class="qp"><span class="bar v"><i style="--w:${step / D.quiz.length * 100}%"></i></span><span>${step + 1} of ${D.quiz.length}</span></div><h2 id="qh">${esc(Q.q)}</h2><div class="opts" role="radiogroup" aria-labelledby="qh">${Q.o.map((o, i) => opt(o, ans[step] === i, i)).join("")}</div>
-          <div class="obnav"><button class="bk" type="button" data-back>Back</button><span class="sp"></span><button class="sk" type="button" data-skip>Skip</button><button class="btn btn-p" type="button" data-next>${step === D.quiz.length - 1 ? "See my path" : "Next"}</button></div><a class="tl obskip" href="/app/" data-skipall>Skip the quiz for now</a>`; }
+        obc.innerHTML = `<div class="qp"><span class="bar v"><i style="--w:${step / D.quiz.length * 100}%"></i></span><span>${step + 1} of ${D.quiz.length}</span></div><h2 id="qh">${esc(Q.q)}</h2>${Q.h ? `<p class="qhint" id="qhint">${esc(Q.h)}</p>` : ""}<div class="opts" role="radiogroup" aria-labelledby="qh"${Q.h ? ' aria-describedby="qhint"' : ""}>${Q.o.map((o, i) => opt(o, ans[step] === i, i)).join("")}</div>
+          <div class="obnav">${step ? '<button class="bk" type="button" data-back>Back</button>' : ""}<span class="sp"></span><button class="sk" type="button" data-skip>Skip</button><button class="btn btn-p" type="button" data-next>${step === D.quiz.length - 1 ? "See my path" : "Next"}</button></div><a class="tl obskip" href="/app/" data-skipall>Skip the quiz for now</a>`; }
       else { save(); ls.set("lv-pathnote", "new"); const m = score(), qq = quiz(), x = S[m[0]];
         H.innerHTML = "Your path <em>is ready.</em>";
         P.innerHTML = `${D.path.steps.length + 1} steps${ADULT() ? "" : " that fit around school"}, from the ${esc(D.path.name || "Postiz")} breakdown.`
@@ -525,11 +532,10 @@
     render.n = 0;
     obc.addEventListener("click", e => {
       const o = e.target.closest(".opt");
-      if (o) { const i = +o.dataset.o; if (step === -1) { age = AGES[i]; } else { ans[step] = ans[step] === i ? null : i; } $$(".opt", obc).forEach(x => x.setAttribute("aria-checked", +x.dataset.o === i && (step === -1 || ans[step] === i))); const nx = $("[data-next]", obc); if (nx) nx.disabled = false; return; }
-      if (e.target.closest("[data-next]")) { if (step === -1) { if (age === "Under 13") { ls.keys().forEach(ls.del); age = null; step = -2; } else { ls.set("lv-age", age); step = 0; } } else step++; render(); return; }
+      if (o) { const i = +o.dataset.o; ans[step] = ans[step] === i ? null : i; $$(".opt", obc).forEach(x => x.setAttribute("aria-checked", +x.dataset.o === i && ans[step] === i)); return; }
+      if (e.target.closest("[data-next]")) { step++; render(); return; }
       if (e.target.closest("[data-skip]")) { ans[step] = null; step++; render(); return; }
-      if (e.target.closest("[data-back]")) { step = step === 0 ? -1 : step - 1; render(); return; }
-      if (e.target.closest("[data-skipall]")) { if (age && age !== "Under 13") ls.set("lv-age", age); }
+      if (e.target.closest("[data-back]")) { step = Math.max(0, step - 1); render(); return; }
     });
     obc.addEventListener("keydown", e => { if (!["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(e.key)) return; const os = $$(".opt", obc); if (!os.length) return; e.preventDefault();
       const i = Math.max(0, os.indexOf(document.activeElement)), j = (i + (e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : -1) + os.length) % os.length; os[j].focus(); os[j].click(); });
@@ -557,7 +563,7 @@
           body: JSON.stringify({story_slug: b.dataset.report || null, page: location.pathname, what, contact: contact || null})});
         if (!r.ok) throw new Error(r.status);
         msg.className = "rmsg ok"; msg.textContent = "Thanks, we'll check it."; send.hidden = true; $("[data-rclose]", d).textContent = "Close";
-      } catch (err) { send.disabled = false; msg.className = "rmsg err"; msg.textContent = "Sorry, that didn't send (" + err.message + "). Please try again in a minute."; }
+      } catch (err) { send.disabled = false; msg.className = "rmsg err"; msg.textContent = sendErr(err); }
     });
     d.showModal(); $("#rwhat", d).focus();
   });

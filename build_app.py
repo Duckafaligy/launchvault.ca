@@ -213,7 +213,8 @@ def spark(series, cls="spark", name=""):
 
 # ============================================================ shell
 SIDE_SOON = ["dm-champ", "stencil-ai", "windmill-growth", "gojiberry"]
-def head(title, desc, extra="", og_slug=""):
+GATE = '\n<script src="/assets/gate.js"></script>'   # the age gate: every /app/ page, in the head, before anything else runs (not deferred, on purpose)
+def head(title, desc, extra="", og_slug="", gate=True):
     og = (NL + f'<meta property="og:title" content="{esc(title)}">' + NL + f'<meta property="og:description" content="{esc(desc)}">' + NL
           + f'<meta property="og:image" content="https://launchvault-site.vercel.app/assets/covers/{og_slug or "postiz"}.png">')
     return f'''<!doctype html>
@@ -233,7 +234,7 @@ def head(title, desc, extra="", og_slug=""):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,600;1,700&family=Inter+Tight:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,600;1,700&family=Inter+Tight:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="/assets/app.css">{extra}
+<link rel="stylesheet" href="/assets/app.css">{extra}{GATE if gate else ""}
 </head>
 '''
 def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_slug=""):
@@ -727,6 +728,27 @@ def update_story_cards(ready):
     sec2 = re.sub(r'<article class="bcard[^"]*" data-cat="[^"]*" data-story="([^"]+)">.*?</article>', one, sec, flags=re.S)
     if sec2 != sec: wr(p, s[:a] + sec2 + s[b:])
 
+BASE = "https://launchvault-site.vercel.app"   # the preview address (same as the og:image links); change it here and in build.py at launch
+def add_meta():
+    """Every built page gets a canonical link, og:title/description/type/url and a Twitter card (build.py's head only has og:image).
+    The 404 pages get no canonical or og:url. Runs after both builds; pages are rewritten on every build, so this never stacks."""
+    pages = [os.path.join(ROOT, f) for f in ("index.html", "404.html")]
+    for d in ("blog", "legal", "welcome", "app"):
+        pages += [os.path.join(dp, f) for dp, _, fs in os.walk(os.path.join(ROOT, d)) for f in fs if f == "index.html"]
+    for p in pages:
+        t = rd(p)
+        if "twitter:card" in t: continue
+        rel = os.path.relpath(p, ROOT).replace(os.sep, "/"); url = BASE + "/" + rel[:-len("index.html")] if rel.endswith("index.html") else None
+        if rel in ("404.html", "app/not-found/index.html", "welcome/callback/index.html"): url = None
+        title = re.search(r"<title>(.*?)</title>", t, re.S).group(1); desc = re.search(r'<meta name="description" content="(.*?)">', t, re.S).group(1)
+        m = []
+        if 'property="og:title"' not in t: m += [f'<meta property="og:title" content="{title}">', f'<meta property="og:description" content="{desc}">']
+        m += [f'<meta property="og:type" content="{"article" if rel.startswith("blog/") and rel.count("/") == 2 else "website"}">', '<meta property="og:site_name" content="LaunchVault">']
+        if url: m += [f'<meta property="og:url" content="{url}">', f'<link rel="canonical" href="{url}">']
+        m += ['<meta name="twitter:card" content="summary_large_image">']
+        assert t.count('<meta name="robots" content="noindex">') == 1, rel + ": every page must stay noindex until launch"
+        wr(p, t.replace('<meta name="robots" content="noindex">', '<meta name="robots" content="noindex">' + NL + NL.join(m), 1))
+
 def write_sitemap():
     """Public pages and posts. The preview stays noindex (robots.txt Disallow + X-Robots-Tag); the sitemap is ready for launch."""
     urls = ["/"] + ["/" + out[:-len("index.html")] for out, *_ in build.PAGES if out.endswith("index.html") and out != "index.html"]
@@ -779,15 +801,16 @@ def make_cover(S):
         raise SystemExit(f"COVER FAILED for {S['slug']}: {e}. Set LV_PLAYWRIGHT / LV_CHROME (see PUBLISHING.md).")
 
 # ============================================================ client data (search, library, path, quiz)
+# (question, answers, optional hint). Answer COUNT and ORDER must not change without updating QW below.
 QUIZ = [
-    ("How much time could you give this most weeks?", ["Under 5 h a week", "About 10 h a week", "15 h or more"]),
-    ("How much money could you put in?", ["$0", "Under $100", "Under $1,000"]),
-    ("Can you code, even a little?", ["Yes, I can code", "A little", "Not yet"]),
+    ("How many hours a week could you spend on a project of your own?", ["Under 5 hours", "About 10 hours", "15 hours or more"]),
+    ("How much money could you spend to get a project started?", ["$0", "Under $100", "Under $1,000"], "Think of a domain, a tool subscription or ads. $0 is a fine answer."),
+    ("Do you know how to code, even a little?", ["Yes, I can code", "A little", "Not yet"]),
     ("What are you already good at, even a little?", ["Design, video or writing", "Talking to people", "Not sure yet, and that's fine"]),
-    ("Who around you has a problem worth fixing?", ["Someone in my family", "A local shop or business", "People in an online group I'm in", "No one comes to mind yet"]),
-    ("Which sounds most like fun?", ["Building an app people use", "Doing a job for real clients", "Testing an idea fast and changing it"]),
-    ("Where do people your age hang out online?", ["Reddit or Discord", "TikTok or Instagram", "Not sure"]),
-    ("How soon would you like a first sale?", ["This month", "This school term", "No rush"]),
+    ("Who around you has a problem you could help fix?", ["Someone in my family", "A local shop or business", "People in an online group I'm in", "No one comes to mind yet"]),
+    ("Which would you most enjoy doing?", ["Building an app people use", "Doing a job for real clients", "Testing an idea fast and changing it"]),
+    ("Where do you and your friends spend time online?", ["Reddit or Discord", "TikTok or Instagram", "Not sure"]),
+    ("When would you like to make your first sale?", ["This month", "By the end of this school term", "No rush"]),
 ]
 # answer -> patterns it points to. Each key is a story's real pattern line (PAT); main() expands it to every ready story with that pattern,
 # so a new story with a known pattern is matched without touching this table. Editorial mapping, not data.
@@ -844,7 +867,7 @@ def main():
                               "lead": {"id": "x1", "text": (S["checklist"][0]["text"] if isinstance(S["checklist"][0], dict) else S["checklist"][0]), "from": "Pattern from " + S["name"], "href": f"/app/story/{S['slug']}/"}} for S in ready},
         "path": {"title": "Ship something small first", "source": "postiz", "steps": steps,
                  "extra": {"id": "x1", "text": "Ask for money early: offer the easy paid version to your 5 most active users.", "from": "Pattern from Gojiberry", "href": "/app/story/gojiberry/" if "gojiberry" in rslugs else ""}},
-        "quiz": [{"q": q, "o": o, "w": w} for (q, o), w in zip(QUIZ, quiz_weights(ready))],
+        "quiz": [{"q": t[0], "o": t[1], "w": w, **({"h": t[2]} if len(t) > 2 else {})} for t, w in zip(QUIZ, quiz_weights(ready))],
         "search_extra": [x for S in ready for x in (
                             [{"t": f"{S['name']} · phase {i + 1}: {ph['name']}", "k": " ".join([ph["name"], ph["story"], ph["lesson"]]), "h": f"/app/story/{S['slug']}/#ph{i + 1}", "g": "Phases"} for i, ph in enumerate(S["phases"])]
                             + [{"t": f"{S['name']} move {i + 1}: {m['text']} · {m['when']}", "h": f"/app/story/{S['slug']}/#chart", "g": "Moves"} for i, m in enumerate(S["moves"])]
@@ -866,7 +889,7 @@ def main():
     wr(os.path.join(ROOT, "app", "start", "index.html"), head("Welcome · LaunchVault", "Set up your LaunchVault path.") + "<body>\n" + rd(os.path.join(SRC, "app", "start.body.html"))
        + f'\n<script type="application/json" id="lvapp">{json.dumps(APPDATA, separators=(",", ":"))}</script>\n<script src="/assets/auth.js" defer></script>\n<script src="/assets/app.js" defer></script>\n</body>\n</html>\n')
     # Clerk OAuth lands here, then goes on to /app/ (returning) or /app/start/ (new). Unused while LV_AUTH is false.
-    wr(os.path.join(ROOT, "welcome", "callback", "index.html"), head("Signing you in · LaunchVault", "Finishing sign-in.") + '<body><main class="pg narrow" id="main"><p class="note" role="status">Signing you in…</p></main>' + NL + '<script src="/assets/auth.js"></script>' + NL + '<script>window.LVAuth && LVAuth.callback().catch(() => location.replace("/welcome/"));</script>' + NL + '</body>' + NL + '</html>' + NL)
+    wr(os.path.join(ROOT, "welcome", "callback", "index.html"), head("Signing you in · LaunchVault", "Finishing sign-in.", gate=False) + '<body><main class="pg narrow" id="main"><p class="note" role="status">Signing you in…</p></main>' + NL + '<script src="/assets/auth.js"></script>' + NL + '<script>window.LVAuth && LVAuth.callback().catch(() => location.replace("/welcome/"));</script>' + NL + '</body>' + NL + '</html>' + NL)
     # public side: generated blog posts (Postiz keeps its hand-made post; its generated twin goes to _gen for the parity check)
     for S in ready:
         post = blog_post(S, E)
@@ -883,6 +906,7 @@ def main():
     for S in ready:
         p = os.path.join(ROOT, "blog", S["slug"], "index.html"); t = rd(p)
         if "chart.js" not in t: wr(p, t.replace("</body>", '<script src="/assets/chart.js" defer></script>\n</body>').replace("</head>", '<link rel="stylesheet" href="/assets/chart.css">\n</head>'))
+    add_meta()
     print(f"app: {len(E)} stories ({len(ready)} ready, {len(E) - len(ready)} coming soon)")
     return ready, E
 
