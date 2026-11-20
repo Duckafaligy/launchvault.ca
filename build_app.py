@@ -470,17 +470,17 @@ def reader(E, S, gate=True):
     # truthful gate: there is no checkout yet, so no button that looks like one
     also = "the lessons recap, Fact checks and Then and now" if tn else "the lessons recap and Fact checks"
     gate_html = (f'<div class="gate" id="gate"><h3>{ic(I["lock"], 18)}{f"Phases 2 to {n} are" if n > 2 else "Phase 2 is"} on Pro</h3><p>Pro is $7.99 a month. Payments open soon.</p>'
-                 f'<p>Phase 1, the numbers, the checklist, the story check and the Sources stay free. Also on Pro: {also}.</p>'
+                 f'<p>Phase 1, the numbers, the checklist and the Sources stay free. Also on Pro: {also}.</p>'
                  '<div class="acts"><a class="btn btn-s" href="/app/account/#parent">Under 18? Send a parent link</a></div>'
                  + JUDGE_FORM.replace('{i}', 'g') + '</div>')
     teaser = f'<div class="gatewrap"><div class="fade" aria-hidden="true">{phase(1, S["phases"][1]).replace(" open>", ">")}</div>{gate_html}</div>' if n > 1 and gate else ""
     phs = sec("phases", "How it happened", f"The story in {n} steps, in order. Each one ends with a lesson you can use.", f'<div class="ptl">{phases_free}' + (teaser + f'<div id="locked" data-locked="1" hidden>{phases_rest}</div>' if gate else phases_rest) + "</div>")
     locked = lambda h: f'<div data-locked="1" hidden>{h}</div>' if gate and h else h
-    chk = check_html(S, E, gate)
+    done = f'<section class="rsec rcard" id="done"><div class="sh"><h2>Mark as read</h2></div><div class="donebox" id="donebox" data-donebox="{slug}"></div></section>'
     recap = sec("lessons", f"The whole story in {n} lesson{'s' if n != 1 else ''}", "Every phase's lesson in one place. Tap a phase name to go back to it.",
                 '<ol class="recap">' + "".join(f'<li><span class="rn">{i + 1}</span><div><p>{esc(p["lesson"])}</p><a href="#ph{i + 1}">Phase {i + 1}: {esc(p["name"])}</a></div></li>' for i, p in enumerate(S["phases"])) + "</ol>")
     proof = ('<section class="rsec rcard" id="proof"><div class="sh"><h2>Check our work</h2></div>' + intro("Where every claim and number comes from. Open a panel and check it yourself.") + locked(fc) + locked(tn) + src + "</section>")
-    nav_items = [("overview", "Overview"), ("chart", "The numbers"), ("phases", "How it happened"), ("todo", "Checklist")] + ([("check", "Story check")] if chk else []) + [("proof", "Check our work")]
+    nav_items = [("overview", "Overview"), ("chart", "The numbers"), ("phases", "How it happened"), ("todo", "Checklist")] + [("done", "Mark as read"), ("proof", "Check our work")]
     rail = ('<aside class="rrail"><nav class="rtoc" aria-label="On this page"><h2>On this page</h2>' + "".join(f'<a href="#{k}" data-r="{k}"><span>{t}</span><i data-rdone="{k}" hidden>{CHK}</i></a>' for k, t in nav_items) + "</nav>"
             f'<div class="rnext"><h2>Your next step</h2><p data-cknext="{slug}"></p><a class="btn btn-p" href="#todo">Jump to the checklist</a></div></aside>')
     nav = (f'<nav class="snav" aria-label="Sections"><div class="snav-in">' + "".join(f'<a href="#{k}" data-r="{k}">{t}</a>' for k, t in nav_items)
@@ -498,54 +498,9 @@ def reader(E, S, gate=True):
             f'<p class="sint">Share what you are trying from {esc(S["name"])}, or ask how others did. Your message starts with "About {esc(S["name"])}:".</p>'
             f'<a class="btn btn-p" href="/app/community/#breakdowns?about={quote(S["name"])}">Join the conversation</a></section>')
     art = (over + sec("chart", "The numbers", chart_intro(S), chart_block(S))
-           + phs + kmoves + locked(recap) + ck + chk + talk + proof)
+           + phs + kmoves + locked(recap) + ck + done + talk + proof)
     body = f'{nav}<div class="rd rd2" data-reader="{slug}" data-phases="{n}"><article>{art}</article>{rail}</div>'
     return shell(E, S["name"], S["dek"], "story-" + slug, body, crumbs=[("/app/library/", "Library"), ("", S["name"])], scripts='\n<script src="/assets/chart.js" defer></script>', og_slug=slug)
-
-def story_check(S, E, gate=False):
-    """Up to 5 multiple-choice questions. Every right answer is a field of this story's JSON; every wrong one is real text from another story (nothing invented).
-    Order is deterministic (hash), not random. "h"/"hl" say where in the reader the answer is."""
-    import hashlib
-    hk = lambda *a: hashlib.md5("|".join((S["slug"],) + a).encode()).hexdigest()
-    def mix(key, right, wrong):
-        opts = list(dict.fromkeys([right] + [w for w in wrong if w != right]))[:4]
-        opts.sort(key=lambda o: hk(key, o))
-        return opts, opts.index(right)
-    pick = lambda key, pool, bad=(): sorted({x for x in pool if x and x not in bad}, key=lambda x: hk(key, x))[:3]
-    others = [e["S"] for e in E if e["status"] == "ready" and e["slug"] != S["slug"]]
-    short = lambda X: ((X.get("facts") or {}).get("first_customers") or {}).get("short") or ""
-    ctext = lambda c: c["text"] if isinstance(c, dict) else c
-    Q = []
-    fcu = (S.get("facts") or {}).get("first_customers") or {}; sh = short(S)
-    pool = pick("fc", [short(o) for o in others if short(o).lower() != "not public"], (sh,))
-    if sh and fcu.get("text") and len(pool) == 3:
-        o, a = mix("fc", "Not public" if sh.lower() == "not public" else sh, pool)
-        Q.append({"q": f'Where did {S["name"]}\'s first customers come from?', "o": o, "a": a, "e": fcu["text"], "h": "#overview", "hl": "How the first customers came"})
-    ph = S["phases"]; i = 0 if gate else int(hk("lesson"), 16) % len(ph)   # a gated story only asks about the free phase
-    pool = pick("ls", [p["lesson"] for o in others for p in o["phases"]], [p["lesson"] for p in ph])
-    if len(pool) == 3:
-        o, a = mix("ls", ph[i]["lesson"], pool)
-        Q.append({"q": f'Which lesson belongs to phase {i + 1}, "{ph[i]["name"]}"?', "o": o, "a": a, "e": f'That is the lesson at the end of phase {i + 1} ({ph[i]["when"]}).', "h": f"#ph{i + 1}", "hl": f'Phase {i + 1}: {ph[i]["name"]}'})
-    pool = pick("pat", [o["pattern"] for o in others], (S["pattern"],))
-    if len(pool) == 3:
-        o, a = mix("pat", S["pattern"], pool)
-        Q.append({"q": "Which pattern does this story follow?", "o": o, "a": a, "e": f'The pattern is "{S["pattern"]}".', "h": "#overview", "hl": "Overview"})
-    fcs = [f for f in S["fact_checks"] if f["label"] in ("Verified", "Claimed", "Sources differ", "Couldn't verify")]
-    if fcs and not gate:   # fact checks are locked on a gated story, so it is not asked there
-        f = next((f for f in fcs if f["label"] == "Claimed"), fcs[0])
-        o, a = mix("lab", f["label"], ["Verified", "Claimed", "Sources differ", "Couldn't verify"])
-        Q.append({"q": f'How is this claim labelled: "{f["claim"]}"?', "o": o, "a": a, "e": f'Labelled {f["label"]}. {f["found"]}', "h": "#facts", "hl": "Fact checks"})
-    cl = [ctext(c) for c in S["checklist"]]; k = int(hk("step"), 16) % len(cl)
-    pool = pick("ck", [ctext(c) for o in others for c in o["checklist"]], cl)
-    if len(pool) == 3:
-        o, a = mix("ck", cl[k], pool)
-        Q.append({"q": "Which of these steps is on this story's checklist?", "o": o, "a": a, "e": f'It is step {k + 1} on the {S["name"]} checklist. The other three come from other breakdowns.', "h": "#todo", "hl": "Your checklist"})
-    return Q[:5]
-def check_html(S, E, gate=False):
-    Q = story_check(S, E, gate)
-    if len(Q) < 3: return ""
-    return (f'<section class="rsec rcard" id="check"><div class="sh"><h2>Story check</h2></div><p class="sint">Takes about 2 minutes. {len(Q)} questions. {len(Q) - 1} to log the story as complete.</p>'
-            f'<div class="scheck" data-check="{S["slug"]}"><script type="application/json">{json.dumps(Q).replace("</", "<\\/")}</script><div data-checkbody></div></div></section>')
 
 # ============================================================ coming-soon story page
 def soon_page(E, e):
