@@ -1,5 +1,5 @@
 // Site streak (spacefs-style): thousands of tiny red-to-orange particles drifting along an S-shaped wave.
-// One fixed full-screen canvas behind every page's content.
+// One fixed full-screen canvas behind all light sections, plus section canvases inside dark sections and the footer.
 (() => {
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches, small = innerWidth < 760, LANES = 34;
   const A = [225, 29, 72], B = [255, 138, 0], CQ = 16, AQ = 10, STY = [];             // #E11D48 -> #FF8A00, pre-built colour x alpha styles
@@ -11,20 +11,20 @@
     const ctx = cv.getContext("2d"), P = [], bins = STY.map(() => []);
     for (let i = 0; i < n; i++) P.push({ x: Math.random(), lane: Math.floor(Math.random() * LANES), j: gauss() * .35, v: .00004 + Math.random() * .00008, a: Math.random() });
     let W, H, dpr, t0 = performance.now(), running = false;
-    const size = () => { dpr = Math.min(devicePixelRatio || 1, 2); [W, H] = box(); cv.width = W * dpr; cv.height = H * dpr; };
+    const size = () => { dpr = Math.min(devicePixelRatio || 1, 2); [W, H] = box(); cv.width = Math.max(1, W * dpr | 0); cv.height = Math.max(1, H * dpr | 0); };
     const frame = now => {
       const t = (now - t0) / 1000 + scrollY * .0015;                                     // scrolling nudges the wave too
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
-      const band = Math.min(H * .34, 320), d = Math.max(1, 1.1 * dpr) / dpr;
+      const band = Math.min(H * .36, 340), d = Math.max(1.35, 1.85 * dpr) / dpr;
       for (const b of bins) b.length = 0;
       for (const p of P) {
         if (!still) p.x = (p.x + p.v) % 1;
         const x = p.x, sx = x * W;
         const off = ((p.lane + .5) / LANES - .5) * 2 + p.j;                              // lanes give the fine striations
-        const cy = H * (1.02 - .74 * x) + Math.sin(x * 5.4 + t * .22) * H * .09;          // S-curve rising left to right, slow sway
+        const cy = H * (.96 - .68 * x) + Math.sin(x * 5.4 + t * .22) * H * .09;          // S-curve rising left to right, slow sway
         const y = cy + off * band * (.75 + .25 * Math.sin(x * 3.1 + 1 + t * .15)) + Math.sin(x * 40 + p.lane) * 2;
         const edge = Math.min(1, x / .06, (1 - x) / .06), core = 1 - Math.min(1, Math.abs(off));
-        const al = edge * core * (.45 + .55 * p.a);
+        const al = edge * core * (.55 + .45 * p.a);
         if (al < .03) continue;
         bins[Math.min(CQ - 1, x * CQ | 0) * AQ + Math.min(AQ - 1, al * AQ | 0)].push(sx, y);
       }
@@ -41,10 +41,17 @@
   const make = cls => { const c = document.createElement("canvas"); c.className = cls; c.setAttribute("aria-hidden", "true"); return c; };
 
   const foot = document.querySelector("footer.foot");
-  // the background wave rests (frozen, still drawn) once the footer covers most of the screen, so only one wave animates at a time
-  const bgLive = () => !foot || foot.getBoundingClientRect().top > innerHeight * .4;
+  const bgLive = () => !foot || foot.getBoundingClientRect().top > innerHeight * .25;
   const bg = make("streak"); document.body.prepend(bg);
-  const kickBg = wave(bg, () => [innerWidth, innerHeight], small ? 9400 : 34300, bgLive); kickBg();
+  const kickBg = wave(bg, () => [innerWidth, innerHeight], small ? 11000 : 36000, bgLive); kickBg();
   addEventListener("scroll", kickBg, { passive: true });
 
+  // Dark sections (.dk) and footer have opaque #0B1020 backgrounds; give each its own wave layer so the streak never vanishes on dark blocks
+  for (const el of document.querySelectorAll(".dk, footer.foot")) {
+    const sc = make(el.tagName === "FOOTER" ? "streak-foot" : "streak-dk");
+    el.prepend(sc);
+    let seen = false;
+    const kick = wave(sc, () => [el.clientWidth || innerWidth, el.clientHeight || innerHeight], small ? 6000 : 20000, () => seen);
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) kick(); }).observe(el);
+  }
 })();
