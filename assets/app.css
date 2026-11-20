@@ -1246,3 +1246,41 @@ html.gated body{background:var(--alt)}
 .dnext b{font:600 15px/21px var(--fd)}
 .dnext i{font-style:normal;color:var(--brand);font-weight:600}
 @media (max-width:600px){.dbar .btn{width:100%}}
+/* Wave 4: status pills, icon badges, card elevation and warm empty states (Saved, My path, Checklists, Library) */
+.lvpill{display:inline-flex;align-items:center;gap:5px;min-height:24px;padding:0 10px 0 8px;border-radius:999px;font:600 12px/1 var(--fd);white-space:nowrap;flex:none;box-shadow:inset 0 0 0 1px rgba(11,18,32,.06)}
+.lvpill svg{flex:none}
+.lvpill.ready{background:#EFF4FF;color:#1D4ED8}
+.lvpill.prog{background:#FFEDD5;color:#9A3412}
+.lvpill.done{background:#DCFCE7;color:#166534}
+.lvpill.free{background:#ECFDF5;color:#047857}
+.lvpill.judge{background:#F1EEFF;color:#5B21B6}
+.lvpill.pro{background:#FFF1F2;color:#BE123C}
+.lvlift,[data-savedsec],[data-savedsec2],.cla,.hnext{box-shadow:0 1px 2px rgba(11,18,32,.04),0 6px 18px -12px rgba(11,18,32,.16)}
+.scard{box-shadow:0 1px 2px rgba(11,18,32,.04),0 6px 18px -12px rgba(11,18,32,.16)}
+.scard .spills{display:flex;flex-wrap:wrap;gap:6px}
+.scard .scta{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;margin-top:6px;padding:0 16px;border-radius:10px;background:var(--brand);color:#fff;font:600 14px/1 var(--fd);transition:background-color .15s,color .15s,box-shadow .15s}
+.scard .scta.sec{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.scard:hover .scta{background:var(--brand2)}.scard:hover .scta.sec{background:#F4F8FF;color:var(--brand2);box-shadow:inset 0 0 0 1px #BFD3FB}
+.scard .scta .arr{transition:transform .2s var(--out)}.scard:hover .scta .arr{transform:translateX(3px)}
+.lvempty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:32px 24px;border-color:#DCE6FB;background:linear-gradient(#F4F8FF,#fff 140px);box-shadow:0 1px 2px rgba(11,18,32,.04),0 10px 28px -18px rgba(37,99,235,.35)}
+#lout .lvempty{grid-column:1/-1}
+.lvebadge{display:inline-grid;place-items:center;flex:none;width:56px;height:56px;border-radius:16px;background:#E0EAFF;color:#1D4ED8}
+.lvebadge.sm{width:40px;height:40px;border-radius:12px}
+.lvempty h2{margin-top:6px;font:600 20px/28px var(--fd);color:var(--ink)}
+.lvempty p{max-width:46ch;font-size:16px;line-height:24px;color:var(--text)}
+.lveact{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:10px}
+.lveact .btn{min-height:48px}
+.lvsug{margin-top:16px}
+.lvsitem a>span{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0}
+.lvsitem .lvpill{margin-top:6px}
+.pathhd{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pathhd h2{flex:1 1 auto;min-width:0}
+.pquiz .lvebadge{align-self:flex-start;background:#fff;box-shadow:inset 0 0 0 1px #BFD3FB}
+.rsh .lvpill{margin-left:auto}
+.rsa .tl,.cla .clo,.lvlift .ch .tl{min-height:44px}
+.cla{transition:border-color .2s,box-shadow .2s}
+.cla:hover{border-color:#BFD3FB}
+.cla[open]{border-color:#BFD3FB;box-shadow:0 1px 2px rgba(11,18,32,.04),0 12px 28px -18px rgba(37,99,235,.4)}
+.cla .clt{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px}
+.cla .clt b{display:inline}
+@media (max-width:600px){.rstep:not(.open) .rsh .lvpill{display:none}.lvempty{padding:24px 16px}.lveact,.lveact .btn{width:100%}}

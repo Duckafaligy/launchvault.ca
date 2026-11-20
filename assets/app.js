@@ -64,6 +64,7 @@
     $$("[data-ckc]").forEach(n => { const t = ticks(n.dataset.ckc); n.textContent = t.filter(Boolean).length + (n.closest(".mph") ? "/" : " of ") + t.length; });
     $$("[data-ckbar]").forEach(n => { const t = ticks(n.dataset.ckbar); n.style.width = (t.filter(Boolean).length / Math.max(1, t.length) * 100) + "%"; });
     $$("[data-cknext]").forEach(n => { const s = n.dataset.cknext, t = ticks(s), i = t.indexOf(false); n.textContent = i < 0 ? "All done. Nice." : (n.closest(".rnext") ? "" : "Next: ") + CL[s].items[i].text; });
+    $$("[data-ckstate]").forEach(n => { const t = ticks(n.dataset.ckstate); n.innerHTML = pill(statusKey(t.filter(Boolean).length, t.length)); });
     $$("[data-pathname]").forEach(n => n.textContent = D.path.title);
     const st = pathSteps(), dn = pathDone();
     $$("[data-pathbar]").forEach(n => n.style.setProperty("--w", (dn / st.length * 100) + "%"));
@@ -183,13 +184,27 @@
   const STAR = '<svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>';
   const WEEKS = (READY.find(s => !s.stale) || READY[0] || {}).slug;
   const bar = (f, cls = "") => `<span class="bar${cls}"><i style="--w:${Math.round(Math.max(0, Math.min(1, f)) * 100)}%"></i></span>`;
+  // status pills + icon badges (Wave 4): one look for story, step and checklist status everywhere
+  const svgI = (d, w = 14) => `<svg width="${w}" height="${w}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  const PI = {ready: '<path d="M5 4h14v16l-7-4-7 4z"/>', prog: '<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/>', done: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    free: '<rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/>', judge: '<path d="M4 8h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M14 8v10" stroke-dasharray="2 2"/>',
+    pro: '<rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>', star: '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',
+    lib: '<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>', list: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>', path: '<circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 6h7a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h7"/>'};
+  const PL = {ready: "Ready", prog: "In progress", done: "Completed", free: "Free", judge: "Judge pass", pro: "Pro"};
+  const pill = (k, label) => `<span class="lvpill ${k}">${svgI(PI[k], 12)}${esc(label || PL[k])}</span>`;
+  const judgeOn = () => ls.get("lv-judge") === "SPARK2026";   // same code as JCODE below (syncJudge)
+  const accessPill = s => pill(s.slug === WEEKS ? "free" : judgeOn() ? "judge" : "pro");
+  const statusKey = (k, n) => k <= 0 ? "ready" : k >= n ? "done" : "prog";   // k of n done
   const storyCard = s => { const st = stateOf(s), k = Math.min(seen(s.slug).length, nph(s)), sv = savedList().includes(s.slug), wk = s.slug === WEEKS;
     return `<article class="scard${wk ? " wk" : ""}"><a class="scl" href="${s.href}"><span class="sct">${logo(s, 32)}<span class="nm"><b>${esc(s.name)}</b><small>${esc(s.type)}</small></span></span>`
+      + `<span class="spills">${pill({new: "ready", prog: "prog", done: "done"}[st])}${accessPill(s)}</span>`
       + `<span class="stt">${esc(s.title || s.what)}</span>`
       + (s.first ? `<span class="sfc">First customers: ${esc(s.first)}${s.firstl ? " " + chip(s.firstl) : ""}</span>` : "")
       + `<span class="num"><b>${esc(s.hv)}</b><span>${esc(s.hm || s.hu)}</span>${chip(s.hl)}${staleChip(s)}<span>${esc([s.hs, s.hd].filter(Boolean).join(" · "))}</span></span>${s.spark}`
       + `<span class="sft"><span class="spt">${esc(s.pattern)}</span><span class="smt">${wk ? '<span class="tag wkc">This week</span>' : ""}${s.read} min · ${nph(s)} phases</span>`
-      + (st === "new" ? "" : `<span class="sp">${bar(k / nph(s))}${st === "done" ? '<span class="done">Done</span>' : `<span>${k} of ${nph(s)} phases</span>`}</span>`)
+      + (st === "new" ? "" : `<span class="sp">${bar(k / nph(s))}<span>${k} of ${nph(s)} phases seen</span></span>`)
+      + `<span class="scta${st === "prog" ? "" : " sec"}">${st === "prog" ? "Continue reading" : st === "done" ? "Read again" : "Read the breakdown"}<span class="arr" aria-hidden="true">→</span></span>`
       + `</span></a>${s.site ? `<a class="web" href="${esc(s.site)}" target="_blank" rel="noopener" aria-label="${esc(s.name)} website"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></a>` : ""}<button class="star" type="button" data-star="${s.slug}" aria-pressed="${sv}" aria-label="${sv ? "Remove" : "Save"} ${esc(s.name)}">${STAR}</button></article>`; };
   const syncStars = () => { const L = savedList(), I = savedItems();
     $$("[data-star]").forEach(b => { const on = L.includes(b.dataset.star); b.setAttribute("aria-pressed", on); const t = b.querySelector("span"); if (t) t.textContent = on ? "Saved" : "Save"; });
@@ -267,9 +282,14 @@
     $("[data-savedsec]").hidden = !L.length; $("[data-savedsec2]").hidden = !I.length;
     $("[data-savedcount]").textContent = L.length ? `${L.length} saved` : "";
     sc.innerHTML = L.map(storyCard).join("");
-    $("[data-saveditems]").innerHTML = I.map(({k, c, i, it}) => `<div class="sitem"><a href="${c.href}#todo">${logo(c, 20)}<span><b>${esc(it.text)}</b><small>${esc(c.name)} · step ${i + 1}${ticks(c.slug)[i] ? " · ticked" : ""}</small></span></a><button class="ckstar" type="button" data-staritem="${k}" aria-pressed="true" aria-label="Remove this step">${STAR}</button></div>`).join("");
+    $("[data-saveditems]").innerHTML = I.map(({k, c, i, it}) => { const tk = ticks(c.slug)[i];
+      return `<div class="sitem lvsitem"><a href="${c.href}#todo">${logo(c, 20)}<span><b>${esc(it.text)}</b><small>${esc(c.name)} · step ${i + 1}</small>${pill(tk ? "done" : "ready", tk ? "Ticked" : "To do")}</span></a><button class="ckstar" type="button" data-staritem="${k}" aria-pressed="true" aria-label="Remove this step">${STAR}</button></div>`; }).join("");
     const sug = [...new Set([WEEKS, ...matches()])].map(k => S[k]).filter(Boolean).slice(0, 3);
-    $("[data-savedempty]").innerHTML = L.length || I.length ? "" : `<section class="card sempty"><h2>Nothing saved yet</h2><p>Star a story to keep it here. Star a checklist step to keep the step.</p><div class="scards">${sug.map(storyCard).join("")}</div><a class="btn btn-p" href="/app/library/">Open the Library</a></section>`; };
+    $("[data-savedempty]").innerHTML = L.length || I.length ? "" : emptyCard("star", "Nothing saved yet", "Tap the star on any story or checklist step and it waits for you here, on this device.", "/app/library/", "Browse the Library")
+      + (sug.length ? `<section class="card hsec lvsug"><div class="ch"><h2>Stories to start with</h2></div><div class="scards">${sug.map(storyCard).join("")}</div></section>` : ""); };
+  // warm empty state: icon badge, one honest sentence, one primary action (and an optional secondary)
+  function emptyCard(icon, h, p, href, label, extra = "") {
+    return `<section class="card lvempty"><span class="lvebadge">${svgI(PI[icon], 24)}</span><h2>${esc(h)}</h2><p>${esc(p)}</p><div class="lveact">${href ? `<a class="btn btn-p" href="${href}">${esc(label)} <span class="arr" aria-hidden="true">→</span></a>` : ""}${extra}</div></section>`; }
 
   // ---------- library: cards only, ready stories only. Filters live in the URL (?tab=&pat=&lp=&sort=&q=), so a reload or a shared link keeps them ----------
   const lout = $("#lout");
@@ -303,7 +323,7 @@
       const nf = (st.pat ? 1 : 0) + (st.lp ? 1 : 0) + (st.sort !== "new" ? 1 : 0), badge = $("[data-lfn]"); badge.hidden = !nf; badge.textContent = nf;
       $("#lfopen").setAttribute("aria-label", nf ? `Filters, ${nf} on` : "Filters");
       $("#lclear").hidden = !(st.q || st.tab !== "all" || st.pat || st.lp || st.sort !== "new");
-      lout.innerHTML = L.length ? L.map(storyCard).join("") : `<div class="card empty"><h3>No stories match these filters</h3><p>One new breakdown arrives each week.</p><button class="btn btn-s" type="button" data-clearall>Clear filters</button></div>`;
+      lout.innerHTML = L.length ? L.map(storyCard).join("") : emptyCard("search", "No stories match these filters", st.lp === "saved" && !sv.length ? "You haven't starred a story yet. Clear the filters to see every breakdown." : "Try a different word or pattern, or clear the filters to see every breakdown.", "", "", '<button class="btn btn-p" type="button" data-clearall>Clear filters</button>');
     };
     $("#lq").addEventListener("input", e => { st.q = e.target.value; libDraw(); });
     $("#lpat").addEventListener("change", e => { st.pat = e.target.value; libDraw(); });
@@ -382,9 +402,11 @@
   function renderPath() {
     if (!stepsEl) return; const st = pathSteps(), q = quiz(), src = CL[D.path.source], dn = pathDone();
     if (openStep == null) openStep = st.findIndex(s => !s.done);
+    const nxi = st.findIndex(s => !s.done);
+    const sp = $("[data-pathstate]"); if (sp) sp.innerHTML = pill(statusKey(dn, st.length));
     stepsEl.innerHTML = st.map((s, i) => { const open = i === openStep;
       const link = s.extra ? (s.href ? `<a class="tl" href="${s.href}">${esc(s.from)}: open the breakdown</a>` : "") : `<a class="tl" href="${src.href}#${s.ph ? "ph" + s.ph : "todo"}">Open in the ${esc(src.name)} breakdown${s.ph ? ", phase " + esc(s.from) : ""}</a>`;
-      return `<div class="rstep${open ? " open" : ""}${s.done ? " done" : ""}"><button class="rsh" type="button" data-stepopen="${i}" aria-expanded="${open}"><span class="dot">${s.done ? CKS : i + 1}</span><span class="rst">${esc(s.task || s.text)}</span>${s.done && s.date ? `<span class="dt">Done ${esc(s.date)}</span>` : ""}</button>`
+      return `<div class="rstep${open ? " open" : ""}${s.done ? " done" : ""}"><button class="rsh" type="button" data-stepopen="${i}" aria-expanded="${open}"><span class="dot">${s.done ? CKS : i + 1}</span><span class="rst">${esc(s.task || s.text)}</span>${s.done ? pill("done", s.date ? "Done " + s.date : "Completed") : i === nxi ? pill("prog", "Up next") : ""}</button>`
         + (open ? `<div class="rsb">${s.task ? `<p class="fs">From the story: ${esc(s.text)}</p>` : ""}${s.why ? `<p class="why"><b>Why:</b> ${esc(s.why)}</p>` : ""}<div class="rsa"><button class="btn ${s.done ? "btn-s" : "btn-p"}" type="button" data-step${s.done ? "undo" : "done"}="${i}">${s.done ? "Mark as not done" : "Mark step done"}</button>${link}</div></div>` : "") + "</div>"; }).join("");
     $$("[data-pathtitle]").forEach(n => n.textContent = q ? D.path.title : "A starter path");
     const ps = $("[data-pathsrc]"); if (ps) ps.innerHTML = `<img src="${esc(src.logo)}" alt="" width="16" height="16" style="vertical-align:-3px;margin-right:6px;border-radius:4px">From the ${esc(src.name)} breakdown`;
@@ -410,12 +432,13 @@
 
   // ---------- checklists page: a "Next up" card, then one accordion per story (in progress first, then this week's) ----------
   const cls = $("[data-cllists]");
-  if (cls) {
+  if (cls && !D.checklists.length) { $("[data-clnext]").innerHTML = ""; cls.innerHTML = emptyCard("list", "No checklists yet", "Every breakdown ends with a checklist. Open one from the Library to start ticking.", "/app/library/", "Browse the Library"); }
+  else if (cls) {
     const cnt = c => ticks(c.slug).filter(Boolean).length, inprog = c => { const n = cnt(c); return n > 0 && n < c.items.length; };
     const order = D.checklists.slice().sort((a, b) => (inprog(b) - inprog(a)) || ((b.slug === WEEKS) - (a.slug === WEEKS)));
     const lastK = ls.get("lv-ck-last"), nxc = (CL[lastK] && ticks(lastK).includes(false) && CL[lastK]) || order.find(inprog) || CL[WEEKS] || order[0];
     $("[data-clnext]").innerHTML = `<section class="hnext"><span class="logo">${logo(nxc, 40)}</span><div class="mid"><h2>Next up in the ${esc(nxc.name)} checklist</h2><p data-cknext="${nxc.slug}"></p></div><a class="btn btn-p" href="${nxc.href}#todo">Do it <span class="arr" aria-hidden="true">→</span></a></section>`;
-    cls.innerHTML = order.map(c => `<details class="cla" name="cl"${c === nxc ? " open" : ""}><summary>${logo(c, 24)}<span class="mid"><b>${esc(c.name)}</b><small data-cknext="${c.slug}"></small></span><span class="ct" data-ckc="${c.slug}"></span><span class="bar"><i data-ckbar="${c.slug}"></i></span><span class="chev" aria-hidden="true"></span></summary>${ckListHTML(c)}<a class="tl clo" href="${c.href}">Open the ${esc(c.name)} breakdown</a></details>`).join("");
+    cls.innerHTML = order.map(c => `<details class="cla" name="cl"${c === nxc ? " open" : ""}><summary>${logo(c, 24)}<span class="mid"><span class="clt"><b>${esc(c.name)}</b><span data-ckstate="${c.slug}"></span></span><small data-cknext="${c.slug}"></small></span><span class="ct" data-ckc="${c.slug}"></span><span class="bar"><i data-ckbar="${c.slug}"></i></span><span class="chev" aria-hidden="true"></span></summary>${ckListHTML(c)}<a class="tl clo" href="${c.href}">Open the ${esc(c.name)} breakdown</a></details>`).join("");
   }
 
   // ---------- account ----------
@@ -550,12 +573,12 @@
     if (v === JCODE) {
       if (err) err.hidden = true;
       if (inp) inp.value = "";
-      ls.set("lv-judge", JCODE); syncJudge(); toast("Judge pass on. All 10 breakdowns are unlocked in this browser.");
+      ls.set("lv-judge", JCODE); syncJudge(); renderAll(); toast("Judge pass on. All 10 breakdowns are unlocked in this browser.");
     } else if (err) { err.hidden = false; if (inp) inp.focus(); }
   }));
   document.addEventListener("click", e => {
     if (e.target.closest("[data-jfocus]")) { const j = document.getElementById("jca"); if (j && j.offsetParent) { e.preventDefault(); j.scrollIntoView({block: "center", behavior: reduce ? "auto" : "smooth"}); j.focus({preventScroll: true}); } }
-    if (e.target.closest("[data-judge-off-btn]")) { try { localStorage.removeItem("lv-judge"); } catch {} syncJudge(); toast("Judge pass off. Back to the Free view."); }
+    if (e.target.closest("[data-judge-off-btn]")) { try { localStorage.removeItem("lv-judge"); } catch {} syncJudge(); renderAll(); toast("Judge pass off. Back to the Free view."); }
   });
 
   syncJudge(); if (urlHit) toast("Judge pass on. All 10 breakdowns are unlocked in this browser."); syncChecklists(); renderAll();

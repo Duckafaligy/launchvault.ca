@@ -91,7 +91,7 @@
 .kpis .kpi .m{display:flex;gap:6px;align-items:center;font-size:12px;color:#4B5563}
 .kpis .kpi:hover,.kpis .kpi.gh-hover{background:#F8FAFF;box-shadow:inset 0 0 0 1px #C7D5FE}
 .kpis .kpi[aria-pressed=true]{background:#F3F7FF;box-shadow:inset 0 0 0 1px #93B4FF}
-.kpi .ksrc{display:none;font-size:11.5px;line-height:20px;color:var(--brand-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .ksrc{display:none;font-size:12px;line-height:20px;color:var(--brand-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpi[aria-pressed=true] .m{display:none}
 .kpi[aria-pressed=true] .ksrc{display:block;animation:rise .35s var(--out)}
 .win .body2{grid-template-columns:minmax(0,1fr) 290px;gap:12px;margin-top:12px}
@@ -142,6 +142,22 @@
 .win .mv.future{opacity:.52;transition:opacity .2s}
 .win .mv.future:hover{opacity:.88}
 .plot .tag.future{opacity:.42}
+/* checkpoint stepper (site.js): Prev · Move X of N · Next under the moves header; Auto-play sits in the header */
+.mstep{display:flex;align-items:center;gap:6px;padding:0 8px 6px}
+.mstep button,.ms-play{display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:none;min-height:44px;min-width:44px;padding:0 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font:600 13px var(--fd);color:var(--ink);cursor:pointer;transition:background-color .2s,border-color .2s,color .2s}
+.win .mstep button,.win .ms-play{min-height:calc(44px / var(--s, 1))}
+.mstep button:hover:not(:disabled){border-color:var(--brand);color:var(--brand)}
+.mstep button:disabled{background:#F8FAFC;color:#6B7280;cursor:default}
+.mstep button:focus-visible,.ms-play:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.mstep .ms-t{flex:1 1 auto;min-width:0;text-align:center;font:500 12.5px/1.3 var(--fn);color:var(--ink);font-variant-numeric:tabular-nums}
+.ms-play{margin-left:auto;padding:0 12px;border-color:transparent;background:#EEF3FF;color:#1D4ED8}
+.ms-play:hover{background:#DCE6FE}
+.ms-play[aria-pressed=true],.ms-play[aria-pressed=true]:hover{background:var(--brand);color:#fff}
+.moves .hd:has(.ms-play){padding-top:8px;padding-bottom:4px}
+@media (min-width:1101px){
+  .win .moves{display:flex;flex-direction:column}
+  .win .moves ol{position:static;flex:1 1 0;min-height:0;contain:size;overflow:auto}
+}
 .plot .tag.past rect{stroke:#2563EB}
 
 /* ---- Home ---- */
@@ -200,7 +216,7 @@
 .ltr .spark .ln{fill:none;stroke:var(--brand);stroke-width:1.6;vector-effect:non-scaling-stroke}
 .ltr .spark .ar{fill:rgba(37,99,235,.08)}
 .ltr .spark circle{fill:var(--brand)}
-.noser{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;padding:3px 7px;border:1px dashed #CBD5E1;border-radius:6px;font-size:11px;color:#4B5563;white-space:nowrap}
+.noser{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;padding:3px 7px;border:1px dashed #CBD5E1;border-radius:6px;font-size:12px;color:#4B5563;white-space:nowrap}
 .lnum{color:#4B5563;white-space:nowrap}
 .lnum b{font:600 14px var(--fn);color:var(--ink)}
 .ls{font-size:13px;color:#4B5563;white-space:nowrap}
@@ -283,8 +299,8 @@
 .sd-l li:hover,.sd-l li.gh-hover{background:#F8FAFC}
 .sd-l .blogo{width:20px;height:20px;border-radius:5px;object-fit:contain}
 .sr-t b{display:block;font:600 13px/1.3 var(--fd);color:var(--ink)}
-.sr-t span{display:block;font-size:11.5px;line-height:1.35;color:#4B5563}
-.sr-dt{font-size:11.5px;color:#4B5563;white-space:nowrap}
+.sr-t span{display:block;font-size:12px;line-height:1.35;color:#4B5563}
+.sr-dt{font-size:12px;color:#4B5563;white-space:nowrap}
 .sdrawer.open .sd-l li{animation:rise .4s var(--out) both}
 .sdrawer.open .sd-l li:nth-child(2){animation-delay:.03s}.sdrawer.open .sd-l li:nth-child(3){animation-delay:.06s}.sdrawer.open .sd-l li:nth-child(4){animation-delay:.09s}
 .sdrawer.open .sd-l li:nth-child(5){animation-delay:.12s}.sdrawer.open .sd-l li:nth-child(6){animation-delay:.15s}.sdrawer.open .sd-l li:nth-child(7){animation-delay:.18s}

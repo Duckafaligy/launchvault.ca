@@ -146,7 +146,7 @@
     const plot = $("#plot"), tip = $("#tip"), movesEl = $("#moves"), size = plot.dataset.size, inHero = !!plot.closest(".win");
     let G = null, M0 = 0, animate = !reduce && IO, pinned = null, userPin = false;
     movesEl.innerHTML = EVT.map((e, i) => `<li><button type="button" class="mv${i === TURN ? " turn" : ""}" data-i="${i}"><span class="n">${i + 1}</span><span><b>${e[2]}</b><small>${e[3]}</small></span><span class="w">${e[1]}</span></button></li>`).join("");
-    function draw() {
+    function draw() { cancelAnimationFrame(tw);
       const W = Math.max(260, plot.clientWidth - 12), narrow = W < 520, H = narrow ? (inHero ? 196 : 236) : size === "big" ? 326 : inHero ? 202 : 268;
       const L = 46, R = 16, T = 24, B = 52, TAG = narrow ? 14 : 16, span = 34 - M0;
       const X = m => L + Math.max(0, m - M0) / span * (W - L - R), Y = v => T + (1 - v / 450000) * (H - T - B);
@@ -218,7 +218,16 @@
       let left = ox + 14; if (left + w > plot.clientWidth - 4) left = ox - w - 14;
       tip.style.left = Math.max(4, left) + "px"; tip.style.top = Math.min(Math.max(4, oy - h / 2), plot.clientHeight - h - 4) + "px";
     }
-    function mark(x, y, label) {
+    // stepping glides the guide line, pill and mask from the last checkpoint; hover jumps straight there
+    let glide = false, tw = 0;
+    function mark(x, y, label) { cancelAnimationFrame(tw);
+      const fx = G.mx, fy = G.my; G.mx = x; G.my = y;
+      if (!glide || reduce || fx == null || fx === x) return markAt(x, y, label);
+      const t0 = performance.now(), f = now => { const k = Math.min(1, (now - t0) / 360), e = 1 - (1 - k) ** 3;
+        markAt(fx + (x - fx) * e, y == null || fy == null ? y : fy + (y - fy) * e, label); if (k < 1) tw = requestAnimationFrame(f); };
+      f(t0);
+    }
+    function markAt(x, y, label) {
       G.vline.setAttribute("x1", x); G.vline.setAttribute("x2", x); G.vline.setAttribute("opacity", 1);
       if (G.ms1 && G.ms2) { G.ms1.setAttribute("offset", Math.min(1, (x + 2) / G.W)); G.ms2.setAttribute("offset", Math.min(1, (x + 18) / G.W)); }
       if (G.tsPill && label) {
@@ -243,7 +252,7 @@
       mark(x, p ? G.Y(p[1]) : null, e[1]); setActive(i);
       place(x, p ? G.Y(p[1]) : (G.H - G.B) * .55, `<div class="d">Move ${i + 1} · ${e[1]}</div><div class="tt">${e[2]}</div><div>${e[3]}</div><div class="s">${pill(e[4])}</div>`);
     }
-    function showDefault() { if (pinned != null) showEvent(pinned); else showEvent(TURN); }
+    function showDefault() { if (pinned != null) showEvent(pinned); else showEvent(TURN); syncStep(); }
     // a clicked move stays highlighted, and the list scrolls to it (inside its own panel, never the page)
     function pin(i, byUser) { pinned = pinned === i && (userPin || !byUser) ? null : i; userPin = !!byUser && pinned != null; showDefault();   // a user's click takes over a ghost's pin
       const b = movesEl.querySelectorAll(".mv")[i];
@@ -252,6 +261,30 @@
     movesEl.addEventListener("pointerleave", showDefault);
     movesEl.addEventListener("click", ev => { const b = ev.target.closest(".mv"); if (b) pin(+b.dataset.i, ev.isTrusted); });
     movesEl.addEventListener("focusin", ev => { const b = ev.target.closest(".mv"); if (b) showEvent(+b.dataset.i); });
+    // checkpoint stepper: Prev / Next (and ←/→ in the chart or moves panel) walk the pinned move 1 → N through pin();
+    // Auto-play steps every 1.8s and stops at the last move (left out under reduced motion); any manual input stops it
+    const mpanel = movesEl.closest(".moves"), cpanel = plot.closest(".chartp"), NE = EVT.length;
+    const tri = d => `<svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="${d}" fill="currentColor"/></svg>`;
+    movesEl.insertAdjacentHTML("beforebegin", `<div class="mstep" role="group" aria-label="Step through the moves"><button type="button" class="ms-b" data-d="-1" aria-label="Previous move">${tri("M7 1 2 5l5 4z")}Prev</button><span class="ms-t" aria-live="polite"></span><button type="button" class="ms-b" data-d="1" aria-label="Next move">Next${tri("M3 1l5 4-5 4z")}</button></div>`);
+    const mstep = movesEl.previousElementSibling, [msPv, msNx] = mstep.querySelectorAll(".ms-b"), msT = mstep.querySelector(".ms-t"), mhd = mpanel.querySelector(".hd");
+    if (!reduce) { const s = mhd.querySelector("span"); if (s) s.remove(); mhd.insertAdjacentHTML("beforeend", '<button type="button" class="ms-play" aria-pressed="false">Auto-play</button>'); }
+    const msPl = mhd.querySelector(".ms-play"), curEv = () => pinned ?? TURN;
+    let auto = 0;
+    function syncStep() { const i = curEv(), t = `Move ${i + 1} of ${NE} · ${EVT[i][1].replace(/ /g, " ")}`, f = document.activeElement;
+      if (msT.textContent !== t) msT.textContent = t; msPv.disabled = i <= 0; msNx.disabled = i >= NE - 1;
+      if (f === msNx && msNx.disabled) msPv.focus(); else if (f === msPv && msPv.disabled) msNx.focus(); }
+    const stopAuto = () => { if (!auto) return; clearInterval(auto); auto = 0; msPl.setAttribute("aria-pressed", "false"); msPl.textContent = "Auto-play"; };
+    const stepTo = i => { i = Math.max(0, Math.min(NE - 1, i)); if (i === curEv() && userPin) return; glide = true; pinned = null; pin(i, true); glide = false; };
+    mstep.addEventListener("click", e => { const b = e.target.closest(".ms-b"); if (b) { stopAuto(); stepTo(curEv() + +b.dataset.d); } });
+    if (msPl) msPl.addEventListener("click", () => { if (auto) return stopAuto();
+      msPl.setAttribute("aria-pressed", "true"); msPl.textContent = "Pause"; stepTo(0);
+      auto = setInterval(() => { stepTo(curEv() + 1); if (curEv() >= NE - 1) stopAuto(); }, 1800); });
+    [mpanel, cpanel].forEach(n => { if (!n) return;
+      n.addEventListener("pointerdown", e => { if (e.isTrusted && !e.target.closest(".ms-play")) stopAuto(); });
+      n.addEventListener("keydown", e => { if (!e.isTrusted) return; const d = {ArrowLeft: -1, ArrowRight: 1}[e.key];
+        if (!d) { if (!e.target.closest(".ms-play")) stopAuto(); return; }
+        if (e.target.closest("[role=tablist]")) return;
+        e.preventDefault(); stopAuto(); stepTo(curEv() + d); }); });
     const play = () => { if (!animate) return; plot.classList.remove("drawing"); void plot.offsetWidth; plot.classList.add("drawing"); };
     redraw = draw;
     draw();

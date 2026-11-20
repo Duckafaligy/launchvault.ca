@@ -37,8 +37,9 @@
     const moves = (D.moves || []).map((m, i) => ({...m, i, x: m.at ? mi(m.at) : NaN})).filter(m => m.x >= x0 && m.x <= x1);
     const before = (D.moves || []).filter(m => m.w === "before").length;   // moves dated before the first month: counted at the left edge, listed below
     const top = nice(Math.max(...pts.map(p => p.v), ...alt.map(p => p.v)) * 1.05);
-    let G = null, cur = -1;
-    const draw = () => {
+    let G = null, cur = -1, pinned = null, glide = false, tw = 0;
+    const turnI = (moves.find(m => m.turn) || {i: -1}).i;   // the move shown when nothing is pinned (-1: show the latest point)
+    const draw = () => { cancelAnimationFrame(tw);
       const W = Math.max(280, plot.clientWidth), narrow = W < 560, H = narrow ? 230 : 300, L = 48, R = 12, T = 12, B = moves.length || before ? 54 : 30;
       const X = x => L + (x - x0) / Math.max(1, x1 - x0) * (W - L - R), Y = v => T + (1 - v / top) * (H - T - B);
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("height", H); svg.innerHTML = "";
@@ -74,7 +75,7 @@
       const mks = moves.map((m, i) => { const g = el("g", {class: "mk" + (m.turn ? " turn" : ""), tabindex: "-1", "aria-hidden": "true"}, svg);
         const cx = Math.min(Math.max(X(m.x), L + (before ? 48 : 9)), W - R - 9) + (moves[i - 1] && Math.abs(X(moves[i - 1].x) - X(m.x)) < 18 ? 9 : 0);
         el("rect", {x: cx - 9, y: H - B + 8, width: 18, height: 18, rx: 4}, g); el("text", {x: cx, y: H - B + 21, "text-anchor": "middle"}, g).textContent = m.i + 1;
-        g.addEventListener("pointerenter", () => showMove(i)); g.addEventListener("click", () => showMove(i)); return g; });
+        g.addEventListener("pointerenter", () => showMove(i)); g.addEventListener("click", () => pin(m.i, true)); return g; });
       const hit = el("rect", {x: L, y: T, width: W - L - R, height: H - B - T, fill: "transparent"}, svg);
       hit.addEventListener("pointermove", ev => { const r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width;
         let b = 0; all.forEach((p, i) => { if (Math.abs(X(p.x) - mx) < Math.abs(X(all[b].x) - mx)) b = i; }); showPoint(all[b]); });
@@ -90,7 +91,15 @@
       showDefault();
     };
     const setRO = (a, b, c) => { ro.innerHTML = `<b>${a}</b><span class="rd-d">${b}</span><span class="rd-s">${c}</span>`; };
-    const mark = (x, y, label) => {
+    // stepping glides the guide line, pill and mask from the last checkpoint; hover jumps straight there
+    const mark = (x, y, label) => { cancelAnimationFrame(tw);
+      const fx = G.mx, fy = G.my; G.mx = x; G.my = y;
+      if (!glide || reduce || fx == null || fx === x) return place(x, y, label);
+      const t0 = performance.now(), f = now => { const k = Math.min(1, (now - t0) / 360), e = 1 - (1 - k) ** 3;
+        place(fx + (x - fx) * e, y == null || fy == null ? y : fy + (y - fy) * e, label); if (k < 1) tw = requestAnimationFrame(f); };
+      f(t0);
+    };
+    const place = (x, y, label) => {
       G.cross.setAttribute("x1", x); G.cross.setAttribute("x2", x); G.cross.style.opacity = 1;
       if (G.ms1 && G.ms2) { G.ms1.setAttribute("offset", Math.min(1, (x + 2) / G.W)); G.ms2.setAttribute("offset", Math.min(1, (x + 18) / G.W)); }
       if (G.tsPill && label) {
@@ -109,10 +118,16 @@
     function showPoint(p) { mark(G.X(p.x), G.Y(p.v), p.d); activate(-1); setRO(money(p.v) + (S.unit || ""), p.d, chip(p.l) + " " + esc(p.s)); }
     function showMove(i) { const m = moves[i], p = pts.find(q => q.x === m.x); mark(G.X(m.x), p ? G.Y(p.v) : null, m.when); activate(i);
       setRO(`Move ${m.i + 1}`, esc(m.when), `<span style="color:#0B1220;font-weight:600">${esc(m.text)}</span> · ${esc(m.detail || "")} ${chip(m.label)}`); }
+    // n indexes D.moves (the full list); moves before the chart's months only fill the readout
+    function showN(n) { const k = moves.findIndex(m => m.i === n); if (k >= 0) return showMove(k); const m = (D.moves || [])[n]; if (!m) return;
+      activate(-1); G.cross.style.opacity = 0; G.hl.style.opacity = 0; G.tsPill.setAttribute("opacity", 0); G.ms1.setAttribute("offset", 1); G.ms2.setAttribute("offset", 1); G.mx = null;
+      setRO(`Move ${n + 1}`, esc(m.when), `<span style="color:#0B1220;font-weight:600">${esc(m.text)}</span> ${chip(m.label)}`); }
+    function pin(n, g) { pinned = n; glide = !!g; showDefault(); glide = false; if (hooks.pin) hooks.pin(); }
     function showDefault() {
+      if (pinned != null) return showN(pinned);
       const turnIdx = moves.findIndex(m => m.turn);
       if (turnIdx >= 0) { showMove(turnIdx); return; }
-      const p = pts.at(-1); G.cross.style.opacity = 0; G.hl.style.opacity = 0;
+      const p = pts.at(-1); G.cross.style.opacity = 0; G.hl.style.opacity = 0; G.mx = null;
       if (G.ms1 && G.ms2) { G.ms1.setAttribute("offset", 1); G.ms2.setAttribute("offset", 1); }
       if (G.tsPill) G.tsPill.setAttribute("opacity", 0);
       activate(-1);
@@ -120,22 +135,47 @@
     }
     draw();
     let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(draw, 100); });
-    return {showMove: n => { const k = moves.findIndex(m => m.i === n); if (k >= 0) showMove(k); else { const m = (D.moves || [])[n]; if (m) { activate(-1); G.cross.style.opacity = 0; G.hl.style.opacity = 0; setRO(`Move ${n + 1}`, esc(m.when), `<span style="color:#0B1220;font-weight:600">${esc(m.text)}</span> ${chip(m.label)}`); } } }, showDefault, moves};
+    return {showMove: showN, showDefault, moves, pin, cur: () => pinned ?? turnI, N: (D.moves || []).length};
   };
 
   // the chart could not be drawn: say so and point at the table (it is plain HTML and always there)
   const fail = root => { const pl = root.querySelector(".plot"); if (!pl || root.querySelector(".cfail")) return; pl.hidden = true;
     pl.insertAdjacentHTML("afterend", '<div class="cfail" role="status"><span>The chart didn\'t load. Reload, or read the table.</span><button class="btn btn-s" type="button">Show the table</button></div>');
     root.querySelector(".cfail button").addEventListener("click", () => { const d = root.querySelector(".ctab"); if (d) { d.open = true; d.scrollIntoView({block: "nearest"}); } }); };
+  // checkpoint stepper above the moves list: Prev / Next (and ←/→ anywhere in the chart) walk the pinned move 1 → N;
+  // Auto-play steps every 1.8s and stops at the last move (left out under reduced motion); any manual input stops it
+  const tri = d => `<svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="${d}" fill="currentColor"/></svg>`;
+  const stepper = (root, list, api, M, hooks) => {
+    list.insertAdjacentHTML("beforebegin", `<div class="mstep" role="group" aria-label="Step through the moves"><button type="button" class="ms-b" data-d="-1" aria-label="Previous move">${tri("M7 1 2 5l5 4z")}Prev</button><span class="ms-t" aria-live="polite"></span><button type="button" class="ms-b" data-d="1" aria-label="Next move">Next${tri("M3 1l5 4-5 4z")}</button>${reduce ? "" : '<button type="button" class="ms-play" aria-pressed="false">Auto-play</button>'}</div>`);
+    const ms = list.previousElementSibling, [pv, nx] = ms.querySelectorAll(".ms-b"), tx = ms.querySelector(".ms-t"), pl = ms.querySelector(".ms-play"), N = api.N;
+    let auto = 0;
+    const sync = () => { const i = api.cur(), t = i < 0 ? `${N} moves · press Next to step through` : `Move ${i + 1} of ${N} · ${M[i].when.replace(/ /g, " ")}`, f = document.activeElement;
+      if (tx.textContent !== t) tx.textContent = t; pv.disabled = i <= 0; nx.disabled = i >= N - 1;
+      if (f === nx && nx.disabled && !pv.disabled) pv.focus(); else if (f === pv && pv.disabled && !nx.disabled) nx.focus(); };
+    const stop = () => { if (!auto) return; clearInterval(auto); auto = 0; pl.setAttribute("aria-pressed", "false"); pl.textContent = "Auto-play"; };
+    const step = d => { const i = Math.max(0, Math.min(N - 1, api.cur() + d)); if (i !== api.cur()) api.pin(i, true); };
+    hooks.pin = sync; sync();
+    ms.addEventListener("click", e => { const b = e.target.closest(".ms-b"); if (b) { stop(); step(+b.dataset.d); } });
+    if (pl) pl.addEventListener("click", () => { if (auto) return stop();
+      pl.setAttribute("aria-pressed", "true"); pl.textContent = "Pause"; api.pin(0, true);
+      auto = setInterval(() => { step(1); if (api.cur() >= N - 1) stop(); }, 1800); if (N < 2) stop(); });
+    root.addEventListener("pointerdown", e => { if (!e.target.closest(".ms-play")) stop(); });
+    root.addEventListener("keydown", e => { const d = {ArrowLeft: -1, ArrowRight: 1}[e.key];
+      if (!d) { if (!e.target.closest(".ms-play")) stop(); return; }
+      if (e.target.closest("input,textarea,select,[role=tablist],[role=slider]")) return;
+      e.preventDefault(); stop(); step(d); });
+  };
   // auto-mount every chart block on the page
   document.querySelectorAll(".lvchart").forEach(root => { try {
     const D = JSON.parse(root.querySelector(".lvchart-data").textContent);
     const list = root.querySelector(".moves"), band = root.querySelector(".pband");
-    const api = LVChart(root, D, {move: i => { if (list) list.querySelectorAll("button").forEach((b, k) => { b.classList.toggle("on", k === i); b.classList.toggle("future", i >= 0 && k > i); }); }});
+    const hooks = {move: i => { if (list) list.querySelectorAll("button").forEach((b, k) => { b.classList.toggle("on", k === i); b.classList.toggle("future", i >= 0 && k > i); }); }};
+    const api = LVChart(root, D, hooks);
     if (list) { list.addEventListener("pointerover", e => { const b = e.target.closest("button[data-i]"); if (b) api.showMove(+b.dataset.i); });
       list.addEventListener("focusin", e => { const b = e.target.closest("button[data-i]"); if (b) api.showMove(+b.dataset.i); });
-      list.addEventListener("click", e => { const b = e.target.closest("button[data-i]"); if (b) api.showMove(+b.dataset.i); });
+      list.addEventListener("click", e => { const b = e.target.closest("button[data-i]"); if (b) api.pin(+b.dataset.i, true); });
       list.addEventListener("pointerleave", () => api.showDefault()); }
+    if (list && api.N) stepper(root, list, api, D.moves, hooks);
     if (band) band.addEventListener("click", e => { const b = e.target.closest("button[data-ph]"); if (!b) return;
       band.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
       const t = document.getElementById("ph" + b.dataset.ph); if (t && !t.closest("[hidden]")) t.scrollIntoView({behavior: reduce ? "auto" : "smooth", block: "start"}); });

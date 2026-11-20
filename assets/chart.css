@@ -78,3 +78,12 @@ table.sr{display:block}
 .moves .n{font-size:12px}
 .moves button.future{opacity:.52;transition:opacity .2s}.moves button.future:hover{opacity:.88}
 .plot .mk.future{opacity:.42}
+/* checkpoint stepper (chart.js): Prev · Move X of N · Next, plus Auto-play */
+.mstep{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px;padding:0 8px}
+.mstep button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;min-width:44px;padding:0 12px;border:1px solid #E5E7EB;border-radius:8px;background:#fff;font:600 13.5px var(--fd,system-ui);color:#0B1220;cursor:pointer;transition:background-color .2s,border-color .2s,color .2s}
+.mstep button:hover:not(:disabled){border-color:#2563EB;color:#2563EB}
+.mstep button:focus-visible{outline:2px solid #2563EB;outline-offset:2px}
+.mstep button:disabled{color:#6B7280;background:#F8FAFC;cursor:default}
+.mstep .ms-t{flex:1 1 0;min-width:112px;text-align:center;font:500 13.5px/1.35 var(--fn,system-ui);color:#0B1220;font-variant-numeric:tabular-nums}
+.mstep .ms-play{margin-left:auto;border-color:transparent;background:#EEF3FE;color:#1D4ED8}
+.mstep .ms-play[aria-pressed=true],.mstep .ms-play[aria-pressed=true]:hover{background:#2563EB;border-color:#2563EB;color:#fff}
