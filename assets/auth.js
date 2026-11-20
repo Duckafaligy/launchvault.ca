@@ -4,8 +4,8 @@
      LV_AUTH      false = accounts are off for now (no sign-in UI, no third-party requests). true = use Clerk (+ Supabase sync).
      LV_GATE      false = the app opens without signing in (current choice). true = signed-out visitors go to /welcome/.
    While LV_CLERK_PK is empty the site runs in PREVIEW mode: sign-in buttons go straight to /app/ and a preview bar shows. */
-const LV_CLERK_PK = "";
-const LV_AUTH = false;   // false = login OFF: no sign-in UI in the app, Clerk and supabase-js never load, progress stays on this device
+const LV_CLERK_PK = "pk_test_ZGFzaGluZy1zcGlkZXItNDg2LmNsZXJrLmFjY291bnRzLmRldiQ";   // development instance (dashing-spider-486)
+const LV_AUTH = true;    // login ON: Clerk sign-in, synced progress (stories stay readable without an account: LV_GATE false)
 const LV_GATE = false;
 const LV_CLERK_JS = "https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5.128.1/dist/clerk.browser.js";
 
