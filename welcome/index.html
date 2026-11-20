@@ -95,6 +95,7 @@
         </form>
         <p class="fmsg on l" id="authoff" hidden></p>
       </div>
+      <div class="clerkui" id="clerkui" hidden aria-live="polite"><p class="sub">Loading sign-in…</p></div>
       <div class="aoff" id="aoff" hidden>
         <a class="btn btn-p btn-lg" id="openapp" href="/app/start/">Open the app <span class="arr" aria-hidden="true">→</span></a>
         <p class="aoffn"><b>Sign-in opens soon.</b> You can use the app now; your progress stays on this device.</p>
@@ -105,7 +106,7 @@
           <li aria-disabled="true"><img src="/assets/logos/discord.svg" alt="" width="20" height="20">Discord<span>Coming soon</span></li>
         </ul>
       </div>
-      <p class="note">We only keep your email address. By continuing you agree to the <a href="/legal/terms/">terms</a> and <a href="/legal/privacy/">privacy policy</a> (drafts).</p>
+      <p class="note">We keep your email address and the name you choose. By continuing you agree to the <a href="/legal/terms/">terms</a> and <a href="/legal/privacy/">privacy policy</a> (drafts).</p>
     </div>
   </div>
 </section>
@@ -128,7 +129,20 @@
     $("#oauth").style.display = "none"; $("#ecode").remove(); $("#aoff").hidden = false; $("#openapp").href = back ? "/app/" : "/app/start/";
     document.querySelector("#p-signin .sub").textContent = "Sign-in opens soon. Your progress is on this device, so the app picks up where you left off.";
     document.querySelector("#p-signup .sub").textContent = "Accounts open soon. Until then the app works without one."; }
-  else A.load().then(() => { const on = A.enabled(); $$("[data-strategy]").forEach(b => { b.hidden = !on.has(b.dataset.strategy); }); }).catch(() => {});
+  else {   // accounts are on: Clerk's own sign-in and sign-up forms (they handle bot protection, every provider and email codes)
+    $("#oauth").style.display = "none"; const ui = $("#clerkui"); ui.hidden = false;
+    const look = {variables: {colorPrimary: "#2563EB", colorText: "#0B1220", colorTextSecondary: "#4B5563", colorDanger: "#B91C1C", borderRadius: "10px", fontFamily: "inherit", fontSize: "15px"},
+      elements: {rootBox: {width: "100%"}, cardBox: {width: "100%", boxShadow: "none", border: "0"}, card: {boxShadow: "none", padding: "4px 0", background: "transparent"}, header: {display: "none"},
+        formButtonPrimary: {minHeight: "48px", fontSize: "15px"}, socialButtonsBlockButton: {minHeight: "48px"}, formFieldInput: {minHeight: "44px"}, footerAction: {padding: "12px 0"}}};
+    const opts = {routing: "hash", signInUrl: "/welcome/#signin", signUpUrl: "/welcome/#signup", signInForceRedirectUrl: "/app/", signUpForceRedirectUrl: "/app/start/", appearance: look};
+    let shown = null;
+    const show = () => A.load().then(c => { const k = isNew() ? "up" : "in"; if (k === shown) return; shown = k; ui.innerHTML = "";
+      if (c.user) { ui.innerHTML = '<p class="sub">You are signed in.</p><a class="btn btn-p btn-lg" href="/app/">Open the app</a>'; return; }
+      const el = document.createElement("div"); ui.appendChild(el);
+      if (k === "up") c.mountSignUp(el, opts); else c.mountSignIn(el, opts); })
+      .catch(() => { ui.innerHTML = '<p class="sub">Sign-in could not load. Check your connection and try again.</p>'; });
+    show(); $$(".wtabs [role=tab]").forEach(t => t.addEventListener("click", () => setTimeout(show, 0)));
+  }
   $("#oauth").addEventListener("click", e => {
     const b = e.target.closest("[data-strategy]"); if (!b) return;
     if (!A || !A.live) { location.href = isNew() ? "/app/start/" : "/app/"; return; }

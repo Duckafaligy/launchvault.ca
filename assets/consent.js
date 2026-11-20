@@ -20,7 +20,7 @@ window.LVConsent = (() => {
     box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "false");
     box.setAttribute("aria-labelledby", "lvc-t"); box.setAttribute("aria-describedby", "lvc-d");
     box.innerHTML = `<h2 id="lvc-t">Cookies and storage</h2>
-<p id="lvc-d">We keep a few things on this device so the site works, like your checklist ticks. <em>No ads, no tracking.</em> <a href="/legal/cookies/">Cookie policy</a></p>
+<p id="lvc-d">We store a few things on this device so the site works. <em>No ads, no tracking.</em> <a href="/legal/cookies/">Cookie policy</a></p>
 <div class="lvc-panel" id="lvc-panel" hidden>
   <div class="lvc-row"><label for="lvc-nec">Necessary</label>${sw("nec", true, true)}<em id="lvc-nec-d">Your ticks, reading progress and this choice. Always on.</em></div>
   <div class="lvc-row"><label for="lvc-pref">Preferences</label>${sw("pref", allowed("preferences"), false)}<em id="lvc-pref-d">Remembers your homepage quiz and your Library view.</em></div>

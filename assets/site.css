@@ -722,14 +722,17 @@ footer .fmsg,.dk .fmsg{color:#E2E8F0;justify-content:flex-start}
 .chrome .dots i:nth-child(3){background:#28C840}
 /* site streak (assets/streak.js): fixed full-screen particle wave behind all content, spacefs-style (2026-11-18).
    Content sits above it; light section backgrounds are see-through so the wave carries on through them. */
-.streak{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
+.streak{position:absolute;top:0;left:0;width:100%;height:100vh;z-index:0;pointer-events:none;
+  /* X9: the wave only lives in the top-right corner of the first screen and is gone by 560px, so it never sits behind a run of body text */
+  -webkit-mask-image:radial-gradient(ellipse 42% 560px at 100% 0,#000 30%,transparent 100%);mask-image:radial-gradient(ellipse 42% 560px at 100% 0,#000 30%,transparent 100%)}
+@media (max-width:900px){.streak{-webkit-mask-image:radial-gradient(ellipse 60% 150px at 100% 0,#000 20%,transparent 100%);mask-image:radial-gradient(ellipse 60% 150px at 100% 0,#000 20%,transparent 100%)}}
 #main,footer.foot{position:relative;z-index:1}
 .sec-alt{background:rgba(248,250,252,.55)}
 .hero{position:relative}.hero > .wrap{position:relative;z-index:1}
 /* footer details (2026-11-18): data status, label key, sources row */
 .fbrand .fstat{margin:14px 0 0;font-size:13px;line-height:1.55;color:#CBD5E1}
 .fbrand .fstat b{color:#6EE7B7;font-weight:600}
-.fbrand .fstat em{color:#FDBA74}
+.fbrand .fstat em{color:#FB7185}
 .fkey{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 32px;margin-top:48px;padding-top:28px;border-top:1px solid rgba(255,255,255,.08)}
 .fkey h4,.fsrc h4{margin:0;font:600 14px var(--fd);color:#F8FAFC}
 .fkey h4{grid-column:1/-1}
@@ -763,6 +766,14 @@ footer.foot .lb.x{color:#FCA5A5;background:rgba(229,83,61,.16)}footer.foot .lb.n
 .hero .hmail .form{margin-top:8px}
 .hmail .hmn{margin-top:8px;font-size:14px;color:var(--text)}
 .fbot .lgl a{min-width:44px;justify-content:center}
+/* blog: what the blog is (BI1), the first-customers line on cards, a plain meta line on posts (BP1) */
+.blede{margin-top:10px;font-size:16px;line-height:24px;color:var(--text);max-width:62ch}
+.blede a{color:var(--brand);text-decoration:underline;text-underline-offset:3px}
+.post .pfc{display:block;margin-top:10px;font-size:14px;line-height:20px;color:var(--ink)}
+.pz .pmeta{font-size:14px;line-height:20px;color:var(--text)}
+.appcta + .sec-alt{margin-top:0}
+/* X3: 12px minimum on the public pages (the scaled hero product mock keeps its own sizes) */
+.article .plot svg text,.article .plot .tag text,.article .fig svg text,.article .mv .n,.article .mv .w{font-size:12px}
 
 /* =====================================================================
    Round 11: remodel + motion. Shared components (see COMPONENTS.md).

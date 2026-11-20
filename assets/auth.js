@@ -5,23 +5,26 @@
      LV_GATE      false = the app opens without signing in (current choice). true = signed-out visitors go to /welcome/.
    While LV_CLERK_PK is empty the site runs in PREVIEW mode: sign-in buttons go straight to /app/ and a preview bar shows. */
 const LV_CLERK_PK = "pk_test_ZGFzaGluZy1zcGlkZXItNDg2LmNsZXJrLmFjY291bnRzLmRldiQ";   // development instance (dashing-spider-486)
-const LV_AUTH = false;   // OFF until the Clerk dashboard is finished and /welcome/ uses Clerk's prebuilt sign-in (bot protection needs it)
+const LV_AUTH = true;    // login ON (Clerk prebuilt sign-in on /welcome/). Stories stay readable without an account (LV_GATE false)
 const LV_GATE = false;
-const LV_CLERK_JS = "https://cdn.jsdelivr.net/npm/@clerk/clerk-js@6.42.3/dist/clerk.browser.js";
+// Clerk's recommended no-bundler setup: clerk-js v6 + its UI bundle, both served from this instance's Frontend API,
+// so the two always match and Clerk never blocks the SDK as outdated. The host comes from the publishable key.
+const LV_FAPI = LV_CLERK_PK ? atob(LV_CLERK_PK.split("_")[2]).replace(/\$$/, "") : "";
+const LV_CLERK_JS = `https://${LV_FAPI}/npm/@clerk/clerk-js@6/dist/clerk.browser.js`;
+const LV_CLERK_UI = `https://${LV_FAPI}/npm/@clerk/ui@1/dist/ui.browser.js`;
 
 window.LVAuth = (() => {
   const live = LV_AUTH && !!LV_CLERK_PK;
   let clerk = null, loading = null;
+  const script = (src, attrs = {}) => new Promise((res, rej) => {
+    const s = document.createElement("script"); s.src = src; s.async = true; s.crossOrigin = "anonymous";
+    Object.entries(attrs).forEach(([k, v]) => s.setAttribute(k, v)); s.onload = res; s.onerror = () => rej(new Error("could not load " + src)); document.head.appendChild(s);
+  });
   const load = () => {
     if (!live) return Promise.resolve(null);
-    if (loading) return loading;
-    loading = new Promise((res, rej) => {
-      const s = document.createElement("script");
-      s.src = LV_CLERK_JS; s.async = true; s.crossOrigin = "anonymous";
-      s.setAttribute("data-clerk-publishable-key", LV_CLERK_PK);
-      s.onload = async () => { try { clerk = window.Clerk; await clerk.load(); res(clerk); } catch (e) { rej(e); } };
-      s.onerror = rej; document.head.appendChild(s);
-    });
+    if (!loading) loading = script(LV_CLERK_UI)
+      .then(() => script(LV_CLERK_JS, {"data-clerk-publishable-key": LV_CLERK_PK}))
+      .then(async () => { clerk = window.Clerk; await clerk.load({ui: {ClerkUI: window.__internal_ClerkUICtor}}); return clerk; });
     return loading;
   };
   const email = () => clerk && clerk.user && clerk.user.primaryEmailAddress ? clerk.user.primaryEmailAddress.emailAddress : null;
@@ -79,7 +82,7 @@ window.LVAuth = (() => {
       const e = email(); if (!bar) return;
       bar.innerHTML = !LV_AUTH ? "Preview: accounts open soon. Your progress stays on this device."
         : e ? `Signed in as <b>${e.replace(/</g, "")}</b> <button type="button" id="soBtn">Sign out</button>`
-            : `Preview: sign-ups open soon. <a href="/welcome/">Sign in</a>`;
+            : `Your progress is saved on this device. <a href="/welcome/">Sign in</a> to keep it everywhere.`;
       const so = document.getElementById("soBtn"); if (so) so.addEventListener("click", signOut);
       document.querySelectorAll("[data-auth-email]").forEach(n => { n.textContent = e || "Not signed in (preview)"; });
       document.querySelectorAll("[data-auth-out]").forEach(n => { n.hidden = !e; });

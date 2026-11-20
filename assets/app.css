@@ -1049,4 +1049,22 @@ ol.tnow .snap .sb b{font:600 14px var(--fd);color:var(--ink)}
 .opt[aria-checked=true]{border-color:var(--brand);background:#EFF4FF}.opt[aria-checked=true] i{box-shadow:inset 0 0 0 5px var(--brand)}
 .qp .bar i,.bar.v i{background:var(--brand)}
 .side .brand{min-height:44px;min-width:44px}
-.top .ttl a{display:inline-flex;align-items:center;min-height:44px;min-width:44px}
+@media (min-width:721px){.top .ttl a{display:inline-flex;align-items:center;min-height:44px;min-width:44px}}
+/* ========== 2026-11-19 UI batch 3: phone reader hero (R3), Library sort grid + coming soon (L3/L4), app 404 (N1) ========== */
+.sumc>.fcmore{align-self:flex-start}
+@media (max-width:600px){
+  .sumc{display:flex;flex-direction:column}
+  .sumc .dek:not(.open){display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;line-clamp:4;overflow:hidden}
+  .sumc .ktiles,.sumc .synced{order:1}.sumc .fcust{order:2}.sumc .rmeta{order:3}
+  .sumc .srow{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}.sumc .srow::-webkit-scrollbar{display:none}.sumc .srow>*{flex:none}
+}
+@media (min-width:1101px){#lout{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}}
+.lsoon{margin-top:32px}
+.lsoon h2{font:600 22px/28px var(--fd)}
+.lsoon p{margin:4px 0 12px;font-size:15px;color:var(--text)}
+.lsoon .soonrow img{flex:none;border-radius:6px}
+.lsoon .soonrow .nm small,.lsoon .soonrow .nv{color:var(--text)}
+.nf{padding:24px}
+.nf .nfs{display:flex;width:100%;max-width:420px;margin:0 0 16px}
+.nf .nfb{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+@media (max-width:600px){.nf{padding:16px}}

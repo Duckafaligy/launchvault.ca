@@ -274,7 +274,7 @@
     $("#lpat").insertAdjacentHTML("beforeend", pats.map(p => `<option>${esc(p)}</option>`).join(""));
     if (!pats.includes(st.pat)) st.pat = "";
     if (st.tab !== "all" && !D.tabs[st.tab]) st.tab = "all";
-    if (!["new", "mrr", "growth"].includes(st.sort)) st.sort = "new";
+    if (!["new", "mrr", "growth", "read"].includes(st.sort)) st.sort = "new";
     if (!["", "prog", "done", "saved"].includes(st.lp)) st.lp = "";
     const ctl = () => { if ($("#lq").value !== st.q) $("#lq").value = st.q; $("#lpat").value = st.pat; $("#lsort").value = st.sort;
       $$("[data-tab]").forEach(b => b.setAttribute("aria-pressed", b.dataset.tab === st.tab)); $$("[data-lp]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lp === (st.lp || ""))); };
@@ -286,7 +286,7 @@
       let L = READY.filter(s => (st.tab === "all" || s.tab === st.tab) && (!st.pat || s.pattern === st.pat)
         && (!st.lp || (st.lp === "saved" ? sv.includes(s.slug) : stateOf(s) === st.lp))
         && (!q || [s.name, s.what, s.pattern, s.title, s.first, ...(s.lessons || [])].join(" ").toLowerCase().includes(q)));
-      const key = {new: s => (s.published || "") + (s.stale ? "0" : "1") + String(1e9 - D.stories.indexOf(s)).padStart(10, "0"), mrr: s => s.mrr || 0, growth: s => s.growth == null ? -1e9 : s.growth}[st.sort] || (s => s.published || "");
+      const key = {new: s => (s.published || "") + (s.stale ? "0" : "1") + String(1e9 - D.stories.indexOf(s)).padStart(10, "0"), mrr: s => s.mrr || 0, growth: s => s.growth == null ? -1e9 : s.growth, read: s => -(s.read || 99)}[st.sort] || (s => s.published || "");
       L.sort((a, b) => key(b) > key(a) ? 1 : key(b) < key(a) ? -1 : 0);
       $("[data-lcount]").textContent = L.length === READY.length ? `${READY.length} breakdowns` : `${L.length} of ${READY.length} breakdowns`;
       $("[data-lfcount]").textContent = `Show ${L.length} breakdown${L.length === 1 ? "" : "s"}`;
@@ -394,17 +394,19 @@
   const railDone = () => { if (!rd) return; const slug = rd.dataset.reader, t = ticks(slug), ok = {phases: seen(slug).length >= +rd.dataset.phases, todo: t.length > 0 && t.every(Boolean), check: !!doneOf(slug)};
     $$("[data-rdone]").forEach(n => n.hidden = !ok[n.dataset.rdone]); };
   // coming-soon page: two finished breakdowns of the same type (any ready story fills a gap)
+  // app 404: this week's story and the two newest others
+  const renderNF = () => $$("[data-nfcards]").forEach(n => { n.innerHTML = [S[WEEKS], ...READY.filter(s => s.slug !== WEEKS)].filter(Boolean).slice(0, 3).map(storyCard).join(""); });
   const renderSoon = () => $$("[data-sooncards]").forEach(n => { const L = READY.filter(s => s.tab === n.dataset.sooncards); n.innerHTML = L.concat(READY.filter(s => !L.includes(s))).slice(0, 2).map(storyCard).join(""); });
   document.addEventListener("click", e => {
     const a = e.target.closest('a[href^="#"]');   // an in-page link opens any folded panel its target sits in
     if (a && a.hash.length > 1) for (let d = document.getElementById(a.hash.slice(1)); d; d = d.parentElement) if (d.tagName === "DETAILS") d.open = true;
-    const m = e.target.closest("[data-fcmore]"); if (m) { const on = m.previousElementSibling.classList.toggle("open"); m.setAttribute("aria-expanded", on); m.textContent = on ? "Less" : "More"; }
+    const m = e.target.closest("[data-fcmore]"); if (m) { const on = m.previousElementSibling.classList.toggle("open"); m.setAttribute("aria-expanded", on); m.textContent = on ? (m.dataset.less || "Less") : (m.dataset.more || "More"); }
     const tb = e.target.closest("[data-showtab]"); if (tb) { const d = tb.closest(".lvchart").querySelector(".ctab"); if (d) { d.open = true; d.scrollIntoView({block: "nearest"}); } }
   });
   // chart.js blocked or failed to load: say so and point at the table (chart.js handles its own runtime errors the same way)
   addEventListener("load", () => $$(".lvchart").forEach(r => { const pl = $(".plot", r); if (!pl || $("svg", pl).childElementCount || $(".cfail", r)) return;
     pl.hidden = true; pl.insertAdjacentHTML("afterend", '<div class="cfail" role="status"><span>The chart didn\'t load. Reload, or read the table.</span><button class="btn btn-s" type="button" data-showtab>Show the table</button></div>'); }));
-  const renderAll = () => { renderHome(); renderSaved(); renderSoon(); libDraw(); syncStars(); paint(); railDone(); };
+  const renderAll = () => { renderHome(); renderSaved(); renderSoon(); renderNF(); libDraw(); syncStars(); paint(); railDone(); };
   addEventListener("storage", renderAll);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) renderAll(); });
   addEventListener("lv:changed", () => { clearTimeout(renderAll.t); renderAll.t = setTimeout(() => { renderHome(); renderSaved(); syncStars(); railDone(); }, 50); });

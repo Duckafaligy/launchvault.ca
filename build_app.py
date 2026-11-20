@@ -485,8 +485,8 @@ def reader(E, S, gate=True):
     over = (f'<section class="rsec rcard sumc" id="overview"><div class="rh"><span class="logo big"><img src="{S["logo"]}" alt="" width="44" height="44"></span><div class="rhm">'
             f'<p class="co"><b>{esc(S["name"])}</b><span class="tag">{esc(S.get("type_label") or S["category"])}</span>{stale_chip}</p><p class="what">{esc(S["what"])}</p><p class="what pat">Pattern: <b>{esc(S["pattern"])}</b></p></div>'
             f'<button type="button" class="star" data-star="{slug}" aria-pressed="false">{ic(I["saved"], 18)}<span>Save</span></button></div>'
-            f'<h1>{t_html}</h1><p class="dek">{esc(S["dek"])}</p>{link_row(S)}{first_block(S)}'
-            f'<div class="ktiles">{nums}</div>' + (f'<p class="synced">Revenue numbers from TrustMRR, synced {esc(synced)}.</p>' if synced else "")
+            f'<h1>{t_html}</h1><p class="dek">{esc(S["dek"])}</p>{'<button type="button" class="fcmore" data-fcmore data-more="Read the rest" data-less="Show less" aria-expanded="false">Read the rest</button>' if len(S["dek"]) > 170 else ""}{link_row(S)}{first_block(S)}'
+            f'<div class="ktiles">{nums}</div>' + (f'<p class="synced">Revenue numbers from TrustMRR, synced {esc(synced)}.{" MRR is what all current subscriptions add up to per month." if any(x["k"] == "MRR" for x in S["numbers"][:3]) else ""}</p>' if synced else "")
             + f'<div class="rmeta"><span>By LaunchVault</span><span>{len(S["sources"])} sources</span><span>{S["read_min"]} min read</span><button type="button" class="rpt" data-report="{esc(slug)}">Report a mistake</button></div></section>')
     art = (over + sec("chart", "The numbers", chart_intro(S), chart_block(S))
            + phs + kmoves + locked(recap) + ck + chk + proof)
@@ -575,18 +575,18 @@ def pghead(h, s, attrs=""):
     """Every app page: one visible h1 and one line under it."""
     return f'<h1 class="pg-h"{attrs}>{h}</h1><p class="pg-s">{s}</p>'
 def noscript_list(ready):
-    return ('<noscript><div class="nojs"><p>LaunchVault\'s app needs JavaScript. You can still read the stories on the public blog.</p>'
+    return ('<noscript><style>.jsonly{display:none!important}</style><div class="nojs"><p>LaunchVault\'s app needs JavaScript. You can still read the stories on the public blog.</p>'
             + "".join(f'<a href="/blog/{e["slug"]}/">{esc(e["name"])}: {esc(e["title"])}</a>' for e in ready) + "</div></noscript>")
 def home(E):
     ready = [e for e in E if e["status"] == "ready"]
     body = f'''<div class="pg home2">{pghead("Welcome back", f"{len(ready)} breakdowns ready. Your progress stays on this device.", " data-hh1").replace('<p class="pg-s">', '<p class="pg-s" data-hsum>')}
 <div class="pathnote" id="pathnote" hidden><span><b>Your path is ready:</b> <span data-pathname></span>.</span><a class="tl" href="/app/path/">Open My path</a><button type="button" aria-label="Close" data-closenote>✕</button></div>
-<section class="hnext" data-hnext aria-label="Next step"></section>
-<div data-hstats></div>
+<section class="hnext jsonly" data-hnext aria-label="Next step"></section>
+<div class="jsonly" data-hstats></div>
 <section class="card hsec"><div class="ch"><h2>Stories</h2><span class="meta" data-hcount>{len(ready)} ready</span></div>
-  <div class="hfilt" role="group" aria-label="Show">{"".join(f'<button type="button" data-hf="{k}" aria-pressed="{str(k == "all").lower()}">{t}</button>' for k, t in (("all", "All"), ("new", "Not started"), ("prog", "In progress"), ("done", "Done"), ("saved", "Saved")))}</div>
+  <div class="hfilt jsonly" role="group" aria-label="Show">{"".join(f'<button type="button" data-hf="{k}" aria-pressed="{str(k == "all").lower()}">{t}</button>' for k, t in (("all", "All"), ("new", "Not started"), ("prog", "In progress"), ("done", "Done"), ("saved", "Saved")))}</div>
   <div class="scards" data-hcards></div>{noscript_list(ready)}</section>
-<div class="grid2 h75"><div>
+<div class="grid2 h75 jsonly"><div>
 <section class="card"><div class="ch"><h2>Open checklists</h2><a class="tl" href="/app/checklists/">All checklists</a></div><div data-homecl></div></section>
 <section class="card" data-hpath></section>
 </div><div>
@@ -596,16 +596,22 @@ def home(E):
 
 def saved(E):
     body = f'''<div class="pg">{pghead("Saved", "Stories and steps you starred.")}
-<div data-savedempty></div>
+<div data-savedempty></div>{noscript_list([e for e in E if e["status"] == "ready"])}
 <section class="card hsec" data-savedsec hidden><div class="ch"><h2>Saved stories</h2><span class="meta" data-savedcount></span></div><div class="scards" data-savedcards></div></section>
 <section class="card" data-savedsec2 hidden><div class="ch"><h2>Saved checklist steps</h2></div><div data-saveditems></div></section></div>'''
     return shell(E, "Saved", "Stories and checklist items you starred.", "saved", body)
 
+def soon_list(E):
+    soon = [e for e in E if e["status"] == "soon"]
+    if not soon: return ""
+    row = lambda e: (f'<a class="soonrow" href="{e["href"]}"><img src="{e["logo"]}" alt="" width="24" height="24" loading="lazy"><span class="nm">{esc(e["name"])}<small> · {esc(e["type"])}</small></span>'
+                     f'<span class="nv"><b>{e["hv"]}</b>{"revenue" + esc(e["hu"]) if e["hu"].startswith(" in ") else esc(e["hu"].strip())}{lb(e["hl"])}{f"""<span class="lb n">Stale</span>""" if e["stale"] else ""}<span>TrustMRR · {esc(e["hd"])}</span></span></a>')
+    return ('<section class="lsoon"><h2>Coming soon</h2><p>Real, verified numbers already. The breakdown is still being written.</p><div class="card">' + "".join(row(e) for e in soon) + "</div></section>")
 def library(E):
     ready = [e for e in E if e["status"] == "ready"]
     body = f'''<div class="pg">
 {pghead("Library", f"{len(ready)} breakdowns. Each ends with a checklist you can start this week.")}
-<div class="lbar2">
+<div class="lbar2 jsonly">
   <label class="lsearch">{ic(I["srch"], 16)}<input type="search" id="lq" placeholder="Search companies, patterns or lessons" aria-label="Search the library"></label>
   <div class="ltabs" role="group" aria-label="Type"><button type="button" data-tab="all" aria-pressed="true">All</button>{"".join(f'<button type="button" data-tab="{k}" aria-pressed="false">{v}</button>' for k, v in TABS.items())}</div>
   <button class="lfbtn" type="button" id="lfopen" aria-haspopup="dialog">Filters<span class="lfn" data-lfn hidden></span></button>
@@ -613,13 +619,14 @@ def library(E):
     <h2 class="lfh">Filters</h2>
     <label class="lfl"><span>Pattern</span><select class="sel" id="lpat" aria-label="Pattern"><option value="">Any pattern</option></select></label>
     <div class="lfl"><span>Progress</span><div class="seg" role="group" aria-label="Progress"><button type="button" data-lp="" aria-pressed="true">Any</button><button type="button" data-lp="prog" aria-pressed="false">In progress</button><button type="button" data-lp="done" aria-pressed="false">Done</button><button type="button" data-lp="saved" aria-pressed="false">Saved</button></div></div>
-    <label class="lfl"><span>Sort</span><select class="sel" id="lsort" aria-label="Sort"><option value="new">Newest</option><option value="mrr">Biggest MRR</option><option value="growth">Fastest growth</option></select></label>
+    <label class="lfl"><span>Sort</span><select class="sel" id="lsort" aria-label="Sort"><option value="new">Newest</option><option value="mrr">Biggest MRR</option><option value="growth">Fastest growth</option><option value="read">Quickest read</option></select></label>
     <button class="btn btn-p lfgo" type="button" data-lfclose data-lfcount>Show {len(ready)} breakdowns</button>
   </dialog>
   <button class="lclear" type="button" id="lclear" hidden>Clear <span aria-hidden="true">×</span><span class="sr"> filters</span></button>
 </div>
-<p class="lcount" data-lcount>{len(ready)} breakdowns</p>
+<p class="lcount jsonly" data-lcount>{len(ready)} breakdowns</p>
 <div id="lout" class="scards"></div>
+{soon_list(E)}
 <p class="lfoot">Revenue read from Stripe by TrustMRR; each number keeps the date it was read. Fastest growth is the average monthly growth between the first and last point of each series.</p>
 {noscript_list(ready)}
 </div>'''
@@ -676,13 +683,15 @@ def blog_post(S, E):
 
 # ============================================================ blog cards (homepage block + blog index featured)
 def card(S, feat=False):
+    fcu = (S.get("facts") or {}).get("first_customers") or {}; sh = fcu.get("short") or ""
+    pfc = f'<span class="pfc">First customers: {esc(sh)}{(" " + lb(fcu.get("label"))) if sh.lower() != "not public" else ""}</span>' if sh else ""
     alt = f'{esc(S["name"])} breakdown cover'
     pic = f'<picture><source srcset="/assets/covers/{S["slug"]}.webp" type="image/webp"><img src="/assets/covers/{S["slug"]}.png" width="1600" height="900" {"fetchpriority=" + chr(34) + "high" + chr(34) if feat else "loading=" + chr(34) + "lazy" + chr(34)} decoding="async" alt="{alt}"></picture>'
     if feat:
-        return (f'<a class="post bfeat" href="/blog/{S["slug"]}/">\n        <div class="cv cover big">{pic}</div>\n        <div class="bd"><h3>{esc(S["title"])}</h3><p>{esc(S["dek"])}</p>\n'
+        return (f'<a class="post bfeat" href="/blog/{S["slug"]}/">\n        <div class="cv cover big">{pic}</div>\n        <div class="bd"><h3>{esc(S["title"])}</h3><p>{esc(S["dek"])}</p>{pfc}\n'
                 f'          <span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · {S["read_min"]} min read · {dlab(S["published"])}</span>\n'
                 '          <span class="bgo">Read the breakdown <span aria-hidden="true">→</span></span></div></a>')
-    return (f'<a class="post" href="/blog/{S["slug"]}/"><div class="cv cover">{pic}</div>\n        <div class="bd"><h3>{esc(S["title"])}</h3><p>{esc(S["dek"])}</p>'
+    return (f'<a class="post" href="/blog/{S["slug"]}/"><div class="cv cover">{pic}</div>\n        <div class="bd"><h3>{esc(S["title"])}</h3><p>{esc(S["dek"])}</p>{pfc}'
             f'<span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · {S["read_min"]} min read<span class="go" aria-hidden="true">→</span></span></div></a>')
 def update_cards(ready, stale=()):
     p = os.path.join(SRC, "index.body.html"); s = rd(p)
@@ -731,10 +740,10 @@ def make_cover(S):
     png = os.path.join(ROOT, "assets", "covers", S["slug"] + ".png")
     if os.path.exists(png): return "kept"
     pts = S["series"]["points"]; vs = [p[1] for p in pts]
-    # y axis scaled to the data: nice ticks from just under the low to just over the high
-    raw = (max(vs) - min(vs)) or max(vs) or 1; mag = 10 ** math.floor(math.log10(raw / 3))
+    # y axis always starts at $0 (same rule as the app charts): nice ticks from 0 to just over the high
+    raw = max(vs) or 1; mag = 10 ** math.floor(math.log10(raw / 3))
     step = next(m * mag for m in (1, 2, 2.5, 5, 10) if raw / (m * mag) <= 4)
-    lo = math.floor(min(vs) / step) * step; hi = math.ceil(max(vs) / step) * step
+    lo = 0; hi = math.ceil(max(vs) / step) * step
     if hi == lo: hi = lo + step
     X0, X1, Y0, Y1 = 250, 1460, 760, 330   # plot box (y0 = baseline)
     sx = lambda i: X0 + i * (X1 - X0) / max(1, len(vs) - 1); sy = lambda v: Y0 - (v - lo) / (hi - lo) * (Y0 - Y1)
