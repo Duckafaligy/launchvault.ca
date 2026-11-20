@@ -1123,3 +1123,6 @@ html.gated body{background:var(--alt)}
 @media (min-width:834px){.scards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (min-width:1280px){.scards{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (min-width:1600px){.scards{grid-template-columns:repeat(4,minmax(0,1fr))}}
+/* community: phone header gets a person icon (Account) instead of an Account tab */
+.macct{display:none}
+@media (max-width:720px){.macct{display:inline-flex}}
