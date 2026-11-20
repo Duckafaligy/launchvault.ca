@@ -139,6 +139,10 @@
 .win .mv.on .n{background:var(--brand);border-color:var(--brand);color:#fff}
 .win .mv.turn .n{background:#fff;border-color:#D1D5DB;color:#374151}
 .win .mv.turn.on .n{background:var(--brand);border-color:var(--brand);color:#fff}
+.win .mv.future{opacity:.52;transition:opacity .2s}
+.win .mv.future:hover{opacity:.88}
+.plot .tag.future{opacity:.42}
+.plot .tag.past rect{stroke:#2563EB}
 
 /* ---- Home ---- */
 .hcont{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 16px;border:1px solid var(--hl);border-radius:12px}

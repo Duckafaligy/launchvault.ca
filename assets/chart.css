@@ -76,3 +76,5 @@ table.sr{display:block}
 .legend .lm{width:18px;height:18px;font:600 12px/18px var(--fn)}
 .plot .mk text,.plot .note{font-size:12px}
 .moves .n{font-size:12px}
+.moves button.future{opacity:.52;transition:opacity .2s}.moves button.future:hover{opacity:.88}
+.plot .mk.future{opacity:.42}

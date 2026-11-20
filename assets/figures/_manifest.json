@@ -1,0 +1,72 @@
+[
+  {
+    "slug": "postiz",
+    "url": "https://postiz.com",
+    "status": 200,
+    "title": "Postiz: The Agentic Social Media Scheduling Platform",
+    "ok": true
+  },
+  {
+    "slug": "dm-champ",
+    "url": "https://dmchamp.com",
+    "status": 200,
+    "title": "DM Champ: White Label AI Platform for Agencies, from $297/mo",
+    "ok": true
+  },
+  {
+    "slug": "rezi",
+    "url": "https://www.rezi.ai",
+    "status": 200,
+    "title": "The #1 AI Resume Builder – Forbes' Top Pick. Trusted by 4,785,497+",
+    "ok": true
+  },
+  {
+    "slug": "gojiberry",
+    "url": "https://gojiberry.ai",
+    "status": 200,
+    "title": "Gojiberry AI - Grow your sales with warm leads & high intent outreach",
+    "ok": true
+  },
+  {
+    "slug": "aeo-engine",
+    "url": "https://aeoengine.ai",
+    "status": 200,
+    "title": "The AI SEO Agency That Wins Brands AI Citations | AEO Engine",
+    "ok": true
+  },
+  {
+    "slug": "boothie",
+    "url": "https://boothieapp.com",
+    "status": 200,
+    "title": "Boothie: AI photo editor",
+    "ok": true
+  },
+  {
+    "slug": "mindset",
+    "url": "https://mindsetapp.com",
+    "status": 200,
+    "title": "Mindset App | The #1 Best Motivation App to Start Your Day",
+    "ok": true
+  },
+  {
+    "slug": "stencil-ai",
+    "url": "https://www.stencilai.app",
+    "status": 200,
+    "title": "Tattoo Stencil Maker – Turn Any Photo Into a Stencil in Seconds",
+    "ok": true
+  },
+  {
+    "slug": "upscale-b2b",
+    "url": "https://upscaleb2b.com",
+    "status": 200,
+    "title": "Upscale B2B - Revenue Generation via Outbound",
+    "ok": true
+  },
+  {
+    "slug": "windmill-growth",
+    "url": "https://windmillgrowth.com",
+    "status": 200,
+    "title": "Windmill Growth | LinkedIn Ghostwriting for B2B Founders",
+    "ok": true
+  }
+]

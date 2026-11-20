@@ -131,36 +131,55 @@
     const pill = k => `<span class="lb ${LB[k][0]}">${LB[k][1]}</span>`;
     const money = v => "$" + v.toLocaleString("en-US");
     const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
+    const monotone = pts => {
+      const n = pts.length; if (n < 2) return pts.length ? `M${pts[0][0]} ${pts[0][1]}` : "";
+      if (n === 2) return `M${pts[0][0]} ${pts[0][1]}L${pts[1][0]} ${pts[1][1]}`;
+      const dx = [], dy = [], s = [], m = [];
+      for (let i = 0; i < n - 1; i++) { dx[i] = pts[i + 1][0] - pts[i][0]; dy[i] = pts[i + 1][1] - pts[i][1]; s[i] = dy[i] / dx[i]; }
+      m[0] = s[0]; m[n - 1] = s[n - 2];
+      for (let i = 1; i < n - 1; i++) m[i] = s[i - 1] * s[i] <= 0 ? 0 : 3 * (dx[i - 1] + dx[i]) / ((2 * dx[i] + dx[i - 1]) / s[i - 1] + (dx[i] + 2 * dx[i - 1]) / s[i]);
+      let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+      for (let i = 0; i < n - 1; i++) { const h = dx[i] / 3;
+        d += ` C${(pts[i][0] + h).toFixed(1)} ${(pts[i][1] + m[i] * h).toFixed(1)} ${(pts[i + 1][0] - h).toFixed(1)} ${(pts[i + 1][1] - m[i + 1] * h).toFixed(1)} ${pts[i + 1][0].toFixed(1)} ${pts[i + 1][1].toFixed(1)}`; }
+      return d;
+    };
     const plot = $("#plot"), tip = $("#tip"), movesEl = $("#moves"), size = plot.dataset.size, inHero = !!plot.closest(".win");
     let G = null, M0 = 0, animate = !reduce && IO, pinned = null, userPin = false;
     movesEl.innerHTML = EVT.map((e, i) => `<li><button type="button" class="mv${i === TURN ? " turn" : ""}" data-i="${i}"><span class="n">${i + 1}</span><span><b>${e[2]}</b><small>${e[3]}</small></span><span class="w">${e[1]}</span></button></li>`).join("");
     function draw() {
-      const W = Math.max(260, plot.clientWidth - 12), narrow = W < 520, H = narrow ? (inHero ? 190 : 230) : size === "big" ? 320 : inHero ? 192 : 262;
-      const L = 46, R = 14, T = 12, B = 50, TAG = narrow ? 14 : 16, span = 34 - M0;
+      const W = Math.max(260, plot.clientWidth - 12), narrow = W < 520, H = narrow ? (inHero ? 196 : 236) : size === "big" ? 326 : inHero ? 202 : 268;
+      const L = 46, R = 16, T = 24, B = 52, TAG = narrow ? 14 : 16, span = 34 - M0;
       const X = m => L + Math.max(0, m - M0) / span * (W - L - R), Y = v => T + (1 - v / 450000) * (H - T - B);
       svg.innerHTML = ""; svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("height", H);
       const defs = el("defs", {}, svg), gr = el("linearGradient", {id: "ga", x1: 0, x2: 0, y1: 0, y2: 1}, defs);
-      el("stop", {offset: 0, "stop-color": "#2563EB", "stop-opacity": .14}, gr); el("stop", {offset: 1, "stop-color": "#2563EB", "stop-opacity": 0}, gr);
+      el("stop", {offset: 0, "stop-color": "#2563EB", "stop-opacity": .22}, gr); el("stop", {offset: 1, "stop-color": "#2563EB", "stop-opacity": 0}, gr);
+      const mg = el("linearGradient", {id: "hmask-g", gradientUnits: "userSpaceOnUse", x1: 0, x2: W, y1: 0, y2: 0}, defs);
+      const ms1 = el("stop", {offset: 1, "stop-color": "#fff", "stop-opacity": 1}, mg), ms2 = el("stop", {offset: 1, "stop-color": "#fff", "stop-opacity": .26}, mg);
+      el("rect", {x: 0, y: 0, width: W, height: H, fill: "url(#hmask-g)"}, el("mask", {id: "hmask", maskUnits: "userSpaceOnUse", x: 0, y: 0, width: W, height: H}, defs));
       [0, 100000, 200000, 300000, 400000].forEach(v => {
         el("line", {x1: L, x2: W - R, y1: Y(v), y2: Y(v), stroke: "#EEF0F3"}, svg);
         el("text", {x: L - 8, y: Y(v) + 4, "text-anchor": "end"}, svg).textContent = v === 0 ? "$0" : "$" + v / 1000 + "k";
       });
-      const xt = M0 ? [22, 26, 30, 34] : narrow ? [0, 12, 24, 34] : [0, 6, 12, 18, 24, 34];
-      xt.forEach((m, i) => el("text", {x: X(m), y: H - 6, "text-anchor": i === 0 ? "start" : i === xt.length - 1 ? "end" : "middle"}, svg).textContent = m === 34 ? "Nov 2026" : mlabel(m));
-      if (!narrow && !M0) { const t = el("text", {x: X(0) + 2, y: Y(0) - 8, fill: "#9CA3AF"}, svg); t.textContent = "No public revenue numbers before Sep 2024"; }
+      const xt = M0 ? [22, 26, 30, 34] : narrow ? [0, 12, 24, 34] : [0, 8, 18, 25, 32, 34];
+      xt.forEach((m, i) => el("text", {x: X(m), y: H - 6, "text-anchor": i === 0 ? "start" : i === xt.length - 1 ? "end" : "middle"}, svg).textContent = m === 34 ? "Nov '26" : m === 25 ? "Early '26" : mlabel(m).replace("20", "'"));
+      if (!narrow && !M0) { const t = el("text", {x: X(0) + 2, y: Y(0) - 8, fill: "#64748B"}, svg); t.textContent = "No public revenue numbers before Sep 2024"; }
       if (!M0) el("line", {x1: X(0), x2: X(8), y1: Y(0), y2: Y(0), stroke: "#CBD5E1", "stroke-dasharray": "2 3"}, svg);
-      const PV = P.filter(p => p[0] >= M0), pts = PV.map(p => [X(p[0]), Y(p[1])]);
-      const line = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
-      el("path", {class: "area", d: `${line} L${pts.at(-1)[0]} ${Y(0)} L${pts[0][0]} ${Y(0)} Z`, fill: "url(#ga)"}, svg);
-      el("path", {class: "line", d: line, fill: "none", stroke: "#2563EB", "stroke-width": 2, "stroke-linejoin": "round", pathLength: 1}, svg);
-      const vline = el("line", {y1: T, y2: H - B, stroke: "#9CA3AF", "stroke-dasharray": "3 3", opacity: 0}, svg);
+      const PV = P.filter(p => p[0] >= M0), pts = PV.map(p => [X(p.x ?? p[0]), Y(p[1])]);
+      const line = monotone(pts);
+      const fg = el("g", {mask: "url(#hmask)"}, svg);
+      el("path", {class: "area", d: `${line} L${pts.at(-1)[0].toFixed(1)} ${Y(0)} L${pts[0][0].toFixed(1)} ${Y(0)} Z`, fill: "url(#ga)"}, fg);
+      el("path", {class: "line", d: line, fill: "none", stroke: "#2563EB", "stroke-width": 2.4, "stroke-linejoin": "round", "stroke-linecap": "round", pathLength: 1}, fg);
+      const vline = el("line", {y1: T, y2: H - B, stroke: "#2563EB", "stroke-width": 1.25, "stroke-dasharray": "3 3", opacity: 0}, svg);
+      const tsPill = el("g", {class: "tspill", opacity: 0}, svg);
+      const tsRect = el("rect", {y: 2, height: 18, rx: 5, fill: "#0B1220"}, tsPill);
+      const tsTxt = el("text", {y: 14, "text-anchor": "middle", fill: "#fff", "font-size": "11", "font-weight": "600"}, tsPill);
       PV.forEach((p, i) => {
-        if (p[2] === "v") el("circle", {cx: pts[i][0], cy: pts[i][1], r: 4.5, fill: "#10B981", stroke: "#fff", "stroke-width": 2}, svg);
-        else el("circle", {cx: pts[i][0], cy: pts[i][1], r: 3, fill: "#fff", stroke: p[2] === "x" ? "#E5533D" : "#2563EB", "stroke-width": 1.5}, svg);
+        if (p[2] === "v") el("circle", {cx: pts[i][0], cy: pts[i][1], r: 5, fill: "#10B981", stroke: "#fff", "stroke-width": 2}, fg);
+        else el("circle", {cx: pts[i][0], cy: pts[i][1], r: 3.4, fill: "#fff", stroke: p[2] === "x" ? "#E5533D" : "#2563EB", "stroke-width": 1.8}, fg);
       });
       const ax = X(ALT[0]), ay = Y(ALT[1]);
-      el("rect", {class: "dmd", x: ax - 3.5, y: ay - 3.5, width: 7, height: 7, fill: "#E5533D", transform: `rotate(45 ${ax} ${ay})`}, svg);
-      const hl = el("circle", {r: 5.5, fill: "none", stroke: "#0B1220", "stroke-width": 1.5, opacity: 0}, svg);
+      el("rect", {class: "dmd", x: ax - 3.5, y: ay - 3.5, width: 7, height: 7, fill: "#E5533D", transform: `rotate(45 ${ax} ${ay})`}, fg);
+      const hl = el("circle", {r: 6.5, fill: "rgba(37,99,235,.14)", stroke: "#2563EB", "stroke-width": 2, opacity: 0}, svg);
       const tags = EVT.map((e, i) => {           // decorative mirror of the list (the list is the accessible control)
         const g = el("g", {class: "tag" + (i === TURN ? " turn" : ""), "aria-hidden": "true"}, svg);
         if (e[0] < M0) { g.setAttribute("display", "none"); return g; }
@@ -171,7 +190,7 @@
         return g;
       });
       const hit = el("rect", {x: L, y: T, width: W - L - R, height: H - B - T, fill: "transparent"}, svg);
-      G = {X, Y, W, H, B, vline, hl, tags};
+      G = {X, Y, W, H, B, vline, hl, tags, ms1, ms2, tsPill, tsRect, tsTxt};
       hit.addEventListener("pointermove", ev => {
         const r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width;
         let best = null, bd = 1e9;
@@ -199,19 +218,32 @@
       let left = ox + 14; if (left + w > plot.clientWidth - 4) left = ox - w - 14;
       tip.style.left = Math.max(4, left) + "px"; tip.style.top = Math.min(Math.max(4, oy - h / 2), plot.clientHeight - h - 4) + "px";
     }
-    function mark(x, y) { G.vline.setAttribute("x1", x); G.vline.setAttribute("x2", x); G.vline.setAttribute("opacity", 1);
-      if (y == null) G.hl.setAttribute("opacity", 0); else { G.hl.setAttribute("cx", x); G.hl.setAttribute("cy", y); G.hl.setAttribute("opacity", 1); } }
-    function setActive(i) { G.tags.forEach((g, k) => g.classList.toggle("on", k === i)); movesEl.querySelectorAll(".mv").forEach((b, k) => b.classList.toggle("on", k === i)); }
+    function mark(x, y, label) {
+      G.vline.setAttribute("x1", x); G.vline.setAttribute("x2", x); G.vline.setAttribute("opacity", 1);
+      if (G.ms1 && G.ms2) { G.ms1.setAttribute("offset", Math.min(1, (x + 2) / G.W)); G.ms2.setAttribute("offset", Math.min(1, (x + 18) / G.W)); }
+      if (G.tsPill && label) {
+        G.tsTxt.textContent = label;
+        const pw = Math.max(54, label.length * 6.5 + 14), px = Math.max(pw / 2 + 2, Math.min(G.W - pw / 2 - 2, x));
+        G.tsRect.setAttribute("x", px - pw / 2); G.tsRect.setAttribute("width", pw); G.tsTxt.setAttribute("x", px);
+        G.tsPill.setAttribute("opacity", 1);
+      } else if (G.tsPill) G.tsPill.setAttribute("opacity", 0);
+      if (y == null) G.hl.setAttribute("opacity", 0); else { G.hl.setAttribute("cx", x); G.hl.setAttribute("cy", y); G.hl.setAttribute("opacity", 1); }
+    }
+    function setActive(i) {
+      G.tags.forEach((g, k) => { g.classList.toggle("on", k === i); g.classList.toggle("past", i >= 0 && k < i); g.classList.toggle("future", i >= 0 && k > i); });
+      movesEl.querySelectorAll(".mv").forEach((b, k) => { b.classList.toggle("on", k === i); b.classList.toggle("future", i >= 0 && k > i); });
+    }
     function showPoint(p) {
-      const x = G.X(p[0]), y = G.Y(p[1]); mark(x, y); setActive(-1);
+      const x = G.X(p[0]), y = G.Y(p[1]), lb = p === ALT ? "Mar 2026" : mlabel(p[0]);
+      mark(x, y, lb); setActive(-1);
       place(x, y, `<div class="d">${p === ALT ? "Mar 2026, second source" : mlabel(p[0])}</div><div class="tv">${money(p[1])}<span class="d" style="font:500 12px var(--fd)">${p[2] === "v" ? " MRR" : " /mo"}</span></div><div class="s">${pill(p[2])}<span>${p[3]}</span></div>`);
     }
     function showEvent(i) {
       const e = EVT[i], x = G.X(e[0]), p = P.find(q => q[0] === e[0] && q[0] >= M0);
-      mark(x, p ? G.Y(p[1]) : null); setActive(i);
+      mark(x, p ? G.Y(p[1]) : null, e[1]); setActive(i);
       place(x, p ? G.Y(p[1]) : (G.H - G.B) * .55, `<div class="d">Move ${i + 1} · ${e[1]}</div><div class="tt">${e[2]}</div><div>${e[3]}</div><div class="s">${pill(e[4])}</div>`);
     }
-    function showDefault() { if (pinned != null) showEvent(pinned); else showPoint(P[P.length - 1]); }
+    function showDefault() { if (pinned != null) showEvent(pinned); else showEvent(TURN); }
     // a clicked move stays highlighted, and the list scrolls to it (inside its own panel, never the page)
     function pin(i, byUser) { pinned = pinned === i && (userPin || !byUser) ? null : i; userPin = !!byUser && pinned != null; showDefault();   // a user's click takes over a ghost's pin
       const b = movesEl.querySelectorAll(".mv")[i];

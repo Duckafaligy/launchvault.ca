@@ -442,7 +442,8 @@ def reader(E, S, gate=True):
     tn = ""
     if S.get("wayback"):
         def snap(w):
-            img = f'<picture><source srcset="{w["image"].replace(".png", ".webp")}" type="image/webp"><img src="{w["image"]}" alt="{esc(S["name"])} homepage, {esc(w["date"])}" width="800" height="450" loading="lazy" decoding="async"></picture>' if w.get("image") else ""
+            img = (f'<figure class="rfig" style="margin:12px 0"><picture><source srcset="{w["image"].replace(".png", ".webp")}" type="image/webp"><img src="{w["image"]}" alt="{esc(S["name"])} homepage, {esc(w["date"])}" width="800" height="450" loading="lazy" decoding="async"></picture>'
+                   f'<figcaption class="rcap">{esc(S["name"])}. ({esc(w["date"])}). <em>{esc(w["headline"])}</em> [Archived website screenshot]. Internet Archive Wayback Machine. <a href="{esc(w["source"])}" target="_blank" rel="noopener">{esc(w["source"])}</a></figcaption></figure>') if w.get("image") else ""
             link = "Open snapshot" if "archive.org" in w["source"] else "Open site"
             return (f'<li class="snap"><div class="sb"><b>{esc(w["date"])}</b>{lb(w.get("label", "Wayback"))}</div>'
                     f'{img}<p class="hl">"{esc(w["headline"])}"</p>' + (f'<p class="sp">{esc(w["sub"])}</p>' if w.get("sub") else "") + f'{prices(w.get("prices"))}<div class="ft"><span>{esc(w.get("prices_date", ""))}</span><a href="{esc(w["source"])}" target="_blank" rel="noopener">{link} ↗</a></div></li>')
@@ -487,10 +488,18 @@ def reader(E, S, gate=True):
            + f'</div><span class="snph">Phase <b data-curph>1</b> of {n}</span><div class="rprog"><i data-readbar2></i></div></nav>')
     title = S["title"]; em = S.get("title_em")
     t_html = esc(title[:-len(em.rstrip("."))]) + f'<em class="em">{esc(em.rstrip("."))}</em>' if em and title.endswith(em.rstrip(".")) else esc(title)
+    site_url = (S.get("links") or {}).get("site") or S.get("site") or ""
+    fig_path = os.path.join(ROOT, "assets", "figures", f"{slug}-site.webp")
+    fig_html = ""
+    if os.path.exists(fig_path) and site_url:
+        fig_html = (f'<figure class="rfig"><picture><source srcset="/assets/figures/{slug}-site.webp" type="image/webp">'
+                    f'<img src="/assets/figures/{slug}-site.png" width="800" height="450" loading="lazy" decoding="async" alt="{esc(S["name"])} live website homepage"></picture>'
+                    f'<figcaption class="rcap">{esc(S["name"])}. (2026, November 20). <em>{esc(S["name"])} official product homepage</em> [Website screenshot]. {esc(S["name"])}. '
+                    f'<a href="{esc(site_url)}" target="_blank" rel="noopener">{esc(site_url)}</a></figcaption></figure>')
     over = (f'<section class="rsec rcard sumc" id="overview"><div class="rh"><span class="logo big"><img src="{S["logo"]}" alt="" width="44" height="44"></span><div class="rhm">'
             f'<p class="co"><b>{esc(S["name"])}</b><span class="tag">{esc(S.get("type_label") or S["category"])}</span>{stale_chip}</p><p class="what">{esc(S["what"])}</p><p class="what pat">Pattern: <b>{esc(S["pattern"])}</b></p></div>'
             f'<button type="button" class="star" data-star="{slug}" aria-pressed="false">{ic(I["saved"], 18)}<span>Save</span></button></div>'
-            f'<h1>{t_html}</h1><p class="dek">{esc(S["dek"])}</p>{'<button type="button" class="fcmore" data-fcmore data-more="Read the rest" data-less="Show less" aria-expanded="false">Read the rest</button>' if len(S["dek"]) > 170 else ""}{link_row(S)}{first_block(S)}'
+            f'<h1>{t_html}</h1><p class="dek">{esc(S["dek"])}</p>{'<button type="button" class="fcmore" data-fcmore data-more="Read the rest" data-less="Show less" aria-expanded="false">Read the rest</button>' if len(S["dek"]) > 170 else ""}{fig_html}{link_row(S)}{first_block(S)}'
             f'<div class="ktiles">{nums}</div>' + (f'<p class="synced">Revenue numbers from TrustMRR, synced {esc(synced)}.{" MRR is what all current subscriptions add up to per month." if any(x["k"] == "MRR" for x in S["numbers"][:3]) else ""}</p>' if synced else "")
             + f'<div class="rmeta"><span>By LaunchVault</span><span>{len(S["sources"])} sources</span><span>{S["read_min"]} min read</span><button type="button" class="rpt" data-report="{esc(slug)}">Report a mistake</button></div></section>')
     from urllib.parse import quote

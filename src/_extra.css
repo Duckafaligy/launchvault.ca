@@ -322,3 +322,9 @@ footer.foot .lb.x{color:#FCA5A5;background:rgba(229,83,61,.16)}footer.foot .lb.n
 main .lede{background:rgba(255,255,255,.82);box-shadow:0 0 14px 10px rgba(255,255,255,.82);border-radius:8px}
 main .dk .lede{background:none;box-shadow:none}
 .hmi .fmsg.on ~ .hmn{display:none}
+/* APA-cited editorial figures */
+.rfig{margin:20px 0 24px;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;box-shadow:var(--sh1)}
+.rfig .rfig-in{background:#F8FAFC;border-bottom:1px solid var(--line2)}
+.rfig img{display:block;width:100%;height:auto}
+.rcap{padding:10px 14px;font-size:12.5px;line-height:1.5;color:#4B5563}
+.rcap a{color:var(--brand);text-decoration:underline;text-underline-offset:2px}

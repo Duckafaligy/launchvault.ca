@@ -42,6 +42,12 @@
       const W = Math.max(280, plot.clientWidth), narrow = W < 560, H = narrow ? 230 : 300, L = 48, R = 12, T = 12, B = moves.length || before ? 54 : 30;
       const X = x => L + (x - x0) / Math.max(1, x1 - x0) * (W - L - R), Y = v => T + (1 - v / top) * (H - T - B);
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("height", H); svg.innerHTML = "";
+      const defs = el("defs", {}, svg);
+      const gr = el("linearGradient", {id: "lvcg", x1: 0, x2: 0, y1: 0, y2: 1}, defs);
+      el("stop", {offset: 0, "stop-color": "#2563EB", "stop-opacity": .2}, gr); el("stop", {offset: 1, "stop-color": "#2563EB", "stop-opacity": 0}, gr);
+      const mg = el("linearGradient", {id: "lvmask-g", gradientUnits: "userSpaceOnUse", x1: 0, x2: W, y1: 0, y2: 0}, defs);
+      const ms1 = el("stop", {offset: 1, "stop-color": "#fff", "stop-opacity": 1}, mg), ms2 = el("stop", {offset: 1, "stop-color": "#fff", "stop-opacity": .26}, mg);
+      el("rect", {x: 0, y: 0, width: W, height: H, fill: "url(#lvmask-g)"}, el("mask", {id: "lvmask", maskUnits: "userSpaceOnUse", x: 0, y: 0, width: W, height: H}, defs));
       [0, .25, .5, .75, 1].forEach(f => { const v = top * f; el("line", {x1: L, x2: W - R, y1: Y(v), y2: Y(v), class: "gl"}, svg);
         el("text", {x: L - 8, y: Y(v) + 4, "text-anchor": "end", class: "ax"}, svg).textContent = short(v); });
       // x axis: the first and last month are always named; a January in between is added where there is room
@@ -52,14 +58,18 @@
         el("text", {x: L + 17, y: H - B + 21, "text-anchor": "middle"}, g).textContent = "← " + before; el("title", {}, g).textContent = `${before} move${before > 1 ? "s" : ""} before ${mlab(x0)}`; }
       if (S.empty_note && pts[0].x - x0 > 4 && !narrow) el("text", {x: X(x0) + 4, y: Y(0) - 8, class: "note"}, svg).textContent = S.empty_note;
       const P = pts.map(p => [X(p.x), Y(p.v)]), line = monotone(P);
-      const area = el("path", {class: "area", d: line + `L${P.at(-1)[0].toFixed(1)} ${Y(0)}L${P[0][0].toFixed(1)} ${Y(0)}Z`}, svg);
-      const ln = el("path", {class: "line", d: line}, svg);
+      const fg = el("g", {mask: "url(#lvmask)"}, svg);
+      const area = el("path", {class: "area", fill: "url(#lvcg)", d: line + `L${P.at(-1)[0].toFixed(1)} ${Y(0)}L${P[0][0].toFixed(1)} ${Y(0)}Z`}, fg);
+      const ln = el("path", {class: "line", d: line}, fg);
       const cross = el("line", {y1: T, y2: H - B, class: "cross"}, svg);
+      const tsPill = el("g", {class: "tspill", opacity: 0}, svg);
+      const tsRect = el("rect", {y: 0, height: 18, rx: 5, fill: "#0B1220"}, tsPill);
+      const tsTxt = el("text", {y: 12.5, "text-anchor": "middle", fill: "#fff", "font-size": "11", "font-weight": "600"}, tsPill);
       const all = pts.concat(alt);
       all.forEach(p => { const k = LBC[p.l] || "c", cx = X(p.x), cy = Y(p.v);
-        if (k === "x") el("rect", {x: cx - 4, y: cy - 4, width: 8, height: 8, class: "pt x", transform: `rotate(45 ${cx} ${cy})`}, svg);
-        else el("circle", {cx, cy, r: k === "v" ? 5 : 3.2, class: "pt" + (k === "v" ? " v" : "") + (p.k ? " kd" : "")}, svg);
-        if (p.k) el("text", {x: cx - 8, y: cy - 10, "text-anchor": "end", class: "ax kdl"}, svg).textContent = p.k; });
+        if (k === "x") el("rect", {x: cx - 4, y: cy - 4, width: 8, height: 8, class: "pt x", transform: `rotate(45 ${cx} ${cy})`}, fg);
+        else el("circle", {cx, cy, r: k === "v" ? 5 : 3.2, class: "pt" + (k === "v" ? " v" : "") + (p.k ? " kd" : "")}, fg);
+        if (p.k) el("text", {x: cx - 8, y: cy - 10, "text-anchor": "end", class: "ax kdl"}, fg).textContent = p.k; });
       const hl = el("circle", {r: 7, class: "hl"}, svg);
       const mks = moves.map((m, i) => { const g = el("g", {class: "mk" + (m.turn ? " turn" : ""), tabindex: "-1", "aria-hidden": "true"}, svg);
         const cx = Math.min(Math.max(X(m.x), L + (before ? 48 : 9)), W - R - 9) + (moves[i - 1] && Math.abs(X(moves[i - 1].x) - X(m.x)) < 18 ? 9 : 0);
@@ -69,7 +79,7 @@
       hit.addEventListener("pointermove", ev => { const r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width;
         let b = 0; all.forEach((p, i) => { if (Math.abs(X(p.x) - mx) < Math.abs(X(all[b].x) - mx)) b = i; }); showPoint(all[b]); });
       hit.addEventListener("pointerleave", () => showDefault());
-      G = {X, Y, cross, hl, mks, area, ln, H, B};
+      G = {X, Y, W, cross, hl, mks, area, ln, H, B, ms1, ms2, tsPill, tsRect, tsTxt};
       // the line is visible by default (print, screenshots, no IntersectionObserver); it only replays a draw-in once, when first scrolled into view
       if (!reduce && !root.dataset.drawn && "IntersectionObserver" in window) { root.dataset.drawn = 1;
         const io = new IntersectionObserver(es => { if (!es[0].isIntersecting) return; io.disconnect(); const l = G.ln, a = G.area, len = l.getTotalLength(); if (!len) return;
@@ -80,14 +90,34 @@
       showDefault();
     };
     const setRO = (a, b, c) => { ro.innerHTML = `<b>${a}</b><span class="rd-d">${b}</span><span class="rd-s">${c}</span>`; };
-    const mark = (x, y) => { G.cross.setAttribute("x1", x); G.cross.setAttribute("x2", x); G.cross.style.opacity = 1;
-      if (y == null) G.hl.style.opacity = 0; else { G.hl.setAttribute("cx", x); G.hl.setAttribute("cy", y); G.hl.style.opacity = 1; } };
-    const activate = i => { cur = i; G.mks.forEach((g, k) => g.classList.toggle("on", k === i)); if (hooks.move) hooks.move(i < 0 ? -1 : moves[i].i); };
-    function showPoint(p) { mark(G.X(p.x), G.Y(p.v)); activate(-1); setRO(money(p.v) + (S.unit || ""), p.d, chip(p.l) + " " + esc(p.s)); }
-    function showMove(i) { const m = moves[i], p = pts.find(q => q.x === m.x); mark(G.X(m.x), p ? G.Y(p.v) : null); activate(i);
+    const mark = (x, y, label) => {
+      G.cross.setAttribute("x1", x); G.cross.setAttribute("x2", x); G.cross.style.opacity = 1;
+      if (G.ms1 && G.ms2) { G.ms1.setAttribute("offset", Math.min(1, (x + 2) / G.W)); G.ms2.setAttribute("offset", Math.min(1, (x + 18) / G.W)); }
+      if (G.tsPill && label) {
+        G.tsTxt.textContent = label;
+        const pw = Math.max(56, label.length * 6.5 + 14), px = Math.max(pw / 2 + 2, Math.min(G.W - pw / 2 - 2, x));
+        G.tsRect.setAttribute("x", px - pw / 2); G.tsRect.setAttribute("width", pw); G.tsTxt.setAttribute("x", px);
+        G.tsPill.setAttribute("opacity", 1);
+      } else if (G.tsPill) G.tsPill.setAttribute("opacity", 0);
+      if (y == null) G.hl.style.opacity = 0; else { G.hl.setAttribute("cx", x); G.hl.setAttribute("cy", y); G.hl.style.opacity = 1; }
+    };
+    const activate = i => {
+      cur = i;
+      G.mks.forEach((g, k) => { g.classList.toggle("on", k === i); g.classList.toggle("future", i >= 0 && k > i); });
+      if (hooks.move) hooks.move(i < 0 ? -1 : moves[i].i);
+    };
+    function showPoint(p) { mark(G.X(p.x), G.Y(p.v), p.d); activate(-1); setRO(money(p.v) + (S.unit || ""), p.d, chip(p.l) + " " + esc(p.s)); }
+    function showMove(i) { const m = moves[i], p = pts.find(q => q.x === m.x); mark(G.X(m.x), p ? G.Y(p.v) : null, m.when); activate(i);
       setRO(`Move ${m.i + 1}`, esc(m.when), `<span style="color:#0B1220;font-weight:600">${esc(m.text)}</span> · ${esc(m.detail || "")} ${chip(m.label)}`); }
-    function showDefault() { const p = pts.at(-1); G.cross.style.opacity = 0; G.hl.style.opacity = 0; activate(-1);
-      setRO(money(p.v) + (S.unit || ""), p.d, chip(p.l) + " " + esc(p.s)); }
+    function showDefault() {
+      const turnIdx = moves.findIndex(m => m.turn);
+      if (turnIdx >= 0) { showMove(turnIdx); return; }
+      const p = pts.at(-1); G.cross.style.opacity = 0; G.hl.style.opacity = 0;
+      if (G.ms1 && G.ms2) { G.ms1.setAttribute("offset", 1); G.ms2.setAttribute("offset", 1); }
+      if (G.tsPill) G.tsPill.setAttribute("opacity", 0);
+      activate(-1);
+      setRO(money(p.v) + (S.unit || ""), p.d, chip(p.l) + " " + esc(p.s));
+    }
     draw();
     let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(draw, 100); });
     return {showMove: n => { const k = moves.findIndex(m => m.i === n); if (k >= 0) showMove(k); else { const m = (D.moves || [])[n]; if (m) { activate(-1); G.cross.style.opacity = 0; G.hl.style.opacity = 0; setRO(`Move ${n + 1}`, esc(m.when), `<span style="color:#0B1220;font-weight:600">${esc(m.text)}</span> ${chip(m.label)}`); } } }, showDefault, moves};
@@ -101,7 +131,7 @@
   document.querySelectorAll(".lvchart").forEach(root => { try {
     const D = JSON.parse(root.querySelector(".lvchart-data").textContent);
     const list = root.querySelector(".moves"), band = root.querySelector(".pband");
-    const api = LVChart(root, D, {move: i => { if (list) list.querySelectorAll("button").forEach((b, k) => b.classList.toggle("on", k === i)); }});
+    const api = LVChart(root, D, {move: i => { if (list) list.querySelectorAll("button").forEach((b, k) => { b.classList.toggle("on", k === i); b.classList.toggle("future", i >= 0 && k > i); }); }});
     if (list) { list.addEventListener("pointerover", e => { const b = e.target.closest("button[data-i]"); if (b) api.showMove(+b.dataset.i); });
       list.addEventListener("focusin", e => { const b = e.target.closest("button[data-i]"); if (b) api.showMove(+b.dataset.i); });
       list.addEventListener("click", e => { const b = e.target.closest("button[data-i]"); if (b) api.showMove(+b.dataset.i); });
