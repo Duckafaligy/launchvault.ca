@@ -234,11 +234,15 @@
     $("[data-hsum]").textContent = started.length ? `You've started ${started.length} of ${READY.length} breakdowns and seen ${seenPh} lessons.${tk[0] ? ` ${tk[0]} checklist ticks so far.` : ""}`
       : `${READY.length} breakdowns ready. Start with this week's${adult ? "." : ": each one ends with steps that fit around school."}`;
     // hero: the story you were reading, else this week's breakdown
+    const fmtDate = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ""); return m ? `${MON[+m[2] - 1]} ${+m[3]} ${m[1]}` : s || ""; };
+    const hnum = x => { const t = (x.nt || []).map(([k, v, d]) => [k, v, d]); if (x.ns) t.push(["Sources", x.ns, x.nsd ? "Read " + x.nsd : ""]);
+      return t.length ? `<div class="hnums">${t.map(([k, v, d]) => `<div><span class="k">${esc(k)}</span><b>${esc(v)}</b><span class="d">${esc(d)}</span></div>`).join("")}</div>` : ""; };
     const last = ls.get("lv-last"), L = last && S[last.slug] && S[last.slug].status === "ready" && stateOf(S[last.slug]) !== "new" ? S[last.slug] : null, H = L || W;
     if (H) { const n = nph(H), ph = L ? Math.min(n, last.ph || 1) : 1, pct = readPct(H.slug);
-      $("[data-hhero]").innerHTML = `<div class="ch"><h2>${L ? "Continue where you left off" : "This week's breakdown"}</h2><span class="meta">${L ? `Phase ${ph} of ${n}` : `Published ${esc((d => MON[+d[1] - 1] + " " + +d[2] + " " + d[0])((H.published || "").split("-")))}`}</span></div>`
+      $("[data-hhero]").innerHTML = `<div class="ch"><h2>${L ? "Continue where you left off" : "This week's breakdown"}</h2><span class="meta">${L ? `Phase ${ph} of ${n} · ` : ""}${H.published ? `Published ${esc(fmtDate(H.published))}` : ""}</span></div>`
         + `<div class="hh"><span class="logo">${logo(H, 44)}</span><div class="hhm"><h3>${esc(H.title || H.name)}</h3><p>${esc(H.what)}</p><p class="hhc"><span class="tag">${esc(H.type)}</span><span class="tag">${H.read} min read</span><span class="tag">${n} phases</span></p></div>`
         + `<div class="hhn"><b>${esc(H.hv)}</b><span>${esc(H.hm || H.hu)}</span><span class="hhl">${chip(H.hl)}${staleChip(H)}</span><small>${esc([H.hs, H.hd].filter(Boolean).join(" · "))}</small>${H.spark}</div></div>`
+        + hnum(H)
         + (H.first ? `<div class="hfc"><span>First customers</span><p>${esc(notPublic(H.first))}${H.firstl && !/^not public$/i.test(H.first) ? " " + chip(H.firstl) : ""}</p></div>` : "")
         + `<div class="hact"><a class="btn btn-p" href="${L ? `${H.href}#ph${ph}` : H.href}">${L ? "Continue reading" + (pct ? ` (${pct}%)` : "") : "Read this week's breakdown"} <span class="arr" aria-hidden="true">→</span></a></div>`; }
     // stats strip: only once there is real activity
@@ -567,5 +571,35 @@
     d.showModal(); $("#rwhat", d).focus();
   });
 
-  syncChecklists(); renderAll();
+  // ---------- hackathon judge code (?judge=SPARK2026 or form[data-judge]) ----------
+  const JCODE = "SPARK2026";
+  const urlJ = new URLSearchParams(location.search).get("judge");
+  let urlHit = false;
+  if (urlJ !== null) { const u = new URL(location.href); u.searchParams.delete("judge"); try { history.replaceState(null, "", u.pathname + u.search + u.hash); } catch {} }   // keep the code out of shared links
+  if (urlJ && urlJ.trim().toUpperCase() === JCODE) { urlHit = ls.get("lv-judge") !== JCODE; ls.set("lv-judge", JCODE); }
+  const syncJudge = () => {
+    const on = ls.get("lv-judge") === JCODE;
+    $$('[data-locked="1"]').forEach(el => { el.hidden = !on; });
+    $$(".gatewrap, #gate").forEach(el => { el.hidden = on; });
+    $$("[data-plan]").forEach(el => { el.textContent = on ? "Judge pass" : "Free plan"; });
+    $$("[data-upg]").forEach(el => { el.textContent = on ? "Manage" : "Upgrade"; });
+    $$("[data-plan-chip]").forEach(el => { el.textContent = on ? "Judge pass" : "Free"; });
+    $$("[data-plan-sm]").forEach(el => { el.hidden = on; });
+    $$("[data-judge-off]").forEach(el => { el.hidden = !on; });
+    $$(".jcard form[data-judge]").forEach(el => { el.hidden = on; });
+  };
+  $$("form[data-judge]").forEach(f => f.addEventListener("submit", e => {
+    e.preventDefault();
+    const inp = $("input[name=code]", f), err = $(".jerr", f), v = (inp ? inp.value : "").trim().toUpperCase();
+    if (v === JCODE) {
+      if (err) err.hidden = true;
+      if (inp) inp.value = "";
+      ls.set("lv-judge", JCODE); syncJudge(); toast("Judge pass on. All 10 breakdowns are unlocked in this browser.");
+    } else if (err) { err.hidden = false; if (inp) inp.focus(); }
+  }));
+  document.addEventListener("click", e => {
+    if (e.target.closest("[data-judge-off-btn]")) { try { localStorage.removeItem("lv-judge"); } catch {} syncJudge(); toast("Judge pass off. Back to the Free view."); }
+  });
+
+  syncJudge(); if (urlHit) toast("Judge pass on. All 10 breakdowns are unlocked in this browser."); syncChecklists(); renderAll();
 })();

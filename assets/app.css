@@ -1166,3 +1166,28 @@ html.gated body{background:var(--alt)}
 .home2 .lsoon{margin-top:24px}
 @media (prefers-reduced-motion:reduce){.hck .bx{transition:none}}
 @media (min-width:834px) and (max-width:1279px){.home2 .hsec .scards .scard:nth-child(3){display:none}}
+/* home hero 4-tile KPI strip (matches Paper Home - Desktop 1440) */
+.hnums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);margin-bottom:14px}
+.hnums>div{display:flex;flex-direction:column;gap:2px;padding:12px 16px;min-width:0}
+.hnums>div+div{border-left:1px solid var(--line2)}
+.hnums .k{font-size:12.5px;line-height:18px;color:var(--text)}
+.hnums b{font:600 19px/24px var(--fn);color:var(--ink);letter-spacing:-.01em}
+.hnums .d{font-size:12px;line-height:16px;color:var(--text)}
+@media (max-width:700px){.hnums{grid-template-columns:1fr 1fr}.hnums>div:nth-child(3){border-left:0}.hnums>div:nth-child(n+3){border-top:1px solid var(--line2)}}
+/* mobile library filter pills: full width on 390px so 'Services' is never clipped next to Filters button */
+@media (max-width:600px){
+  .lbar2 .ltabs{flex:1 1 100%;flex-wrap:wrap}
+  .lbar2 .ltabs button{padding:0 12px;font-size:13.5px}
+}
+/* hackathon judge code form inside #gate and /app/account/ */
+.jcard{margin-top:14px;padding:16px 20px}
+.jcard [data-judge-off]{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.jcard [data-judge-off]:not([hidden]){display:flex}
+.jcard [data-judge-off][hidden],.jform[hidden]{display:none!important}
+.gate .jform{margin-top:14px;padding-top:14px;border-top:1px solid var(--line2)}
+.jform label{display:block;font:600 13.5px/20px var(--fd);color:var(--ink);margin-bottom:6px}
+.jrow{display:flex;gap:8px;align-items:center;max-width:340px}
+.jrow input{flex:1;min-width:0;height:44px;padding:0 12px;border:1px solid var(--line);border-radius:8px;font:500 14px var(--fn);color:var(--ink);background:#fff}
+.jrow .btn{min-height:44px;flex:none}
+.jerr{margin:6px 0 0;font-size:13px;line-height:18px;color:var(--pop);font-weight:500}
+@media (max-width:420px){.tabs{padding-left:2px;padding-right:2px}.tabs a{font-size:11px;letter-spacing:-.02em;padding:0 1px}}

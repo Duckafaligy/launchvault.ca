@@ -258,7 +258,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
   <nav aria-label="Main">{side}</nav>
   <p class="sgrp">This week</p>{wk}
   
-  <div class="foot"><div class="plan">Free plan <a href="/app/account/#plan">Upgrade</a></div><a class="si" href="/app/account/"{cur("acct")}>{ic(I["acct"])}<span class="t">Account</span></a></div>
+  <div class="foot"><div class="plan"><span data-plan>Free plan</span> <a href="/app/account/#plan" data-upg>Upgrade</a></div><a class="si" href="/app/account/"{cur("acct")}>{ic(I["acct"])}<span class="t">Account</span></a></div>
 </aside>
 <div class="main">
   <div class="prev" id="prevbar" role="status">Preview: accounts open soon. Your progress stays on this device.</div>
@@ -266,7 +266,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
     {f'<a class="mback" href="{crumbs[0][0]}" aria-label="Back to {esc(crumbs[0][1])}">' + ic(I["back"], 22) + '</a>' if crumbs else ""}<a class="mlogo" href="/app/" aria-label="LaunchVault app home">{LV}</a>
     <div class="ttl">{ttl}</div>
     <button class="srch" type="button" data-cmd>{ic(I["srch"], 16)}<span>Search breakdowns</span><kbd>⌘K</kbd></button>
-    <a class="chip" href="/app/account/#plan">Free <small>plan</small></a>
+    <a class="chip" href="/app/account/#plan"><span data-plan-chip>Free</span> <small data-plan-sm>plan</small></a>
     <button class="ibtn" type="button" data-cmd aria-label="Search">{ic(I["srch"], 20)}</button><a class="ibtn macct" href="/app/account/" aria-label="Account">{ic(I["user"], 20)}</a>
   </header>
   <main id="main">
@@ -416,6 +416,8 @@ def first_block(S):
     rows = "".join(row(t, k) for t, k in (("First customers came from", "first_customers"), ("First money came from", "first_revenue"), ("Cost to start", "cost_to_start"), ("Team", "team")))
     return f'<div class="fcust"><h2>How the first customers came</h2><dl>{rows}</dl></div>' if rows else ""
 
+JUDGE_FORM = ('<form class="jform" data-judge novalidate><label for="jc{i}">Have a hackathon judge code?</label><div class="jrow"><input id="jc{i}" name="code" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false">'
+              '<button class="btn btn-s" type="submit">Unlock</button></div><p class="jerr" role="alert" hidden>That code didn&#39;t work.</p></form>')
 def reader(E, S, gate=True):
     set_srcmap(S); slug = S["slug"]; n = len(S["phases"])
     me = next((e for e in E if e["slug"] == slug), {}); stale_chip = f'<span class="lb n">{esc(me["stale"])}</span>' if me.get("stale") else ""
@@ -469,7 +471,8 @@ def reader(E, S, gate=True):
     also = "the lessons recap, Fact checks and Then and now" if tn else "the lessons recap and Fact checks"
     gate_html = (f'<div class="gate" id="gate"><h3>{ic(I["lock"], 18)}{f"Phases 2 to {n} are" if n > 2 else "Phase 2 is"} on Pro</h3><p>Pro is $7.99 a month. Payments open soon.</p>'
                  f'<p>Phase 1, the numbers, the checklist, the story check and the Sources stay free. Also on Pro: {also}.</p>'
-                 '<div class="acts"><a class="btn btn-s" href="/app/account/#parent">Under 18? Send a parent link</a></div></div>')
+                 '<div class="acts"><a class="btn btn-s" href="/app/account/#parent">Under 18? Send a parent link</a></div>'
+                 + JUDGE_FORM.replace('{i}', 'g') + '</div>')
     teaser = f'<div class="gatewrap"><div class="fade" aria-hidden="true">{phase(1, S["phases"][1]).replace(" open>", ">")}</div>{gate_html}</div>' if n > 1 and gate else ""
     phs = sec("phases", "How it happened", f"The story in {n} steps, in order. Each one ends with a lesson you can use.", f'<div class="ptl">{phases_free}' + (teaser + f'<div id="locked" data-locked="1" hidden>{phases_rest}</div>' if gate else phases_rest) + "</div>")
     locked = lambda h: f'<div data-locked="1" hidden>{h}</div>' if gate and h else h
@@ -862,7 +865,7 @@ def main():
     steps = [{"id": c["id"], "text": c["text"], "from": c["from"], "n": int(c["id"][1:]), "task": TASKS.get(c["id"], ""), "ph": phase_of(pz, c["from"])[0], "why": phase_of(pz, c["from"])[1]} for c in [pz_ck[i] for i in (0, 1, 5, 3, 2)]]
     APPDATA = {
         "stories": [{k: e[k] for k in ("slug", "name", "title", "tab", "type", "what", "logo", "pattern", "lessons", "hv", "hu", "hl", "hd", "hm", "hs", "first", "firstl", "sub", "status", "stale", "href", "read", "published", "mrr", "growth")}
-                    | {"spark": spark(e["series"]), "phases": len(e["S"]["phases"]), "site": (e["S"].get("links") or {}).get("site") or e["S"].get("site", "")} for e in E if e["status"] == "ready"],
+                    | {"spark": spark(e["series"]), "phases": len(e["S"]["phases"]), "nt": [[re.sub(r"\s*\(.*?\)", "", x["k"]), x["v"], x["date"]] for x in e["S"]["numbers"][:3]], "ns": len(e["S"]["sources"]), "nsd": latest_date(x["date"] for x in e["S"]["sources"]), "site": (e["S"].get("links") or {}).get("site") or e["S"].get("site", "")} for e in E if e["status"] == "ready"],
         "tabs": TABS,
         "checklists": [{"slug": S["slug"], "name": S["name"], "logo": S["logo"], "href": next(e["href"] for e in E if e["slug"] == S["slug"]), "key": f"lv-{S['slug']}-checks",
                         "items": [c if isinstance(c, dict) else {"text": c, "from": ""} for c in S["checklist"]], "phases": len(S["phases"]),
