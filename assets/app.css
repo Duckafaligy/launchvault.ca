@@ -1058,7 +1058,6 @@ ol.tnow .snap .sb b{font:600 14px var(--fd);color:var(--ink)}
   .sumc .ktiles,.sumc .synced{order:1}.sumc .fcust{order:2}.sumc .rmeta{order:3}
   .sumc .srow{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}.sumc .srow::-webkit-scrollbar{display:none}.sumc .srow>*{flex:none}
 }
-@media (min-width:1101px){#lout{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}}
 .lsoon{margin-top:32px}
 .lsoon h2{font:600 22px/28px var(--fd)}
 .lsoon p{margin:4px 0 12px;font-size:15px;color:var(--text)}
@@ -1106,3 +1105,21 @@ html.gated body{background:var(--alt)}
   .prev a,.prev button{display:inline;min-height:0;padding:14px 4px;margin:-14px 0}}   /* one sentence that wraps as text; the link keeps a 44px-tall hit area */
 
 .qhint{margin:-4px 0 14px;font-size:14.5px;line-height:1.45;color:var(--text)}
+
+/* ---------- wide screens: centre the page in the space right of the sidebar ---------- */
+.main{--colw:1360px;--padx:40px}
+.main:has(.rd2){--colw:1152px}
+@media (max-width:1100px){.main{--padx:32px}}
+@media (max-width:1279px){.main:has(.rd2){--colw:840px}}
+.pg{margin-inline:auto;max-width:var(--colw)}
+.pg.narrow{max-width:900px}
+.rd{margin-inline:auto}
+.rd.rd2{justify-content:center}
+@media (min-width:721px){
+  .top,.snav{padding-inline:calc(max(0px,(100% - var(--colw))/2) + var(--padx))}
+}
+/* story cards: 1 column, 2 from 834, 3 from 1280, 4 from 1600 */
+@media (max-width:833px){.scards{grid-template-columns:minmax(0,1fr)}}
+@media (min-width:834px){.scards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1280px){.scards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1600px){.scards{grid-template-columns:repeat(4,minmax(0,1fr))}}
