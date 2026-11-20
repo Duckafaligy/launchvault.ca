@@ -1,25 +1,27 @@
-<div class="pg"><h1 class="sr">Account</h1>
+<div class="pg"><h1 class="pg-h">Account</h1><p class="pg-s">What LaunchVault keeps on this device.</p>
+<nav class="snav anavm" aria-label="Account sections"><div class="snav-in"><a href="#profile" class="on">Profile</a><a href="#plan">Plans</a><a href="#parent">Parent</a><a href="#email">Email</a><a href="#data">Your data</a></div></nav>
 <div class="acc">
-<nav class="anav" aria-label="Account sections"><a href="#profile" class="on">Profile</a><a href="#plan">Plan and billing</a><a href="#parent">Parent pays</a><a href="#email">Email</a><a href="#data">Your data</a></nav>
+<nav class="anav" aria-label="Account sections"><a href="#profile" class="on">Profile</a><a href="#plan">Plans</a><a href="#parent">Parent pays</a><a href="#email">Email</a><a href="#data">Your data</a></nav>
 <div>
 <section class="asec" id="profile"><h2>Profile</h2><p>We only keep your age range, on this device. No name, school, location or photo.</p>
   <p class="note" style="margin-top:12px" data-noauth-only>Accounts open soon. Until then everything below stays on this device.</p>
   <div class="card"><div class="arow" data-auth-only hidden><span class="k">Email</span><span class="v" data-auth-email></span></div>
-    <div class="arow"><span class="k">Age range</span><span class="v" data-agenote>Set your age range so the right rules apply.</span>
-      <select id="agesel" aria-label="Age range"><option value="">Choose</option><option>13 to 15</option><option>16 to 17</option><option>18 to 20</option><option>21 or older</option></select></div></div></section>
-<section class="asec" id="plan"><div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap"><div><h2>Plan and billing</h2><p>Payments open with accounts. Cancel any time.</p></div>
-  <div class="seg" role="group" aria-label="Billing"><button type="button" data-bill="m" aria-pressed="false">Monthly</button><button type="button" data-bill="y" aria-pressed="true">Yearly <small style="color:#2563EB">save up to 20%</small></button></div></div>
+    <fieldset class="agef"><legend>Age range</legend><p data-agenote>Set your age range so the right rules apply.</p>
+      <label class="opt2"><input type="radio" name="age" value="13 to 15"><span>13 to 15</span></label><label class="opt2"><input type="radio" name="age" value="16 to 17"><span>16 to 17</span></label><label class="opt2"><input type="radio" name="age" value="18 to 20"><span>18 to 20</span></label><label class="opt2"><input type="radio" name="age" value="21 or older"><span>21 or older</span></label></fieldset></div></section>
+<section class="asec" id="plan"><div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap"><div><h2>Plans</h2><p>Payments open soon. Nothing to pay yet.</p></div>
+  <div class="seg" role="group" aria-label="Billing"><button type="button" data-bill="m" aria-pressed="true">Monthly</button><button type="button" data-bill="y" aria-pressed="false">Yearly <small style="color:#2563EB">save up to 20%</small></button></div></div>
   <div class="plans">
     <div class="plan2 cur"><div class="ph2">Free<small>Your plan</small></div><div class="pp">$0</div><p>This week's breakdown plus the first phase of every other story, the quiz and 3 matched stories, every source, checklists on this device.</p></div>
-    <div class="plan2"><div class="ph2">Pro</div><div class="pp" data-pr="pro">$6.49</div><div class="ps" data-ps="pro">a month, $77.88 billed yearly · $7.99 monthly</div><p>Every breakdown, checklists saved to your account, your path saved and updated as stories land.</p></div>
-    <div class="plan2"><div class="ph2">Developer</div><div class="pp" data-pr="developer">$23.99</div><div class="ps" data-ps="developer">a month, $287.88 billed yearly · $29.99 monthly</div><p>Everything in Pro, plus templates and worksheets for every story, 2 breakdown requests a month, new breakdowns 48 hours early, CSV/JSON downloads, API access and priority mistake reports. All coming soon.</p></div>
+    <div class="plan2"><div class="ph2">Pro</div><div class="pp" data-pr="pro">$7.99</div><div class="ps" data-ps="pro">a month, or $6.49 a month billed yearly ($77.88)</div><p>Every breakdown, checklists saved to your account, your path saved and updated as stories land.</p></div>
+    <div class="plan2"><div class="ph2">Developer</div><div class="pp" data-pr="developer">$29.99</div><div class="ps" data-ps="developer">a month, or $23.99 a month billed yearly ($287.88)</div><p>Everything in Pro, plus templates and worksheets for every story, 2 breakdown requests a month, new breakdowns 48 hours early, CSV/JSON downloads, API access and priority mistake reports. All coming soon.</p></div>
   </div>
-  <div class="card" style="margin-top:12px;border:1px solid #E11D48"><div class="arow"><span class="v"><b style="color:#0B1220;font-weight:600">Lifetime access · $149.99 once</b><small>Beta only. Everything in Developer, forever, no subscription and no limits.</small></span><a class="btn btn-p" href="/#pricing">See offer</a></div></div>
-  <p class="note" style="margin-top:12px">Payments will run through Stripe and receipts go to whoever pays. Nothing to pay yet: plans open with accounts.</p></section>
-<section class="asec" id="parent"><h2>Parent pays</h2><p>Under 18? A parent pays and gets the receipts. Send them a link; they choose the plan.</p>
+  <details class="card life"><summary><span><b>Lifetime access · $149.99 once, beta</b><small>One payment instead of a subscription.</small></span><span class="btn btn-s">See what's included</span></summary>
+    <p>Everything in Developer, with no subscription and no limits, for as long as LaunchVault runs. Offered during the beta only. Payments open soon.</p></details>
+  <p class="note" style="margin-top:12px">Payments will run through Stripe and receipts go to whoever pays. Nothing can be bought yet.</p>
+  <div id="parent" class="parentb"><h3>Parent pays</h3><p>Under 18? A parent pays and gets the receipts. Send them a link to the plans; they choose.</p>
   <div class="card cb"><div class="prow"><input type="email" id="pemail" placeholder="parent@email.com" aria-label="Parent's email" autocomplete="off"><button class="btn btn-s" type="button" id="psend">Email the link</button><button class="btn btn-s" type="button" id="pcopy">Copy link</button></div>
     <div class="pflow" data-pflow><span class="t"><i></i>Link sent</span><span class="t"><i></i>Waiting for the parent</span><span class="t"><i></i>Plan starts</span></div>
-    <p class="meta" style="margin-top:10px">The parent sees the price, pays through Stripe and gets every receipt by email. You never enter card details. Paying opens with accounts.</p></div></section>
+    <p class="meta" style="margin-top:10px">The parent will see the price, pay through Stripe and get every receipt by email. You never enter card details. Payments open soon.</p></div></div></section>
 <section class="asec" id="email"><h2>Email</h2><p>Email is the only way we will contact you. Extras are off until you turn them on.</p>
   <div class="card">
     <div class="arow"><span class="v"><b style="color:#0B1220;font-weight:500">Weekly breakdown</b><small>One email when a new story is out</small></span><button class="tgl" type="button" role="switch" aria-checked="false" data-pref="new_story" aria-label="Weekly breakdown"><span class="sw"></span></button></div>

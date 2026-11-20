@@ -452,7 +452,7 @@ def reader(E, S, gate=True):
     ck = sec("todo", "Your checklist", '<span data-school="Small steps that copy what worked here, at low cost.">Small steps that copy what worked here, at low cost and around school.</span> Tick them as you go; star one to keep it in Saved.',
              f'<div class="ckl" data-store="{ckey}" data-slug="{slug}"><div class="ckh"><span class="ckp">0 of {len(cl)}</span><span class="bar"><i></i></span><span class="dev">{ic(I["dev"], 14)}On this device</span></div>'
              + "".join(f'<div class="ckw"><button class="ck" type="button" role="checkbox" aria-checked="false"><span class="bx">{CHK}</span><span class="ct">{esc(c["text"])}</span><span class="cf">{esc(c.get("from", ""))}</span></button><button class="ckstar" type="button" data-staritem="{slug}:{i}" aria-pressed="false" aria-label="Save this item">{ic(I["saved"], 16)}</button></div>' for i, c in enumerate(cl))
-             + '<div class="ckf"><span>Ticks stay on this device. Pro saves them to your account.</span><a href="/app/account/#plan">See Pro</a></div></div>')
+             + '<div class="ckf"><span>Ticks stay on this device.</span></div></div>')
     grp = {"Revenue data": [], "Interviews and posts": [], "Archives": []}
     for x in S["sources"]:
         u = (x.get("url") or "") + " " + x["name"]
@@ -571,46 +571,57 @@ def soon_page(E, e):
     return shell(E, e["name"], e["what"], "", body, crumbs=[("/app/library/", "Library"), ("", e["name"])], scripts='\n<script src="/assets/chart.js" defer></script>')
 
 # ============================================================ home, library and the static pages
+def pghead(h, s, attrs=""):
+    """Every app page: one visible h1 and one line under it."""
+    return f'<h1 class="pg-h"{attrs}>{h}</h1><p class="pg-s">{s}</p>'
+def noscript_list(ready):
+    return ('<noscript><div class="nojs"><p>LaunchVault\'s app needs JavaScript. You can still read the stories on the public blog.</p>'
+            + "".join(f'<a href="/blog/{e["slug"]}/">{esc(e["name"])}: {esc(e["title"])}</a>' for e in ready) + "</div></noscript>")
 def home(E):
     ready = [e for e in E if e["status"] == "ready"]
-    body = f'''<div class="pg home2"><h1 class="sr">Home</h1>
+    body = f'''<div class="pg home2">{pghead("Welcome back", f"{len(ready)} breakdowns ready. Your progress stays on this device.", " data-hh1").replace('<p class="pg-s">', '<p class="pg-s" data-hsum>')}
 <div class="pathnote" id="pathnote" hidden><span><b>Your path is ready:</b> <span data-pathname></span>.</span><a class="tl" href="/app/path/">Open My path</a><button type="button" aria-label="Close" data-closenote>✕</button></div>
-<section class="hgreet"><h2>Welcome back</h2><p data-hsum>{len(ready)} breakdowns ready. Your progress stays on this device.</p></section>
-<div class="hstats" data-hstats></div>
-<div class="hrow"><div data-hcont></div><section class="card" data-hquiz></section></div>
+<section class="hnext" data-hnext aria-label="Next step"></section>
+<div data-hstats></div>
 <section class="card hsec"><div class="ch"><h2>Stories</h2><span class="meta" data-hcount>{len(ready)} ready</span></div>
   <div class="hfilt" role="group" aria-label="Show">{"".join(f'<button type="button" data-hf="{k}" aria-pressed="{str(k == "all").lower()}">{t}</button>' for k, t in (("all", "All"), ("new", "Not started"), ("prog", "In progress"), ("done", "Done"), ("saved", "Saved")))}</div>
-  <div class="scards" data-hcards><noscript>{"".join(f'<a class="scard" href="{e["href"]}"><b>{esc(e["name"])}</b></a>' for e in ready)}</noscript></div></section>
-<div class="grid2"><div>
+  <div class="scards" data-hcards></div>{noscript_list(ready)}</section>
+<div class="grid2 h75"><div>
 <section class="card"><div class="ch"><h2>Open checklists</h2><a class="tl" href="/app/checklists/">All checklists</a></div><div data-homecl></div></section>
-<section class="card"><div class="ch"><h2>Your path</h2><a class="tl" href="/app/start/?quiz=1" data-pathcta>Take the quiz</a></div><div class="cb" data-homepath></div><div data-likeyou></div></section>
+<section class="card" data-hpath></section>
 </div><div>
 <section class="card"><div class="ch"><h2>Recent activity</h2></div><ol class="hact" data-hact></ol></section>
 </div></div></div>'''
     return shell(E, "Home", "Your LaunchVault home.", "home", body)
 
 def saved(E):
-    body = '''<div class="pg"><h1 class="sr">Saved</h1>
-<section class="card hsec"><div class="ch"><h2>Saved stories</h2><span class="meta" data-savedcount></span></div><div class="scards" data-savedcards></div></section>
-<section class="card"><div class="ch"><h2>Saved checklist items</h2></div><div data-saveditems></div></section></div>'''
+    body = f'''<div class="pg">{pghead("Saved", "Stories and steps you starred.")}
+<div data-savedempty></div>
+<section class="card hsec" data-savedsec hidden><div class="ch"><h2>Saved stories</h2><span class="meta" data-savedcount></span></div><div class="scards" data-savedcards></div></section>
+<section class="card" data-savedsec2 hidden><div class="ch"><h2>Saved checklist steps</h2></div><div data-saveditems></div></section></div>'''
     return shell(E, "Saved", "Stories and checklist items you starred.", "saved", body)
 
 def library(E):
     ready = [e for e in E if e["status"] == "ready"]
     body = f'''<div class="pg">
-<h1 class="sr">Library</h1>
-<div class="lbar"><label class="lsearch">{ic(I["srch"], 16)}<input type="search" id="lq" placeholder="Search companies, patterns or lessons" aria-label="Search the library"></label></div>
-<div class="fchips">
-  <div class="seg" role="group" aria-label="Type"><button type="button" data-tab="all" aria-pressed="true">All</button>{"".join(f'<button type="button" data-tab="{k}" aria-pressed="false">{v}</button>' for k, v in TABS.items())}</div>
-  <select class="sel" id="lpat" aria-label="Pattern"><option value="">Any pattern</option></select>
-  <select class="sel" id="lsort" aria-label="Sort"><option value="new">Newest</option><option value="mrr">Biggest MRR</option><option value="growth">Fastest growth</option></select>
-  <div class="seg" role="group" aria-label="Progress"><button type="button" data-lp="" aria-pressed="true">Any</button><button type="button" data-lp="prog" aria-pressed="false">In progress</button><button type="button" data-lp="done" aria-pressed="false">Done</button><button type="button" data-lp="saved" aria-pressed="false">Saved</button></div>
-  <button class="tl clear" type="button" id="lclear">Clear filters</button>
+{pghead("Library", f"{len(ready)} breakdowns. Each ends with a checklist you can start this week.")}
+<div class="lbar2">
+  <label class="lsearch">{ic(I["srch"], 16)}<input type="search" id="lq" placeholder="Search companies, patterns or lessons" aria-label="Search the library"></label>
+  <div class="ltabs" role="group" aria-label="Type"><button type="button" data-tab="all" aria-pressed="true">All</button>{"".join(f'<button type="button" data-tab="{k}" aria-pressed="false">{v}</button>' for k, v in TABS.items())}</div>
+  <button class="lfbtn" type="button" id="lfopen" aria-haspopup="dialog">Filters<span class="lfn" data-lfn hidden></span></button>
+  <dialog class="lfs" id="lfs" aria-label="Filters">
+    <h2 class="lfh">Filters</h2>
+    <label class="lfl"><span>Pattern</span><select class="sel" id="lpat" aria-label="Pattern"><option value="">Any pattern</option></select></label>
+    <div class="lfl"><span>Progress</span><div class="seg" role="group" aria-label="Progress"><button type="button" data-lp="" aria-pressed="true">Any</button><button type="button" data-lp="prog" aria-pressed="false">In progress</button><button type="button" data-lp="done" aria-pressed="false">Done</button><button type="button" data-lp="saved" aria-pressed="false">Saved</button></div></div>
+    <label class="lfl"><span>Sort</span><select class="sel" id="lsort" aria-label="Sort"><option value="new">Newest</option><option value="mrr">Biggest MRR</option><option value="growth">Fastest growth</option></select></label>
+    <button class="btn btn-p lfgo" type="button" data-lfclose data-lfcount>Show {len(ready)} breakdowns</button>
+  </dialog>
+  <button class="lclear" type="button" id="lclear" hidden>Clear <span aria-hidden="true">×</span><span class="sr"> filters</span></button>
 </div>
 <p class="lcount" data-lcount>{len(ready)} breakdowns</p>
 <div id="lout" class="scards"></div>
 <p class="lfoot">Revenue read from Stripe by TrustMRR; each number keeps the date it was read. Fastest growth is the average monthly growth between the first and last point of each series.</p>
-<noscript><div>{"".join(f'<a class="scard" href="{e["href"]}"><b>{esc(e["name"])}</b> {e["hv"]}{esc(e["hu"])}</a>' for e in ready)}</div></noscript>
+{noscript_list(ready)}
 </div>'''
     return shell(E, "Library", "Every LaunchVault story, with its numbers labelled and dated.", "lib", body)
 
@@ -668,10 +679,10 @@ def card(S, feat=False):
     alt = f'{esc(S["name"])} breakdown cover'
     pic = f'<picture><source srcset="/assets/covers/{S["slug"]}.webp" type="image/webp"><img src="/assets/covers/{S["slug"]}.png" width="1600" height="900" {"fetchpriority=" + chr(34) + "high" + chr(34) if feat else "loading=" + chr(34) + "lazy" + chr(34)} decoding="async" alt="{alt}"></picture>'
     if feat:
-        return (f'<a class="post bfeat" href="/blog/{S["slug"]}/">\n        <div class="cv cover big">{pic}</div>\n        <div class="bd"><span class="cat">Breakdowns</span><h3>{esc(S["title"])}</h3><p>{esc(S["dek"])}</p>\n'
+        return (f'<a class="post bfeat" href="/blog/{S["slug"]}/">\n        <div class="cv cover big">{pic}</div>\n        <div class="bd"><h3>{esc(S["title"])}</h3><p>{esc(S["dek"])}</p>\n'
                 f'          <span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · {S["read_min"]} min read · {dlab(S["published"])}</span>\n'
                 '          <span class="bgo">Read the breakdown <span aria-hidden="true">→</span></span></div></a>')
-    return (f'<a class="post" href="/blog/{S["slug"]}/"><div class="cv cover">{pic}</div>\n        <div class="bd"><span class="cat">Breakdowns</span><h3>{esc(S["title"])}</h3><p>{esc(S["dek"])}</p>'
+    return (f'<a class="post" href="/blog/{S["slug"]}/"><div class="cv cover">{pic}</div>\n        <div class="bd"><h3>{esc(S["title"])}</h3><p>{esc(S["dek"])}</p>'
             f'<span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · {S["read_min"]} min read<span class="go" aria-hidden="true">→</span></span></div></a>')
 def update_cards(ready, stale=()):
     p = os.path.join(SRC, "index.body.html"); s = rd(p)
@@ -769,15 +780,26 @@ QUIZ = [
     ("Where do people your age hang out online?", ["Reddit or Discord", "TikTok or Instagram", "Not sure"]),
     ("How soon would you like a first sale?", ["This month", "This school term", "No rush"]),
 ]
-# answer -> stories it points to (pattern matches, from each story's public pattern line)
-QW = [[{"stencil-ai": 2}, {"windmill-growth": 1, "postiz": 1}, {"postiz": 2, "dm-champ": 1}],
-      [{"postiz": 2, "stencil-ai": 2}, {"stencil-ai": 2, "windmill-growth": 1, "gojiberry": 1}, {"windmill-growth": 2, "dm-champ": 2}],
-      [{"postiz": 2, "stencil-ai": 1}, {"stencil-ai": 1, "gojiberry": 1}, {"windmill-growth": 2}],
-      [{"windmill-growth": 2, "postiz": 1}, {"windmill-growth": 2, "gojiberry": 2}, {"stencil-ai": 1, "gojiberry": 1}],
-      [{"stencil-ai": 3}, {"windmill-growth": 3}, {"postiz": 2, "dm-champ": 1}, {"gojiberry": 2, "postiz": 1}],
-      [{"postiz": 2, "stencil-ai": 2}, {"windmill-growth": 3}, {"gojiberry": 2, "dm-champ": 2}],
-      [{"postiz": 2}, {"stencil-ai": 1, "windmill-growth": 1}, {}],
-      [{"gojiberry": 2, "windmill-growth": 1}, {"dm-champ": 1, "stencil-ai": 1}, {"postiz": 2}]]
+# answer -> patterns it points to. Each key is a story's real pattern line (PAT); main() expands it to every ready story with that pattern,
+# so a new story with a known pattern is matched without touching this table. Editorial mapping, not data.
+PAT = {"FREE": "Give it away free, charge for the easy version", "CLOSE": "Start with a problem someone close to you has", "REBUILD": "Throw away the first version when nobody pays",
+       "SERVICE": "Start with a small, cheap service, then sell the bigger one", "WORK": "Start with a problem you saw at work", "WAVE": "Ride a wave",
+       "TOOLS": "Sell the tools to people already in the game", "AUD": "Build the audience first, then the app"}
+QW = [[{"CLOSE": 2}, {"SERVICE": 1, "FREE": 1, "AUD": 1, "TOOLS": 1}, {"FREE": 2, "WORK": 1, "WAVE": 1}],
+      [{"FREE": 2, "CLOSE": 2, "AUD": 2}, {"CLOSE": 2, "SERVICE": 1, "REBUILD": 1, "WAVE": 1}, {"SERVICE": 2, "WORK": 2, "TOOLS": 2}],
+      [{"FREE": 2, "CLOSE": 1, "WAVE": 1}, {"CLOSE": 1, "REBUILD": 1, "WAVE": 1}, {"SERVICE": 2, "AUD": 2, "TOOLS": 1}],
+      [{"SERVICE": 2, "FREE": 1, "AUD": 3}, {"SERVICE": 2, "REBUILD": 2, "TOOLS": 1}, {"CLOSE": 1, "REBUILD": 1, "WAVE": 1}],
+      [{"CLOSE": 3}, {"SERVICE": 3}, {"FREE": 2, "WORK": 1, "TOOLS": 2, "AUD": 1}, {"REBUILD": 2, "FREE": 1, "WAVE": 2}],
+      [{"FREE": 2, "CLOSE": 2, "WAVE": 1, "AUD": 1}, {"SERVICE": 3, "TOOLS": 1}, {"REBUILD": 2, "WORK": 2, "WAVE": 2}],
+      [{"FREE": 2, "TOOLS": 1}, {"CLOSE": 1, "SERVICE": 1, "WAVE": 2, "AUD": 2}, {}],
+      [{"REBUILD": 2, "SERVICE": 1, "TOOLS": 1}, {"WORK": 1, "CLOSE": 1, "WAVE": 1}, {"FREE": 2, "AUD": 2}]]
+def quiz_weights(ready):
+    """QW by pattern -> weights by story slug, for the ready stories. Warns when a story's pattern is not in PAT (it can't be matched until it is)."""
+    by = {}
+    for S in ready: by.setdefault(S["pattern"], []).append(S["slug"])
+    for S in ready:
+        if S["pattern"] not in PAT.values(): print(f"quiz: no mapping for the pattern of {S['slug']}: {S['pattern']!r}")
+    return [[{s: v for k, v in a.items() for s in by.get(PAT[k], [])} for a in q] for q in QW]
 TASKS = {"c1": "Pick the one place and post your next small update there today.", "c2": "Write down the one thing you could give away free, and the easy paid version.",
          "c3": "List three tools growing fast right now that your idea could plug into.", "c4": "Find the five people who use your thing most and ask them one question each.",
          "c5": "Write one useful post yourself instead of paying for SEO.", "c6": "Pick one hour a week you can keep through exams and put it in your calendar."}
@@ -798,7 +820,8 @@ def main():
     global WEEK; WEEK = next((e["slug"] for e in E if e["status"] == "ready" and not e["stale"]), ready[0]["slug"])
     pz = next(S for S in ready if S["slug"] == "postiz")
     pz_ck = [c for c in pz["checklist"]]
-    steps = [{"id": c["id"], "text": c["text"], "from": c["from"], "n": int(c["id"][1:]), "task": TASKS.get(c["id"], "")} for c in [pz_ck[i] for i in (0, 1, 5, 3, 2)]]
+    def phase_of(S, frm): return next(((i + 1, p["lesson"]) for i, p in enumerate(S["phases"]) if p["name"] == frm), (0, ""))
+    steps = [{"id": c["id"], "text": c["text"], "from": c["from"], "n": int(c["id"][1:]), "task": TASKS.get(c["id"], ""), "ph": phase_of(pz, c["from"])[0], "why": phase_of(pz, c["from"])[1]} for c in [pz_ck[i] for i in (0, 1, 5, 3, 2)]]
     APPDATA = {
         "stories": [{k: e[k] for k in ("slug", "name", "title", "tab", "type", "what", "logo", "pattern", "lessons", "hv", "hu", "hl", "hd", "hm", "hs", "first", "firstl", "sub", "status", "stale", "href", "read", "published", "mrr", "growth")}
                     | {"spark": spark(e["series"]), "phases": len(e["S"]["phases"]), "site": (e["S"].get("links") or {}).get("site") or e["S"].get("site", "")} for e in E if e["status"] == "ready"],
@@ -812,7 +835,7 @@ def main():
                               "lead": {"id": "x1", "text": (S["checklist"][0]["text"] if isinstance(S["checklist"][0], dict) else S["checklist"][0]), "from": "Pattern from " + S["name"], "href": f"/app/story/{S['slug']}/"}} for S in ready},
         "path": {"title": "Ship something small first", "source": "postiz", "steps": steps,
                  "extra": {"id": "x1", "text": "Ask for money early: offer the easy paid version to your 5 most active users.", "from": "Pattern from Gojiberry", "href": "/app/story/gojiberry/" if "gojiberry" in rslugs else ""}},
-        "quiz": [{"q": q, "o": o, "w": w} for (q, o), w in zip(QUIZ, QW)],
+        "quiz": [{"q": q, "o": o, "w": w} for (q, o), w in zip(QUIZ, quiz_weights(ready))],
         "search_extra": [x for S in ready for x in (
                             [{"t": f"{S['name']} · phase {i + 1}: {ph['name']}", "k": " ".join([ph["name"], ph["story"], ph["lesson"]]), "h": f"/app/story/{S['slug']}/#ph{i + 1}", "g": "Phases"} for i, ph in enumerate(S["phases"])]
                             + [{"t": f"{S['name']} move {i + 1}: {m['text']} · {m['when']}", "h": f"/app/story/{S['slug']}/#chart", "g": "Moves"} for i, m in enumerate(S["moves"])]
@@ -828,7 +851,7 @@ def main():
     for e in E:
         if e["status"] == "soon": out(f"story/{e['slug']}", soon_page(E, e))
     out("path", static_page(E, "path", "My path", "Your path, built from your quiz answers.", "path"))
-    out("checklists", static_page(E, "checklists", "Checklists", "Every checklist, ticked on this device.", "ck"))
+    out("checklists", static_page(E, "checklists", "Checklists", "Every checklist, ticked on this device.", "ck").replace("{{NCK}}", str(len(ready[0]["checklist"]))))
     out("account", static_page(E, "account", "Account", "Your account, plan, email and data.", "acct"))
     out("not-found", static_page(E, "notfound", "Not found", "This page isn't in the app.", ""))
     wr(os.path.join(ROOT, "app", "start", "index.html"), head("Welcome · LaunchVault", "Set up your LaunchVault path.") + "<body>\n" + rd(os.path.join(SRC, "app", "start.body.html"))
@@ -844,6 +867,7 @@ def main():
             build.PAGES.insert(2, (f"blog/{S['slug']}/index.html", f"post-{S['slug']}.body.html", f"{S['title']} · LaunchVault", S["dek"], "blog", False, False, ""))
     update_cards(ready, {e["slug"] for e in E if e["stale"]})
     update_story_cards(ready)
+    build.WEEK = WEEK   # the public nav button and hero open this week's story
     build.main()
     write_sitemap()
     # the public posts load the shared chart renderer

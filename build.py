@@ -105,6 +105,8 @@ def mega_html():
             f'    <div class="mside" role="tablist" aria-orientation="vertical" aria-label="Sections"><span class="mhl" aria-hidden="true"></span>{side}</div>\n'
             f'    <div class="mpanes">{panes}</div>\n  </div></div>')
 
+WEEK = ""   # slug of this week's story; build_app.py sets it before main(). Run alone, the buttons fall back to the Library.
+def week_href(): return f"/app/story/{WEEK}/" if WEEK else "/app/library/"
 def nav(active):
     cur = lambda k: ' aria-current="page"' if k == active else ""
     links = "".join(f'<a href="{h}"{cur(k)}>{t}</a>' for k, h, t in NAVLINKS)
@@ -114,7 +116,7 @@ def nav(active):
   <div class="links">{links}</div>
   <button class="mbtn" id="menubtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mega"><span class="mic" aria-hidden="true"><i></i><i></i><i></i></span></button>
   <div class="right">
-    <a class="btn btn-p cta" href="/app/"><span class="long">Read your first success story</span><span class="short">Read a story</span></a>
+    <a class="btn btn-p cta" href="{week_href()}"><span class="long">Read your first success story</span><span class="short">Read a story</span></a>
   </div>
   {MEGA}
 </nav>'''
@@ -222,6 +224,7 @@ def main():
     for out, body, title, desc, active, bstrip, fn, cls in PAGES:
         b = read(body)
         for k, v in frag.items(): b = b.replace(k, v)
+        b = b.replace("{{WEEK_HREF}}", week_href()).replace("{{NREADY}}", str(NREADY))
         html = (HEAD.format(title=title, desc=desc, og=og(out)) + f'<body{" class=" + chr(34) + cls + chr(34) if cls else ""}>\n' + sprite + "\n" + nav(active)
                 + '\n<main id="main">\n' + b + ("\n" + strip if bstrip else "") + "\n</main>\n"
                 + FOOTER + '\n<script src="/assets/consent.js" defer></script>\n<script src="/assets/nav.js" defer></script>\n<script src="/assets/site.js" defer></script>\n<script src="/assets/home.js" defer></script>\n<script src="/assets/streak.js" defer></script>\n</body>\n</html>\n')

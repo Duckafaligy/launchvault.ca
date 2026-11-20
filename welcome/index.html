@@ -46,7 +46,7 @@
   <div class="links"><a href="/#stories">Stories</a><a href="/#sources">How we check</a><a href="/#pricing">Pricing</a><a href="/#faq">FAQ</a><a href="/blog/">Blog</a></div>
   <button class="mbtn" id="menubtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mega"><span class="mic" aria-hidden="true"><i></i><i></i><i></i></span></button>
   <div class="right">
-    <a class="btn btn-p cta" href="/app/"><span class="long">Read your first success story</span><span class="short">Read a story</span></a>
+    <a class="btn btn-p cta" href="/app/story/rezi/"><span class="long">Read your first success story</span><span class="short">Read a story</span></a>
   </div>
   <div class="mega" id="mega" role="region" aria-label="Site menu"><div class="mgc">
     <div class="mhead"><button class="mback" type="button" aria-label="Back to the menu" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><b>Menu</b><button class="mx" type="button" aria-label="Close menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -74,7 +74,7 @@
         <p class="sub">Sign in to see your checklists and your path.</p>
       </div>
       <div class="wpanel" id="p-signup" role="tabpanel" aria-labelledby="signup" hidden>
-        <h2>Make your free account</h2>
+        <h2>Create your account</h2>
         <p class="sub">One breakdown a week, the quiz and your saved checklists.</p>
         <p class="draft" id="plannote" hidden style="margin-top:16px"><span><b>You picked a paid plan.</b> Start with a free account; you can upgrade from there. Payments open with accounts.</span></p>
       </div>
@@ -93,7 +93,17 @@
           <button class="btn btn-s btn-lg" type="submit" id="ec-go">Send the code</button>
           <p class="ec-msg" id="ec-msg" role="status"></p>
         </form>
-        <p class="fmsg on l" id="authoff" hidden>Accounts open soon. You can use the app now; your progress stays on this device.</p>
+        <p class="fmsg on l" id="authoff" hidden></p>
+      </div>
+      <div class="aoff" id="aoff" hidden>
+        <a class="btn btn-p btn-lg" id="openapp" href="/app/start/">Open the app <span class="arr" aria-hidden="true">→</span></a>
+        <p class="aoffn"><b>Sign-in opens soon.</b> You can use the app now; your progress stays on this device.</p>
+        <ul class="provs" aria-label="Sign-in options, coming soon">
+          <li aria-disabled="true"><img src="/assets/logos/google.svg" alt="" width="20" height="20">Google<span>Coming soon</span></li>
+          <li aria-disabled="true"><img src="/assets/logos/github.svg" alt="" width="20" height="20">GitHub<span>Coming soon</span></li>
+          <li aria-disabled="true"><img src="/assets/logos/apple.svg" alt="" width="20" height="20">Apple<span>Coming soon</span></li>
+          <li aria-disabled="true"><img src="/assets/logos/discord.svg" alt="" width="20" height="20">Discord<span>Coming soon</span></li>
+        </ul>
       </div>
       <p class="note">We only keep your email address. By continuing you agree to the <a href="/legal/terms/">terms</a> and <a href="/legal/privacy/">privacy policy</a> (drafts).</p>
     </div>
@@ -107,13 +117,17 @@
   const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
   const want = () => location.hash === "#signup" || /^(pro|developer|builder|lifetime|full)$/.test(new URLSearchParams(location.search).get("plan") || "") ? "signup" : location.hash === "#signin" ? "signin" : null;
   const set = id => ["signin", "signup"].forEach(k => { const on = k === id; document.getElementById(k).setAttribute("aria-selected", on); document.getElementById("p-" + k).hidden = !on; });
-  const w = want(); if (w) set(w);
+  let back = false; try { back = !!localStorage.getItem("lv-age"); } catch {}   // someone who has used the app on this device
+  set(want() || (back ? "signin" : "signup"));
   if (/^(pro|developer|builder|lifetime|full)$/.test(new URLSearchParams(location.search).get("plan") || "")) $("#plannote").hidden = false;
   addEventListener("hashchange", () => { const w = want(); if (w) document.getElementById(w).click(); });
   $$(".wtabs [role=tab]").forEach(t => t.addEventListener("click", () => history.replaceState(null, "", "#" + t.id)));
   const isNew = () => document.getElementById("signup").getAttribute("aria-selected") === "true";
   const A = window.LVAuth;
-  if (!A || !A.live) { $("#authoff").hidden = false; $("#ecode").remove(); }
+  if (!A || !A.live) {   // accounts are off: no button pretends to sign anyone in
+    $("#oauth").style.display = "none"; $("#ecode").remove(); $("#aoff").hidden = false; $("#openapp").href = back ? "/app/" : "/app/start/";
+    document.querySelector("#p-signin .sub").textContent = "Sign-in opens soon. Your progress is on this device, so the app picks up where you left off.";
+    document.querySelector("#p-signup .sub").textContent = "Accounts open soon. Until then the app works without one."; }
   else A.load().then(() => { const on = A.enabled(); $$("[data-strategy]").forEach(b => { b.hidden = !on.has(b.dataset.strategy); }); }).catch(() => {});
   $("#oauth").addEventListener("click", e => {
     const b = e.target.closest("[data-strategy]"); if (!b) return;

@@ -645,3 +645,20 @@ table.sr{display:block}
 @media (max-width:600px){.fcv:not(.open){display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;line-clamp:4;overflow:hidden}
   .fcmore{display:inline-flex;align-items:center;min-height:44px;padding:0;border:0;background:none;color:#2563EB;font:600 14px var(--fd);cursor:pointer}}
 .fcmore{min-width:44px}
+/* 2026-11-19 batch 2 */
+/* first-customers rows: value, then one line with the chip and the source (it wraps as plain text when long) */
+.fcr{padding:14px 0}
+.fcsrc{display:block;min-height:0;margin-top:6px;line-height:22px}
+.fcsrc .lb{margin-right:8px}
+.fcsrc a{display:inline;min-height:0;padding:14px 0}
+
+/* welcome: honest while accounts are off (one real button, the sign-in options listed as coming soon) */
+.aoff{display:grid;gap:14px;margin-top:18px}
+.aoff .btn{width:100%;justify-content:center;min-height:48px}
+.aoffn{margin:0;font-size:15px;line-height:22px;color:#4B5563}.aoffn b{font-weight:600;color:#0B1220}
+.provs{list-style:none;margin:0;padding:0;border:1px solid #E5E7EB;border-radius:10px}
+.provs li{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 14px;font:500 15px var(--fd);color:#4B5563}
+.provs li+li{border-top:1px solid #EEF0F3}
+.provs li span{margin-left:auto;font-size:13px}
+.aoff[hidden]{display:none}
+.crumbs a{padding:0 9px;margin:0 -9px}

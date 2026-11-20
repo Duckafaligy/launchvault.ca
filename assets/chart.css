@@ -72,3 +72,7 @@ table.sr{display:block}
 .cfail{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0 0;padding:14px 16px;border:1px solid #E5E7EB;border-radius:10px;background:#F8FAFC;font-size:15px;line-height:22px;color:#0B1220}
 .cfail .btn{min-height:44px}
 @media (max-width:600px){.moves button{grid-template-columns:72px 22px minmax(0,1fr);gap:8px}}
+/* X3: 12px minimum in the chart */
+.legend .lm{width:18px;height:18px;font:600 12px/18px var(--fn)}
+.plot .mk text,.plot .note{font-size:12px}
+.moves .n{font-size:12px}

@@ -753,6 +753,16 @@ footer.foot .lb.x{color:#FCA5A5;background:rgba(229,83,61,.16)}footer.foot .lb.n
 #pricing .beta .pr{font-size:44px;font-weight:600;color:#fff}#pricing .beta .pr small{color:#CBD5E1!important}
 #pricing .beta .ps{color:#CBD5E1!important}
 @media (max-width:720px){#pricing .beta{grid-template-columns:1fr;padding:22px}#pricing .beta .bp{text-align:left;align-items:stretch}}
+/* hero: the main button opens this week's story; the email form is folded under one line (build.py fills {{WEEK_HREF}}) */
+.hero .hcta{display:flex;gap:10px 22px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:22px}
+.hero .hcta .btn{min-height:52px}
+.hero .hcta .tlink{display:inline-flex;align-items:center;min-height:44px;margin:0}
+.hmail{max-width:520px;margin:6px auto 0;text-align:center}
+.hmail summary{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:8px;cursor:pointer;list-style:none;font:500 15px var(--fd);color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.hmail summary::-webkit-details-marker{display:none}
+.hero .hmail .form{margin-top:8px}
+.hmail .hmn{margin-top:8px;font-size:14px;color:var(--text)}
+.fbot .lgl a{min-width:44px;justify-content:center}
 
 /* =====================================================================
    Round 11: remodel + motion. Shared components (see COMPONENTS.md).
