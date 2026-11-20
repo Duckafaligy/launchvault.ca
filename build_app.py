@@ -587,17 +587,18 @@ def home(E):
     ready = [e for e in E if e["status"] == "ready"]
     body = f'''<div class="pg home2">{pghead("Welcome back", f"{len(ready)} breakdowns ready. Your progress stays on this device.", " data-hh1").replace('<p class="pg-s">', '<p class="pg-s" data-hsum>')}
 <div class="pathnote" id="pathnote" hidden><span><b>Your path is ready:</b> <span data-pathname></span>.</span><a class="tl" href="/app/path/">Open My path</a><button type="button" aria-label="Close" data-closenote>✕</button></div>
-<section class="hnext jsonly" data-hnext aria-label="Next step"></section>
 <div class="jsonly" data-hstats></div>
-<section class="card hsec"><div class="ch"><h2>Stories</h2><span class="meta" data-hcount>{len(ready)} ready</span></div>
-  <div class="hfilt jsonly" role="group" aria-label="Show">{"".join(f'<button type="button" data-hf="{k}" aria-pressed="{str(k == "all").lower()}">{t}</button>' for k, t in (("all", "All"), ("new", "Not started"), ("prog", "In progress"), ("done", "Done"), ("saved", "Saved")))}</div>
-  <div class="scards" data-hcards></div>{noscript_list(ready)}</section>
-<div class="grid2 h75 jsonly"><div>
+<div class="hgrid jsonly"><div class="hmain">
+<section class="card hhero" data-hhero aria-label="Your next breakdown"></section>
 <section class="card"><div class="ch"><h2>Open checklists</h2><a class="tl" href="/app/checklists/">All checklists</a></div><div data-homecl></div></section>
+</div><div class="hrail">
 <section class="card" data-hpath></section>
-</div><div>
-<section class="card"><div class="ch"><h2>Recent activity</h2></div><ol class="hact" data-hact></ol></section>
-</div></div></div>'''
+<section class="card hcomm"><div class="ch"><h2>Community</h2><a class="tl" href="/app/community/">Open Community</a></div><div class="cb"><p>Talk with other builders in the channels:</p><ul class="chans"><li>#general</li><li>#breakdowns</li><li>#what-im-trying</li></ul></div></section>
+</div></div>
+<section class="card hsec jsonly"><div class="ch"><h2 data-hrowt>Top breakdowns</h2><a class="tl" href="/app/library/">Browse all {len(ready)} breakdowns in Library</a></div><div class="scards" data-hcards></div></section>
+{noscript_list(ready)}
+{soon_list(E)}
+</div>'''
     return shell(E, "Home", "Your LaunchVault home.", "home", body)
 
 def saved(E):
@@ -618,7 +619,7 @@ def library(E):
     body = f'''<div class="pg">
 {pghead("Library", f"{len(ready)} breakdowns. Each ends with a checklist you can start this week.")}
 <div class="lbar2 jsonly">
-  <label class="lsearch">{ic(I["srch"], 16)}<input type="search" id="lq" placeholder="Search companies, patterns or lessons" aria-label="Search the library"></label>
+  <label class="lsearch">{ic(I["srch"], 16)}<input type="search" id="lq" placeholder="Search the library" aria-label="Search the library"></label>
   <div class="ltabs" role="group" aria-label="Type"><button type="button" data-tab="all" aria-pressed="true">All</button>{"".join(f'<button type="button" data-tab="{k}" aria-pressed="false">{v}</button>' for k, v in TABS.items())}</div>
   <button class="lfbtn" type="button" id="lfopen" aria-haspopup="dialog">Filters<span class="lfn" data-lfn hidden></span></button>
   <dialog class="lfs" id="lfs" aria-label="Filters">
@@ -876,6 +877,10 @@ def main():
         "search_extra": [x for S in ready for x in (
                             [{"t": f"{S['name']} · phase {i + 1}: {ph['name']}", "k": " ".join([ph["name"], ph["story"], ph["lesson"]]), "h": f"/app/story/{S['slug']}/#ph{i + 1}", "g": "Phases"} for i, ph in enumerate(S["phases"])]
                             + [{"t": f"{S['name']} move {i + 1}: {m['text']} · {m['when']}", "h": f"/app/story/{S['slug']}/#chart", "g": "Moves"} for i, m in enumerate(S["moves"])]
+                            + [{"t": f"{S['name']} · checklist: {(c['text'] if isinstance(c, dict) else c)[:70]}", "k": (c["text"] if isinstance(c, dict) else c), "h": f"/app/story/{S['slug']}/#todo", "g": "Checklists"} for c in S["checklist"]]
+                            + [{"t": f"{S['name']} · fact check: {f['claim'][:70]}", "k": f["claim"] + " " + f["found"], "h": f"/app/story/{S['slug']}/#facts", "g": "Fact checks"} for f in S["fact_checks"]]
+                            + [{"t": f"{S['name']} · key move: {h['title']}", "k": h["text"], "h": f"/app/story/{S['slug']}/#two", "g": "Moves"} for h in S.get("highlights", [])]
+                            + [{"t": f"{S['name']} · {lbl}: {(f.get('text') or '')[:70]}", "k": f.get("text") or "", "h": f"/app/story/{S['slug']}/#overview", "g": "Facts"} for key, lbl in (("first_customers", "first customers"), ("first_revenue", "first money"), ("cost_to_start", "cost to start"), ("team", "team")) for f in [(S.get("facts") or {}).get(key)] if isinstance(f, dict) and f.get("text")]
                             + [{"t": f"{S['name']} · {so['name']}", "k": so["name"] + " " + so.get("what", ""), "h": f"/app/story/{S['slug']}/#sources", "g": "Sources"} for so in S["sources"]])],
     }
     out = lambda rel, t: wr(os.path.join(ROOT, "app", rel, "index.html") if rel else os.path.join(ROOT, "app", "index.html"), t)

@@ -109,7 +109,7 @@
     cmdEl = document.createElement("div"); cmdEl.className = "cmd"; cmdEl.setAttribute("role", "dialog"); cmdEl.setAttribute("aria-modal", "true"); cmdEl.setAttribute("aria-label", "Search");
     cmdEl.innerHTML = `<div class="box"><div class="in"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="text" placeholder="Search breakdowns, moves, patterns, sources" aria-label="Search" aria-controls="cmdres" autocomplete="off"><kbd>esc</kbd></div><div class="res" id="cmdres" role="listbox"></div><div class="ft">↑↓ to move · ↵ to open · esc to close</div></div>`;
     document.body.appendChild(cmdEl); const inp = $("input", cmdEl), res = $(".res", cmdEl);
-    const draw = () => { const q = inp.value.trim().toLowerCase(), hits = (q ? idx.filter(x => x.k.toLowerCase().includes(q)) : idx.filter(x => x.g === "Breakdowns" || x.g === "Pages")).slice(0, 14);
+    const draw = () => { const q = inp.value.trim().toLowerCase(), hits = (q ? idx.filter(x => x.k.toLowerCase().includes(q)) : idx.filter(x => x.g === "Breakdowns" || x.g === "Pages")).slice(0, 40);
       sel = Math.min(sel, Math.max(0, hits.length - 1));
       let g = ""; res.innerHTML = hits.length ? hits.map((x, i) => (x.g !== g ? `<div class="grp">${g = x.g}</div>` : "") +
         `<a class="it" role="option" id="ci${i}" aria-selected="${i === sel}" href="${esc(x.h)}" ${x.h.startsWith("http") ? 'target="_blank" rel="noopener"' : ""}>${x.img ? `<img src="${esc(x.img)}" alt="">` : ""}<span>${esc(x.t)}</span>${x.r ? `<span class="r">${esc(x.r)}</span>` : ""}</a>`).join("") : '<div class="none">No matches. Try a company or a pattern.</div>';
@@ -214,11 +214,15 @@
     const pr = CL[WEEKS] || D.checklists[0], prT = ticks(pr.slug);
     const list = rows.length ? rows : [{c: pr, t: prT, k: prT.filter(Boolean).length}];
     cl.innerHTML = list.slice(0, 3).map(({c, t, k}) => { const i = t.indexOf(false);
-      return `<a class="clrow" href="${c.href}#todo"><img src="${esc(c.logo)}" alt="" width="20" height="20" style="border-radius:4px"><span class="mid"><b>${esc(c.name)}</b><small>${i < 0 ? "All done." : "Next: " + esc(c.items[i].text)}</small></span>${bar(k / t.length)}<span class="ct">${k} of ${t.length}</span></a>`; }).join("")
+      return `<div class="clrow">${i < 0 ? "" : `<button class="hck" type="button" role="checkbox" aria-checked="false" data-hck="${c.slug}:${i}" aria-label="Tick: ${esc(c.items[i].text)}"><span class="bx">${CKS}</span></button>`}<a class="mid" href="${c.href}#todo"><b>${esc(c.name)}</b><small>${i < 0 ? "All done." : "Next: " + esc(c.items[i].text)}</small></a>${bar(k / t.length)}<span class="ct">${k} of ${t.length}</span></div>`; }).join("")
       + (q ? `<a class="clrow" href="/app/path/"><span style="color:var(--brand)">●</span><span class="mid"><b>Your path · ${esc(D.path.title)}</b><small>${(() => { const s = pathSteps().find(x => !x.done); return s ? "Next: " + esc(s.text) : "All done."; })()}</small></span><span class="bar"><i data-pathbar></i></span><span class="ct" data-pathcount2></span></a>` : ""); };
-  let hf = "all";
   const hcards = $("[data-hcards]");
   const CKS = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  const notPublic = f => /^not public$/i.test(f) ? "Not public" : f;
+  const markDone = () => { const nx = pathSteps().find(s => !s.done); if (!nx) return;
+    if (nx.extra) { ls.set("lv-path-extra", today()); logAct("Finished a step on your path"); toast("Step done. Saved on this device."); } else toggleTick(D.path.source, nx.n - 1); };
+  document.addEventListener("click", e => { if (e.target.closest("[data-hdone]")) markDone();
+    const h = e.target.closest("[data-hck]"); if (h) { const [s, i] = h.dataset.hck.split(":"); toggleTick(s, +i); } });
   const renderHome = () => {
     if (!hcards) return;
     const started = READY.filter(s => stateOf(s) !== "new");
@@ -229,33 +233,28 @@
     $("[data-hh1]").textContent = prog || q ? "Welcome back" : "Start here";
     $("[data-hsum]").textContent = started.length ? `You've started ${started.length} of ${READY.length} breakdowns and seen ${seenPh} lessons.${tk[0] ? ` ${tk[0]} checklist ticks so far.` : ""}`
       : `${READY.length} breakdowns ready. Start with this week's${adult ? "." : ": each one ends with steps that fit around school."}`;
-    // the one dominant card: your open path step, else the story you were reading, else this week's breakdown
-    const st = pathSteps(), nx = q ? st.find(s => !s.done) : null, last = ls.get("lv-last"), L = last && S[last.slug] && S[last.slug].status === "ready" ? S[last.slug] : null;
-    let c;
-    if (nx) c = {img: CL[D.path.source], t: "Your next step: " + nx.text, m: `Step ${st.indexOf(nx) + 1} of ${st.length} · ${nx.extra ? esc(nx.from) : "from the " + esc(srcName()) + " breakdown"}`, b: "Open step", h: "/app/path/"};
-    else if (L) { const n = nph(L), k = Math.min(n, seen(L.slug).length), ph = Math.min(n, last.ph || 1); c = {img: L, t: "Continue: " + (L.title || L.name), m: `Phase ${ph} of ${n} · ${k} of ${n} seen`, b: "Resume", h: `${L.href}#ph${ph}`}; }
-    else if (W) c = {img: W, t: "This week's breakdown: " + (W.title || W.name), m: `${nph(W)} phases · ${W.read} min <span class="tag wkc">This week</span>`, b: "Start", h: W.href};
-    if (c) $("[data-hnext]").innerHTML = `<span class="logo">${logo(c.img, 40)}</span><div class="mid"><h2>${esc(c.t)}</h2><p>${c.m}</p></div><a class="btn btn-p" href="${c.h}">${c.b} <span class="arr" aria-hidden="true">→</span></a>`;
-    // progress strip once there is progress; the 3-step start list until this week's story has been read, ticked and checked
+    // hero: the story you were reading, else this week's breakdown
+    const last = ls.get("lv-last"), L = last && S[last.slug] && S[last.slug].status === "ready" && stateOf(S[last.slug]) !== "new" ? S[last.slug] : null, H = L || W;
+    if (H) { const n = nph(H), ph = L ? Math.min(n, last.ph || 1) : 1, pct = readPct(H.slug);
+      $("[data-hhero]").innerHTML = `<div class="ch"><h2>${L ? "Continue where you left off" : "This week's breakdown"}</h2><span class="meta">${L ? `Phase ${ph} of ${n}` : `Published ${esc((d => MON[+d[1] - 1] + " " + +d[2] + " " + d[0])((H.published || "").split("-")))}`}</span></div>`
+        + `<div class="hh"><span class="logo">${logo(H, 44)}</span><div class="hhm"><h3>${esc(H.title || H.name)}</h3><p>${esc(H.what)}</p><p class="hhc"><span class="tag">${esc(H.type)}</span><span class="tag">${H.read} min read</span><span class="tag">${n} phases</span></p></div>`
+        + `<div class="hhn"><b>${esc(H.hv)}</b><span>${esc(H.hm || H.hu)}</span><span class="hhl">${chip(H.hl)}${staleChip(H)}</span><small>${esc([H.hs, H.hd].filter(Boolean).join(" · "))}</small>${H.spark}</div></div>`
+        + (H.first ? `<div class="hfc"><span>First customers</span><p>${esc(notPublic(H.first))}${H.firstl && !/^not public$/i.test(H.first) ? " " + chip(H.firstl) : ""}</p></div>` : "")
+        + `<div class="hact"><a class="btn btn-p" href="${L ? `${H.href}#ph${ph}` : H.href}">${L ? "Continue reading" + (pct ? ` (${pct}%)` : "") : "Read this week's breakdown"} <span class="arr" aria-hidden="true">→</span></a></div>`; }
+    // stats strip: only once there is real activity
     const stat = (v, l) => `<div><b>${v}</b><span>${l}</span></div>`;
-    const w3 = W ? [seen(WEEKS).length > 0, ticks(WEEKS).some(Boolean), !!checkRes(WEEKS)] : [true, true, true];
-    const srow = (i, t, h) => `<li><a href="${h}"><span class="n${w3[i] ? " d" : ""}">${w3[i] ? CKS : i + 1}</span><span>${t}${w3[i] ? '<span class="sr"> (done)</span>' : ""}</span></a></li>`;
-    $("[data-hstats]").innerHTML = (prog ? `<div class="hstrip">${stat(`${started.length} of ${READY.length}`, "Stories started")}${stat(`${seenPh} of ${totPh}`, "Lessons seen")}${stat(`${tk[0]} of ${tk[1]}`, "Steps ticked")}${stat(sc.length ? avg + "%" : "Not taken yet", "Check average")}</div>` : "")
-      + (W && !w3.every(Boolean) && started.length <= 1 ? `<ol class="hstart" aria-label="Start here">${srow(0, `Read this week's breakdown (${W.read} min)`, W.href)}${srow(1, "Tick one step on its checklist", W.href + "#todo")}${srow(2, "Take the story check", W.href + "#check")}</ol>` : "");
-    const hp = $("[data-hpath]"), dn = pathDone();
-    hp.innerHTML = q ? (() => { const t = q.top && S[q.top] ? S[q.top] : S[(q.matches || [])[0]];
-        return `<div class="ch"><h2>Your path, from the ${esc(srcName())} breakdown</h2><a class="tl" href="/app/start/?quiz=1">Retake quiz</a></div><div class="cb"><div class="hpr">${bar(dn / st.length)}<span>${dn} of ${st.length} steps</span></div>`
-          + (t ? `<a class="mini hm" href="${t.href}">${logo(t, 24)}<span><b>${esc(t.name)}</b><span class="pill">${q.top ? "Top match" : "Closest match"}</span></span></a>` : "")
-          + `<p class="qm">${q.top && q.why && q.why.length ? "Matched on: " + esc(q.why.join(" · ")) : "No single story matched your answers, so this is the general path."}</p><a class="btn btn-s" style="margin-top:12px" href="/app/path/">Open my path</a></div>`; })()
-      : `<div class="ch"><h2>Get a path that fits you</h2></div><div class="cb"><p>Eight quick questions match you with 3 stories that started a lot like you, and a ${st.length}-step path.</p><a class="btn btn-p" style="margin-top:12px" href="/app/start/?quiz=1">Take the 2-minute quiz</a></div>`;
-    $$("[data-hf]").forEach(b => b.setAttribute("aria-pressed", b.dataset.hf === hf));
-    const sv = savedList(), list = READY.filter(s => hf === "all" || (hf === "saved" ? sv.includes(s.slug) : stateOf(s) === hf)).sort((a, b) => (b.slug === WEEKS) - (a.slug === WEEKS));
-    hcards.innerHTML = list.length ? list.map(storyCard).join("") : `<div class="empty"><p>${hf === "saved" ? "Nothing saved yet. Tap the star on a story to keep it here." : "No stories here yet."}</p></div>`;
-    const act = arr("lv-activity");
-    $("[data-hact]").innerHTML = act.length ? act.map(a => `<li><span>${esc(a.m)}</span><time>${ago(a.t)}</time></li>`).join("") : '<li class="empty">Read a phase, tick an item or take a story check, and it shows up here.</li>';
+    $("[data-hstats]").innerHTML = prog ? `<div class="hstrip">${stat(`${started.length} of ${READY.length}`, "Stories started")}${stat(`${seenPh} of ${totPh}`, "Lessons seen")}${stat(`${tk[0]} of ${tk[1]}`, "Steps ticked")}${stat(sc.length ? avg + "%" : "Not taken yet", "Check average")}</div>` : "";
+    // right rail: the path
+    const st = pathSteps(), dn = pathDone(), nx = q ? st.find(s => !s.done) : null, hp = $("[data-hpath]");
+    hp.innerHTML = q ? `<div class="ch"><h2>Your path</h2><a class="tl" href="/app/start/?quiz=1">Retake quiz</a></div><div class="cb"><p class="hpt">${esc(D.path.title)}</p><div class="hpr">${bar(dn / st.length)}<span>${dn} of ${st.length} steps</span></div>`
+        + (nx ? `<p class="hps">Step ${st.indexOf(nx) + 1} of ${st.length}</p><p class="hpx">${esc(nx.task || nx.text)}</p><button class="btn btn-p" type="button" data-hdone>Mark step done</button><a class="tl hpo" href="/app/path/">Open My path</a>` : `<p class="hpx">All steps done. Nice.</p><a class="btn btn-s" href="/app/path/">Open My path</a>`) + `</div>`
+      : `<div class="ch"><h2>Your path</h2></div><div class="cb"><p>Eight quick questions match you with 3 stories that started a lot like you, and a ${st.length}-step path.</p><a class="btn btn-p" style="margin-top:12px" href="/app/start/?quiz=1">Take the 2-minute quiz</a></div><div class="hlike"><h3>Stories like yours</h3>${matches().map(miniRow).join("")}</div>`;
+    // 3 matched (after the quiz) or top breakdowns, this week's first
+    const pool = q ? matches() : [WEEKS, ...READY.map(s => s.slug)], pick = [...new Set(pool)].map(k => S[k]).filter(s => s && s.status === "ready").slice(0, 3);
+    $("[data-hrowt]").textContent = q ? "Stories matched to you" : "Top breakdowns";
+    hcards.innerHTML = pick.map(storyCard).join("");
     homeCL();
   };
-  $$("[data-hf]").forEach(b => b.addEventListener("click", () => { hf = b.dataset.hf; renderHome(); syncStars(); }));
 
   // ---------- saved: one empty state (what it is, how to fill it, three stories to star), else the two lists ----------
   const renderSaved = () => { const sc = $("[data-savedcards]"); if (!sc) return;
