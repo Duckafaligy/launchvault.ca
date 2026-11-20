@@ -5,9 +5,9 @@
      LV_GATE      false = the app opens without signing in (current choice). true = signed-out visitors go to /welcome/.
    While LV_CLERK_PK is empty the site runs in PREVIEW mode: sign-in buttons go straight to /app/ and a preview bar shows. */
 const LV_CLERK_PK = "pk_test_ZGFzaGluZy1zcGlkZXItNDg2LmNsZXJrLmFjY291bnRzLmRldiQ";   // development instance (dashing-spider-486)
-const LV_AUTH = true;    // login ON: Clerk sign-in, synced progress (stories stay readable without an account: LV_GATE false)
+const LV_AUTH = false;   // OFF until the Clerk dashboard is finished and /welcome/ uses Clerk's prebuilt sign-in (bot protection needs it)
 const LV_GATE = false;
-const LV_CLERK_JS = "https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5.128.1/dist/clerk.browser.js";
+const LV_CLERK_JS = "https://cdn.jsdelivr.net/npm/@clerk/clerk-js@6.42.3/dist/clerk.browser.js";
 
 window.LVAuth = (() => {
   const live = LV_AUTH && !!LV_CLERK_PK;
