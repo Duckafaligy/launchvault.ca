@@ -696,3 +696,14 @@ table.sr{display:block}
 .win .legend .lg-m{width:16px;height:16px;font-size:12px;line-height:16px}
 .post-links .soc{color:#0B1220;cursor:pointer}.post-links .soc:hover,.post-links .soc:focus-visible{color:#2563EB;border-color:#2563EB;background:#fff;translate:none}
 .post-links .soc::after{content:none}.post-links .soc svg{fill:none}
+
+/* 2026-11-21: sign-in fits one screen on iPads and short laptops (owner had to scroll on an iPad). Leaves ~90px for a password field. */
+.welcome .cl-card,.welcome .cl-main{gap:18px!important}.welcome .cl-socialButtonsRoot,.welcome .cl-form{gap:14px!important}
+@media (min-width:1000px) and (max-height:980px){.wmain{padding:64px 32px 24px}.wtabs{margin-bottom:16px}.wpanel h2{font-size:24px}.wpanel .sub{margin-top:4px;font-size:14px}
+  .welcome #clerkui{margin-top:10px}.welcome .acard .note{margin-top:10px;font-size:12.5px;line-height:1.45}.gkey{margin-top:10px}.wside{gap:24px;padding-top:28px;padding-bottom:28px}
+  .wl-copy .aget{margin-top:20px}.wl-copy .lede{margin-top:12px}}
+@media (min-width:1000px) and (max-height:880px){.wprev{display:none}.wpanel .sub{display:none}.wmain{align-items:flex-start;padding-top:72px}
+  .welcome .cl-card,.welcome .cl-main{gap:14px!important}.welcome .cl-socialButtonsRoot,.welcome .cl-form{gap:10px!important}}
+@media (max-width:999px) and (max-height:1200px){.wmain{padding-top:12px;padding-bottom:24px}.welcome .acard{padding:22px 22px 18px}.wtabs{margin-bottom:16px}.wpanel h2{font-size:24px}.wpanel .sub{margin-top:4px;font-size:14px}
+  .welcome #clerkui{margin-top:10px}.welcome .acard .note{margin-top:10px;font-size:12.5px}.gkey{margin-top:10px}}
+
