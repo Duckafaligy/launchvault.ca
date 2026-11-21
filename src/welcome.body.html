@@ -1,4 +1,4 @@
-<style>@media (min-width:1100px){body:has(.welcome) .lvc{right:auto;left:20px}}.welcome [role=tab],.welcome .acard{scroll-margin-top:104px}.welcome #clerkui{max-width:100%;overflow:visible}@media (max-width:600px){.welcome{padding-bottom:180px}}
+<style>@media (min-width:1100px){body:has(.welcome) .lvc{right:auto;left:20px}}.welcome #clerkui{max-width:100%;overflow:visible;margin-top:16px}@media (max-width:600px){.welcome{padding-bottom:180px}}
 .gkey{margin-top:16px;border-top:1px solid #E5E7EB;padding-top:8px}
 .gkey summary{display:flex;align-items:center;gap:6px;min-height:44px;cursor:pointer;list-style:none;font:600 14px var(--fd);color:#1D4ED8}
 .gkey summary::-webkit-details-marker{display:none}.gkey summary span{transition:transform .25s}.gkey[open] summary span{transform:rotate(90deg)}
@@ -20,14 +20,14 @@
 
     <div class="acard">
       <div class="seg wtabs" data-tabs role="tablist" aria-label="Sign in or sign up">
-        <button type="button" role="tab" id="signin" aria-selected="true" aria-controls="p-signin">Sign in</button>
-        <button type="button" role="tab" id="signup" aria-selected="false" aria-controls="p-signup">Sign up</button>
+        <button type="button" role="tab" id="tab-signin" aria-selected="true" aria-controls="p-signin">Sign in</button>
+        <button type="button" role="tab" id="tab-signup" aria-selected="false" aria-controls="p-signup">Sign up</button>
       </div>
-      <div class="wpanel" id="p-signin" role="tabpanel" aria-labelledby="signin">
+      <div class="wpanel" id="p-signin" role="tabpanel" aria-labelledby="tab-signin">
         <h2>Welcome back</h2>
         <p class="sub">Sign in to see your checklists and your path.</p>
       </div>
-      <div class="wpanel" id="p-signup" role="tabpanel" aria-labelledby="signup" hidden>
+      <div class="wpanel" id="p-signup" role="tabpanel" aria-labelledby="tab-signup" hidden>
         <h2>Create your account</h2>
         <p class="sub">One breakdown a week, the quiz and your saved checklists.</p>
         <p class="draft" id="plannote" hidden style="margin-top:16px"><span><b>You picked a paid plan.</b> Start with a free account; you can upgrade from there. Payments open with accounts.</span></p>
@@ -74,14 +74,18 @@
    #signup opens the sign-up tab. While accounts are off (LV_AUTH false) every option just opens the app. */
 (() => {
   const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  try { history.scrollRestoration = "manual"; } catch {}
+  let moved = false; ["wheel", "touchmove", "keydown"].forEach(t => addEventListener(t, () => { moved = true; }, {once: true, passive: true}));
+  const still = () => { if (!moved && scrollY) scrollTo(0, 0); };
+  still(); addEventListener("load", still); [300, 900, 1800].forEach(ms => setTimeout(still, ms));
   const want = () => location.hash === "#signup" || /^(pro|developer|builder|lifetime|full)$/.test(new URLSearchParams(location.search).get("plan") || "") ? "signup" : location.hash === "#signin" ? "signin" : null;
-  const set = id => ["signin", "signup"].forEach(k => { const on = k === id; document.getElementById(k).setAttribute("aria-selected", on); document.getElementById("p-" + k).hidden = !on; });
+  const set = id => ["signin", "signup"].forEach(k => { const on = k === id; document.getElementById("tab-" + k).setAttribute("aria-selected", on); document.getElementById("p-" + k).hidden = !on; });
   let back = false; try { back = !!localStorage.getItem("lv-age"); } catch {}   // someone who has used the app on this device
   set(want() || (back ? "signin" : "signup"));
   if (/^(pro|developer|builder|lifetime|full)$/.test(new URLSearchParams(location.search).get("plan") || "")) $("#plannote").hidden = false;
-  addEventListener("hashchange", () => { const w = want(); if (w) document.getElementById(w).click(); });
-  $$(".wtabs [role=tab]").forEach(t => t.addEventListener("click", () => history.replaceState(null, "", "#" + t.id)));
-  const isNew = () => document.getElementById("signup").getAttribute("aria-selected") === "true";
+  addEventListener("hashchange", () => { const w = want(); if (w) document.getElementById("tab-" + w).click(); });
+  $$(".wtabs [role=tab]").forEach(t => t.addEventListener("click", () => history.replaceState(null, "", "#" + t.id.slice(4))));
+  const isNew = () => document.getElementById("tab-signup").getAttribute("aria-selected") === "true";
   const A = window.LVAuth;
   const blocked = () => { try { if (localStorage.getItem("lv-age-block")) return true; } catch {} return /(?:^|; )lv-age-block=1/.test(document.cookie); };
   if (!A || !A.live) {   // accounts are off: no button pretends to sign anyone in
@@ -98,7 +102,7 @@
     const look = {variables: {colorPrimary: "#2563EB", colorText: "#0B1220", colorTextSecondary: "#4B5563", colorDanger: "#B91C1C", borderRadius: "10px", fontFamily: "inherit", fontSize: "15px"},
       elements: {rootBox: {width: "100%", maxWidth: "100%"}, cardBox: {width: "100%", maxWidth: "100%", boxShadow: "none", border: "0", overflow: "visible", background: "transparent"},
         card: {boxShadow: "none", padding: "4px 3px 8px", background: "transparent", border: "0", width: "100%", maxWidth: "100%"}, header: {display: "none"},
-        footer: {background: "transparent", padding: "0"}, footerAction: {flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: "4px", padding: "12px 0"}, footerActionText: {whiteSpace: "normal"},
+        footer: {background: "transparent", padding: "0"}, footerAction: {flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: "4px", padding: "12px 0"}, footerActionText: {whiteSpace: "normal", display: "inline-flex", alignItems: "center", minHeight: "44px"},
         formButtonPrimary: {minHeight: "48px", fontSize: "15px"}, socialButtonsBlockButton: {minHeight: "48px"}, socialButtonsIconButton: {minHeight: "48px", minWidth: "48px"},
         footerActionLink: {minHeight: "44px", display: "inline-flex", alignItems: "center", whiteSpace: "nowrap"}, formFieldInput: {minHeight: "44px"}, footerAction: {padding: "12px 0"}}};
     const opts = {routing: "hash", signInUrl: "/welcome/#signin", signUpUrl: "/welcome/#signup", signInForceRedirectUrl: "/app/", signUpForceRedirectUrl: "/app/start/", appearance: look};
@@ -125,7 +129,7 @@
     location.href = /^\/app\/[\w\-/?=&%.]*$/.test(nx) ? nx : "/app/";
   });
   $("#gk").addEventListener("input", () => { $("#gke").hidden = true; });
-  if (new URLSearchParams(location.search).has("next")) document.getElementById("signin").click();
+  if (new URLSearchParams(location.search).has("next")) document.getElementById("tab-signin").click();
   const f = $("#ecode");
   if (f) f.addEventListener("submit", async e => {
     e.preventDefault(); const msg = $("#ec-msg"), codeStep = !$('[data-step="code"]').hidden;
