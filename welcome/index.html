@@ -56,16 +56,20 @@
 </nav>
 <main id="main">
 <style>@media (min-width:1100px){body:has(.welcome) .lvc{right:auto;left:20px}}.welcome #clerkui{max-width:100%;overflow:visible;margin-top:16px}@media (max-width:600px){.welcome{padding-bottom:180px}}
-.gkey{margin-top:16px;border-top:1px solid #E5E7EB;padding-top:8px}
-.gkey summary{display:flex;align-items:center;gap:6px;min-height:44px;cursor:pointer;list-style:none;font:600 14px var(--fd);color:#1D4ED8}
-.gkey summary::-webkit-details-marker{display:none}.gkey summary span{transition:transform .25s}.gkey[open] summary span{transform:rotate(90deg)}
-.gkey summary:hover{text-decoration:underline;text-underline-offset:3px}
-.gkf label{display:block;margin:4px 0 6px;font-size:13px;color:#4B5563}
-.welcome .gkr{display:flex;gap:8px}.welcome .gkr input{flex:1 1 auto;width:100%;min-width:0;min-height:44px;padding:0 12px;border:1px solid #CBD5E1;border-radius:10px;font:500 15px var(--fn);letter-spacing:.04em;text-transform:uppercase}
-.gkr input:focus-visible{outline:2px solid #2563EB;outline-offset:1px;border-color:#2563EB}.welcome .gkr .btn{flex:0 0 auto;width:auto;min-height:44px;white-space:nowrap}
+.gkey{margin-top:16px;border-top:1px solid #E5E7EB;padding-top:4px}
+.gkey summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;cursor:pointer;list-style:none;font:600 14px var(--fd);color:#1D4ED8;border-radius:8px}
+.gkey summary::-webkit-details-marker{display:none}
+.gkey summary svg{flex:none;transition:transform .25s}.gkey[open] summary svg{transform:rotate(180deg)}
+.gkey summary:hover{color:#1E40AF}.gkey summary:focus-visible{outline:2px solid #2563EB;outline-offset:2px}
+.gkf{margin-top:4px}.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.welcome .gkr{display:flex;align-items:center;gap:6px;height:48px;padding:4px 4px 4px 14px;border:1px solid #CBD5E1;border-radius:12px;background:#fff;transition:border-color .2s,box-shadow .2s}
+.welcome .gkr:focus-within{border-color:#2563EB;box-shadow:0 0 0 3px rgba(37,99,235,.18)}
+.welcome .gkr input{flex:1 1 auto;width:100%;min-width:0;height:100%;min-height:0;margin:0;padding:0;border:0;outline:0;background:transparent;box-shadow:none;font:500 15px var(--fn);letter-spacing:.06em;text-transform:uppercase;color:#0B1220}
+.welcome .gkr input::placeholder{text-transform:none;letter-spacing:0;color:#6B7280}
+.welcome .gkr .btn{flex:none;width:auto;height:40px;min-height:40px;margin:0;padding:0 18px;border-radius:9px;font-size:14px}
+.gkey.bad .gkr{border-color:#DC2626}
 .gke{margin-top:8px;font-size:13px;color:#B91C1C}
-@media (max-width:420px){.welcome .gkr{flex-direction:column}.welcome .gkr .btn{width:100%}}
-@media (prefers-reduced-motion:reduce){.gkey summary span{transition:none}}</style>
+@media (prefers-reduced-motion:reduce){.gkey summary svg,.welcome .gkr{transition:none}}</style>
 <section class="auth welcome">
   <div class="wl">
     <div class="wl-copy">
@@ -118,9 +122,9 @@
         </ul>
       </div>
       <p class="note">We keep your email address and the name you choose. By continuing you agree to the <a href="/legal/terms/">terms</a> and <a href="/legal/privacy/">privacy policy</a> (drafts).</p>
-      <details class="gkey" id="gkey"><summary>Judging LaunchVault? Enter your judge code <span aria-hidden="true">→</span></summary>
-        <form class="gkf" id="gkf" novalidate><label for="gk">Judge code</label>
-          <div class="gkr"><input id="gk" name="key" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="btn btn-p" type="submit">Enter as judge</button></div>
+      <details class="gkey" id="gkey"><summary>Judging? Enter your judge code <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <form class="gkf" id="gkf" novalidate><label for="gk" class="vh">Judge code</label>
+          <div class="gkr"><input id="gk" name="key" type="text" placeholder="Judge code" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="btn btn-p" type="submit">Enter</button></div>
           <p class="gke" id="gke" role="alert" hidden>That code didn't work. Check it and try again.</p></form></details>
     </div>
   </div>
@@ -180,12 +184,13 @@
   // judge code (hackathon judges only): same check as the app's judge pass, then into the app in judge view
   $("#gkf").addEventListener("submit", e => {
     e.preventDefault(); const v = $("#gk").value.trim().toUpperCase();
-    if (v !== "SPARK2026") { $("#gke").hidden = false; $("#gk").focus(); return; }
+    if (v !== "SPARK2026") { $("#gke").hidden = false; $("#gkey").classList.add("bad"); $("#gk").focus(); return; }
     try { localStorage.setItem("lv-judge", JSON.stringify(v)); } catch {}
     const nx = new URLSearchParams(location.search).get("next") || "";
     location.href = /^\/app\/[\w\-/?=&%.]*$/.test(nx) ? nx : "/app/";
   });
-  $("#gk").addEventListener("input", () => { $("#gke").hidden = true; });
+  $("#gk").addEventListener("input", () => { $("#gke").hidden = true; $("#gkey").classList.remove("bad"); });
+  $("#gkey").addEventListener("toggle", e => { if (e.target.open) $("#gk").focus({preventScroll: true}); });
   if (new URLSearchParams(location.search).has("next")) document.getElementById("tab-signin").click();
   const f = $("#ecode");
   if (f) f.addEventListener("submit", async e => {
