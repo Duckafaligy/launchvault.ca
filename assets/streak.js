@@ -43,7 +43,7 @@
   const foot = document.querySelector("footer.foot");
   const bgLive = () => !foot || foot.getBoundingClientRect().top > innerHeight * .25;
   const bg = make("streak"); document.body.prepend(bg);
-  const kickBg = wave(bg, () => [innerWidth, innerHeight], small ? 11000 : 36000, bgLive); kickBg();
+  const kickBg = wave(bg, () => [innerWidth, innerHeight], small ? 8800 : 28800, bgLive); kickBg();
   addEventListener("scroll", kickBg, { passive: true });
   // Dark sections (.dk) and the footer are opaque, so they cover the wave: dots show on light sections only (owner's call).
 })();

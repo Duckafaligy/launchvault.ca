@@ -20,6 +20,8 @@ window.LVGate = (() => {
   if (blocked) { wipe(); if (left > 0) cookie(left / 1000); else put(BLOCK, Date.now()); }   // keep both copies of the flag in step
   const ok = !blocked && RANGES.includes(get(KEY));
   if (ok) return {ok, rangeFor};
+  // hackathon judges (judge code typed on /welcome/) skip the question
+  if (!blocked && get("lv-judge") === "SPARK2026") return {ok: true, rangeFor};
 
   const root = document.documentElement; root.classList.add("gated");   // app.css hides the app while the gate is up
   const LOGO = '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19.99 14.91A8.5 8.5 0 1 1 10.52 3.63"/><path d="M6.8 15.6l3.7-3.7 2.6 2.6 6.7-6.7"/><path d="M16 7.8h3.8v3.8"/></g></svg>';
@@ -50,6 +52,10 @@ window.LVGate = (() => {
     requestAnimationFrame(() => { const row = list.querySelector("label"); if (row) list.scrollTop = row.offsetHeight * 12; });
   };
   const mount = () => { blocked ? stop() : ask(); document.body.appendChild(el); };
-  document.body ? mount() : document.addEventListener("DOMContentLoaded", mount);
-  return {ok, rangeFor};
+  let started = false;
+  const start = () => { if (started) return; started = true; document.body ? mount() : document.addEventListener("DOMContentLoaded", mount); };
+  // the sign-in wall comes first: auth.js calls LVGate.start() once Clerk confirms an account (or if accounts are off / Clerk fails).
+  // A blocked device still sees the "13 and up" stop straight away.
+  if (blocked) start();
+  return {ok, rangeFor, start};
 })();

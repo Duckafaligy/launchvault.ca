@@ -1,7 +1,9 @@
 /* LaunchVault app: storage (this device only, safe without storage), ⌘K search, Library, reader, checklists, path, account, onboarding.
    Calm by design: no magnetic buttons, no cursor effects, no particles. Respects prefers-reduced-motion. */
 (() => {
-  if (!window.LVGate || !LVGate.ok) return;   // age gate (assets/gate.js): the app does nothing, and stores nothing, until it passes
+  // age gate (assets/gate.js): the app does nothing, and stores nothing, until it passes. The sign-in wall still runs first,
+  // so signed-out visitors go to /welcome/ before being asked anything; auth.js then opens the age question for real accounts.
+  if (!window.LVGate || !LVGate.ok) { if (window.LVAuth) LVAuth.app(); return; }
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));

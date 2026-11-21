@@ -98,11 +98,12 @@ window.LVAuth = (() => {
     paint();
     document.querySelectorAll("[data-auth-only]").forEach(n => { n.hidden = !LV_AUTH; });
     document.querySelectorAll("[data-noauth-only]").forEach(n => { n.hidden = LV_AUTH; });
-    if (!live) return;
+    const ageQ = () => { if (window.LVGate && !LVGate.ok && LVGate.start) LVGate.start(); };   // age question only after the wall
+    if (!live) { ageQ(); return; }
     try { await load(); paint();
-      if (clerk.user) { const sc = document.createElement("script"); sc.src = "/assets/supabase.js"; sc.onload = () => window.LVSync && LVSync.start(clerk); document.head.appendChild(sc); }
+      if (clerk.user && window.LVGate && LVGate.ok) { const sc = document.createElement("script"); sc.src = "/assets/supabase.js"; sc.onload = () => window.LVSync && LVSync.start(clerk); document.head.appendChild(sc); }
       if (wall && !clerk.user) { location.replace("/welcome/?next=" + encodeURIComponent(location.pathname + location.search) + "#signin"); return; }
-      document.documentElement.style.visibility = ""; } catch (e) { document.documentElement.style.visibility = ""; /* Clerk didn't load: fail open, keep the preview face */ }
+      document.documentElement.style.visibility = ""; ageQ(); } catch (e) { document.documentElement.style.visibility = ""; ageQ(); /* Clerk didn't load: fail open, keep the preview face */ }
   };
   return {on: LV_AUTH, live, gate: LV_GATE, load, enabled, signInWith, callback, signOut, app, email};
 })();
