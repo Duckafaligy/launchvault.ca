@@ -20,7 +20,7 @@ window.LVGate = (() => {
   if (blocked) { wipe(); if (left > 0) cookie(left / 1000); else put(BLOCK, Date.now()); }   // keep both copies of the flag in step
   const ok = !blocked && RANGES.includes(get(KEY));
   if (ok) return {ok, rangeFor};
-  // hackathon judges (judge code typed on /welcome/) skip the question
+  // hackathon judges (judge code typed on /sign-in/) skip the question
   if (!blocked && get("lv-judge") === "SPARK2026") return {ok: true, rangeFor};
 
   const root = document.documentElement; root.classList.add("gated");   // app.css hides the app while the gate is up

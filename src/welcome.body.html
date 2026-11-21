@@ -13,7 +13,7 @@
 .gkey.bad .gkr{border-color:#DC2626}
 .gke{margin-top:8px;font-size:13px;color:#B91C1C}
 @media (prefers-reduced-motion:reduce){.gkey summary svg,.welcome .gkr{transition:none}}</style>
-<section class="welcome">
+<section class="welcome" data-mode="{{MODE}}">
   <a class="wl-back" href="/">Back to the homepage</a>
   <div class="wside">
     <a class="wlogo" href="/" aria-label="LaunchVault home"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19.99 14.91A8.5 8.5 0 1 1 10.52 3.63"/><path d="M6.8 15.6l3.7-3.7 2.6 2.6 6.7-6.7"/><path d="M16 7.8h3.8v3.8"/></g></svg>LaunchVault</a>
@@ -31,15 +31,15 @@
 
   <div class="wmain">
     <div class="acard">
-      <div class="seg wtabs" data-tabs role="tablist" aria-label="Sign in or sign up">
-        <button type="button" role="tab" id="tab-signin" aria-selected="true" aria-controls="p-signin">Sign in</button>
-        <button type="button" role="tab" id="tab-signup" aria-selected="false" aria-controls="p-signup">Sign up</button>
-      </div>
-      <div class="wpanel" id="p-signin" role="tabpanel" aria-labelledby="tab-signin">
+      <nav class="seg wtabs" aria-label="Sign in or sign up">
+        <a href="/sign-in/" id="tab-signin"{{CUR_IN}}>Sign in</a>
+        <a href="/sign-up/" id="tab-signup"{{CUR_UP}}>Sign up</a>
+      </nav>
+      <div class="wpanel" id="p-signin"{{HID_IN}}>
         <h2>Welcome back</h2>
         <p class="sub">Sign in to see your checklists and your path.</p>
       </div>
-      <div class="wpanel" id="p-signup" role="tabpanel" aria-labelledby="tab-signup" hidden>
+      <div class="wpanel" id="p-signup"{{HID_UP}}>
         <h2>Create your account</h2>
         <p class="sub">One breakdown a week, the quiz and your saved checklists.</p>
         <p class="draft" id="plannote" hidden style="margin-top:16px"><span><b>You picked a paid plan.</b> Start with a free account; you can upgrade from there. Payments open with accounts.</span></p>
@@ -82,22 +82,24 @@
 </section>
 <script src="/assets/auth.js"></script>
 <script>
-/* Welcome: one set of sign-in options for both tabs (Clerk decides new vs returning; new users land on /app/start/).
-   #signup opens the sign-up tab. While accounts are off (LV_AUTH false) every option just opens the app. */
+/* /sign-in/ and /sign-up/ (both built from this file; data-mode says which). One set of sign-in options (Clerk decides new vs
+   returning; new users land on /app/start/). The tabs are plain links that carry ?next= and ?plan= across.
+   While accounts are off (LV_AUTH false) every option just opens the app. */
 (() => {
   const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const mode = $(".welcome").dataset.mode, q = new URLSearchParams(location.search);
+  // old links (/welcome/#signup arrives here as /sign-in/#signup: browsers keep the hash across the redirect)
+  if (/^#signup\/?$/.test(location.hash) && mode === "signin") { location.replace("/sign-up/" + location.search); return; }
+  if (/^#sign(in|up)\/?$/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search);
   try { history.scrollRestoration = "manual"; } catch {}
   let moved = false; ["wheel", "touchmove", "keydown"].forEach(t => addEventListener(t, () => { moved = true; }, {once: true, passive: true}));
   const still = () => { if (!moved && scrollY) scrollTo(0, 0); };
   still(); addEventListener("load", still); [300, 900, 1800].forEach(ms => setTimeout(still, ms));
-  const want = () => /^#signup\/?$/.test(location.hash) || /^(pro|developer|builder|lifetime|full)$/.test(new URLSearchParams(location.search).get("plan") || "") ? "signup" : /^#signin\/?$/.test(location.hash) ? "signin" : null;
-  const set = id => ["signin", "signup"].forEach(k => { const on = k === id; document.getElementById("tab-" + k).setAttribute("aria-selected", on); document.getElementById("p-" + k).hidden = !on; });
+  const keep = new URLSearchParams(); ["next", "plan"].forEach(k => { if (q.get(k)) keep.set(k, q.get(k)); });
+  if (keep.toString()) $$(".wtabs a").forEach(a => { a.href = a.getAttribute("href") + "?" + keep; });
   let back = false; try { back = !!localStorage.getItem("lv-age"); } catch {}   // someone who has used the app on this device
-  set(want() || (back ? "signin" : "signup"));
-  if (/^(pro|developer|builder|lifetime|full)$/.test(new URLSearchParams(location.search).get("plan") || "")) $("#plannote").hidden = false;
-  addEventListener("hashchange", () => { const w = want(); if (w) document.getElementById("tab-" + w).click(); });
-  $$(".wtabs [role=tab]").forEach(t => t.addEventListener("click", () => history.replaceState(null, "", "#" + t.id.slice(4))));
-  const isNew = () => document.getElementById("tab-signup").getAttribute("aria-selected") === "true";
+  if (mode === "signup" && /^(pro|developer|builder|lifetime|full)$/.test(q.get("plan") || "")) $("#plannote").hidden = false;
+  const isNew = () => mode === "signup";
   const A = window.LVAuth;
   const blocked = () => { try { if (localStorage.getItem("lv-age-block")) return true; } catch {} return /(?:^|; )lv-age-block=1/.test(document.cookie); };
   if (!A || !A.live) {   // accounts are off: no button pretends to sign anyone in
@@ -121,15 +123,14 @@
         dividerLine: {background: "#E5E7EB"}, dividerText: {color: "#4B5563", fontSize: "13px"},
         footerActionLink: {minHeight: "44px", display: "inline-flex", alignItems: "center", whiteSpace: "nowrap", fontWeight: "600"}}};
     // back to the page that sent them to the wall (only /app/ paths), else the app home; new accounts start with the quiz
-    const nx = new URLSearchParams(location.search).get("next") || "", back2 = /^\/app\/[\w\-/?=&%.]*$/.test(nx) ? nx : "/app/";
-    const opts = {routing: "hash", signInUrl: "/welcome/#signin", signUpUrl: "/welcome/#signup", signInForceRedirectUrl: back2, signUpForceRedirectUrl: "/app/start/", appearance: look};
-    let shown = null;
-    const show = () => A.load().then(c => { const k = isNew() ? "up" : "in"; if (k === shown) return; shown = k; ui.innerHTML = "";
+    const nx = q.get("next") || "", back2 = /^\/app\/[\w\-/?=&%.]*$/.test(nx) ? nx : "/app/";
+    // path routing: Clerk's own steps get clean URLs (/sign-in/factor-one); vercel.json serves this page for them
+    const opts = {routing: "path", path: isNew() ? "/sign-up" : "/sign-in", signInUrl: "/sign-in", signUpUrl: "/sign-up", signInForceRedirectUrl: back2, signUpForceRedirectUrl: "/app/start/", appearance: look};
+    A.load().then(c => { ui.innerHTML = "";
       if (c.user) { ui.innerHTML = '<p class="sub">You are signed in.</p><a class="btn btn-p btn-lg" href="/app/">Open the app</a>'; return; }
       const el = document.createElement("div"); ui.appendChild(el);
-      if (k === "up") c.mountSignUp(el, opts); else c.mountSignIn(el, opts); })
+      if (isNew()) c.mountSignUp(el, opts); else c.mountSignIn(el, opts); })
       .catch(() => { ui.innerHTML = '<p class="sub">Sign-in could not load. Check your connection and try again.</p>'; });
-    show(); $$(".wtabs [role=tab]").forEach(t => t.addEventListener("click", () => setTimeout(show, 0)));
   }
   $("#oauth").addEventListener("click", e => {
     const b = e.target.closest("[data-strategy]"); if (!b) return;
@@ -142,12 +143,11 @@
     e.preventDefault(); const v = $("#gk").value.trim().toUpperCase();
     if (v !== "SPARK2026") { $("#gke").hidden = false; $("#gkey").classList.add("bad"); $("#gk").focus(); return; }
     try { localStorage.setItem("lv-judge", JSON.stringify(v)); } catch {}
-    const nx = new URLSearchParams(location.search).get("next") || "";
+    const nx = q.get("next") || "";
     location.href = /^\/app\/[\w\-/?=&%.]*$/.test(nx) ? nx : "/app/";
   });
   $("#gk").addEventListener("input", () => { $("#gke").hidden = true; $("#gkey").classList.remove("bad"); });
   $("#gkey").addEventListener("toggle", e => { if (e.target.open) $("#gk").focus({preventScroll: true}); });
-  if (new URLSearchParams(location.search).has("next")) document.getElementById("tab-signin").click();
   const f = $("#ecode");
   if (f) f.addEventListener("submit", async e => {
     e.preventDefault(); const msg = $("#ec-msg"), codeStep = !$('[data-step="code"]').hidden;

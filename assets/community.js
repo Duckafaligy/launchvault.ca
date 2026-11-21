@@ -128,9 +128,9 @@
   // one bar on top: a 2-way switch (Chat / Threads) and Settings; a thread or Settings gets a back link instead
   const header = (view, back = null) => `<header class="cm-h">${back ? `<a class="cm-back" href="${back[0]}">${ic("back", 20)}<span>${back[1]}</span></a><span class="cm-div"></span>` :
     `<nav class="cm-tabs" aria-label="Community"><a href="#chat"${view === "chat" ? ' aria-current="page"' : ""}>${ic("msg", 18)}Chat</a><a href="#threads"${view === "threads" ? ' aria-current="page"' : ""}>${ic("list", 18)}Threads</a></nav><span class="cm-div"></span>`}` +
-    (S.signed ? (view === "settings" ? "" : `<a class="cm-gear" href="#settings" aria-label="Chat settings">${ic("gear", 20)}</a>`) : `<a class="btn btn-s" href="/welcome/">Sign in</a>`) + `</header>`;
+    (S.signed ? (view === "settings" ? "" : `<a class="cm-gear" href="#settings" aria-label="Chat settings">${ic("gear", 20)}</a>`) : `<a class="btn btn-s" href="/sign-in/">Sign in</a>`) + `</header>`;
   const skeleton = (kind, room) => `<div class="cm-sk ${kind}" aria-hidden="true">${Array.from({length: kind === "cards" ? 6 : 7}, (_, i) => kind === "cards" ? `<div class="sk-card"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>` : `<div class="sk-row"><i class="sk-av"></i><span><i class="b1" style="width:${[34, 22, 40, 28, 36, 24, 30][i]}%"></i><i class="b2" style="width:${[78, 62, 88, 54, 70, 82, 60][i]}%"></i></span></div>`).join("")}</div>
-    <div class="cm-join card"><h2>Log in to join the conversation</h2><p>Members read every ${kind === "cards" ? "thread" : "message"} and reply. Every story stays free to read without an account.</p><div class="cm-dr"><a class="btn btn-p" href="/welcome/#signup">Sign up</a><a class="btn btn-s" href="/welcome/">Sign in</a></div></div>`;
+    <div class="cm-join card"><h2>Log in to join the conversation</h2><p>Members read every ${kind === "cards" ? "thread" : "message"} and reply. Every story stays free to read without an account.</p><div class="cm-dr"><a class="btn btn-p" href="/sign-up/">Sign up</a><a class="btn btn-s" href="/sign-in/">Sign in</a></div></div>`;
   const setView = v => { root.dataset.v = v; };
   const busy = () => { pane.innerHTML = '<p class="cm-load" role="status">Loading…</p>'; };
   const failed = (retry) => { pane.innerHTML = `<div class="cm-empty"><p>We couldn't load this. Check your connection and try again.</p><button class="btn btn-s" type="button" id="cmRetry">Try again</button></div>`; $("#cmRetry").addEventListener("click", retry); };
@@ -373,7 +373,7 @@
   // ---------- settings ----------
   const showSettings = () => {
     cur = {tok: ++cur.tok, room: null, view: "settings", thread: null, msgs: new Map()}; unsub(); setView("settings");
-    if (!S.signed) { pane.innerHTML = header("settings", ["#chat", "Back to chat"]) + `<div class="cm-body"><div class="cm-empty"><p>Log in to change your chat settings.</p><a class="btn btn-p" href="/welcome/">Sign in</a></div></div>`; return; }
+    if (!S.signed) { pane.innerHTML = header("settings", ["#chat", "Back to chat"]) + `<div class="cm-body"><div class="cm-empty"><p>Log in to change your chat settings.</p><a class="btn btn-p" href="/sign-in/">Sign in</a></div></div>`; return; }
     const p = S.prof || {};
     pane.innerHTML = header("settings", ["#chat", "Back to chat"]) + `<div class="cm-body cm-set"><h1 class="cm-sh">Chat settings</h1>
       <section class="card"><h2>Chat name</h2><form class="cm-sec" id="cmName" novalidate><label class="cm-lbl" for="snm">Display name</label><div class="cm-nr"><input id="snm" maxlength="30" value="${esc(p.display_name || "")}" autocomplete="off"><span class="tg">${p.name_tag ? "· " + esc(p.name_tag) : ""}</span></div>

@@ -388,7 +388,9 @@ main>section.welcome{padding:0}
 .wl-back:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
 .welcome .acard{width:min(400px,100%);padding:0;border:0;border-radius:0;background:none;box-shadow:none}
 .wtabs{display:flex;width:100%;position:relative;margin-bottom:28px}
-.wtabs>button{flex:1;justify-content:center}
+.wtabs>a{position:relative;z-index:1;flex:1;display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 16px;border-radius:8px;font:500 14px var(--fd);color:var(--muted);text-decoration:none;white-space:nowrap;transition:color .2s,background-color .2s}
+.wtabs>a:hover{color:var(--ink);background:rgba(255,255,255,.5)}
+.wtabs>a[aria-current=page]{color:var(--ink);background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.06)}
 .wpanel h2{font:700 28px/1.15 var(--fd);letter-spacing:-.02em;color:var(--ink)}
 .wpanel .sub{margin-top:8px;font-size:15px;line-height:1.5;color:var(--text)}
 @media (prefers-reduced-motion:no-preference){.wpanel:not([hidden]){animation:lv-up .4s var(--out) both}}

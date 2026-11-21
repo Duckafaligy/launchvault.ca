@@ -30,10 +30,11 @@ PAGES = [
     ("legal/cookies/index.html", "legal-cookies.body.html", "Cookie policy (draft) · LaunchVault", "Every cookie and storage key LaunchVault uses, and why. Draft, not yet reviewed by a lawyer.", "", False, False, ""),
     ("legal/community/index.html", "legal-community.body.html", "Community Guidelines (draft) · LaunchVault", "The rules for LaunchVault's community chat, how moderation works, and how to report or appeal. Draft, not yet reviewed by a lawyer.", "", False, False, ""),
     ("legal/accessibility/index.html", "legal-accessibility.body.html", "Accessibility statement · LaunchVault", "How LaunchVault works for everyone, known gaps, and how to tell us about a problem.", "", False, False, ""),
-    ("welcome/index.html", "welcome.body.html", "Welcome · LaunchVault", "Sign in or make a free LaunchVault account.", "welcome", False, False, ""),
+    ("sign-in/index.html", "welcome.body.html", "Sign in · LaunchVault", "Sign in to your LaunchVault account.", "welcome", False, False, ""),
+    ("sign-up/index.html", "welcome.body.html", "Sign up · LaunchVault", "Make a free LaunchVault account.", "welcome", False, False, ""),
     ("404.html", "404.body.html", "Page not found · LaunchVault", "This page isn't here.", "", False, False, ""),
 ]
-# Pages that no longer exist (2026-11-17 scope: homepage + blog + legal + welcome). Their built folders are deleted on build;
+# Pages that no longer exist (2026-11-17 scope: homepage + blog + legal + sign-in/sign-up). Their built folders are deleted on build;
 # vercel.json redirects the old URLs.
 REMOVED = ["breakdowns", "how-we-check", "pricing", "signin", "signup"]
 
@@ -127,7 +128,7 @@ def nav(active):
 FCOLS = [("Explore", [("/#stories", "Stories"), ("/#sources", "How we check"), ("/#check", "Verified vs Claimed"), ("/#inside", "Inside a breakdown"), ("/#pricing", "Pricing"), ("/#faq", "FAQ")]),
          ("Blog", [("/blog/", "All posts"), ("/blog/postiz/", "The Postiz breakdown"), ("/blog/what-verified-means/", "What Verified means"),
                    ("/blog/how-to-read-a-revenue-chart/", "Reading a revenue chart"), ("/blog/three-ways-to-start-small/", "Three ways to start small")]),
-         ("Account", [("/welcome/", "Sign in"), ("/welcome/#signup", "Sign up")]),
+         ("Account", [("/sign-in/", "Sign in"), ("/sign-up/", "Sign up")]),
          ("Legal", [("/legal/privacy/", "Privacy (draft)"), ("/legal/terms/", "Terms (draft)"), ("/legal/cookies/", "Cookies (draft)"), ("/legal/community/", "Community Guidelines (draft)"), ("/legal/accessibility/", "Accessibility")])]
 FCOLS_HTML = "".join(f'<nav class="fcol" aria-label="{h}"><h4>{h}</h4>' + "".join(f'<a href="{u}"><span>{t}</span></a>' for u, t in ls) + "</nav>" for h, ls in FCOLS)
 def footer():
@@ -200,6 +201,8 @@ def main():
     for d in REMOVED:
         full = os.path.join(ROOT, d)
         if os.path.isdir(full): shutil.rmtree(full)
+    old = os.path.join(ROOT, "welcome", "index.html")   # /welcome/ now redirects to /sign-in/ (vercel.json); welcome/callback/ stays
+    if os.path.exists(old): os.remove(old)
     global MEGA; MEGA = mega_html()   # nav() is called per page; build the card once
     sprite, strip, frag = read("_sprite.html"), blog_strip(), fragments()
     if not os.path.exists(os.path.join(ROOT, "assets", "pages.css")): open(os.path.join(ROOT, "assets", "pages.css"), "w", encoding="utf-8").write("/* Inner-page styles (owned by the pages coder). Loaded after site.css. */\n")
@@ -207,9 +210,14 @@ def main():
         b = read(body)
         for k, v in frag.items(): b = b.replace(k, v)
         b = b.replace("{{WEEK_HREF}}", week_href()).replace("{{NREADY}}", str(NREADY))
-        html = (HEAD.format(title=title, desc=desc, og=og(out)) + f'<body{" class=" + chr(34) + cls + chr(34) if cls else ""}>\n' + sprite + "\n" + (nav(active) if out != "welcome/index.html" else "")   # welcome: its own logo + back link, no site nav or footer
+        auth = out in ("sign-in/index.html", "sign-up/index.html")   # sign-in pages: their own logo + back link, no site nav or footer
+        if auth:
+            up = out.startswith("sign-up"); cur, hid = ' aria-current="page"', " hidden"
+            b = (b.replace("{{MODE}}", "signup" if up else "signin").replace("{{CUR_IN}}", "" if up else cur).replace("{{CUR_UP}}", cur if up else "")
+                  .replace("{{HID_IN}}", hid if up else "").replace("{{HID_UP}}", "" if up else hid))
+        html = (HEAD.format(title=title, desc=desc, og=og(out)) + f'<body{" class=" + chr(34) + cls + chr(34) if cls else ""}>\n' + sprite + "\n" + (nav(active) if not auth else "")
                 + '\n<main id="main">\n' + b + ("\n" + strip if bstrip else "") + "\n</main>\n"
-                + (footer() if out != "welcome/index.html" else "") + '\n<script src="/assets/consent.js" defer></script>\n<script src="/assets/nav.js" defer></script>\n<script src="/assets/site.js" defer></script>\n<script src="/assets/home.js" defer></script>\n<script src="/assets/streak.js" defer></script>\n</body>\n</html>\n')
+                + (footer() if not auth else "") + '\n<script src="/assets/consent.js" defer></script>\n<script src="/assets/nav.js" defer></script>\n<script src="/assets/site.js" defer></script>\n<script src="/assets/home.js" defer></script>\n<script src="/assets/streak.js" defer></script>\n</body>\n</html>\n')
         path = os.path.join(ROOT, out); os.makedirs(os.path.dirname(path), exist_ok=True)
         write(path, html)
     print("built", len(PAGES), "pages")

@@ -30,23 +30,33 @@
  ],
  "redirects": [
   {
+   "source": "/welcome",
+   "destination": "/sign-in/",
+   "permanent": true
+  },
+  {
+   "source": "/welcome/",
+   "destination": "/sign-in/",
+   "permanent": true
+  },
+  {
    "source": "/signin",
-   "destination": "/welcome/",
+   "destination": "/sign-in/",
    "permanent": true
   },
   {
    "source": "/signin/",
-   "destination": "/welcome/",
+   "destination": "/sign-in/",
    "permanent": true
   },
   {
    "source": "/signup",
-   "destination": "/welcome/",
+   "destination": "/sign-up/",
    "permanent": true
   },
   {
    "source": "/signup/",
-   "destination": "/welcome/",
+   "destination": "/sign-up/",
    "permanent": true
   },
   {
@@ -98,6 +108,16 @@
    "source": "/app/postiz/",
    "destination": "/app/story/postiz/",
    "permanent": true
+  }
+ ],
+ "rewrites": [
+  {
+   "source": "/sign-in/:path+",
+   "destination": "/sign-in/"
+  },
+  {
+   "source": "/sign-up/:path+",
+   "destination": "/sign-up/"
   }
  ]
 }

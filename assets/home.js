@@ -74,7 +74,7 @@
         ${chips ? `<ul class="qr-c" aria-label="Your answers">${chips}</ul>` : ""}
         <ol class="qr-p">${p.map(([k, b], i) => { const [h, t] = POSTS[ST[k].p];
           return `<li style="--i:${i}"><a href="${h}"><span class="qn">${i + 1}</span><span class="qt"><b>${k}</b><small>${ST[k].why}${because(b)}</small><span class="qin">In: ${esc(t)}</span></span>${ARW}</a></li>`; }).join("")}</ol>
-        <div class="qr-a"><a class="btn btn-p" href="/welcome/#signup">Start free <span class="arr" aria-hidden="true">→</span></a><a class="btn btn-s" href="${href}">Read about ${top}</a></div>
+        <div class="qr-a"><a class="btn btn-p" href="/sign-up/">Start free <span class="arr" aria-hidden="true">→</span></a><a class="btn btn-s" href="${href}">Read about ${top}</a></div>
       </div>`;
     };
     const play = el => { el.classList.remove("play"); void el.offsetWidth; el.classList.add("play"); };
