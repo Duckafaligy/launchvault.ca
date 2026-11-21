@@ -60,3 +60,29 @@
   .lvc-l{grid-column:auto;min-width:44px;padding:0 6px}
   .lvc-l[data-c="save"]{grid-column:1/-1}
 }
+
+/* 2026-11-21 soft look (owner: the black border looked bad). Overrides the outlined/hard-shadow style above. */
+.lvc{border:1px solid #E2E8F0;border-radius:16px;padding:18px 18px 16px;
+  box-shadow:0 1px 2px rgba(11,18,32,.06),0 12px 32px -8px rgba(11,18,32,.18),0 32px 64px -24px rgba(37,99,235,.18)}
+.lvc h2{font-size:16px}
+.lvc p{color:#334155;font-size:14.5px;line-height:1.5}
+.lvc a{color:#0B1220;text-decoration-color:rgba(37,99,235,.45);text-decoration-thickness:1.5px}
+.lvc a:hover{color:#1D4ED8;text-decoration-color:#2563EB}
+.lvc-panel{border-top:1px solid #E2E8F0}
+.lvc-row{border-bottom:1px solid #EEF2F7}
+.lvc-b{border:1px solid #CBD5E1;border-radius:11px;color:#0B1220;font-weight:600}
+.lvc-b:hover{background:#F1F5F9;color:#0B1220;border-color:#94A3B8}
+.lvc-p{background:#2563EB;border-color:#2563EB;color:#fff;box-shadow:0 1px 2px rgba(37,99,235,.25)}
+.lvc-p:hover{background:#1D4ED8;border-color:#1D4ED8;color:#fff}
+.lvc-l{border-color:transparent;box-shadow:none}
+.lvc-l:hover{background:#EEF3FF;border-color:transparent}
+.lvc-l[data-c="save"]{border-color:#CBD5E1}
+.lvc-l[data-c="save"]:hover{background:#F1F5F9;color:#0B1220}
+.lvc-sw{border:1.5px solid #94A3B8}
+.lvc-sw i{background:#64748B}
+.lvc-sw[aria-checked="true"]{border-color:#2563EB}
+@media (max-width:600px){
+  .lvc{left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));width:auto;border-width:1px;border-radius:16px;padding:14px 14px 12px;
+    box-shadow:0 1px 2px rgba(11,18,32,.06),0 16px 40px -12px rgba(11,18,32,.28)}
+}
+@media (max-width:600px){.lvc-b{font-size:14px;white-space:nowrap;padding:0 10px}.lvc-btns{grid-template-columns:auto auto 1fr}.lvc-l[data-c="save"]{grid-column:1/-1}}
