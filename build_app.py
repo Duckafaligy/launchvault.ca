@@ -258,7 +258,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
   <nav aria-label="Main">{side}</nav>
   <p class="sgrp">This week</p>{wk}
   
-  <div class="foot"><div class="plan"><span data-plan>Free plan</span> <a href="/app/account/#plan" data-upg>Upgrade</a></div><a class="si" href="/app/account/"{cur("acct")}>{ic(I["acct"])}<span class="t">Account</span></a></div>
+  <div class="foot"><div class="plan" data-state="free"><div class="pl-h"><span class="pl-ok" aria-hidden="true"><svg viewBox="0 0 16 16" width="12" height="12"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="pl-n" data-plan>Free plan</span></div><p class="pl-v">Unlock every phase of every breakdown.</p><p class="pl-p">From $6.49/mo billed yearly</p><a href="/app/account/#plan" data-upg>Upgrade to Pro</a></div><a class="si" href="/app/account/"{cur("acct")}>{ic(I["acct"])}<span class="t">Account</span></a></div>
 </aside>
 <div class="main">
   <div class="prev" id="prevbar" role="status">Preview: accounts open soon. Your progress stays on this device.</div>

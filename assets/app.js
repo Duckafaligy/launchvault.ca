@@ -106,16 +106,19 @@
     return out;
   };
   let cmdEl = null, idx = null, sel = 0;
+  // small icon badges for results without a logo (pages, patterns, story sections)
+  const CMDI = {Pages: '<path d="M4 5h16v14H4z"/><path d="M4 9h16"/>', Patterns: '<path d="M4 12h4l3-7 3 14 3-7h3"/>',
+    _: '<path d="M6 4h9l3 3v13H6z"/><path d="M9 11h6M9 15h6"/>'};
   const openCmd = () => {
     if (cmdEl) return; idx = idx || cmdIndex();
     const act = document.activeElement, prev = act && act !== document.body ? act : [...document.querySelectorAll("[data-cmd]")].find(b => b.offsetParent);
     cmdEl = document.createElement("div"); cmdEl.className = "cmd"; cmdEl.setAttribute("role", "dialog"); cmdEl.setAttribute("aria-modal", "true"); cmdEl.setAttribute("aria-label", "Search");
-    cmdEl.innerHTML = `<div class="box"><div class="in"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="text" placeholder="Search breakdowns, moves, patterns, sources" aria-label="Search" aria-controls="cmdres" autocomplete="off"><kbd>esc</kbd></div><div class="res" id="cmdres" role="listbox"></div><div class="ft">↑↓ to move · ↵ to open · esc to close</div></div>`;
+    cmdEl.innerHTML = `<div class="box"><div class="in"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="text" placeholder="Search breakdowns, moves, patterns, sources" aria-label="Search" aria-controls="cmdres" autocomplete="off"><kbd>esc</kbd></div><div class="res" id="cmdres" role="listbox"></div><div class="ft"><span><kbd>↑</kbd><kbd>↓</kbd> to move</span><span><kbd>↵</kbd> to open</span><span><kbd>esc</kbd> to close</span></div></div>`;
     document.body.appendChild(cmdEl); const inp = $("input", cmdEl), res = $(".res", cmdEl);
     const draw = () => { const q = inp.value.trim().toLowerCase(), hits = (q ? idx.filter(x => x.k.toLowerCase().includes(q)) : idx.filter(x => x.g === "Breakdowns" || x.g === "Pages")).slice(0, 40);
       sel = Math.min(sel, Math.max(0, hits.length - 1));
       let g = ""; res.innerHTML = hits.length ? hits.map((x, i) => (x.g !== g ? `<div class="grp">${g = x.g}</div>` : "") +
-        `<a class="it" role="option" id="ci${i}" aria-selected="${i === sel}" href="${esc(x.h)}" ${x.h.startsWith("http") ? 'target="_blank" rel="noopener"' : ""}>${x.img ? `<img src="${esc(x.img)}" alt="">` : ""}<span>${esc(x.t)}</span>${x.r ? `<span class="r">${esc(x.r)}</span>` : ""}</a>`).join("") : '<div class="none">No matches. Try a company or a pattern.</div>';
+        `<a class="it" role="option" id="ci${i}" aria-selected="${i === sel}" href="${esc(x.h)}" ${x.h.startsWith("http") ? 'target="_blank" rel="noopener"' : ""}>${x.img ? `<img src="${esc(x.img)}" alt="">` : `<i class="cib" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${CMDI[x.g] || CMDI._}</svg></i>`}<span class="t">${esc(x.t)}</span>${x.r ? `<span class="r">${esc(x.r)}</span>` : ""}</a>`).join("") : '<div class="none">No matches. Try a company or a pattern.</div>';
       inp.setAttribute("aria-activedescendant", hits.length ? "ci" + sel : ""); return hits; };
     let hits = draw();
     inp.addEventListener("input", () => { sel = 0; hits = draw(); });
@@ -167,7 +170,7 @@
       $$("#phsheet [data-goph]").forEach(b => { const k = +b.dataset.goph; b.classList.toggle("on", k === ph); b.querySelector(".r").textContent = k === ph ? "Reading" : k < ph ? "read" : ""; });
       if (pct > (saved.pct || 0) && Date.now() - lastSave > 800) { saved = {pct, ph, name: names[ph - 1] || "", n}; ls.set("lv-read-" + slug, saved); lastSave = Date.now(); paint(); }
     };
-    addEventListener("scroll", onScroll, {passive: true}); onScroll();
+    let scQ = 0; addEventListener("scroll", () => { if (!scQ) scQ = requestAnimationFrame(() => { scQ = 0; onScroll(); }); }, {passive: true}); onScroll();   // once per frame: reads + writes no longer thrash on every scroll event
     if (location.hash) setTimeout(() => { const t = document.getElementById(location.hash.slice(1)); if (t && !t.closest("[hidden]")) t.scrollIntoView(); }, 50);
   }
 
@@ -483,7 +486,7 @@
       if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = H.at(-1);
       nav.forEach(a => { const on = a.getAttribute("href") === cur; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); });
       const on = strip && $("a.on", strip); if (on && strip.scrollWidth > strip.clientWidth) strip.scrollTo({left: on.offsetLeft - 16}); };
-    addEventListener("scroll", spy, {passive: true}); spy();
+    let spyQ = 0; addEventListener("scroll", () => { if (!spyQ) spyQ = requestAnimationFrame(() => { spyQ = 0; spy(); }); }, {passive: true}); spy();   // once per frame, not per scroll event
   }
 
   // ---------- onboarding: 8 questions (Skip any) -> result -> Home. The age question is the gate (assets/gate.js), asked once, before this. ----------
@@ -580,8 +583,9 @@
     const j = ls.get("lv-judge") === JCODE, p = paidRow(), on = j || !!p, name = j ? "Judge pass" : p ? paidName(p) : "";
     $$('[data-locked="1"]').forEach(el => { el.hidden = !on; });
     $$(".gatewrap, #gate").forEach(el => { el.hidden = on; });
-    $$("[data-plan]").forEach(el => { el.textContent = j ? name : on ? name + " plan" : "Free plan"; });
-    $$("[data-upg]").forEach(el => { el.textContent = on ? "Manage" : "Upgrade"; });
+    $$("[data-plan]").forEach(el => { el.textContent = j ? "Judge view" : on ? "You're on " + name : "Free plan"; });
+    $$("[data-upg]").forEach(el => { el.textContent = on ? "Manage billing" : "Upgrade to Pro"; });
+    $$(".side .plan").forEach(el => { el.dataset.state = j ? "judge" : p ? "paid" : "free"; });   // sidebar card look: upgrade card, calm paid state, judge badge
     $$("[data-plan-chip]").forEach(el => { el.textContent = on ? name : "Free"; });
     $$("[data-plan-sm]").forEach(el => { el.hidden = on; });
     $$("[data-judge-off]").forEach(el => { el.hidden = !j; });

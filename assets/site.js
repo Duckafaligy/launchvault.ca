@@ -424,7 +424,8 @@
     const ALL = [mk("r", "#E5484D", PERS[0]), mk("g", "#10B981", PERS[1]), mk("b", "#2563EB", PERS[2])];
     const STOP = {}, CANCEL = {}, ABORT = {}; let gen = 0, epoch = 0, active = false, raf = 0, S = null;
     const box = () => wf.getBoundingClientRect();
-    const place = (c, x, y) => { c.el.style.transform = `translate3d(${(x - 2).toFixed(1)}px,${(y - 2).toFixed(1)}px,0)`; c.el.classList.toggle("flip", x > wf.clientWidth - 200); };
+    let wfW = wf.clientWidth; if ("ResizeObserver" in window) new ResizeObserver(() => { wfW = wf.clientWidth; }).observe(wf);   // cached: no layout read inside the 60 fps loop
+    const place = (c, x, y) => { c.el.style.transform = `translate3d(${(x - 2).toFixed(1)}px,${(y - 2).toFixed(1)}px,0)`; c.el.classList.toggle("flip", x > wfW - 200); };
     // one rAF loop: segments (Kumaraswamy time warp = quick start, long tail; optional mid-move pause) + smoothed tremor
     const tick = now => { if (!active) { raf = 0; return; }
       ALL.forEach(c => { const s = c.seg;
@@ -770,10 +771,13 @@
   if (!reduce) {
     const REACH = 12, PULL = .28, MAX = 8, IN = .16, OUT = .1, st = new Map(); let mx = -999, my = -999, running = false;
     const frame = () => { let moving = false;
-      $$(".btn").forEach(b => { if (b.closest("#win")) return; /* the demo window's buttons stay still */ let q = st.get(b); if (!q) { q = {x: 0, y: 0}; st.set(b, q); } const r = b.getBoundingClientRect(); if (!r.width) return;
+      // all reads first, then all writes: reading a rect after each style write forced a layout per button (choppy over remote desktop)
+      const bs = $$(".btn").filter(b => !b.closest("#win")), rs = bs.map(b => b.getBoundingClientRect());   /* the demo window's buttons stay still */
+      bs.forEach((b, i) => { let q = st.get(b); if (!q) { q = {x: 0, y: 0}; st.set(b, q); } const r = rs[i]; if (!r.width || r.bottom < -20 || r.top > innerHeight + 20) return;
         const l = r.left - q.x, t = r.top - q.y, cx = l + r.width / 2, cy = t + r.height / 2;
         const near = Math.hypot(Math.max(l - mx, 0, mx - (l + r.width)), Math.max(t - my, 0, my - (t + r.height))) <= REACH;
         const tx = near ? Math.max(-MAX, Math.min(MAX, (mx - cx) * PULL)) : 0, ty = near ? Math.max(-MAX, Math.min(MAX, (my - cy) * PULL)) : 0, f = near ? IN : OUT;
+        if (!q.x && !q.y && !tx && !ty) return;                                            // at rest and staying there: no style write
         q.x += (tx - q.x) * f; q.y += (ty - q.y) * f;
         if (Math.abs(tx - q.x) < .05 && Math.abs(ty - q.y) < .05) { q.x = tx; q.y = ty; } else moving = true;
         b.style.setProperty("--px", q.x.toFixed(2) + "px"); b.style.setProperty("--py", q.y.toFixed(2) + "px"); });

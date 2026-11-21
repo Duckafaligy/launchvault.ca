@@ -392,7 +392,8 @@ main>section.welcome{padding:0}
 .wpanel h2{font:700 28px/1.15 var(--fd);letter-spacing:-.02em;color:var(--ink)}
 .wpanel .sub{margin-top:8px;font-size:15px;line-height:1.5;color:var(--text)}
 @media (prefers-reduced-motion:no-preference){.wpanel:not([hidden]){animation:lv-up .4s var(--out) both}}
-@media (max-width:999px){
+/* stacked (logo row, then the form) only on narrow or portrait windows; a short landscape window keeps the split so the form fits */
+@media (max-width:759px), (max-width:999px) and (orientation:portrait){
   .welcome{grid-template-columns:1fr;grid-template-rows:auto 1fr;background:var(--alt)}
   .wside{gap:16px;padding:12px 16px 0;background:none;color:var(--ink)}
   .wlogo{color:var(--ink)}.wlogo svg{color:var(--brand)}
@@ -699,11 +700,43 @@ table.sr{display:block}
 
 /* 2026-11-21: sign-in fits one screen on iPads and short laptops (owner had to scroll on an iPad). Leaves ~90px for a password field. */
 .welcome .cl-card,.welcome .cl-main{gap:18px!important}.welcome .cl-socialButtonsRoot,.welcome .cl-form{gap:14px!important}
-@media (min-width:1000px) and (max-height:980px){.wmain{padding:64px 32px 24px}.wtabs{margin-bottom:16px}.wpanel h2{font-size:24px}.wpanel .sub{margin-top:4px;font-size:14px}
+@media (min-width:1000px) and (max-height:980px), (min-width:760px) and (orientation:landscape) and (max-height:980px){.wmain{padding:64px 32px 24px}.wtabs{margin-bottom:16px}.wpanel h2{font-size:24px}.wpanel .sub{margin-top:4px;font-size:14px}
   .welcome #clerkui{margin-top:10px}.welcome .acard .note{margin-top:10px;font-size:12.5px;line-height:1.45}.gkey{margin-top:10px}.wside{gap:24px;padding-top:28px;padding-bottom:28px}
   .wl-copy .aget{margin-top:20px}.wl-copy .lede{margin-top:12px}}
-@media (min-width:1000px) and (max-height:880px){.wprev{display:none}.wpanel .sub{display:none}.wmain{align-items:flex-start;padding-top:72px}
-  .welcome .cl-card,.welcome .cl-main{gap:14px!important}.welcome .cl-socialButtonsRoot,.welcome .cl-form{gap:10px!important}}
-@media (max-width:999px) and (max-height:1200px){.wmain{padding-top:12px;padding-bottom:24px}.welcome .acard{padding:22px 22px 18px}.wtabs{margin-bottom:16px}.wpanel h2{font-size:24px}.wpanel .sub{margin-top:4px;font-size:14px}
+@media (min-width:1000px) and (max-height:880px), (min-width:760px) and (orientation:landscape) and (max-height:880px){.wprev{display:none}.wpanel .sub{display:none}
+  .welcome .cl-card,.welcome .cl-main{gap:14px!important}.welcome .cl-socialButtonsRoot,.welcome .cl-form{gap:10px!important}
+  /* the form starts near the top and centres in what's left; "Back to the homepage" moves to the top right of the dark panel so it can't collide with the tabs */
+  .wmain{align-items:center;padding:clamp(4px,4vh - 20px,32px) 32px}
+  .wl-back{right:calc(600% / 11 + 16px);color:#C9D3EA}.wl-back:hover{color:#fff}
+  .welcome .cl-footerAction{padding:0!important}.welcome .cl-footerItem{padding:8px 0!important}}
+/* the 440px placeholder height only holds the space while Clerk loads; once its card is in, the card sets the height */
+.welcome #clerkui:has(.cl-rootBox){min-height:0!important}
+/* split, short windows (laptops, resized desktop windows, iPad landscape with toolbars) */
+@media (min-width:1000px) and (max-height:740px), (min-width:760px) and (orientation:landscape) and (max-height:740px){
+  .wtabs{margin-bottom:10px}.welcome #clerkui{margin-top:6px}
+  .welcome .cl-card,.welcome .cl-main{gap:10px!important}.welcome .cl-socialButtonsRoot,.welcome .cl-form{gap:8px!important}
+  .wside{gap:16px;padding-top:16px;padding-bottom:16px}.wl-copy h1{font-size:clamp(30px,3vw,40px)}.wl-copy .aget{margin-top:14px;gap:8px}}
+@media (min-width:1000px) and (max-height:700px), (min-width:760px) and (orientation:landscape) and (max-height:700px){
+  .wpanel h2{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}   /* the selected tab already says Sign in / Sign up */
+  .wl-copy .aget{display:none}}
+/* stacked (narrow or portrait) windows */
+@media (max-width:759px) and (max-height:1200px), (max-width:999px) and (orientation:portrait) and (max-height:1200px){.wmain{padding-top:12px;padding-bottom:24px}.welcome .acard{padding:22px 22px 18px}.wtabs{margin-bottom:16px}.wpanel h2{font-size:24px}.wpanel .sub{margin-top:4px;font-size:14px}
   .welcome #clerkui{margin-top:10px}.welcome .acard .note{margin-top:10px;font-size:12.5px}.gkey{margin-top:10px}}
+@media (max-width:759px) and (max-height:900px), (max-width:999px) and (orientation:portrait) and (max-height:900px){
+  .wl-copy h1{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}   /* short window: the logo row + the form, no headline */
+  .wside{padding-bottom:0}.wpanel .sub{display:none}.welcome .acard{padding:16px 18px 12px}.wtabs{margin-bottom:10px}
+  .welcome .cl-card,.welcome .cl-main{gap:10px!important}.welcome .cl-socialButtonsRoot,.welcome .cl-form{gap:8px!important}
+  .welcome .cl-footerAction{padding:0!important}.welcome .cl-footerItem{padding:8px 0!important}}
+@media (max-width:759px) and (max-height:800px), (max-width:999px) and (orientation:portrait) and (max-height:800px){
+  .wpanel h2{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .welcome .acard{border:0;box-shadow:none;padding:4px 0 0;background:none}.wmain{padding-top:4px}
+  .wside{gap:0}}
+/* very short windows, any layout: the last few pixels so the judge box stays on screen with room for a password field */
+@media (max-height:640px){.welcome .cl-footerItem{padding:4px 0!important}.welcome .cl-card,.welcome .cl-main{gap:8px!important}.wtabs{margin-bottom:6px}.welcome #clerkui{margin-top:2px}.welcome .acard .note{margin-top:6px}.gkey{margin-top:6px}}
 
+
+/* 2026-11-21 fluid pass: on very wide windows the page column grows (up to 1680px) instead of leaving half the screen empty */
+@media (min-width:1700px){.wrap{max-width:clamp(1200px,66vw,1680px)}.hero h1,.win,.winfit{max-width:clamp(1200px,62vw,1560px)}}
+/* roomy pass: public pages get fluid side gutters too */
+.wrap{padding-left:clamp(16px,4vw,56px);padding-right:clamp(16px,4vw,56px)}
+@media (min-width:1101px) and (max-height:860px){header.hero{padding-top:clamp(92px,13vh,112px)}}   /* a little air between the floating nav and the headline */
