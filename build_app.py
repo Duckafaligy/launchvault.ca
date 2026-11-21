@@ -721,7 +721,7 @@ def add_meta():
     """Every built page gets a canonical link, og:title/description/type/url and a Twitter card (build.py's head only has og:image).
     The 404 pages get no canonical or og:url. Runs after both builds; pages are rewritten on every build, so this never stacks."""
     pages = [os.path.join(ROOT, f) for f in ("index.html", "404.html")]
-    for d in ("blog", "legal", "welcome", "app"):
+    for d in ("blog", "legal", "welcome", "sign-in", "sign-up", "app"):
         pages += [os.path.join(dp, f) for dp, _, fs in os.walk(os.path.join(ROOT, d)) for f in fs if f == "index.html"]
     for p in pages:
         t = rd(p)
@@ -883,7 +883,7 @@ def main():
     wr(os.path.join(ROOT, "app", "start", "index.html"), head("Welcome · LaunchVault", "Set up your LaunchVault path.") + "<body>\n" + rd(os.path.join(SRC, "app", "start.body.html"))
        + f'\n<script type="application/json" id="lvapp">{json.dumps(APPDATA, separators=(",", ":"))}</script>\n<script src="/assets/auth.js" defer></script>\n<script src="/assets/app.js" defer></script>\n</body>\n</html>\n')
     # Clerk OAuth lands here, then goes on to /app/ (returning) or /app/start/ (new). Unused while LV_AUTH is false.
-    wr(os.path.join(ROOT, "welcome", "callback", "index.html"), head("Signing you in · LaunchVault", "Finishing sign-in.", gate=False) + '<body><main class="pg narrow" id="main"><p class="note" role="status">Signing you in…</p></main>' + NL + '<script src="/assets/auth.js"></script>' + NL + '<script>window.LVAuth && LVAuth.callback().catch(() => location.replace("/welcome/"));</script>' + NL + '</body>' + NL + '</html>' + NL)
+    wr(os.path.join(ROOT, "welcome", "callback", "index.html"), head("Signing you in · LaunchVault", "Finishing sign-in.", gate=False) + '<body><main class="pg narrow" id="main"><p class="note" role="status">Signing you in…</p></main>' + NL + '<script src="/assets/auth.js"></script>' + NL + '<script>window.LVAuth && LVAuth.callback().catch(() => location.replace("/sign-in/"));</script>' + NL + '</body>' + NL + '</html>' + NL)
     # public side: generated blog posts (Postiz keeps its hand-made post; its generated twin goes to _gen for the parity check)
     for S in ready:
         post = blog_post(S, E)

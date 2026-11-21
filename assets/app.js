@@ -2,7 +2,7 @@
    Calm by design: no magnetic buttons, no cursor effects, no particles. Respects prefers-reduced-motion. */
 (() => {
   // age gate (assets/gate.js): the app does nothing, and stores nothing, until it passes. The sign-in wall still runs first,
-  // so signed-out visitors go to /welcome/ before being asked anything; auth.js then opens the age question for real accounts.
+  // so signed-out visitors go to /sign-in/ before being asked anything; auth.js then opens the age question for real accounts.
   if (!window.LVGate || !LVGate.ok) { if (window.LVAuth) LVAuth.app(); return; }
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -571,7 +571,7 @@
     d.showModal(); $("#rwhat", d).focus();
   });
 
-  // ---------- hackathon judge code: typed on /welcome/ (the wall) or form[data-judge]; no URL shortcut ----------
+  // ---------- hackathon judge code: typed on /sign-in/ (the wall) or form[data-judge]; no URL shortcut ----------
   const JCODE = "SPARK2026";
   const urlJ = new URLSearchParams(location.search).get("judge");
   const urlHit = false;
