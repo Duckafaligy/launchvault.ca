@@ -27,7 +27,9 @@ window.LVAuth = (() => {
     if (!live) return Promise.resolve(null);
     if (!loading) loading = script(LV_CLERK_UI)
       .then(() => script(LV_CLERK_JS, {"data-clerk-publishable-key": LV_CLERK_PK}))
-      .then(async () => { clerk = window.Clerk; await clerk.load({ui: {ClerkUI: window.__internal_ClerkUICtor}}); return clerk; });
+      .then(async () => { clerk = window.Clerk; await clerk.load({ui: {ClerkUI: window.__internal_ClerkUICtor},
+      // tell Clerk where OUR pages are; without these it falls back to its hosted pages on *.accounts.dev
+      signInUrl: "/welcome/#signin", signUpUrl: "/welcome/#signup", signInFallbackRedirectUrl: "/app/", signUpFallbackRedirectUrl: "/app/start/"}); return clerk; });
     return loading;
   };
   const email = () => clerk && clerk.user && clerk.user.primaryEmailAddress ? clerk.user.primaryEmailAddress.emailAddress : null;

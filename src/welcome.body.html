@@ -90,7 +90,7 @@
   let moved = false; ["wheel", "touchmove", "keydown"].forEach(t => addEventListener(t, () => { moved = true; }, {once: true, passive: true}));
   const still = () => { if (!moved && scrollY) scrollTo(0, 0); };
   still(); addEventListener("load", still); [300, 900, 1800].forEach(ms => setTimeout(still, ms));
-  const want = () => location.hash === "#signup" || /^(pro|developer|builder|lifetime|full)$/.test(new URLSearchParams(location.search).get("plan") || "") ? "signup" : location.hash === "#signin" ? "signin" : null;
+  const want = () => /^#signup\/?$/.test(location.hash) || /^(pro|developer|builder|lifetime|full)$/.test(new URLSearchParams(location.search).get("plan") || "") ? "signup" : /^#signin\/?$/.test(location.hash) ? "signin" : null;
   const set = id => ["signin", "signup"].forEach(k => { const on = k === id; document.getElementById("tab-" + k).setAttribute("aria-selected", on); document.getElementById("p-" + k).hidden = !on; });
   let back = false; try { back = !!localStorage.getItem("lv-age"); } catch {}   // someone who has used the app on this device
   set(want() || (back ? "signin" : "signup"));
@@ -120,7 +120,9 @@
         formFieldLabel: {fontSize: "14px", fontWeight: "500", color: "#0B1220"}, formFieldInput: {minHeight: "48px", fontSize: "15px", borderColor: "#D9DEE7", boxShadow: "none"},
         dividerLine: {background: "#E5E7EB"}, dividerText: {color: "#4B5563", fontSize: "13px"},
         footerActionLink: {minHeight: "44px", display: "inline-flex", alignItems: "center", whiteSpace: "nowrap", fontWeight: "600"}}};
-    const opts = {routing: "hash", signInUrl: "/welcome/#signin", signUpUrl: "/welcome/#signup", signInForceRedirectUrl: "/app/", signUpForceRedirectUrl: "/app/start/", appearance: look};
+    // back to the page that sent them to the wall (only /app/ paths), else the app home; new accounts start with the quiz
+    const nx = new URLSearchParams(location.search).get("next") || "", back2 = /^\/app\/[\w\-/?=&%.]*$/.test(nx) ? nx : "/app/";
+    const opts = {routing: "hash", signInUrl: "/welcome/#signin", signUpUrl: "/welcome/#signup", signInForceRedirectUrl: back2, signUpForceRedirectUrl: "/app/start/", appearance: look};
     let shown = null;
     const show = () => A.load().then(c => { const k = isNew() ? "up" : "in"; if (k === shown) return; shown = k; ui.innerHTML = "";
       if (c.user) { ui.innerHTML = '<p class="sub">You are signed in.</p><a class="btn btn-p btn-lg" href="/app/">Open the app</a>'; return; }
