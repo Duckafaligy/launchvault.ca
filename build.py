@@ -121,7 +121,7 @@ def nav(active):
   {MEGA}
 </nav>'''
 
-# Footer (2026-11-20 redesign): brand + CTA, four link columns, a "Data from" strip in real logo colours, slim bottom bar.
+# Footer: brand + tagline, four link columns, slim bottom bar. Nothing else (owner removed the logo strip and CTA).
 # No social icons until real LaunchVault accounts exist. The label key lives in the "How we check" section (/#sources) and the FAQ.
 FCOLS = [("Explore", [("/#stories", "Stories"), ("/#sources", "How we check"), ("/#check", "Verified vs Claimed"), ("/#inside", "Inside a breakdown"), ("/#pricing", "Pricing"), ("/#faq", "FAQ")]),
          ("Blog", [("/blog/", "All posts"), ("/blog/postiz/", "The Postiz breakdown"), ("/blog/what-verified-means/", "What Verified means"),
@@ -129,22 +129,15 @@ FCOLS = [("Explore", [("/#stories", "Stories"), ("/#sources", "How we check"), (
          ("Account", [("/welcome/", "Sign in"), ("/welcome/#signup", "Sign up")]),
          ("Legal", [("/legal/privacy/", "Privacy (draft)"), ("/legal/terms/", "Terms (draft)"), ("/legal/cookies/", "Cookies (draft)"), ("/legal/accessibility/", "Accessibility")])]
 FCOLS_HTML = "".join(f'<nav class="fcol" aria-label="{h}"><h4>{h}</h4>' + "".join(f'<a href="{u}"><span>{t}</span></a>' for u, t in ls) + "</nav>" for h, ls in FCOLS)
-FSRC = [("trustmrr.png", "TrustMRR"), ("stripe.svg", "Stripe"), ("github.svg", "GitHub"), ("internetarchive.png", "Wayback Machine"), ("starterstory.png", "Starter Story"),
-        ("mixergy.png", "Mixergy"), ("devto.png", "DEV"), ("hackernews.svg", "Hacker News"), ("producthunt.png", "Product Hunt")]
-FSRC_HTML = "".join(f'<li><img src="/assets/logos/{f}" alt="" width="20" height="20" loading="lazy" decoding="async">{n}</li>' for f, n in FSRC)
-ARR_S = '<span aria-hidden="true">→</span>'
 def footer():
     return '''<footer class="foot">
   <div class="wrap">
     <div class="ftop">
       <div class="fbrand"><a class="logo" href="/">''' + LV + '''LaunchVault</a>
-        <p class="tl">Real startup stories, checked and cut down to the part you can use.</p>
-        <a class="btn btn-p btn-lg fcta" href="''' + week_href() + '''">Read this week's breakdown ''' + ARR_S + '''</a></div>
+        <p class="tl">Real startup stories, checked and cut down to the part you can use.</p></div>
       ''' + FCOLS_HTML + '''
     </div>
-    <div class="fsrc"><h4 id="fsrc-h">Data from</h4><ul aria-labelledby="fsrc-h">''' + FSRC_HTML + '''</ul><a class="fhow" href="/#sources">How we check ''' + ARR_S + '''</a></div>
-    <div class="fbot"><span>© 2026 LaunchVault · Not financial advice</span><span class="lgl"><a href="/legal/privacy/">Privacy</a><a href="/legal/terms/">Terms</a><a href="/legal/cookies/" data-consent-open>Cookie settings</a><a href="/#top">Back to top <span aria-hidden="true">↑</span></a></span>
-      <span class="own">Logos belong to their owners and show where data was read, not a partnership.</span></div>
+    <div class="fbot"><span>© 2026 LaunchVault · Not financial advice</span><span class="lgl"><a href="/legal/privacy/">Privacy</a><a href="/legal/terms/">Terms</a><a href="/legal/cookies/" data-consent-open>Cookie settings</a><a href="/#top">Back to top <span aria-hidden="true">↑</span></a></span></div>
   </div>
 </footer>'''
 

@@ -146,8 +146,6 @@ footer.foot :focus-visible{outline-color:#93B4FF}
 .ftop{grid-template-columns:minmax(0,1.6fr) repeat(4,minmax(0,1fr));gap:40px 32px}
 .fbrand{display:flex;flex-direction:column;align-items:flex-start}
 footer p.tl{color:#CBD5E1;font-size:15px}
-.fcta{margin-top:24px;gap:10px}
-.fcta span,.fhow span{display:inline-block}
 .fcol h4{margin:0 0 6px}
 .fcol a{display:flex;align-items:center;min-height:44px;padding:0;color:#94A3B8;transition:color .2s}
 .fcol a span{background:linear-gradient(#93B4FF,#93B4FF) 0 100%/0 1px no-repeat;padding-bottom:2px}
@@ -163,23 +161,13 @@ footer p.tl{color:#CBD5E1;font-size:15px}
 .soc::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);padding:5px 8px;border-radius:6px;background:#F8FAFC;color:var(--ink);font:500 12px/1.2 var(--fd);white-space:nowrap;
   pointer-events:none;opacity:0;transform:translate(-50%,4px);transition:opacity .2s,transform .3s var(--out)}
 .soc:hover::after,.soc:focus::after{opacity:1;transform:translate(-50%,0)}
-/* data sources: real logo colours on light chips */
-.fsrc{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:56px;padding:24px 0;border-top:1px solid rgba(255,255,255,.08)}
-.fsrc h4{margin:0;font:600 14px var(--fd);color:#F8FAFC}
-.fsrc ul{order:1;flex-basis:100%;display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
-.fsrc li{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px 0 6px;border-radius:999px;background:#F8FAFC;color:#0B1020;font:500 13px/1 var(--fd);white-space:nowrap}
-.fsrc img{width:20px;height:20px;border-radius:5px;object-fit:contain;flex:none}
-.fhow{margin-left:auto;display:inline-flex;align-items:center;gap:6px;min-height:44px;color:#93B4FF;font-weight:600;transition:color .2s}
-.fhow:hover{color:#F8FAFC}
-.fbot{align-items:center;margin-top:0}
+.fbot{align-items:center;margin-top:56px;padding-top:24px;border-top:1px solid rgba(255,255,255,.08)}
 .fbot .lgl{gap:4px 24px}
 .fbot .lgl a{color:#94A3B8;transition:color .2s}
 .fbot .lgl a:hover{color:#F8FAFC}
 .fbot .lgl a span{margin-left:4px}
 @media (prefers-reduced-motion:no-preference){
   .fcol a span{transition:background-size .4s var(--out)}
-  .fcta span,.fhow span{transition:transform .3s var(--out)}
-  .fcta:hover span,.fhow:hover span{transform:translateX(3px)}
 }
 @media (max-width:1100px){
   .ftop{grid-template-columns:repeat(4,minmax(0,1fr))}.ftop .fbrand{grid-column:1/-1}
@@ -187,7 +175,7 @@ footer p.tl{color:#CBD5E1;font-size:15px}
 @media (max-width:720px){
   footer.foot{padding:56px 0 24px}
   .ftop{grid-template-columns:1fr 1fr;gap:32px 16px}
-  .fsrc{margin-top:40px}
+  .fbot{margin-top:40px}
 }
 @media (max-width:359px){
   .ftop{grid-template-columns:1fr}
