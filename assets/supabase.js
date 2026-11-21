@@ -55,6 +55,8 @@ window.LVSync = (() => {
     } catch (e) { /* offline or not set up yet: local progress keeps working */ }
   };
   // community chat (assets/community.js) gets its own client with the same Clerk token; same under-13 rule applies (the age gate already blocked them)
-  const make = async clerk => { await loadLib(); return window.supabase.createClient(URL, KEY, {accessToken: async () => (await clerk.session.getToken()) || null}); };
+  // one shared client per page (chat, the account bubble and the Profile editor all use it)
+  let shared = null;
+  const make = clerk => shared || (shared = loadLib().then(() => window.supabase.createClient(URL, KEY, {accessToken: async () => (await clerk.session.getToken()) || null})).catch(e => { shared = null; throw e; }));
   return {start, make, plan};
 })();

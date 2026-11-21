@@ -268,8 +268,8 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
     {f'<a class="mback" href="{crumbs[0][0]}" aria-label="Back to {esc(crumbs[0][1])}">' + ic(I["back"], 22) + '</a>' if crumbs else ""}<a class="mlogo" href="/app/" aria-label="LaunchVault app home">{LV}</a>
     <div class="ttl">{ttl}</div>
     <button class="srch" type="button" data-cmd>{ic(I["srch"], 16)}<span>Search breakdowns</span><kbd>⌘K</kbd></button>
-    <a class="chip" href="/app/account/#plan"><span data-plan-chip>Free</span> <small data-plan-sm>plan</small></a>
-    <button class="ibtn" type="button" data-cmd aria-label="Search">{ic(I["srch"], 20)}</button><a class="ibtn macct" href="/app/assistant/" aria-label="Ask LaunchVault"{cur("ask")}>{ic(I["ask"], 20)}</a><a class="ibtn macct" href="/app/account/" aria-label="Account">{ic(I["user"], 20)}</a>
+    <button class="ibtn" type="button" data-cmd aria-label="Search">{ic(I["srch"], 20)}</button><a class="ibtn macct" href="/app/assistant/" aria-label="Ask LaunchVault"{cur("ask")}>{ic(I["ask"], 20)}</a>
+    <div class="avw"><button class="avb" type="button" data-avb aria-expanded="false" aria-controls="avm" aria-label="Account menu"><span class="av" data-av aria-hidden="true">{ic(I["user"], 20)}</span></button><div class="avm" id="avm" aria-label="Account" hidden></div></div>
   </header>
   <main id="main">
 {body}
@@ -280,7 +280,8 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script type="application/json" id="lvapp">{json.dumps(APPDATA, separators=(",", ":"))}</script>
 <script src="/assets/auth.js" defer></script>
-<script src="/assets/app.js" defer></script>{scripts}
+<script src="/assets/app.js" defer></script>
+<script src="/assets/profile.js" defer></script>{scripts}
 </body>
 </html>
 ''')

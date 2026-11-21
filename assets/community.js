@@ -17,7 +17,7 @@
   const DEFAULT = "That didn't send. Try again in a moment.";
   const ERR = {
     slow_down: "Slow down a little. Try again in a few seconds.", slow_mode: "This channel is in slow mode. Try again in a moment.",
-    filter_contact: "Contact details and chat-app links aren't allowed. Keep the conversation here.", filter_link: "Links aren't allowed in this message.",
+    filter_contact: "Contact details, chat-app links and outside @handles aren't allowed. To mention a member, pick their @username from the list.", filter_link: "Links aren't allowed in this message.",
     filter_link_unknown: "That site isn't on our list of known sites. Leave the link out, or try another.", filter_link_shortener: "Shortened links aren't allowed. Paste the full link.",
     filter_link_new_account: "New members can post links after a day.", filter_link_count: "Two links per message, max.", filter_link_blocked: "That site isn't allowed.",
     filter_link_scheme: "That link isn't allowed.", filter_link_ip: "That link isn't allowed.", filter_link_lookalike: "That link isn't allowed.",
@@ -41,7 +41,7 @@
   const errKey = e => ((String(e && (e.message || e.details) || "")).match(/chat:([a-z_]+)/) || [])[1] || "";
 
   // ---------- topics: the channels from the database. #general holds the live chat, and its threads are "Other & questions" ----------
-  const S = {signed: false, ready: false, me: null, sb: null, clerk: null, prof: null, mods: new Set(), isMod: false, cats: [], rooms: [], known: new Set(), skipEntry: false, ch: null};
+  const S = {signed: false, ready: false, me: null, sb: null, clerk: null, prof: null, mods: new Set(), isMod: false, cats: [], rooms: [], known: new Set(), skipEntry: false, ch: null, pp: new Map()};   // pp: user_id -> public profile (public_profiles view), null while loading
   const CHAT = "general";
   const NAMES = {introductions: "Introductions", breakdowns: "Story breakdowns", "what-im-trying": "What I'm trying", "apps-and-saas": "Apps and SaaS", "online-stores": "Online stores",
     "local-shops-and-restaurants": "Local shops and restaurants", "services-and-freelancing": "Services and freelancing", wins: "Wins", "ask-for-help": "Ask for help", [CHAT]: "Other & questions"};
@@ -68,7 +68,10 @@
   const dayLabel = d => { const x = new Date(d), n = new Date(); if (dayKey(d) === dayKey(n)) return "Today"; const y = new Date(n); y.setDate(n.getDate() - 1); if (dayKey(d) === dayKey(y)) return "Yesterday"; return MON[x.getMonth()] + " " + x.getDate(); };
   const ago = d => { const s = Math.max(0, (Date.now() - new Date(d)) / 1000); return s < 60 ? "just now" : s < 3600 ? Math.floor(s / 60) + "m ago" : s < 86400 ? Math.floor(s / 3600) + "h ago" : Math.floor(s / 86400) + "d ago"; };
   const AV = [["#EDE9FE", "#5B21B6"], ["#E5E7EB", "#1F2937"], ["#DBEAFE", "#1E40AF"], ["#DCFCE7", "#166534"], ["#FCE7F3", "#9D174D"], ["#E0F2FE", "#075985"]];
-  const avatar = (key, name) => { let h = 0; for (const c of String(key || name)) h = (h * 31 + c.charCodeAt(0)) >>> 0; const [bg, fg] = AV[h % AV.length];
+  const AVURL = "https://azriqynpnbltvxucwmpo.supabase.co/storage/v1/object/public/avatars/";
+  const avatar = (key, name) => { const pp = S.pp.get(key);
+    if (pp && pp.avatar_path) return `<span class="cm-av" aria-hidden="true"><img src="${esc(AVURL + pp.avatar_path)}" alt="" width="40" height="40" loading="lazy"></span>`;
+    let h = 0; for (const c of String(key || name)) h = (h * 31 + c.charCodeAt(0)) >>> 0; const [bg, fg] = AV[h % AV.length];
     return `<span class="cm-av" style="background:${bg};color:${fg}" aria-hidden="true">${esc((name || "?").trim().charAt(0).toUpperCase())}</span>`; };
   const snip = (t, n = 60) => { t = String(t || "").replace(/\s+/g, " ").trim(); return t.length > n ? t.slice(0, n - 1) + "…" : t; };
   const roomBy = slug => S.rooms.find(r => r.slug === slug);
@@ -97,7 +100,17 @@
   const hostOf = u => { try { const x = new URL(u); return /^https?:$/.test(x.protocol) ? x.hostname.toLowerCase().replace(/^www\./, "") : null; } catch { return null; } };
   const isKnown = h => { const p = h.split("."); for (let i = 0; i < p.length - 1; i++) if (S.known.has(p.slice(i).join("."))) return true; return false; };
   const body = t => esc(t).replace(/https?:\/\/[^\s<>]+/g, m => { const tail = (m.match(/[.,;:!?)\]]+$/) || [""])[0]; const url = m.slice(0, m.length - tail.length).replace(/&amp;/g, "&");
-    return hostOf(url) ? `<button type="button" class="cm-link" data-url="${esc(url)}">${esc(url)}</button>${tail}` : m; });
+    return hostOf(url) ? `<button type="button" class="cm-link" data-url="${esc(url)}">${esc(url)}</button>${tail}` : m; })
+    // @mentions (the server only lets real usernames through); yours is marked
+    .replace(/(^|[^a-z0-9_\/@.&;=-])@([a-z0-9_]{3,20})(?![a-z0-9_]|\.[a-z0-9])/gi, (_, pre, u) => `${pre}<span class="cm-at${S.prof && S.prof.username === u.toLowerCase() ? " me" : ""}">@${u}</span>`);
+  const unTag = uid => { const p = S.pp.get(uid); return p && p.username ? `<span class="cm-un">@${esc(p.username)}</span>` : ""; };
+  // public profiles (avatar, @username) of whoever posted, one query per batch; rows painted before it arrives are repainted
+  const people = async arr => {
+    const need = [...new Set(arr.map(m => m && m.user_id).filter(u => u && u !== "launchvault" && !S.pp.has(u)))]; if (!need.length || !S.sb) return;
+    need.forEach(u => S.pp.set(u, null));
+    try { (await q(S.sb.from("public_profiles").select("user_id,username,display_name,avatar_path").in("user_id", need))).forEach(p => S.pp.set(p.user_id, p)); }
+    catch { need.forEach(u => S.pp.delete(u)); }
+  };
   const leaving = (url, msgId) => {
     const host = hostOf(url); if (!host) return; const known = isKnown(host);
     const d = dlg(`<div class="cm-dc"><h2 class="cm-lh">${known ? "" : ic("warn", 22)}${known ? "You're leaving LaunchVault" : "We don't know this site"}</h2>
@@ -142,7 +155,7 @@
     if (m.gone) return `<article class="cm-m cm-gone" data-id="${m.id}"><span class="cm-av gone" aria-hidden="true">${ic("ban", 18)}</span><p class="gt"><em>${esc(m.gone)}</em></p><time datetime="${esc(m.created_at)}">${time(m.created_at)}</time></article>`;
     const p = m.reply_to && cur.msgs.get(m.reply_to), sys = m.user_id === "launchvault";
     const rp = m.reply_to ? (p ? `<button type="button" class="cm-rp" data-jump="${p.id}">${ic("reply", 14)}<b>Replying to ${esc(p.author_name)}</b><span>${esc(snip(p.body))}</span></button>` : `<p class="cm-rp off">${ic("reply", 14)}<b>Replying to a message</b></p>`) : "";
-    return `<article class="cm-m" data-id="${m.id}" id="m${m.id}">${avatar(m.user_id, m.author_name)}<div class="cm-mb">${rp}<p class="cm-mh"><b>${esc(m.author_name)}</b>${m.author_tag ? `<span class="tg">· ${esc(m.author_tag)}</span>` : ""}${msgBadges(m)}${optBadge(m)}<time datetime="${esc(m.created_at)}">${time(m.created_at)}</time></p><p class="cm-tx">${body(m.body)}</p></div>${S.signed && !sys ? `<button type="button" class="cm-more" data-menu="${m.id}" aria-label="Options for the message from ${esc(m.author_name)}" aria-haspopup="dialog">${ic("more", 20)}</button>` : ""}</article>`;
+    return `<article class="cm-m" data-id="${m.id}" id="m${m.id}">${avatar(m.user_id, m.author_name)}<div class="cm-mb">${rp}<p class="cm-mh"><b>${esc(m.author_name)}</b>${m.author_tag ? `<span class="tg">· ${esc(m.author_tag)}</span>` : ""}${unTag(m.user_id)}${msgBadges(m)}${optBadge(m)}<time datetime="${esc(m.created_at)}">${time(m.created_at)}</time></p><p class="cm-tx">${body(m.body)}</p></div>${S.signed && !sys ? `<button type="button" class="cm-more" data-menu="${m.id}" aria-label="Options for the message from ${esc(m.author_name)}" aria-haspopup="dialog">${ic("more", 20)}</button>` : ""}</article>`;
   };
   const withDays = arr => { let last = -1; return arr.map(m => { const k = dayKey(m.created_at), sep = k !== last ? `<div class="cm-day"><span>${dayLabel(m.created_at)}</span></div>` : ""; last = k; return sep + msgHTML(m); }).join(""); };
   const nearBottom = el => el.scrollHeight - el.scrollTop - el.clientHeight < 120;
@@ -150,10 +163,12 @@
     if (cur.msgs.has(m.id)) return false; cur.msgs.set(m.id, m); const stick = nearBottom(logEl);
     const lastDay = [...logEl.querySelectorAll("time")].pop(); const sep = !lastDay || dayKey(lastDay.getAttribute("datetime")) !== dayKey(m.created_at) ? `<div class="cm-day"><span>${dayLabel(m.created_at)}</span></div>` : "";
     const e = logEl.querySelector(".cm-none"); if (e) e.remove();
-    logEl.insertAdjacentHTML("beforeend", sep + msgHTML(m)); if (stick || (S.me && m.user_id === S.me.id)) logEl.scrollTop = logEl.scrollHeight; return true;
+    logEl.insertAdjacentHTML("beforeend", sep + msgHTML(m));
+    if (!S.pp.has(m.user_id)) people([m]).then(() => { const r = $(`#m${m.id}`), x = cur.msgs.get(m.id); if (r && x) r.outerHTML = msgHTML(x); });   // a new face: repaint with their avatar
+    if (stick || (S.me && m.user_id === S.me.id)) logEl.scrollTop = logEl.scrollHeight; return true;
   };
   const goneRow = (id, text) => { const old = cur.msgs.get(id); if (!old) return; const m = {...old, gone: text}; cur.msgs.set(id, m); const row = $(`[data-id="${id}"]`); if (row) row.outerHTML = msgHTML(m); };
-  const fillParents = async arr => { const need = [...new Set(arr.map(m => m.reply_to).filter(id => id && !cur.msgs.has(id) && !arr.some(x => x.id === id)))]; if (!need.length) return;
+  const fillParents = async arr => { await people(arr); const need = [...new Set(arr.map(m => m.reply_to).filter(id => id && !cur.msgs.has(id) && !arr.some(x => x.id === id)))]; if (!need.length) return;
     try { (await q(S.sb.from("chat_messages").select("*").in("id", need))).forEach(p => cur.msgs.set(p.id, p)); } catch {} };
 
   // message menu, report, delete, mod actions
@@ -193,15 +208,41 @@
   };
   const composerHTML = (label, help) => { const b = composerBlock(); if (b) return `<div class="cm-comp"><p class="cm-block">${ic("lock", 18)}<span>${b}</span></p></div>`;
     return `<form class="cm-comp" novalidate><p class="cm-reply" hidden></p><div class="cm-box"><textarea rows="1" maxlength="800" placeholder="${esc(label)}" aria-label="${esc(label)}" enterkeyhint="send"></textarea><button class="btn btn-p" type="submit">Send</button></div>
-      <p class="cm-hint"><span>${esc(help || "No contact details or chat-app links.")}</span><span class="cm-ct" aria-live="polite"></span></p><p class="cm-err" role="alert" hidden></p></form>`; };
+      <p class="cm-hint"><span>${esc(help || "Type @ to mention someone. No contact details or chat-app links.")}</span><span class="cm-ct" aria-live="polite"></span></p><p class="cm-err" role="alert" hidden></p></form>`; };
   const setReply = m => { cur.replyTo = m; const r = $(".cm-reply"); if (!r) return; r.hidden = !m; r.innerHTML = m ? `${ic("reply", 16)}<span>Replying to ${esc(m.author_name)}</span><button type="button" class="cm-x" aria-label="Cancel reply">${ic("x", 16)}</button>` : "";
     const x = $(".cm-x", r); if (x) x.addEventListener("click", () => setReply(null)); const ta = $(".cm-comp textarea"); if (ta) ta.focus(); };
+  // @mention autocomplete: typing "@" lists members seen in this view; more letters also ask profile_search (8 max)
+  const mentions = (ta, f) => {
+    const box = document.createElement("ul"); box.className = "cm-ac"; box.id = "cmAc" + cur.tok; box.setAttribute("role", "listbox"); box.setAttribute("aria-label", "Mention a member"); box.hidden = true;
+    f.prepend(box); Object.entries({role: "combobox", "aria-autocomplete": "list", "aria-controls": box.id, "aria-expanded": "false"}).forEach(([k, v]) => ta.setAttribute(k, v));
+    let list = [], idx = 0, tok = null, seq = 0, tm = 0;
+    const token = () => { const s = ta.value.slice(0, ta.selectionStart), m = s.match(/(^|[^a-z0-9_\/@.])@([a-z0-9_]{0,20})$/i); return m ? {q: m[2].toLowerCase(), at: s.length - m[2].length - 1} : null; };
+    const close = () => { box.hidden = true; list = []; ta.setAttribute("aria-expanded", "false"); ta.removeAttribute("aria-activedescendant"); };
+    const show = () => { if (!list.length) return close();
+      box.innerHTML = list.map((p, i) => `<li role="option" id="${box.id}-${i}" aria-selected="${i === idx}" data-i="${i}">${avatar(p.user_id, p.display_name || p.username)}<span><b>${esc(p.display_name || p.username)}</b><span>@${esc(p.username)}</span></span></li>`).join("");
+      box.hidden = false; ta.setAttribute("aria-expanded", "true"); ta.setAttribute("aria-activedescendant", `${box.id}-${idx}`); };
+    const local = s => [...S.pp.values()].filter(p => p && p.username && p.user_id !== S.me.id && p.username.startsWith(s)).sort((a, b) => a.username.localeCompare(b.username));
+    const update = () => { tok = token(); clearTimeout(tm); if (!tok) return close(); const s = tok.q, my = ++seq;
+      list = local(s).slice(0, 8); idx = 0; show(); if (!s) return;
+      tm = setTimeout(async () => { try { const r = await q(S.sb.rpc("profile_search", {p_prefix: s})); if (my !== seq) return;
+        r.forEach(p => { if (!S.pp.get(p.user_id)) S.pp.set(p.user_id, p); }); const seen = new Set();
+        list = [...local(s), ...r.filter(p => p.user_id !== S.me.id)].filter(p => !seen.has(p.username) && seen.add(p.username)).slice(0, 8); idx = Math.min(idx, Math.max(0, list.length - 1)); show(); } catch {} }, 200); };
+    const pick = i => { const p = list[i]; if (!p || !tok) return; const before = ta.value.slice(0, tok.at), after = ta.value.slice(ta.selectionStart).replace(/^\s/, ""), ins = "@" + p.username + " ";
+      ta.value = before + ins + after; const c = before.length + ins.length; ta.setSelectionRange(c, c); close(); ta.dispatchEvent(new Event("input")); ta.focus(); };
+    ta.addEventListener("input", update); ta.addEventListener("click", update); ta.addEventListener("blur", () => setTimeout(close, 150));
+    ta.addEventListener("keydown", e => { if (box.hidden || e.isComposing) return;
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); idx = (idx + (e.key === "ArrowDown" ? 1 : -1) + list.length) % list.length; show(); }
+      else if (e.key === "Enter" || e.key === "Tab") { e.preventDefault(); e.stopImmediatePropagation(); pick(idx); }
+      else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(); } });
+    box.addEventListener("mousedown", e => { const li = e.target.closest("[data-i]"); if (li) { e.preventDefault(); pick(+li.dataset.i); } });
+  };
   const bindComposer = (logEl, extra = {}) => {
     const eb = $("[data-entry]"); if (eb) eb.addEventListener("click", () => entry());
     const f = $("form.cm-comp"); if (!f) return; const ta = $("textarea", f), ct = $(".cm-ct", f), err = $(".cm-err", f), btn = $('[type="submit"]', f);
     if (extra.about && !ta.value) { ta.value = "About " + extra.about + ": "; }
     const grow = () => { ta.style.height = "auto"; ta.style.height = Math.min(ta.scrollHeight, 150) + "px"; const n = ta.value.length; ct.textContent = n >= 700 ? n + " / 800" : ""; ct.classList.toggle("max", n >= 780); };
     ta.addEventListener("input", grow); grow();
+    mentions(ta, f);   // registers its keydown first, so Enter/Tab pick a name instead of sending while the list is open
     ta.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); f.requestSubmit(); } });
     f.addEventListener("submit", async e => { e.preventDefault(); const text = ta.value.trim(); if (!text || btn.disabled) return; btn.disabled = true; err.hidden = true;
       const row = {room_id: cur.room.id, body: text}; if (cur.thread) row.thread_id = cur.thread.id; if (cur.replyTo) row.reply_to = cur.replyTo.id;
@@ -330,7 +371,7 @@
     const badges = `<span class="cm-kind ${t.kind}">${t.kind === "poll" ? "Poll" : "Discussion"}</span>${t.pinned ? `<span class="cm-kind">${ic("pin", 12)}Pinned</span>` : ""}${t.locked ? `<span class="cm-kind">${ic("lock", 12)}Locked</span>` : t.archived_at ? '<span class="cm-kind">Archived</span>' : cur.closed ? '<span class="cm-kind">Closed</span>' : ""}`;
     const filt = t.kind === "poll" ? `<div class="cm-seg cm-fl" role="group" aria-label="Show replies for">${[{id: 0, label: "All", position: 0}, ...cur.opts].map(o => `<button type="button" data-f="${o.id}" aria-pressed="${cur.filter === o.id}">${o.id ? `<span class="cm-opt o${o.position}"><b>${"ABCDEF"[o.position - 1]}</b></span>` : ""}${esc(o.label)}</button>`).join("")}</div>` : "";
     pane.innerHTML = header("thread", [`#threads?topic=${room.slug}`, "Threads"]) + `<div class="cm-tv"><div class="cm-tvh"><a class="cm-tb" href="#threads?topic=${room.slug}">${esc(topicName(room))}</a>${badges}${S.isMod ? `<button type="button" class="cm-more" id="cmTM" aria-label="Moderator actions for this thread" aria-haspopup="dialog">${ic("more", 20)}</button>` : ""}</div>
-      <div class="cm-tvs"><h2>${esc(t.title)}</h2>${first ? `<div class="cm-first">${avatar(first.user_id, first.author_name)}<div><p class="cm-mh"><b>${esc(first.author_name)}</b>${first.author_tag ? `<span class="tg">· ${esc(first.author_tag)}</span>` : ""}${msgBadges(first)}<span class="tg">Started ${dayLabel(t.created_at).toLowerCase()}</span></p><p class="cm-tx">${body(first.body)}</p></div></div>` : ""}
+      <div class="cm-tvs"><h2>${esc(t.title)}</h2>${first ? `<div class="cm-first">${avatar(first.user_id, first.author_name)}<div><p class="cm-mh"><b>${esc(first.author_name)}</b>${first.author_tag ? `<span class="tg">· ${esc(first.author_tag)}</span>` : ""}${unTag(first.user_id)}${msgBadges(first)}<span class="tg">Started ${dayLabel(t.created_at).toLowerCase()}</span></p><p class="cm-tx">${body(first.body)}</p></div></div>` : ""}
       ${t.kind === "poll" ? pollHTML() : ""}<div class="cm-rh">${filt || '<span class="cm-div"></span>'}<span id="cmRc" class="tg">${repl(t.reply_count)}</span></div></div>
       <div class="cm-log" id="cmLog" role="log" aria-label="Replies" tabindex="0">${shown.length ? withDays(shown) : `<div class="cm-none cm-empty"><p>${cur.filter ? "No replies for this option yet." : "No replies yet."}</p></div>`}</div><div id="cmComp"></div></div>`;
     const logEl = $("#cmLog"), voted = t.kind !== "poll" || cur.vote != null;
@@ -378,7 +419,7 @@
     pane.innerHTML = header("settings", ["#chat", "Back to chat"]) + `<div class="cm-body cm-set"><h1 class="cm-sh">Chat settings</h1>
       <section class="card"><h2>Chat name</h2><form class="cm-sec" id="cmName" novalidate><label class="cm-lbl" for="snm">Display name</label><div class="cm-nr"><input id="snm" maxlength="30" value="${esc(p.display_name || "")}" autocomplete="off"><span class="tg">${p.name_tag ? "· " + esc(p.name_tag) : ""}</span></div>
         <p class="cm-nv">Others see this name with your 4-digit tag. You can change it 3 times a day.</p><p class="cm-err" role="alert" hidden></p><button class="btn btn-p" type="submit">Save name</button></form></section>
-      <section class="card"><h2>Chat</h2><button type="button" class="cm-sr link" id="cmRules"><span><b>Community Guidelines</b><small>Read what you agreed to.</small></span>${ic("chevr", 18)}</button></section>
+      <section class="card"><h2>Chat</h2><a class="cm-sr link" href="/app/account/#profile"><span><b>Public profile</b><small>Photo, @username and bio.</small></span>${ic("chevr", 18)}</a><button type="button" class="cm-sr link" id="cmRules"><span><b>Community Guidelines</b><small>Read what you agreed to.</small></span>${ic("chevr", 18)}</button></section>
       <section class="card"><h2>Account</h2><div class="cm-sr"><span><b>Plan</b><small>Free plan</small></span><a class="tl" href="/app/account/#plan">Upgrade</a></div><button type="button" class="cm-sr link" id="cmOut"><span><b>Sign out</b></span></button></section></div>`;
     const f = $("#cmName"), err = $(".cm-err", f); f.addEventListener("submit", async e => { e.preventDefault(); err.hidden = true;
       try { await q(S.sb.rpc("chat_set_name", {p_name: $("#snm").value})); S.prof = await loadProfile(); toast("Name saved."); showSettings(); } catch (x) { err.hidden = false; err.textContent = errCopy(x); } });
@@ -394,7 +435,7 @@
     if (r.view === "thread") return showThread(r.id);
     return showChat(r.about);
   };
-  const loadProfile = async () => q(S.sb.from("profiles").select("display_name,name_tag,chat_rules_at,age_range").eq("user_id", S.me.id).maybeSingle());
+  const loadProfile = async () => q(S.sb.from("profiles").select("display_name,name_tag,username,chat_rules_at,age_range").eq("user_id", S.me.id).maybeSingle());
   const AGE = {"13 to 15": "13-15", "16 to 17": "16-17", "18 to 20": "18-20", "21 or older": "21+"};
 
   const startSigned = async clerk => {
