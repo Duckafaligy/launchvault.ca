@@ -557,7 +557,7 @@
         { w: 3, can: () => chartFree() && navOK() && desk() && vis(q1("[data-range]")) && !(dash.userRange && !mayUndoUser()), run: async (c, g) => {
             await hold(["chart"], async () => { const t = q1('[data-range][aria-selected="false"]'); say(c, t.dataset.range === "12" ? "Comparing 12 months" : "Back to all time");
               await go(c, t, g); hov(c, t, true); if (await click(c, t, g, {disrupt: true})) await idle(c, rnd(1100, 1800), g); hov(c, t, false); }); } },
-        look(".rhead .btn-p", "Eyeing the full breakdown"),
+        look(".rhead .btn-p", "Looking at the full breakdown"),
         // the phase band: hover a phase to read its name and dates, sometimes pick it, then put "Turning point" back
         { w: 3, can: () => chartFree() && qa(".pseg").filter(free).length > 1, run: async (c, g) => {
             await hold(["chart"], async () => { const segs = qa(".pseg"), n = Math.min(segs.length, chance(.5) ? 2 : 3), s0 = Math.floor(rnd(0, segs.length - n + 1));
@@ -575,7 +575,7 @@
       drawer: [
         look(".sd-l li", el => "Checking " + el.querySelector(".sr-t b").textContent.trim(), [rnd(.15, .5), .5]),
         look(".sd-l li", "Reading a source"),
-        look(".sd-f", "Eyeing the breakdown link"),
+        look(".sd-f", "Looking at the breakdown link"),
         { w: 2.5, can: () => navOK() && free("nav") && !(dash.userDrawer && !mayUndoUser()) && vis(q1(".sd-x")), run: async (c, g) => { const x = q1(".sd-x");
             await hold(["nav", x], async () => { say(c, "Closing the sources"); await go(c, x, g, .5, .5); hov(c, x, true); await click(c, x, g, {must: true, disrupt: true}); hov(c, x, false); }); } },
       ],
@@ -634,7 +634,7 @@
         look(VX(".so-n .lb"), "Checking the label"),
         look(VX(".so-spk"), "Reading the monthly revenue", [0.85, 0.3]),
         look(VX(".so-know li"), "Reading what we know"),
-        look(VX(".so-a .btn-p"), "Eyeing the weekly email"),
+        look(VX(".so-a .btn-p"), "Looking at the weekly email"),
         look(VX(".sst"), el => "Checking: " + el.textContent.trim()),
         nav(VX('.so-a [data-go="postiz"]'), "Back to Postiz", 2.5),
       ],

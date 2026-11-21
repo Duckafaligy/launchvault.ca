@@ -1,4 +1,14 @@
-<style>@media (min-width:1100px){body:has(.welcome) .lvc{right:auto;left:20px}}.welcome [role=tab],.welcome .acard{scroll-margin-top:104px}.welcome #clerkui{max-width:100%;overflow:visible}@media (max-width:600px){.welcome{padding-bottom:180px}}</style>
+<style>@media (min-width:1100px){body:has(.welcome) .lvc{right:auto;left:20px}}.welcome [role=tab],.welcome .acard{scroll-margin-top:104px}.welcome #clerkui{max-width:100%;overflow:visible}@media (max-width:600px){.welcome{padding-bottom:180px}}
+.gkey{margin-top:16px;border-top:1px solid #E5E7EB;padding-top:8px}
+.gkey summary{display:flex;align-items:center;gap:6px;min-height:44px;cursor:pointer;list-style:none;font:600 14px var(--fd);color:#1D4ED8}
+.gkey summary::-webkit-details-marker{display:none}.gkey summary span{transition:transform .25s}.gkey[open] summary span{transform:rotate(90deg)}
+.gkey summary:hover{text-decoration:underline;text-underline-offset:3px}
+.gkf label{display:block;margin:4px 0 6px;font-size:13px;color:#4B5563}
+.welcome .gkr{display:flex;gap:8px}.welcome .gkr input{flex:1 1 auto;width:100%;min-width:0;min-height:44px;padding:0 12px;border:1px solid #CBD5E1;border-radius:10px;font:500 15px var(--fn);letter-spacing:.04em;text-transform:uppercase}
+.gkr input:focus-visible{outline:2px solid #2563EB;outline-offset:1px;border-color:#2563EB}.welcome .gkr .btn{flex:0 0 auto;width:auto;min-height:44px;white-space:nowrap}
+.gke{margin-top:8px;font-size:13px;color:#B91C1C}
+@media (max-width:420px){.welcome .gkr{flex-direction:column}.welcome .gkr .btn{width:100%}}
+@media (prefers-reduced-motion:reduce){.gkey summary span{transition:none}}</style>
 <section class="auth welcome">
   <div class="wl">
     <div class="wl-copy">
@@ -51,6 +61,10 @@
         </ul>
       </div>
       <p class="note">We keep your email address and the name you choose. By continuing you agree to the <a href="/legal/terms/">terms</a> and <a href="/legal/privacy/">privacy policy</a> (drafts).</p>
+      <details class="gkey" id="gkey"><summary>Have a key? Enter it to look around as a guest <span aria-hidden="true">→</span></summary>
+        <form class="gkf" id="gkf" novalidate><label for="gk">Guest key</label>
+          <div class="gkr"><input id="gk" name="key" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="btn btn-p" type="submit">View as guest</button></div>
+          <p class="gke" id="gke" role="alert" hidden>That key didn't work. Check it and try again.</p></form></details>
     </div>
   </div>
 </section>
@@ -102,6 +116,16 @@
     if (b.dataset.strategy === "email_code") { const f = $("#ecode"); f.hidden = !f.hidden; b.setAttribute("aria-expanded", !f.hidden); if (!f.hidden) $("#ec-email").focus(); return; }
     b.disabled = true; A.signInWith(b.dataset.strategy, {isNew: isNew()}).catch(() => { b.disabled = false; $("#authoff").textContent = "That didn't work. Try again, or pick another option."; $("#authoff").hidden = false; });
   });
+  // guest key (handed to judges): same check as the app's judge pass, then into the app as a guest viewer
+  $("#gkf").addEventListener("submit", e => {
+    e.preventDefault(); const v = $("#gk").value.trim().toUpperCase();
+    if (v !== "SPARK2026") { $("#gke").hidden = false; $("#gk").focus(); return; }
+    try { localStorage.setItem("lv-judge", JSON.stringify(v)); } catch {}
+    const nx = new URLSearchParams(location.search).get("next") || "";
+    location.href = /^\/app\/[\w\-/?=&%.]*$/.test(nx) ? nx : "/app/";
+  });
+  $("#gk").addEventListener("input", () => { $("#gke").hidden = true; });
+  if (new URLSearchParams(location.search).has("next")) document.getElementById("signin").click();
   const f = $("#ecode");
   if (f) f.addEventListener("submit", async e => {
     e.preventDefault(); const msg = $("#ec-msg"), codeStep = !$('[data-step="code"]').hidden;

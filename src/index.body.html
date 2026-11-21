@@ -3,15 +3,13 @@
   <div class="wrap">
     <h1>How real apps got their first customers.<br> <em class="em">In 10 minutes, <span class="nw">not 100 videos.</span></em></h1>
     <p class="lede">Real startup stories, broken down from public numbers. Every number is labelled, so you know what's checked.</p>
-    <div class="hcta"><a class="btn btn-p btn-lg" href="{{WEEK_HREF}}">Read this week's breakdown <span class="arr" aria-hidden="true">→</span></a><a class="tlink" href="/app/library/">See all {{NREADY}} breakdowns <span class="arr" aria-hidden="true">→</span></a></div>
-    <div class="hmail open" id="hmail">
-      <div class="hmp" id="hmp"><div class="hmi">
-        <form class="form pv" novalidate>
-          <input type="email" required placeholder="you@email.com" aria-label="Email address">
-          <button class="btn btn-p btn-lg" type="submit">Tell me when it opens</button>
-        </form>
-        <p class="hmn">Your address stays on this device. Emails start when sign-ups open.</p>
-      </div></div>
+    <div class="hmail" id="hmail">
+      <form class="form pv hjoin" novalidate>
+        <input type="email" required placeholder="you@email.com" aria-label="Email address" autocomplete="email">
+        <button class="btn btn-p" type="submit">Get the weekly story</button>
+      </form>
+      <p class="hmn">Saved on this device for now. Emails start when sign-ups open.</p>
+      <p class="hrd"><a href="{{WEEK_HREF}}">Or read this week's breakdown</a></p>
     </div>
 
     <div class="winfit" id="winfit">
@@ -62,7 +60,7 @@
           <div class="view vx" data-view="home" hidden>
             <div class="hcont"><span class="tile plg"><img src="/assets/logos/postiz.svg" alt="" width="22" height="24"></span>
               <span class="hc-t"><b>Continue reading: Postiz</b><span>Breakdown 01 · 10 min read · 8 moves · 6 phases</span><span class="hbar"><i></i></span></span>
-              <button class="btn btn-p btn-sm hres" type="button" data-go="postiz">Resume <span aria-hidden="true">→</span></button></div>
+              <button class="btn btn-p btn-sm hres" type="button" data-go="postiz">Resume</button></div>
             <div class="hgrid">
               <div class="hcol"><div class="hcard2"><div class="hc-h"><b>Being checked now</b><span>Numbers checked · story in progress</span></div>
                 <button class="hnext" type="button" data-go="soon" data-co="dm-champ"><span class="lg big"><img src="/assets/logos/dmchamp.png" alt="" width="36" height="36" loading="lazy" decoding="async"></span>
@@ -76,7 +74,7 @@
                 <button class="hck" type="button" data-go="path"><span class="pi"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 6h7a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h7"/></svg></span><span class="hk-t"><b>My path · from your checklist</b><span>Next: Plan for a long flat stretch</span></span><span class="hk-b vi"><i style="width:33%"></i></span><span class="hk-n">2 of 6</span></button></div>
               <div class="hcard2 hfill hlesson"><div class="hc-h"><b>This week's lesson</b><span>Postiz · The turning point</span></div>
                 <p class="hl-q">You can&amp;#x27;t plan a viral moment, but you can be the tool that&amp;#x27;s ready when one happens.</p>
-                <button class="hlink hl-go" type="button" data-go="postiz">Read the phase <span aria-hidden="true">→</span></button></div></div>
+                <button class="hlink hl-go" type="button" data-go="postiz">Read the phase</button></div></div>
             </div>
           </div>
           <div class="view vx" data-view="breakdowns" hidden>
@@ -126,7 +124,7 @@
           <div class="sdrawer" id="sdrawer" role="dialog" aria-label="Postiz sources" aria-hidden="true" inert>
             <div class="sd-h"><b>Sources</b><span>Every link checked Nov 17 2026</span><button class="sd-x" type="button" aria-label="Close sources"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
             <ol class="sd-l"><li><img class="blogo" src="/assets/logos/trustmrr.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span class="sr-t"><b>TrustMRR: Postiz</b><span>MRR, all-time revenue, subscriptions, read from Stripe</span></span><span class="sr-dt">Nov 17 2026</span><span class="lb v">Verified</span></li><li><img class="blogo" src="/assets/logos/github.svg" alt="" width="20" height="20" loading="lazy" decoding="async"><span class="sr-t"><b>GitHub: gitroomhq/postiz-app</b><span>41,810 stars</span></span><span class="sr-dt">Nov 17 2026</span><span class="lb l">Live</span></li><li><img class="blogo" src="/assets/logos/internetarchive.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span class="sr-t"><b>Wayback Machine: postiz.com</b><span>Homepage Jul 2024, pricing Sep 2024</span></span><span class="sr-dt">archived</span><span class="lb w">Wayback</span></li><li><img class="blogo" src="/assets/logos/devto.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span class="sr-t"><b>The founder on Dev.to</b><span>Open source, n8n, affiliates, revenue to $14K</span></span><span class="sr-dt">Nov 2025</span><span class="lb c">Claimed</span></li><li><img class="blogo" src="/assets/logos/mixergy.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span class="sr-t"><b>Mixergy interview</b><span>The OpenClaw turning point, &quot;$45,000 per month&quot;</span></span><span class="sr-dt">Mar 2026</span><span class="lb c">Claimed</span></li><li><img class="blogo" src="/assets/logos/superframeworks.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span class="sr-t"><b>Superframeworks case study</b><span>Gitroom, the SEO spend, monthly revenue</span></span><span class="sr-dt">Jul 2026</span><span class="lb c">Claimed</span></li><li><img class="blogo" src="/assets/logos/postiz.svg" alt="" width="20" height="20" loading="lazy" decoding="async"><span class="sr-t"><b>Postiz blog</b><span>The X content system, a $186,713 Stripe chart</span></span><span class="sr-dt">Sep 2026</span><span class="lb c">Claimed</span></li></ol>
-            <a class="sd-f" href="/blog/postiz/">Read them in the breakdown <span aria-hidden="true">→</span></a>
+            <a class="sd-f" href="/blog/postiz/">Read them in the breakdown</a>
           </div>
           </div>
         </div>
@@ -142,8 +140,8 @@
 <!-- ================= 2b. SOURCES: one logo band right under the hero; each tile wipes its detail in (hover, focus, tap) ================= -->
 <section class="sec-alt" id="sources">
   <div class="wrap">
-    <div class="shead"><div><h2>Every number has a source. And a date.</h2><p class="lede">Each source gets one label, so you know how far to trust a number.</p></div>
-      <a class="tlink" href="/blog/what-verified-means/">What Verified means <span class="arr" aria-hidden="true">→</span></a></div>
+    <div class="shead"><div><h2>Every number has a source and a date</h2><p class="lede">Each source gets one label, so you know how far to trust a number.</p></div>
+      <a class="tlink" href="/blog/what-verified-means/">What Verified means</a></div>
     <div class="sband">
       <div class="sb-col"><h3>Checked at the source</h3>
         <ul class="sb-big" data-stagger>
@@ -200,12 +198,12 @@
 <!-- ================= 3. STORIES + "Find stories like you" (the quiz reorders the cards; violet only here) ================= -->
 <section id="stories">
   <div class="wrap">
-    <div class="shead"><div><h2>Real stories, checked.</h2><p class="lede">Solo founders and small teams: what it cost to start, where the first customers came from, and how big it is now.</p></div></div>
+    <div class="shead"><div><h2>Founder stories</h2><p class="lede">Solo founders and small teams: what it cost to start, where the first customers came from, and how big it is now.</p></div></div>
     <article class="feat" data-story="Postiz">
       <div class="txt">
         <div class="ftag"><img class="pzlogo" src="/assets/logos/postiz.svg" alt="" width="36" height="40"><span><b>Postiz</b><small>Breakdown 01 · 10 min read</small></span><span class="lb v">Verified</span></div>
-        <h3>Postiz reached $430,896 MRR in under three years by giving the app away free.</h3>
-        <p class="sub2">Two flat years under $15K a month. Then AI agents started posting through it.</p>
+        <h3>Postiz reached $430,896 MRR in under three years by giving the app away free</h3>
+        <p class="sub2">Two flat years under $15K a month, then AI agents started posting through it.</p>
         <dl class="facts">
           <div><dt>Cost to start</dt><dd class="np">Not public</dd><small>He later spent about $12K on SEO that brought little traffic. <span class="lb c">Claimed</span></small></div>
           <div><dt>First revenue on record</dt><dd>~$700/mo</dd><small>Sep 2024, about 8 months in. <span class="lb c">Claimed</span></small></div>
@@ -215,7 +213,7 @@
         <div class="ft"><span><span class="lb v">Verified</span> $430,896 MRR · TrustMRR · Nov 17 2026</span><a class="btn btn-p" href="/blog/postiz/">Read the Postiz breakdown <span class="arr" aria-hidden="true">→</span></a></div>
       </div>
       <div class="vis">
-        <p class="cap">Same price. <em class="em">A different customer.</em> <span>postiz.com on the Wayback Machine</span></p>
+        <p class="cap">Same price, <em class="em">a different customer</em>. <span>postiz.com on the Wayback Machine</span></p>
         <ol class="wbt">
           <li class=""><a class="wbi" href="https://web.archive.org/web/20240703150110/https://postiz.com/" target="_blank" rel="noopener"><span class="wb-d">Jul 3 2024<span class="wb-l"><svg aria-hidden="true"><use href="#i-wayback"/></svg>Wayback</span></span><span class="wb-h">"Your ultimate social media scheduling tool"</span><span class="wb-w">For creators, businesses and agencies</span></a></li>
           <li class=""><a class="wbi" href="https://web.archive.org/web/20240901230244/https://postiz.com/" target="_blank" rel="noopener"><span class="wb-d">Sep 1 2024<span class="wb-l"><svg aria-hidden="true"><use href="#i-wayback"/></svg>Wayback</span></span><span class="wb-h">"Your ultimate <mark>AI</mark> social media scheduling tool"</span><span class="wb-w">For creators, businesses and agencies</span><span class="wb-pr"><i>$29</i><i>$39</i><i>$49</i><i>$99</i><small>a month</small></span></a></li>
@@ -244,74 +242,74 @@
         <div class="bc-viz"><div class="spk"><svg class="spark" viewBox="0 0 240 64" preserveAspectRatio="none" role="img" aria-label="Gojiberry revenue each month, Nov 2025 to Jul 2026: $13,341, $30,017, $54,938, $104,359, $143,691, $204,068, $260,034, $340,786, $407,786"><path class="ar" d="M3.0 58.3 L32.2 56.2 L61.5 53.0 L90.8 46.7 L120.0 41.7 L149.2 34.0 L178.5 26.8 L207.8 16.5 L237.0 8.0 L237.0 64 L3.0 64 Z"/><path class="ln" pathLength="1" d="M3.0 58.3 L32.2 56.2 L61.5 53.0 L90.8 46.7 L120.0 41.7 L149.2 34.0 L178.5 26.8 L207.8 16.5 L237.0 8.0"/></svg><span class="dotv" style="left:98.75%;top:12.5%"></span></div><span class="ax"><span>Revenue each month</span></span></div>
         <div class="bc-num"><span class="nv"><b data-count>$407,786</b><small> in Jul 2026</small></span><span class="lb v">Verified</span><span class="bc-sub">MRR $424,368 · Aug 14 2026 · last synced</span></div>
         <p class="bc-story">Finds B2B buyers showing buying signals on LinkedIn.</p>
-        <div class="bc-foot"><span class="ch">First customers: A $0 waitlist, then a rebuild <span class="lb c">Claimed</span></span><a class="go" href="/blog/gojiberry/">Read <span class="arr" aria-hidden="true">→</span><span class="sr"> the Gojiberry breakdown</span></a></div>
+        <div class="bc-foot"><span class="ch">First customers: A $0 waitlist, then a rebuild <span class="lb c">Claimed</span></span><a class="go" href="/blog/gojiberry/">Read<span class="sr"> the Gojiberry breakdown</span></a></div>
       </article>
       <article class="bcard live" data-cat="ai" data-story="Rezi">
         <div class="bc-top"><img class="blogo" src="/assets/logos/rezi.png" alt="" width="32" height="32" loading="lazy" decoding="async"><span class="bc-n"><b>Rezi</b><small>AI tool · 9 min read</small></span></div>
         <div class="bc-viz"><div class="spk"><svg class="spark" viewBox="0 0 240 64" preserveAspectRatio="none" role="img" aria-label="Rezi revenue each month, Dec 2025 to Oct 2026: $217,472, $253,340, $249,561, $268,415, $275,551, $269,975, $250,274, $249,541, $247,272, $225,184, $216,471"><path class="ar" d="M3.0 19.0 L26.4 12.2 L49.8 12.9 L73.2 9.3 L96.6 8.0 L120.0 9.1 L143.4 12.8 L166.8 12.9 L190.2 13.3 L213.6 17.5 L237.0 19.1 L237.0 64 L3.0 64 Z"/><path class="ln" pathLength="1" d="M3.0 19.0 L26.4 12.2 L49.8 12.9 L73.2 9.3 L96.6 8.0 L120.0 9.1 L143.4 12.8 L166.8 12.9 L190.2 13.3 L213.6 17.5 L237.0 19.1"/></svg><span class="dotv" style="left:98.75%;top:29.9%"></span></div><span class="ax"><span>Revenue each month</span></span></div>
         <div class="bc-num"><span class="nv"><b data-count>$216,471</b><small> in Oct 2026</small></span><span class="lb v">Verified</span><span class="bc-sub">MRR $234,707 · Nov 18 2026</span></div>
         <p class="bc-story">AI resume builder that gets past hiring software.</p>
-        <div class="bc-foot"><span class="ch">First customers: A resume template shared on Reddit <span class="lb c">Claimed</span></span><a class="go" href="/blog/rezi/">Read <span class="arr" aria-hidden="true">→</span><span class="sr"> the Rezi breakdown</span></a></div>
+        <div class="bc-foot"><span class="ch">First customers: A resume template shared on Reddit <span class="lb c">Claimed</span></span><a class="go" href="/blog/rezi/">Read<span class="sr"> the Rezi breakdown</span></a></div>
       </article>
       <article class="bcard live" data-cat="ai" data-story="DM Champ">
         <div class="bc-top"><img class="blogo" src="/assets/logos/dmchamp.png" alt="" width="32" height="32" loading="lazy" decoding="async"><span class="bc-n"><b>DM Champ</b><small>AI tool · 8 min read</small></span></div>
         <div class="bc-viz"><div class="spk"><svg class="spark" viewBox="0 0 240 64" preserveAspectRatio="none" role="img" aria-label="DM Champ revenue each month, Dec 2025 to Oct 2026: $12,263, $6,700, $9,117, $10,310, $8,275, $7,123, $8,094, $6,998, $6,241, $9,936, $28,426"><path class="ar" d="M3.0 37.6 L26.4 47.7 L49.8 43.3 L73.2 41.1 L96.6 44.9 L120.0 47.0 L143.4 45.2 L166.8 47.2 L190.2 48.6 L213.6 41.8 L237.0 8.0 L237.0 64 L3.0 64 Z"/><path class="ln" pathLength="1" d="M3.0 37.6 L26.4 47.7 L49.8 43.3 L73.2 41.1 L96.6 44.9 L120.0 47.0 L143.4 45.2 L166.8 47.2 L190.2 48.6 L213.6 41.8 L237.0 8.0"/></svg><span class="dotv" style="left:98.75%;top:12.5%"></span></div><span class="ax"><span>Revenue each month</span></span></div>
         <div class="bc-num"><span class="nv"><b data-count>$28,426</b><small> in Oct 2026</small></span><span class="lb v">Verified</span><span class="bc-sub">MRR $135,927 · Nov 18 2026</span></div>
         <p class="bc-story">AI sales agent that chats with leads and books calls.</p>
-        <div class="bc-foot"><span class="ch">First customers: Cold email <span class="lb c">Claimed</span></span><a class="go" href="/blog/dm-champ/">Read <span class="arr" aria-hidden="true">→</span><span class="sr"> the DM Champ breakdown</span></a></div>
+        <div class="bc-foot"><span class="ch">First customers: Cold email <span class="lb c">Claimed</span></span><a class="go" href="/blog/dm-champ/">Read<span class="sr"> the DM Champ breakdown</span></a></div>
       </article>
       <article class="bcard live" data-cat="mobile" data-story="Boothie">
         <div class="bc-top"><img class="blogo" src="/assets/logos/boothie.png" alt="" width="32" height="32" loading="lazy" decoding="async"><span class="bc-n"><b>Boothie</b><small>Mobile app · 7 min read</small></span></div>
         <div class="bc-viz"><div class="spk"><svg class="spark" viewBox="0 0 240 64" preserveAspectRatio="none" role="img" aria-label="Boothie revenue each month, Jun 2026 to Oct 2026: $4,727, $27,283, $43,716, $43,416, $56,432"><path class="ar" d="M3.0 55.6 L61.5 34.9 L120.0 19.7 L178.5 20.0 L237.0 8.0 L237.0 64 L3.0 64 Z"/><path class="ln" pathLength="1" d="M3.0 55.6 L61.5 34.9 L120.0 19.7 L178.5 20.0 L237.0 8.0"/></svg><span class="dotv" style="left:98.75%;top:12.5%"></span></div><span class="ax"><span>Revenue each month</span></span></div>
         <div class="bc-num"><span class="nv"><b data-count>$56,432</b><small> in Oct 2026</small></span><span class="lb v">Verified</span><span class="bc-sub">MRR $54,617 · Nov 18 2026</span></div>
         <p class="bc-story">AI photo app that restyles selfies as film shots.</p>
-        <div class="bc-foot"><span class="ch">First customers: not public</span><a class="go" href="/blog/boothie/">Read <span class="arr" aria-hidden="true">→</span><span class="sr"> the Boothie breakdown</span></a></div>
+        <div class="bc-foot"><span class="ch">First customers: not public</span><a class="go" href="/blog/boothie/">Read<span class="sr"> the Boothie breakdown</span></a></div>
       </article>
       <article class="bcard live" data-cat="mobile" data-story="Stencil AI">
         <div class="bc-top"><img class="blogo" src="/assets/logos/stencilai.png" alt="" width="32" height="32" loading="lazy" decoding="async"><span class="bc-n"><b>Stencil AI</b><small>Mobile app · 8 min read</small></span></div>
         <div class="bc-viz"><div class="spk"><svg class="spark" viewBox="0 0 240 64" preserveAspectRatio="none" role="img" aria-label="Stencil AI revenue each month, Jan 2026 to Oct 2026: $16,032, $22,265, $29,870, $37,825, $46,483, $51,793, $62,455, $60,396, $63,721, $62,976"><path class="ar" d="M3.0 46.9 L29.0 41.8 L55.0 35.6 L81.0 29.1 L107.0 22.1 L133.0 17.7 L159.0 9.0 L185.0 10.7 L211.0 8.0 L237.0 8.6 L237.0 64 L3.0 64 Z"/><path class="ln" pathLength="1" d="M3.0 46.9 L29.0 41.8 L55.0 35.6 L81.0 29.1 L107.0 22.1 L133.0 17.7 L159.0 9.0 L185.0 10.7 L211.0 8.0 L237.0 8.6"/></svg><span class="dotv" style="left:98.75%;top:13.4%"></span></div><span class="ax"><span>Revenue each month</span></span></div>
         <div class="bc-num"><span class="nv"><b data-count>$62,976</b><small> in Oct 2026</small></span><span class="lb v">Verified</span><span class="bc-sub">MRR $48,693 · Nov 18 2026</span></div>
         <p class="bc-story">Turns a photo into a print-ready tattoo stencil.</p>
-        <div class="bc-foot"><span class="ch">First customers: not public</span><a class="go" href="/blog/stencil-ai/">Read <span class="arr" aria-hidden="true">→</span><span class="sr"> the Stencil AI breakdown</span></a></div>
+        <div class="bc-foot"><span class="ch">First customers: not public</span><a class="go" href="/blog/stencil-ai/">Read<span class="sr"> the Stencil AI breakdown</span></a></div>
       </article>
       <article class="bcard live" data-cat="mobile" data-story="Mindset">
         <div class="bc-top"><img class="blogo" src="/assets/logos/mindset.png" alt="" width="32" height="32" loading="lazy" decoding="async"><span class="bc-n"><b>Mindset</b><small>Mobile app · 8 min read</small></span></div>
         <div class="bc-viz"><div class="spk"><svg class="spark" viewBox="0 0 240 64" preserveAspectRatio="none" role="img" aria-label="Mindset revenue each month, Dec 2025 to Oct 2026: $17,629, $33,176, $19,282, $23,386, $18,239, $18,458, $16,224, $23,223, $22,017, $35,034, $30,780"><path class="ar" d="M3.0 33.8 L26.4 10.8 L49.8 31.4 L73.2 25.3 L96.6 32.9 L120.0 32.6 L143.4 35.9 L166.8 25.5 L190.2 27.3 L213.6 8.0 L237.0 14.3 L237.0 64 L3.0 64 Z"/><path class="ln" pathLength="1" d="M3.0 33.8 L26.4 10.8 L49.8 31.4 L73.2 25.3 L96.6 32.9 L120.0 32.6 L143.4 35.9 L166.8 25.5 L190.2 27.3 L213.6 8.0 L237.0 14.3"/></svg><span class="dotv" style="left:98.75%;top:22.4%"></span></div><span class="ax"><span>Revenue each month</span></span></div>
         <div class="bc-num"><span class="nv"><b data-count>$30,780</b><small> in Oct 2026</small></span><span class="lb v">Verified</span><span class="bc-sub">MRR $24,251 · Nov 18 2026</span></div>
         <p class="bc-story">Wakes you up with famous speeches, with streaks.</p>
-        <div class="bc-foot"><span class="ch">First customers: Listeners of the founders' YouTube motivation channels</span><a class="go" href="/blog/mindset/">Read <span class="arr" aria-hidden="true">→</span><span class="sr"> the Mindset breakdown</span></a></div>
+        <div class="bc-foot"><span class="ch">First customers: Listeners of the founders' YouTube motivation channels</span><a class="go" href="/blog/mindset/">Read<span class="sr"> the Mindset breakdown</span></a></div>
       </article>
       <article class="bcard live" data-cat="services" data-story="AEO Engine">
         <div class="bc-top"><img class="blogo" src="/assets/logos/aeoengine.png" alt="" width="32" height="32" loading="lazy" decoding="async"><span class="bc-n"><b>AEO Engine</b><small>Service · 8 min read</small></span></div>
         <div class="bc-viz"><div class="spk"><svg class="spark" viewBox="0 0 240 64" preserveAspectRatio="none" role="img" aria-label="AEO Engine revenue each month, Dec 2025 to Oct 2026: $62,797, $65,126, $67,223, $98,264, $76,847, $75,188, $76,832, $108,658, $80,169, $164,301, $204,043"><path class="ar" d="M3.0 44.0 L26.4 43.4 L49.8 42.9 L73.2 35.0 L96.6 40.4 L120.0 40.8 L143.4 40.4 L166.8 32.3 L190.2 39.6 L213.6 18.1 L237.0 8.0 L237.0 64 L3.0 64 Z"/><path class="ln" pathLength="1" d="M3.0 44.0 L26.4 43.4 L49.8 42.9 L73.2 35.0 L96.6 40.4 L120.0 40.8 L143.4 40.4 L166.8 32.3 L190.2 39.6 L213.6 18.1 L237.0 8.0"/></svg><span class="dotv" style="left:98.75%;top:12.5%"></span></div><span class="ax"><span>Revenue each month</span></span></div>
         <div class="bc-num"><span class="nv"><b data-count>$204,043</b><small> in Oct 2026</small></span><span class="lb v">Verified</span><span class="bc-sub">MRR $190,513 · Nov 18 2026</span></div>
         <p class="bc-story">Gets brands into AI answers like ChatGPT.</p>
-        <div class="bc-foot"><span class="ch">First customers: not public</span><a class="go" href="/blog/aeo-engine/">Read <span class="arr" aria-hidden="true">→</span><span class="sr"> the AEO Engine breakdown</span></a></div>
+        <div class="bc-foot"><span class="ch">First customers: not public</span><a class="go" href="/blog/aeo-engine/">Read<span class="sr"> the AEO Engine breakdown</span></a></div>
       </article>
       <article class="bcard live" data-cat="services" data-story="Upscale B2B">
         <div class="bc-top"><img class="blogo" src="/assets/logos/upscaleb2b.png" alt="" width="32" height="32" loading="lazy" decoding="async"><span class="bc-n"><b>Upscale B2B</b><small>Service · 7 min read</small></span></div>
         <div class="bc-viz"><div class="spk"><svg class="spark" viewBox="0 0 240 64" preserveAspectRatio="none" role="img" aria-label="Upscale B2B revenue each month, Dec 2025 to Oct 2026: $33,908, $42,791, $41,794, $39,319, $44,918, $46,378, $85,327, $60,391, $65,648, $84,575, $99,409"><path class="ar" d="M3.0 42.3 L26.4 37.6 L49.8 38.1 L73.2 39.4 L96.6 36.5 L120.0 35.7 L143.4 15.4 L166.8 28.4 L190.2 25.7 L213.6 15.8 L237.0 8.0 L237.0 64 L3.0 64 Z"/><path class="ln" pathLength="1" d="M3.0 42.3 L26.4 37.6 L49.8 38.1 L73.2 39.4 L96.6 36.5 L120.0 35.7 L143.4 15.4 L166.8 28.4 L190.2 25.7 L213.6 15.8 L237.0 8.0"/></svg><span class="dotv" style="left:98.75%;top:12.5%"></span></div><span class="ax"><span>Revenue each month</span></span></div>
         <div class="bc-num"><span class="nv"><b data-count>$99,409</b><small> in Oct 2026</small></span><span class="lb v">Verified</span><span class="bc-sub">MRR $140,324 · Nov 18 2026</span></div>
         <p class="bc-story">Done-for-you outbound sales campaigns.</p>
-        <div class="bc-foot"><span class="ch">First customers: not public</span><a class="go" href="/blog/upscale-b2b/">Read <span class="arr" aria-hidden="true">→</span><span class="sr"> the Upscale B2B breakdown</span></a></div>
+        <div class="bc-foot"><span class="ch">First customers: not public</span><a class="go" href="/blog/upscale-b2b/">Read<span class="sr"> the Upscale B2B breakdown</span></a></div>
       </article>
       <article class="bcard live" data-cat="services" data-story="Windmill Growth">
         <div class="bc-top"><img class="blogo" src="/assets/logos/windmillgrowth.png" alt="" width="32" height="32" loading="lazy" decoding="async"><span class="bc-n"><b>Windmill Growth</b><small>Service · 8 min read</small></span></div>
         <div class="bc-viz"><div class="spk"><svg class="spark" viewBox="0 0 240 64" preserveAspectRatio="none" role="img" aria-label="Windmill Growth revenue each month, Dec 2025 to Oct 2026: $102,899, $94,974, $96,449, $97,499, $101,149, $108,249, $107,187, $115,397, $117,983, $115,232, $118,047"><path class="ar" d="M3.0 14.7 L26.4 18.2 L49.8 17.5 L73.2 17.1 L96.6 15.4 L120.0 12.3 L143.4 12.8 L166.8 9.2 L190.2 8.0 L213.6 9.2 L237.0 8.0 L237.0 64 L3.0 64 Z"/><path class="ln" pathLength="1" d="M3.0 14.7 L26.4 18.2 L49.8 17.5 L73.2 17.1 L96.6 15.4 L120.0 12.3 L143.4 12.8 L166.8 9.2 L190.2 8.0 L213.6 9.2 L237.0 8.0"/></svg><span class="dotv" style="left:98.75%;top:12.5%"></span></div><span class="ax"><span>Revenue each month</span></span></div>
         <div class="bc-num"><span class="nv"><b data-count>$118,047</b><small> in Oct 2026</small></span><span class="lb v">Verified</span><span class="bc-sub">MRR $119,347 · Nov 18 2026</span></div>
         <p class="bc-story">Grows founders' personal brands on LinkedIn.</p>
-        <div class="bc-foot"><span class="ch">First customers: not public</span><a class="go" href="/blog/windmill-growth/">Read <span class="arr" aria-hidden="true">→</span><span class="sr"> the Windmill Growth breakdown</span></a></div>
+        <div class="bc-foot"><span class="ch">First customers: not public</span><a class="go" href="/blog/windmill-growth/">Read<span class="sr"> the Windmill Growth breakdown</span></a></div>
       </article>
       <div class="empty" role="status">No stories in this group yet.</div>
     </div>
-    <div class="bfoot"><p class="bnote">Revenue each month and MRR read from Stripe by TrustMRR, each with the date it was read.</p><a class="tlink" href="/app/">Read your first success story <span class="arr" aria-hidden="true">→</span></a></div>
+    <div class="bfoot"><p class="bnote">Revenue each month and MRR read from Stripe by TrustMRR, each with the date it was read.</p><a class="tlink" href="/app/">Read your first success story</a></div>
   </div>
 </section>
 
 <!-- ================= 8. PRICING (plan table behind "Compare plans") ================= -->
 <section class="pricing sec-alt" id="pricing">
   <div class="wrap">
-    <h2>Start free. Go Pro when you want more.</h2>
+    <h2>Pricing</h2>
     <p class="lede">Read a few breakdowns free. Pay only when you want all of them and a path made for you.</p>
     <div class="bill"><div class="seg" role="group" aria-label="Billing"><button type="button" aria-pressed="true" data-b="m">Monthly</button><button type="button" aria-pressed="false" data-b="y">Yearly <small>Save up to 20%</small></button></div></div>
     <div class="plans p3" data-stagger>
@@ -319,7 +317,7 @@
         <div class="pr">$0<small> forever</small></div><span class="ps">No card needed.</span>
         <a class="btn btn-s btn-lg" href="/welcome/#signup">Start free</a>
         <ul><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>The weekly breakdown email</li><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>This week's breakdown, plus the first phase of every other story</li><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>The quiz and your three stories</li><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Every source, with the date</li></ul></div>
-      <div class="plan pro"><div class="phd"><h3>Pro</h3><span class="tg">Recommended</span></div><p class="pd">For learning from every story.</p>
+      <div class="plan pro"><div class="phd"><h3>Pro</h3></div><p class="pd">For learning from every story.</p>
         <div class="pr"><span class="amt" data-m="$7.99" data-y="$6.49">$7.99</span><small>/month</small></div><span class="ps" data-m="Billed monthly. Cancel anytime." data-y="$77.88 billed once a year. Cancel anytime.">Billed monthly. Cancel anytime.</span>
         <a class="btn btn-p btn-lg" href="/welcome/?plan=pro#signup">Get Pro</a>
         <ul><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Everything in Free</li><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Every breakdown, old and new</li><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>The checklist for every story, saved</li><li><svg width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Your quiz path, saved and updated as new stories land</li></ul></div>
@@ -355,7 +353,7 @@
       </div>
       </div></div>
     <div class="parent"><div><b>Under 18? A parent pays.</b><p>Send them this page. It shows the price, what's included and that payments go through Stripe. Nothing here is financial advice.</p></div>
-      <a class="btn btn-s parentmail" href="/#pricing">Send this to a parent <span class="arr" aria-hidden="true">→</span></a></div>
+      <a class="btn btn-s parentmail" href="/#pricing">Send this to a parent</a></div>
   </div>
 </section>
 
@@ -363,8 +361,8 @@
 <section class="dk" id="inside">
   <div class="wrap split">
     <div>
-      <h2>Inside a breakdown. Ten minutes, four parts.</h2>
-      <p class="lede">The real Postiz breakdown, cropped. Pick a part to see it. Each one ends with a checklist, so you finish with something to do.</p>
+      <h2>Inside a breakdown</h2>
+      <p class="lede">Four parts, about ten minutes. This is the real Postiz breakdown, cropped. Like every breakdown, it ends with a checklist, so you finish with something to do.</p>
       <div class="parts" role="tablist" aria-label="Parts of a breakdown" data-tabs>
         <button class="part" type="button" role="tab" id="t-p1" aria-controls="p-p1" aria-selected="true"><span class="i">01</span><span><b>Why the line moved</b><span>The revenue chart with a marker for every move the founder made.</span></span></button>
         <button class="part" type="button" role="tab" id="t-p2" aria-controls="p-p2" aria-selected="false"><span class="i">02</span><span><b>The story, phase by phase</b><span>Each phase ends with one lesson you can use.</span></span></button>
@@ -413,7 +411,7 @@
             </ul></div>
         </div>
       </div>
-      <a class="btn btn-s btn-lg crop-cta" href="/blog/postiz/">Read the Postiz breakdown <span class="arr" aria-hidden="true">→</span></a>
+      <a class="btn btn-s btn-lg crop-cta" href="/blog/postiz/">Read the Postiz breakdown</a>
     </div>
   </div>
 </section>
@@ -421,44 +419,44 @@
 <!-- ================= 9. BLOG ================= -->
 <section id="blog">
   <div class="wrap">
-    <div class="shead"><div><h2>From the blog.</h2><p class="lede">Short guides on reading the numbers, and what founders did first.</p></div><a class="tlink" href="/blog/">Read the blog <span class="arr" aria-hidden="true">→</span></a></div>
+    <div class="shead"><div><h2>From the blog</h2><p class="lede">Short guides on reading the numbers, and what founders did first.</p></div><a class="tlink" href="/blog/">Read the blog</a></div>
     <div class="posts tkposts" data-stagger>
       <a class="post" href="/blog/rezi/"><div class="cv cover"><picture><source srcset="/assets/covers/rezi.webp" type="image/webp"><img src="/assets/covers/rezi.png" width="1600" height="900" loading="lazy" decoding="async" alt="Rezi breakdown cover"></picture></div>
-        <div class="bd"><h3>Rezi started as a resume template on Reddit and made $216K in October 2026</h3><p>A free template, four slow years, then an early bet on AI writing. October 2026 brought in $216,471, read straight from Stripe. That is about 21% less than April 2026 ($275,551), and revenue has dropped every month since. Rezi&#x27;s MRR (monthly recurring revenue) is $234,707: what all current subscriptions add up to per month, while $216,471 is the money actually collected in October.</p><span class="pfc">First customers: A resume template shared on Reddit <span class="lb c">Claimed</span></span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 9 min read<span class="go" aria-hidden="true">→</span></span></div></a>
+        <div class="bd"><h3>Rezi started as a resume template on Reddit and made $216K in October 2026</h3><p>A free template, four slow years, then an early bet on AI writing. October 2026 brought in $216,471, read straight from Stripe. That is about 21% less than April 2026 ($275,551), and revenue has dropped every month since. Rezi&#x27;s MRR (monthly recurring revenue) is $234,707: what all current subscriptions add up to per month, while $216,471 is the money actually collected in October.</p><span class="pfc">First customers: A resume template shared on Reddit <span class="lb c">Claimed</span></span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 9 min read</span></div></a>
       <a class="post" href="/blog/aeo-engine/"><div class="cv cover"><picture><source srcset="/assets/covers/aeo-engine.webp" type="image/webp"><img src="/assets/covers/aeo-engine.png" width="1600" height="900" loading="lazy" decoding="async" alt="AEO Engine breakdown cover"></picture></div>
-        <div class="bd"><h3>AEO Engine turned an old Amazon ad agency into a $204K month by renaming itself for the AI search wave</h3><p>It did not start from zero. An Amazon marketing agency from 2018 re-launched as an &#x27;answer engine&#x27; agency in January 2026, just as brands started asking how to show up in ChatGPT. Its MRR (monthly recurring revenue: what clients pay every month) is $190,513, read straight from Stripe. A month&#x27;s revenue is the money actually collected that month, so it doesn&#x27;t match MRR exactly.</p><span class="pfc">First customers: not public</span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 8 min read<span class="go" aria-hidden="true">→</span></span></div></a>
+        <div class="bd"><h3>AEO Engine turned an old Amazon ad agency into a $204K month by renaming itself for the AI search wave</h3><p>It did not start from zero. An Amazon marketing agency from 2018 re-launched as an &#x27;answer engine&#x27; agency in January 2026, just as brands started asking how to show up in ChatGPT. Its MRR (monthly recurring revenue: what clients pay every month) is $190,513, read straight from Stripe. A month&#x27;s revenue is the money actually collected that month, so it doesn&#x27;t match MRR exactly.</p><span class="pfc">First customers: not public</span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 8 min read</span></div></a>
       <a class="post" href="/blog/upscale-b2b/"><div class="cv cover"><picture><source srcset="/assets/covers/upscale-b2b.webp" type="image/webp"><img src="/assets/covers/upscale-b2b.png" width="1600" height="900" loading="lazy" decoding="async" alt="Upscale B2B breakdown cover"></picture></div>
-        <div class="bd"><h3>Upscale B2B sold $3 email inboxes to cold-email agencies, then became one, and now makes about $99K a month</h3><p>It started by selling the &#x27;picks and shovels&#x27; of cold email (the tools everyone doing it needs): ready-to-send inboxes for a few dollars a month. Then it started running campaigns itself, with a free-to-try pilot. Its MRR (monthly recurring revenue: what customers pay every month) is $140,324, read straight from Stripe. That is higher than October&#x27;s revenue, the money actually collected that month, so the two numbers don&#x27;t match.</p><span class="pfc">First customers: not public</span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 7 min read<span class="go" aria-hidden="true">→</span></span></div></a>
+        <div class="bd"><h3>Upscale B2B sold $3 email inboxes to cold-email agencies, then became one, and now makes about $99K a month</h3><p>It started by selling the &#x27;picks and shovels&#x27; of cold email (the tools everyone doing it needs): ready-to-send inboxes for a few dollars a month. Then it started running campaigns itself, with a free-to-try pilot. Its MRR (monthly recurring revenue: what customers pay every month) is $140,324, read straight from Stripe. That is higher than October&#x27;s revenue, the money actually collected that month, so the two numbers don&#x27;t match.</p><span class="pfc">First customers: not public</span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 7 min read</span></div></a>
       <a class="post" href="/blog/dm-champ/"><div class="cv cover"><picture><source srcset="/assets/covers/dm-champ.webp" type="image/webp"><img src="/assets/covers/dm-champ.png" width="1600" height="900" loading="lazy" decoding="async" alt="DM Champ breakdown cover"></picture></div>
-        <div class="bd"><h3>DM Champ sat near $10K a month for a year, then hit $28K after it changed who it sells to</h3><p>It started by waking up one clinic&#x27;s old leads on WhatsApp, found customers through cold email, AppSumo (a site that sells lifetime deals on software) and a webinar (a live online talk), and then turned itself into a tool agencies resell. Its MRR (monthly recurring revenue: what subscribers pay every month) is $135,927 today. That is far above any month&#x27;s revenue so far, and we couldn&#x27;t find out why.</p><span class="pfc">First customers: Cold email <span class="lb c">Claimed</span></span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 8 min read<span class="go" aria-hidden="true">→</span></span></div></a>
+        <div class="bd"><h3>DM Champ sat near $10K a month for a year, then hit $28K after it changed who it sells to</h3><p>It started by waking up one clinic&#x27;s old leads on WhatsApp, found customers through cold email, AppSumo (a site that sells lifetime deals on software) and a webinar (a live online talk), and then turned itself into a tool agencies resell. Its MRR (monthly recurring revenue: what subscribers pay every month) is $135,927 today. That is far above any month&#x27;s revenue so far, and we couldn&#x27;t find out why.</p><span class="pfc">First customers: Cold email <span class="lb c">Claimed</span></span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 8 min read</span></div></a>
       <a class="post" href="/blog/windmill-growth/"><div class="cv cover"><picture><source srcset="/assets/covers/windmill-growth.webp" type="image/webp"><img src="/assets/covers/windmill-growth.png" width="1600" height="900" loading="lazy" decoding="async" alt="Windmill Growth breakdown cover"></picture></div>
-        <div class="bd"><h3>Windmill Growth started with a $500-a-month LinkedIn service and now brings in about $118K a month</h3><p>It began by selling likes and comments on founders&#x27; LinkedIn posts, then sold the bigger job: writing the posts. Its MRR (monthly recurring revenue: what clients pay every month) is $119,347, read straight from Stripe.</p><span class="pfc">First customers: not public</span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 8 min read<span class="go" aria-hidden="true">→</span></span></div></a>
+        <div class="bd"><h3>Windmill Growth started with a $500-a-month LinkedIn service and now brings in about $118K a month</h3><p>It began by selling likes and comments on founders&#x27; LinkedIn posts, then sold the bigger job: writing the posts. Its MRR (monthly recurring revenue: what clients pay every month) is $119,347, read straight from Stripe.</p><span class="pfc">First customers: not public</span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 8 min read</span></div></a>
       <a class="post" href="/blog/stencil-ai/"><div class="cv cover"><picture><source srcset="/assets/covers/stencil-ai.webp" type="image/webp"><img src="/assets/covers/stencil-ai.png" width="1600" height="900" loading="lazy" decoding="async" alt="Stencil AI breakdown cover"></picture></div>
-        <div class="bd"><h3>Stencil AI went from $16K to $63K a month in 2026 by fixing one boring job for tattoo artists</h3><p>Two brothers, one of them a tattoo artist, built a tool that skips hours of hand-tracing. They charged from day one, sold on the web first, then put it on the App Store.</p><span class="pfc">First customers: not public</span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 8 min read<span class="go" aria-hidden="true">→</span></span></div></a>
+        <div class="bd"><h3>Stencil AI went from $16K to $63K a month in 2026 by fixing one boring job for tattoo artists</h3><p>Two brothers, one of them a tattoo artist, built a tool that skips hours of hand-tracing. They charged from day one, sold on the web first, then put it on the App Store.</p><span class="pfc">First customers: not public</span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 8 min read</span></div></a>
       <a class="post" href="/blog/boothie/"><div class="cv cover"><picture><source srcset="/assets/covers/boothie.webp" type="image/webp"><img src="/assets/covers/boothie.png" width="1600" height="900" loading="lazy" decoding="async" alt="Boothie breakdown cover"></picture></div>
-        <div class="bd"><h3>Boothie made $208K in five months by riding the digicam selfie trend on TikTok</h3><p>A two-person team launched an AI selfie app in June 2026, aimed it at people already posting on TikTok, and passed $56K in a single month by October. Then they put it up for sale.</p><span class="pfc">First customers: not public</span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 7 min read<span class="go" aria-hidden="true">→</span></span></div></a>
+        <div class="bd"><h3>Boothie made $208K in five months by riding the digicam selfie trend on TikTok</h3><p>A two-person team launched an AI selfie app in June 2026, aimed it at people already posting on TikTok, and passed $56K in a single month by October. Then they put it up for sale.</p><span class="pfc">First customers: not public</span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 7 min read</span></div></a>
       <a class="post" href="/blog/mindset/"><div class="cv cover"><picture><source srcset="/assets/covers/mindset.webp" type="image/webp"><img src="/assets/covers/mindset.png" width="1600" height="900" loading="lazy" decoding="async" alt="Mindset breakdown cover"></picture></div>
-        <div class="bd"><h3>Mindset reached $24K a month by building on its team&#x27;s YouTube audience first</h3><p>The people behind some of YouTube&#x27;s biggest motivation channels built an app for the same audience. It took years, not months, and the YouTube audience did the heavy lifting.</p><span class="pfc">First customers: Listeners of the founders&#x27; YouTube motivation channels <span class="lb c">Claimed</span></span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 8 min read<span class="go" aria-hidden="true">→</span></span></div></a>
+        <div class="bd"><h3>Mindset reached $24K a month by building on its team&#x27;s YouTube audience first</h3><p>The people behind some of YouTube&#x27;s biggest motivation channels built an app for the same audience. It took years, not months, and the YouTube audience did the heavy lifting.</p><span class="pfc">First customers: Listeners of the founders&#x27; YouTube motivation channels <span class="lb c">Claimed</span></span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 8 min read</span></div></a>
       <a class="post" href="/blog/gojiberry/"><div class="cv cover"><picture><source srcset="/assets/covers/gojiberry.webp" type="image/webp"><img src="/assets/covers/gojiberry.png" width="1600" height="900" loading="lazy" decoding="async" alt="Gojiberry breakdown cover"></picture></div>
-        <div class="bd"><h3>Gojiberry&#x27;s waitlist of 2,000 paid nothing. A rebuild took it to $407K in one month</h3><p>The first product got a big waitlist and zero sales. The team rebuilt it in weeks, then pushed it through Reddit and a dozen other channels at once. Its MRR (monthly recurring revenue: what subscribers pay every month) was $424,368 at the last Stripe sync. A month&#x27;s revenue is the money actually collected that month, so the two numbers don&#x27;t match exactly.</p><span class="pfc">First customers: A $0 waitlist, then a rebuild <span class="lb c">Claimed</span></span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 8 min read<span class="go" aria-hidden="true">→</span></span></div></a>
+        <div class="bd"><h3>Gojiberry&#x27;s waitlist of 2,000 paid nothing. A rebuild took it to $407K in one month</h3><p>The first product got a big waitlist and zero sales. The team rebuilt it in weeks, then pushed it through Reddit and a dozen other channels at once. Its MRR (monthly recurring revenue: what subscribers pay every month) was $424,368 at the last Stripe sync. A month&#x27;s revenue is the money actually collected that month, so the two numbers don&#x27;t match exactly.</p><span class="pfc">First customers: A $0 waitlist, then a rebuild <span class="lb c">Claimed</span></span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 8 min read</span></div></a>
       <a class="post" href="/blog/postiz/"><div class="cv cover"><picture><source srcset="/assets/covers/postiz.webp" type="image/webp"><img src="/assets/covers/postiz.png" width="1600" height="900" loading="lazy" decoding="async" alt="Postiz breakdown cover"></picture></div>
-        <div class="bd"><h3>Postiz: almost two years under $15K a month, then $431K</h3><p>A social media scheduler built by one main developer. What he did, what the numbers did after each move, and what you can take from it. MRR (monthly recurring revenue) means what all current subscriptions add up to each month.</p><span class="pfc">First customers: Open-source launch weeks <span class="lb c">Claimed</span></span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 10 min read<span class="go" aria-hidden="true">→</span></span></div></a>
+        <div class="bd"><h3>Postiz: almost two years under $15K a month, then $431K</h3><p>A social media scheduler built by one main developer. What he did, what the numbers did after each move, and what you can take from it. MRR (monthly recurring revenue) means what all current subscriptions add up to each month.</p><span class="pfc">First customers: Open-source launch weeks <span class="lb c">Claimed</span></span><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · 10 min read</span></div></a>
       <a class="post" href="/blog/what-verified-means/"><div class="cv cover"><picture><source srcset="/assets/covers/what-verified-means.webp" type="image/webp"><img src="/assets/covers/what-verified-means.png" width="1600" height="900" loading="lazy" decoding="async" alt="The four LaunchVault labels, Verified, Claimed, Sources differ and Live, each with a real example number and date"></picture></div>
-        <div class="bd"><h3>What 'Verified' means on LaunchVault</h3><p>Where our revenue numbers come from, why some are labelled Claimed, and why every number has a date.</p><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>Explainers · 6 min read<span class="go" aria-hidden="true">→</span></span></div></a>
+        <div class="bd"><h3>What 'Verified' means on LaunchVault</h3><p>Where our revenue numbers come from, why some are labelled Claimed, and why every number has a date.</p><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>Explainers · 6 min read</span></div></a>
       <a class="post" href="/blog/how-to-read-a-revenue-chart/"><div class="cv cover"><picture><source srcset="/assets/covers/how-to-read-a-revenue-chart.webp" type="image/webp"><img src="/assets/covers/how-to-read-a-revenue-chart.png" width="1600" height="900" loading="lazy" decoding="async" alt="Postiz's revenue chart with numbered founder moves and callouts for a new channel and a jump"></picture></div>
-        <div class="bd"><h3>How to read a revenue chart</h3><p>MRR, all-time revenue, and what a sudden jump on the line actually means.</p><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>Guides · 5 min read<span class="go" aria-hidden="true">→</span></span></div></a>
+        <div class="bd"><h3>How to read a revenue chart</h3><p>MRR, all-time revenue, and what a sudden jump on the line actually means.</p><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>Guides · 5 min read</span></div></a>
       <a class="post" href="/blog/three-ways-to-start-small/"><div class="cv cover"><picture><source srcset="/assets/covers/three-ways-to-start-small.webp" type="image/webp"><img src="/assets/covers/three-ways-to-start-small.png" width="1600" height="900" loading="lazy" decoding="async" alt="Stencil AI, Postiz and Windmill Growth side by side, each with its verified revenue and date"></picture></div>
-        <div class="bd"><h3>Three ways to start small</h3><p>A family member's problem, a service you can sell now, or a free version people can try. A real example of each.</p><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>Lists · 7 min read<span class="go" aria-hidden="true">→</span></span></div></a>
+        <div class="bd"><h3>Three ways to start small</h3><p>A family member's problem, a service you can sell now, or a free version people can try. A real example of each.</p><span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>Lists · 7 min read</span></div></a>
       <script src="/assets/pages.js" defer></script>
     </div><!-- end posts -->
-    <div class="bmore"><a class="btn btn-p btn-lg" href="/blog/">See all posts <span class="arr" aria-hidden="true">→</span></a></div>
+    <div class="bmore"><a class="btn btn-p btn-lg" href="/blog/">See all posts</a></div>
   </div>
 </section>
 
 <!-- ================= 10. FAQ (last section before the footer) ================= -->
 <section class="sec-alt faq" id="faq">
   <div class="wrap faqg"><div class="faqg-in" style="display:contents">
-    <div><h2>Questions, answered.</h2><p class="lede">What students and parents ask us before signing up.</p></div>
+    <div><h2>Questions students and parents ask</h2></div>
     <div class="acc">
       <details open><summary>Where do your numbers actually come from?</summary><p>Revenue comes from TrustMRR, which reads it straight from Stripe or RevenueCat. We add GitHub, the Wayback Machine, interviews and the founder's own posts, and link every source with the date we read it.</p></details>
       <details><summary>What's the difference between Verified and Claimed?</summary><p>Verified means we read it from a live source, like Stripe through TrustMRR, on the date shown. Claimed means the founder or an interview said it, and we link where. Sources differ means two sources disagree, so we show both. Couldn't verify means a claim has no source either way, and we say so.</p></details>

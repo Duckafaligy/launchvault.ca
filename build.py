@@ -59,18 +59,18 @@ def mega_html():
     st = sec("stories")
     tabs = re.findall(r'<button class="chip"[^>]*data-f="([^"]+)"[^>]*>([^<]+)</button>', st)
     cos = re.findall(r'<article class="bcard[^"]*" data-cat="([^"]+)" data-story="([^"]+)">\s*<div class="bc-top"><img class="blogo" src="([^"]+)"', st)
-    p_st = ('<p class="mlede">Real founders, checked. Pick a kind of story:</p><div class="mgrps">' + "".join(
-        f'<a class="mgrp" href="/#stories" data-go="stories" data-f="{f}"><b>{n}{ARR}</b><span class="mcos">'
+    p_st = ('<p class="mlede">Pick a kind of story.</p><div class="mgrps">' + "".join(
+        f'<a class="mgrp" href="/#stories" data-go="stories" data-f="{f}"><b>{n}</b><span class="mcos">'
         + "".join(f'<span><img src="{src}" alt="" width="20" height="20" loading="lazy">{c}</span>' for cat, c, src in [x for x in cos if f in x[0].split()][:3])
         + "</span></a>" for f, n in tabs) + "</div>")
     # how we check: the label set
     labels = [("v", "Verified"), ("l", "Live"), ("w", "Wayback"), ("c", "Claimed"), ("x", "Sources differ"), ("n", "Couldn't verify")]
     p_ck = ('<p class="mlede">Every number gets a source, a label and the date we read it.</p><div class="mchips">'
             + "".join(f'<span class="lb {k}">{t}</span>' for k, t in labels) + '</div><div class="mlinks">'
-            + f'<a href="/#sources" data-go="sources">See every source{ARR}</a><a href="/#check" data-go="check">The race chart{ARR}</a></div>')
+            + f'<a href="/#sources" data-go="sources">See every source</a><a href="/#check" data-go="check">The race chart</a></div>')
     # race chart (claim: ~$10K/mo, Starter Story, Mar 2026)
     logo = re.search(r'<div class="rc-co"><img src="([^"]+)"', sec("check")).group(1)
-    p_rc = (f'<a class="mrow big" href="/#check" data-go="check"><img src="{logo}" alt="" width="36" height="36"><span><b>DM Champ{ARR}</b>'
+    p_rc = (f'<a class="mrow big" href="/#check" data-go="check"><img src="{logo}" alt="" width="36" height="36"><span><b>DM Champ</b>'
             '<span>An interview said about $10K a month (Starter Story, Mar 2026). The chart puts that claim next to the verified line.</span></span></a>'
             '<div class="mchips"><span class="lb c">Claimed</span><span class="lb v">Verified</span></div>')
     # pricing
@@ -78,20 +78,20 @@ def mega_html():
     plans = re.findall(r'<h3>([^<]+)</h3>.*?<p class="pd">([^<]+)</p>', pr, re.S)[:3]
     amts = re.findall(r'class="amt" data-m="(\$[\d.]+)"', pr)
     price = {"Free": "$0 forever", "Pro": amts[0] + "/mo", "Developer": amts[1] + "/mo"}
-    p_pr = ('<div class="mlist">' + "".join(f'<a class="mrow" href="/#pricing" data-go="pricing"><span><b>{n}{ARR}</b><span>{d}</span></span><em>{price.get(n, "")}</em></a>' for n, d in plans)
+    p_pr = ('<div class="mlist">' + "".join(f'<a class="mrow" href="/#pricing" data-go="pricing"><span><b>{n}</b><span>{d}</span></span><em>{price.get(n, "")}</em></a>' for n, d in plans)
             + '</div><p class="mnote">Payments open with accounts.</p>')
     # inside a breakdown: the 4 parts; a click selects that tab
     parts = re.findall(r'role="tab" id="(t-p\d)"[^>]*>\s*<span class="i">(\d+)</span>(.*?)</button>', sec("inside"), re.S)
     first = lambda html: strip(re.search(r">([^<>]+)<", ">" + html.strip() + "<").group(1)) if re.search(r">([^<>]+)<", ">" + html.strip() + "<") else ""
-    p_in = '<p class="mlede">Ten minutes, four parts.</p><div class="mlist">' + "".join(
-        f'<a class="mrow" href="/#inside" data-go="inside" data-t="{t}"><i class="mno">{i}</i><span><b>{first(rest)}{ARR}</b></span></a>' for t, i, rest in parts) + "</div>"
+    p_in = '<p class="mlede">Every breakdown has four parts.</p><div class="mlist">' + "".join(
+        f'<a class="mrow" href="/#inside" data-go="inside" data-t="{t}"><i class="mno">{i}</i><span><b>{first(rest)}</b></span></a>' for t, i, rest in parts) + "</div>"
     # faq: top 4 questions; a click opens that one
     qs = re.findall(r"<summary>(.*?)</summary>", sec("faq"))[:4]
-    p_fq = '<div class="mlist">' + "".join(f'<a class="mrow" href="/#faq" data-go="faq" data-q="{k}"><span><b>{q}{ARR}</b></span></a>' for k, q in enumerate(qs)) + "</div>"
+    p_fq = '<div class="mlist">' + "".join(f'<a class="mrow" href="/#faq" data-go="faq" data-q="{k}"><span><b>{q}</b></span></a>' for k, q in enumerate(qs)) + "</div>"
     # blog: the 4 posts with small covers
     posts = re.findall(r'<a class="post" href="(/blog/([^/]+)/)">.*?<h3>([^<]+)</h3>', sec("blog"), re.S)[:4]
     p_bl = ('<div class="mposts">' + "".join(f'<a class="mpost" href="{h}"><img src="/assets/covers/{slug}.webp" alt="" width="112" height="63" loading="lazy"><b>{t}</b></a>' for h, slug, t in posts)
-            + f'</div><div class="mlinks"><a href="/blog/">All posts{ARR}</a></div>')
+            + f'</div><div class="mlinks"><a href="/blog/">All posts</a></div>')
     assert len(tabs) == 3 and len(plans) == 3 and len(amts) >= 2 and len(parts) == 4 and len(qs) == 4 and len(posts) == 4, "mega_html: homepage markup changed shape"
     items = [("stories", "Stories", "/#stories", p_st), ("check", "How we check", "/#sources", p_ck), ("race", "Race chart", "/#check", p_rc),
              ("pricing", "Pricing", "/#pricing", p_pr), ("inside", "Inside a breakdown", "/#inside", p_in), ("faq", "FAQ", "/#faq", p_fq), ("blog", "Blog", "/blog/", p_bl)]

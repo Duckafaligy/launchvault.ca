@@ -198,13 +198,13 @@
   const statusKey = (k, n) => k <= 0 ? "ready" : k >= n ? "done" : "prog";   // k of n done
   const storyCard = s => { const st = stateOf(s), k = Math.min(seen(s.slug).length, nph(s)), sv = savedList().includes(s.slug), wk = s.slug === WEEKS;
     return `<article class="scard${wk ? " wk" : ""}"><a class="scl" href="${s.href}"><span class="sct">${logo(s, 32)}<span class="nm"><b>${esc(s.name)}</b><small>${esc(s.type)}</small></span></span>`
-      + `<span class="spills">${pill({new: "ready", prog: "prog", done: "done"}[st])}${accessPill(s)}</span>`
+      + `<span class="spills">${st === "new" ? "" : pill(st)}${accessPill(s)}</span>`
       + `<span class="stt">${esc(s.title || s.what)}</span>`
       + (s.first ? `<span class="sfc">First customers: ${esc(s.first)}${s.firstl ? " " + chip(s.firstl) : ""}</span>` : "")
       + `<span class="num"><b>${esc(s.hv)}</b><span>${esc(s.hm || s.hu)}</span>${chip(s.hl)}${staleChip(s)}<span>${esc([s.hs, s.hd].filter(Boolean).join(" · "))}</span></span>${s.spark}`
       + `<span class="sft"><span class="spt">${esc(s.pattern)}</span><span class="smt">${wk ? '<span class="tag wkc">This week</span>' : ""}${s.read} min · ${nph(s)} phases</span>`
       + (st === "new" ? "" : `<span class="sp">${bar(k / nph(s))}<span>${k} of ${nph(s)} phases seen</span></span>`)
-      + `<span class="scta${st === "prog" ? "" : " sec"}">${st === "prog" ? "Continue reading" : st === "done" ? "Read again" : "Read the breakdown"}<span class="arr" aria-hidden="true">→</span></span>`
+      + `<span class="scta${st === "prog" ? "" : " sec"}">${st === "prog" ? "Continue reading" : st === "done" ? "Read again" : "Read the breakdown"}</span>`
       + `</span></a>${s.site ? `<a class="web" href="${esc(s.site)}" target="_blank" rel="noopener" aria-label="${esc(s.name)} website"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></a>` : ""}<button class="star" type="button" data-star="${s.slug}" aria-pressed="${sv}" aria-label="${sv ? "Remove" : "Save"} ${esc(s.name)}">${STAR}</button></article>`; };
   const syncStars = () => { const L = savedList(), I = savedItems();
     $$("[data-star]").forEach(b => { const on = L.includes(b.dataset.star); b.setAttribute("aria-pressed", on); const t = b.querySelector("span"); if (t) t.textContent = on ? "Saved" : "Save"; });
@@ -255,7 +255,7 @@
     const last = ls.get("lv-last"), L = last && S[last.slug] && S[last.slug].status === "ready" && stateOf(S[last.slug]) !== "new" ? S[last.slug] : null, H = L || W;
     if (H) { const n = nph(H), ph = L ? Math.min(n, last.ph || 1) : 1, pct = readPct(H.slug);
       $("[data-hhero]").innerHTML = `<div class="ch"><h2>${L ? "Continue where you left off" : "This week's breakdown"}</h2><span class="meta">${L ? `Phase ${ph} of ${n} · ` : ""}${H.published ? `Published ${esc(fmtDate(H.published))}` : ""}</span></div>`
-        + `<div class="hh"><span class="logo">${logo(H, 44)}</span><div class="hhm"><h3>${esc(H.title || H.name)}</h3><p>${esc(H.what)}</p><p class="hhc"><span class="tag">${esc(H.type)}</span><span class="tag">${H.read} min read</span><span class="tag">${n} phases</span></p></div>`
+        + `<div class="hh"><span class="logo">${logo(H, 44)}</span><div class="hhm"><h3>${esc(H.title || H.name)}</h3><p>${esc(H.what)}</p><p class="hhc">${esc(H.type)} · ${H.read} min read · ${n} phases</p></div>`
         + `<div class="hhn"><b>${esc(H.hv)}</b><span>${esc(H.hm || H.hu)}</span><span class="hhl">${chip(H.hl)}${staleChip(H)}</span><small>${esc([H.hs, H.hd].filter(Boolean).join(" · "))}</small>${H.spark}</div></div>`
         + hnum(H)
         + (H.first ? `<div class="hfc"><span>First customers</span><p>${esc(notPublic(H.first))}${H.firstl && !/^not public$/i.test(H.first) ? " " + chip(H.firstl) : ""}</p></div>` : "")
@@ -266,7 +266,7 @@
     // right rail: the path
     const st = pathSteps(), dn = pathDone(), nx = q ? st.find(s => !s.done) : null, hp = $("[data-hpath]");
     hp.innerHTML = q ? `<div class="ch"><h2>Your path</h2><a class="tl" href="/app/start/?quiz=1">Retake quiz</a></div><div class="cb"><p class="hpt">${esc(D.path.title)}</p><div class="hpr">${bar(dn / st.length)}<span>${dn} of ${st.length} steps</span></div>`
-        + (nx ? `<p class="hps">Step ${st.indexOf(nx) + 1} of ${st.length}</p><p class="hpx">${esc(nx.task || nx.text)}</p><button class="btn btn-p" type="button" data-hdone>Mark step done</button><a class="tl hpo" href="/app/path/">Open My path</a>` : `<p class="hpx">All steps done. Nice.</p><a class="btn btn-s" href="/app/path/">Open My path</a>`) + `</div>`
+        + (nx ? `<p class="hps">Step ${st.indexOf(nx) + 1} of ${st.length}</p><p class="hpx">${esc(nx.task || nx.text)}</p><button class="btn btn-p" type="button" data-hdone>Mark step done</button><a class="tl hpo" href="/app/path/">Open My path</a>` : `<p class="hpx">All steps done.</p><a class="btn btn-s" href="/app/path/">Open My path</a>`) + `</div>`
       : `<div class="ch"><h2>Your path</h2><a class="tl" href="/app/path/">Open My path</a></div><div class="hlike"><h3>Start with these</h3>${matches().map(miniRow).join("")}</div><div class="cb" style="padding-top:10px"><a class="btn btn-s" style="width:100%" href="/app/start/?quiz=1">Personalize with 8 quick questions</a></div>`;
     // 3 matched (after the quiz) or top breakdowns, excluding the hero story so it isn't duplicated
     const heroSlug = H ? H.slug : WEEKS;
@@ -286,7 +286,7 @@
     $("[data-saveditems]").innerHTML = I.map(({k, c, i, it}) => { const tk = ticks(c.slug)[i];
       return `<div class="sitem lvsitem"><a href="${c.href}#todo">${logo(c, 20)}<span><b>${esc(it.text)}</b><small>${esc(c.name)} · step ${i + 1}</small>${pill(tk ? "done" : "ready", tk ? "Ticked" : "To do")}</span></a><button class="ckstar" type="button" data-staritem="${k}" aria-pressed="true" aria-label="Remove this step">${STAR}</button></div>`; }).join("");
     const sug = [...new Set([WEEKS, ...matches()])].map(k => S[k]).filter(Boolean).slice(0, 3);
-    $("[data-savedempty]").innerHTML = L.length || I.length ? "" : emptyCard("star", "Nothing saved yet", "Tap the star on any story or checklist step and it waits for you here, on this device.", "/app/library/", "Browse the Library")
+    $("[data-savedempty]").innerHTML = L.length || I.length ? "" : emptyCard("star", "Nothing saved yet", "Star a story or a checklist step to keep it here. Saved on this device.", "/app/library/", "Browse the Library")
       + (sug.length ? `<section class="card hsec lvsug"><div class="ch"><h2>Stories to start with</h2></div><div class="scards">${sug.map(storyCard).join("")}</div></section>` : ""); };
   // warm empty state: icon badge, one honest sentence, one primary action (and an optional secondary)
   function emptyCard(icon, h, p, href, label, extra = "") {
@@ -366,7 +366,7 @@
       return ((q && q.matches) || []).map(k => S[k]).find(open) || READY.find(s => open(s) && stateOf(s) === "new") || READY.find(open); };
     const paint = () => { const d = doneOf(slug), n = nph(me), k = Math.min(n, seen(slug).length), nx = nextStory();
       box.classList.toggle("fin", !!d);
-      box.innerHTML = `<div class="dbar"><div class="dtxt"><b>${d ? "You've read this breakdown" : "Finished reading?"}</b><span>${d ? `Logged ${(t => MON[t.getMonth()] + " " + t.getDate() + " " + t.getFullYear())(new Date(d.t))}. Click again to undo.` : `${k} of ${n} phases seen. One click logs it as read.`}</span></div>`
+      box.innerHTML = `<div class="dbar"><div class="dtxt"><b>${d ? "You've read this breakdown" : "Finished reading?"}</b><span>${d ? `Logged ${(t => MON[t.getMonth()] + " " + t.getDate() + " " + t.getFullYear())(new Date(d.t))}. Click again to undo.` : `${k} of ${n} phases seen.`}</span></div>`
         + `<button class="btn ${d ? "btn-s dok" : "btn-p"}" type="button" data-markread aria-pressed="${!!d}">${d ? CKI + "Completed" : "Mark as read"}</button></div>`
         + (nx ? `<a class="dnext" href="${nx.href}"><span><small>Read next</small><b>${esc(nx.title || nx.name)}</b></span><i aria-hidden="true">→</i></a>` : ""); };
     box.addEventListener("click", e => { if (!e.target.closest("[data-markread]")) return;

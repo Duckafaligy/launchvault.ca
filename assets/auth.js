@@ -6,7 +6,10 @@
    While LV_CLERK_PK is empty the site runs in PREVIEW mode: sign-in buttons go straight to /app/ and a preview bar shows. */
 const LV_CLERK_PK = "pk_test_ZGFzaGluZy1zcGlkZXItNDg2LmNsZXJrLmFjY291bnRzLmRldiQ";   // development instance (dashing-spider-486)
 const LV_AUTH = true;    // login ON (Clerk prebuilt sign-in on /welcome/). Stories stay readable without an account (LV_GATE false)
-const LV_GATE = false;
+const LV_GATE = true;    // 2026-11-21: the app is for account holders; a guest key (handed to judges) opens it as a guest viewer
+const LV_GUEST_KEY = "SPARK2026";   // same value as JCODE in app.js; stored as lv-judge. ponytail: client-side key, swap for a server check if it must stay secret
+const lvGuest = () => { try { if ((new URLSearchParams(location.search).get("judge") || "").trim().toUpperCase() === LV_GUEST_KEY) return true;
+  return JSON.parse(localStorage.getItem("lv-judge") || "null") === LV_GUEST_KEY; } catch { return false; } };
 // Clerk's recommended no-bundler setup: clerk-js v6 + its UI bundle, both served from this instance's Frontend API,
 // so the two always match and Clerk never blocks the SDK as outdated. The host comes from the publishable key.
 const LV_FAPI = LV_CLERK_PK ? atob(LV_CLERK_PK.split("_")[2]).replace(/\$$/, "") : "";
@@ -77,11 +80,14 @@ window.LVAuth = (() => {
   const signOut = async () => { if (!live) return; const c = await load(); await c.signOut({redirectUrl: "/welcome/"}); };
   // app pages: show who is signed in (email only); only redirect when the wall is on
   const app = async () => {
-    const bar = document.getElementById("prevbar");
+    const bar = document.getElementById("prevbar"), guest = lvGuest(), wall = LV_GATE && live && !guest;
+    // hide the page until Clerk says who this is, so signed-out visitors never see a flash of the app before the redirect
+    if (wall) document.documentElement.style.visibility = "hidden";
     const paint = () => {
       const e = email(); if (!bar) return;
       bar.innerHTML = !LV_AUTH ? "Preview: accounts open soon. Your progress stays on this device."
         : e ? `Signed in as <b>${e.replace(/</g, "")}</b> <button type="button" id="soBtn">Sign out</button>`
+        : guest ? `<b>Guest view.</b> You're in with a key, so nothing is saved to an account. <a href="/welcome/#signup">Create an account</a>`
             : `Your progress is saved on this device. <a href="/welcome/">Sign in</a> to keep it everywhere.`;
       const so = document.getElementById("soBtn"); if (so) so.addEventListener("click", signOut);
       document.querySelectorAll("[data-auth-email]").forEach(n => { n.textContent = e || "Not signed in"; });
@@ -92,7 +98,9 @@ window.LVAuth = (() => {
     document.querySelectorAll("[data-noauth-only]").forEach(n => { n.hidden = LV_AUTH; });
     if (!live) return;
     try { await load(); paint();
-      if (clerk.user) { const sc = document.createElement("script"); sc.src = "/assets/supabase.js"; sc.onload = () => window.LVSync && LVSync.start(clerk); document.head.appendChild(sc); } if (LV_GATE && !clerk.user) location.replace("/welcome/"); } catch (e) { /* keep the preview face */ }
+      if (clerk.user) { const sc = document.createElement("script"); sc.src = "/assets/supabase.js"; sc.onload = () => window.LVSync && LVSync.start(clerk); document.head.appendChild(sc); }
+      if (wall && !clerk.user) { location.replace("/welcome/?next=" + encodeURIComponent(location.pathname + location.search) + "#signin"); return; }
+      document.documentElement.style.visibility = ""; } catch (e) { document.documentElement.style.visibility = ""; /* Clerk didn't load: fail open, keep the preview face */ }
   };
   return {on: LV_AUTH, live, gate: LV_GATE, load, enabled, signInWith, callback, signOut, app, email};
 })();

@@ -352,14 +352,14 @@ def chart_block(S, moves_list=True, band=True):
     big = f'{kd[last[0]]}, {(S["series"].get("point_dates") or {}).get(last[0]) or mlab(last[0])}' if last[0] in kd else S["series"]["what"].lower()   # an MRR point is never called revenue
     ml = ""
     if moves_list and S["moves"]:
-        ml = f'<div class="mvh"><b>All {len(S["moves"])} moves</b><span>Tap one to see it in the readout</span></div><ol class="moves">' + "".join(f'<li><button type="button" data-i="{i}" class="{"turn" if data["moves"][i].get("turn") else ""}"><span class="w">{esc(m["when"])}</span><span class="n">{i + 1}</span><span class="mt">{esc(m["text"])}</span></button></li>' for i, m in enumerate(S["moves"])) + "</ol>"
+        ml = f'<div class="mvh"><b>All {len(S["moves"])} moves</b></div><ol class="moves">' + "".join(f'<li><button type="button" data-i="{i}" class="{"turn" if data["moves"][i].get("turn") else ""}"><span class="w">{esc(m["when"])}</span><span class="n">{i + 1}</span><span class="mt">{esc(m["text"])}</span></button></li>' for i, m in enumerate(S["moves"])) + "</ol>"
     bd = ""
     if band:
         bd = '<div class="pband" role="group" aria-label="Phases">' + "".join(f'<button type="button" data-ph="{i + 1}" aria-pressed="false" title="{esc(p["name"])}, {esc(p["when"])}">{esc(p.get("short") or p["name"])}</button>' for i, p in enumerate(S["phases"])) + "</div>"
     return (f'<div class="chartc lvchart"><div class="hd"><div><div class="big">{money(last[1])}<small>{esc(big)}</small></div>'
             f'<div class="legend">{legend}</div></div></div><div class="readout" aria-live="polite"></div>'
             f'<div class="plot"><svg role="img" aria-label="{esc(S["name"])}: {esc(S["series"]["what"].lower())}, ' + ", ".join(f"{mlab(p[0])} {money(p[1])}" for p in S["series"]["points"]) + f'"></svg></div><noscript><p class="cfail">The chart needs JavaScript. The numbers are in the table below.</p></noscript>'
-            f'{bd}{ml}{chart_table(S)}<p class="cprov">{esc(S["series"].get("note") or "Points carry their own labels. Hover or tap the line for the month, the value and where it came from.")}</p>'
+            f'{bd}{ml}{chart_table(S)}<p class="cprov">{esc(S["series"].get("note") or "Each point carries its own label.")}</p>'
             f'<script type="application/json" class="lvchart-data">{json.dumps(data, separators=(",", ":"))}</script></div>')
 
 SRC_LOGO = [("trustmrr.com", "trustmrr.png"), ("stripe.com", "stripe.svg"), ("github.com", "github.svg"), ("web.archive.org", "internetarchive.png"), ("archive.org", "internetarchive.png"),
@@ -500,9 +500,9 @@ def reader(E, S, gate=True):
     phs = sec("phases", "How it happened", f"The story in {n} steps, in order. Each one ends with a lesson you can use.", f'<div class="ptl">{phases_free}' + (teaser + f'<div id="locked" data-locked="1" hidden>{phases_rest}</div>' if gate else phases_rest) + "</div>")
     locked = lambda h: f'<div data-locked="1" hidden>{h}</div>' if gate and h else h
     done = f'<section class="rsec rcard" id="done"><div class="sh"><h2>Mark as read</h2></div><div class="donebox" id="donebox" data-donebox="{slug}"></div></section>'
-    recap = sec("lessons", f"The whole story in {n} lesson{'s' if n != 1 else ''}", "Every phase's lesson in one place. Tap a phase name to go back to it.",
+    recap = sec("lessons", f"The whole story in {n} lesson{'s' if n != 1 else ''}", "Every phase's lesson in one place.",
                 '<ol class="recap">' + "".join(f'<li><span class="rn">{i + 1}</span><div><p>{esc(p["lesson"])}</p><a href="#ph{i + 1}">Phase {i + 1}: {esc(p["name"])}</a></div></li>' for i, p in enumerate(S["phases"])) + "</ol>")
-    proof = ('<section class="rsec rcard" id="proof"><div class="sh"><h2>Check our work</h2></div>' + intro("Where every claim and number comes from. Open a panel and check it yourself.") + locked(fc) + locked(tn) + src + "</section>")
+    proof = ('<section class="rsec rcard" id="proof"><div class="sh"><h2>Check our work</h2></div>' + intro("Where every claim and number comes from.") + locked(fc) + locked(tn) + src + "</section>")
     nav_items = [("overview", "Overview"), ("chart", "The numbers"), ("phases", "How it happened"), ("todo", "Checklist")] + [("done", "Mark as read"), ("proof", "Check our work")]
     rail = ('<aside class="rrail"><nav class="rtoc" aria-label="On this page"><h2>On this page</h2>' + "".join(f'<a href="#{k}" data-r="{k}"><span>{t}</span><i data-rdone="{k}" hidden>{CHK}</i></a>' for k, t in nav_items) + "</nav>"
             f'<div class="rnext"><h2>Your next step</h2><p data-cknext="{slug}"></p><a class="btn btn-p" href="#todo">Jump to the checklist</a></div></aside>')
@@ -680,7 +680,7 @@ def card(S, feat=False):
                 f'          <span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · {S["read_min"]} min read · {dlab(S["published"])}</span>\n'
                 '          <span class="bgo">Read the breakdown <span aria-hidden="true">→</span></span></div></a>')
     return (f'<a class="post" href="/blog/{S["slug"]}/"><div class="cv cover">{pic}</div>\n        <div class="bd"><h3>{esc(S["title"])}</h3><p>{esc(S["dek"])}</p>{pfc}'
-            f'<span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · {S["read_min"]} min read<span class="go" aria-hidden="true">→</span></span></div></a>')
+            f'<span class="by"><i><svg width="11" height="11" style="stroke:#60A5FA" aria-hidden="true"><use href="#i-lv"/></svg></i>LaunchVault · {S["read_min"]} min read</span></div></a>')
 def update_cards(ready, stale=()):
     p = os.path.join(SRC, "index.body.html"); s = rd(p)
     a = s.index('<div class="posts'); b = s.index('</div><!-- end posts -->', a)
@@ -710,7 +710,7 @@ def update_story_cards(ready):
         art = art.replace('<article class="bcard soon"', '<article class="bcard live"', 1)
         art = re.sub(r"(<small>[^<·]*)· coming soon</small>", lambda k: f'{k.group(1)}· {S["read_min"]} min read</small>', art, count=1)
         if 'class="go"' not in art:
-            art = art.replace("</div>\n      </article>", f'<a class="go" href="/blog/{S["slug"]}/">Read <span class="arr" aria-hidden="true">→</span><span class="sr"> the {esc(name)} breakdown</span></a></div>' + NL + "      </article>", 1)
+            art = art.replace("</div>\n      </article>", f'<a class="go" href="/blog/{S["slug"]}/">Read<span class="sr"> the {esc(name)} breakdown</span></a></div>' + NL + "      </article>", 1)
         return art
     sec2 = re.sub(r'<article class="bcard[^"]*" data-cat="[^"]*" data-story="([^"]+)">.*?</article>', one, sec, flags=re.S)
     if sec2 != sec: wr(p, s[:a] + sec2 + s[b:])
