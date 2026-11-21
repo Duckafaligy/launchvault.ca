@@ -27,7 +27,7 @@ main > section .shead .lede{max-width:58ch}
 .sbg:hover{border-color:color-mix(in srgb,var(--h) 35%,var(--line));box-shadow:var(--sh2);translate:0 -2px}
 .sbg .blogo{grid-area:m;width:24px;height:24px;border-radius:8px;color:var(--h);align-self:start}
 .sbg.big{padding:16px;row-gap:8px;grid-template-areas:"m t" "d d"}
-.sbg.big .blogo{width:32px;height:32px}
+.sbg.big .blogo{width:32px;height:32px;align-self:center}
 .sb-t{grid-area:t;display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;min-width:0}
 .sb-n{font:700 16px/1.2 var(--fd);letter-spacing:-.01em;color:var(--h);color:color-mix(in srgb,var(--h) 72%,#000);white-space:nowrap}   /* brand hue, darkened to pass AA on white */
 .sbg.big .sb-n{font-size:18px}

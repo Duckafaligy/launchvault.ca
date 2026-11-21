@@ -492,3 +492,4 @@
 .ptip{white-space:normal;width:max-content;max-width:340px}
 .ptip em{display:block;margin-top:3px;font:italic 500 12px/1.4 var(--fd);color:#93B4FF}
 @media (max-width:1100px){.rh-t b{white-space:normal;text-wrap:balance}}
+.tspill text{font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.01em}

@@ -90,3 +90,4 @@ table.sr{display:block}
 /* phones: the readout gets a fixed 3-line box (no clipped text, still no jump on hover); Auto-play takes its own full row under Prev/Next */
 @media (max-width:720px){.readout{height:80px;white-space:normal;flex-wrap:wrap;align-content:center;row-gap:2px;padding:8px 12px}.readout .rd-s{flex-basis:100%;line-height:18px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}}
 @media (max-width:600px){.mstep .ms-play{flex:1 1 100%;margin-left:0}}
+.tspill text{font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.01em}

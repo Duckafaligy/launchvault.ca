@@ -331,3 +331,5 @@ main .dk .lede{background:none;box-shadow:none}
 .rfig.rface{padding:12px 14px}
 .rfig.rface .rcap{padding:0}
 .post-figs:empty{display:none}
+#blog .posts > a.post:nth-of-type(n+5){display:none!important}  /* homepage shows 4; /blog/ lists all */
+#blog .bmore{display:flex;justify-content:center;margin-top:28px}

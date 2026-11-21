@@ -798,6 +798,8 @@ main .dk .lede{background:none;box-shadow:none}
 .rfig.rface{padding:12px 14px}
 .rfig.rface .rcap{padding:0}
 .post-figs:empty{display:none}
+#blog .posts > a.post:nth-of-type(n+5){display:none!important}  /* homepage shows 4; /blog/ lists all */
+#blog .bmore{display:flex;justify-content:center;margin-top:28px}
 
 /* =====================================================================
    Round 11: remodel + motion. Shared components (see COMPONENTS.md).
@@ -1616,3 +1618,4 @@ html{scroll-padding-top:78px}
 .ptip{white-space:normal;width:max-content;max-width:340px}
 .ptip em{display:block;margin-top:3px;font:italic 500 12px/1.4 var(--fd);color:#93B4FF}
 @media (max-width:1100px){.rh-t b{white-space:normal;text-wrap:balance}}
+.tspill text{font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.01em}

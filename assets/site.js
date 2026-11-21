@@ -22,12 +22,6 @@
     try { localStorage.setItem("lv-email-sub", v); } catch {}
     m.textContent = "Saved on this device. Emails start when sign-ups open."; m.classList.add("on", "ok");
   }); });
-  // hero email bar: height animates open/closed (CSS grid rows), no jump
-  const hm = $("#hmail");
-  if (hm) { const hb = hm.querySelector(".hmb"), foc = [...hm.querySelectorAll(".hmp input,.hmp button")];
-    const set = o => { hm.classList.toggle("open", o); hb.setAttribute("aria-expanded", o); foc.forEach(x => x.tabIndex = o ? 0 : -1); if (o) setTimeout(() => foc[0].focus({ preventScroll: true }), reduce ? 0 : 120); };
-    hb.addEventListener("click", () => set(!hm.classList.contains("open")));
-    hm.addEventListener("keydown", e => { if (e.key === "Escape" && hm.classList.contains("open")) { set(false); hb.focus(); } }); }
   // ?plan=pro|developer|builder(alias)|full on /signup/ shows the plan note; .pname (if present) gets the plan's name
   const plan = new URLSearchParams(location.search).get("plan"), pn = $("#plannote");
   if (pn && plan && /^(pro|developer|builder|lifetime|full)$/.test(plan)) { pn.hidden = false; const nm = pn.querySelector(".pname"); if (nm) nm.textContent = /^(developer|builder)$/.test(plan) ? "Developer" : plan === "lifetime" ? "Lifetime (beta)" : "Pro"; }
@@ -172,7 +166,7 @@
       const vline = el("line", {y1: T, y2: H - B, stroke: "#2563EB", "stroke-width": 1.25, "stroke-dasharray": "3 3", opacity: 0}, svg);
       const tsPill = el("g", {class: "tspill", opacity: 0}, svg);
       const tsRect = el("rect", {y: 2, height: 18, rx: 5, fill: "#0B1220"}, tsPill);
-      const tsTxt = el("text", {y: 14, "text-anchor": "middle", fill: "#fff", "font-size": "11", "font-weight": "600"}, tsPill);
+      const tsTxt = el("text", {y: 14, "text-anchor": "middle", fill: "#fff", "font-size": "12", "font-weight": "600"}, tsPill);
       PV.forEach((p, i) => {
         if (p[2] === "v") el("circle", {cx: pts[i][0], cy: pts[i][1], r: 5, fill: "#10B981", stroke: "#fff", "stroke-width": 2}, fg);
         else el("circle", {cx: pts[i][0], cy: pts[i][1], r: 3.4, fill: "#fff", stroke: p[2] === "x" ? "#E5533D" : "#2563EB", "stroke-width": 1.8}, fg);

@@ -65,7 +65,7 @@
       const cross = el("line", {y1: T, y2: H - B, class: "cross"}, svg);
       const tsPill = el("g", {class: "tspill", opacity: 0}, svg);
       const tsRect = el("rect", {y: 0, height: 18, rx: 5, fill: "#0B1220"}, tsPill);
-      const tsTxt = el("text", {y: 12.5, "text-anchor": "middle", fill: "#fff", "font-size": "11", "font-weight": "600"}, tsPill);
+      const tsTxt = el("text", {y: 12.5, "text-anchor": "middle", fill: "#fff", "font-size": "12", "font-weight": "600"}, tsPill);
       const all = pts.concat(alt);
       all.forEach(p => { const k = LBC[p.l] || "c", cx = X(p.x), cy = Y(p.v);
         if (k === "x") el("rect", {x: cx - 4, y: cy - 4, width: 8, height: 8, class: "pt x", transform: `rotate(45 ${cx} ${cy})`}, fg);
