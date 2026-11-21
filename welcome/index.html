@@ -125,10 +125,10 @@
         </ul>
       </div>
       <p class="note">We keep your email address and the name you choose. By continuing you agree to the <a href="/legal/terms/">terms</a> and <a href="/legal/privacy/">privacy policy</a> (drafts).</p>
-      <details class="gkey" id="gkey"><summary>Have a key? Enter it to look around as a guest <span aria-hidden="true">→</span></summary>
-        <form class="gkf" id="gkf" novalidate><label for="gk">Guest key</label>
-          <div class="gkr"><input id="gk" name="key" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="btn btn-p" type="submit">View as guest</button></div>
-          <p class="gke" id="gke" role="alert" hidden>That key didn't work. Check it and try again.</p></form></details>
+      <details class="gkey" id="gkey"><summary>Judging LaunchVault? Enter your judge code <span aria-hidden="true">→</span></summary>
+        <form class="gkf" id="gkf" novalidate><label for="gk">Judge code</label>
+          <div class="gkr"><input id="gk" name="key" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="btn btn-p" type="submit">Enter as judge</button></div>
+          <p class="gke" id="gke" role="alert" hidden>That code didn't work. Check it and try again.</p></form></details>
     </div>
   </div>
 </section>
@@ -180,7 +180,7 @@
     if (b.dataset.strategy === "email_code") { const f = $("#ecode"); f.hidden = !f.hidden; b.setAttribute("aria-expanded", !f.hidden); if (!f.hidden) $("#ec-email").focus(); return; }
     b.disabled = true; A.signInWith(b.dataset.strategy, {isNew: isNew()}).catch(() => { b.disabled = false; $("#authoff").textContent = "That didn't work. Try again, or pick another option."; $("#authoff").hidden = false; });
   });
-  // guest key (handed to judges): same check as the app's judge pass, then into the app as a guest viewer
+  // judge code (hackathon judges only): same check as the app's judge pass, then into the app in judge view
   $("#gkf").addEventListener("submit", e => {
     e.preventDefault(); const v = $("#gk").value.trim().toUpperCase();
     if (v !== "SPARK2026") { $("#gke").hidden = false; $("#gk").focus(); return; }

@@ -6,10 +6,10 @@
    While LV_CLERK_PK is empty the site runs in PREVIEW mode: sign-in buttons go straight to /app/ and a preview bar shows. */
 const LV_CLERK_PK = "pk_test_ZGFzaGluZy1zcGlkZXItNDg2LmNsZXJrLmFjY291bnRzLmRldiQ";   // development instance (dashing-spider-486)
 const LV_AUTH = true;    // login ON (Clerk prebuilt sign-in on /welcome/). Stories stay readable without an account (LV_GATE false)
-const LV_GATE = true;    // 2026-11-21: the app is for account holders; a guest key (handed to judges) opens it as a guest viewer
+const LV_GATE = true;    // 2026-11-21: the app is for account holders only; hackathon judges type a judge code on /welcome/ (judge view)
 const LV_GUEST_KEY = "SPARK2026";   // same value as JCODE in app.js; stored as lv-judge. ponytail: client-side key, swap for a server check if it must stay secret
-const lvGuest = () => { try { if ((new URLSearchParams(location.search).get("judge") || "").trim().toUpperCase() === LV_GUEST_KEY) return true;
-  return JSON.parse(localStorage.getItem("lv-judge") || "null") === LV_GUEST_KEY; } catch { return false; } };
+// judges only: the code is typed on /welcome/ (no URL shortcut), then stored as lv-judge
+const lvGuest = () => { try { return JSON.parse(localStorage.getItem("lv-judge") || "null") === LV_GUEST_KEY; } catch { return false; } };
 // Clerk's recommended no-bundler setup: clerk-js v6 + its UI bundle, both served from this instance's Frontend API,
 // so the two always match and Clerk never blocks the SDK as outdated. The host comes from the publishable key.
 const LV_FAPI = LV_CLERK_PK ? atob(LV_CLERK_PK.split("_")[2]).replace(/\$$/, "") : "";
@@ -87,7 +87,7 @@ window.LVAuth = (() => {
       const e = email(); if (!bar) return;
       bar.innerHTML = !LV_AUTH ? "Preview: accounts open soon. Your progress stays on this device."
         : e ? `Signed in as <b>${e.replace(/</g, "")}</b> <button type="button" id="soBtn">Sign out</button>`
-        : guest ? `<b>Guest view.</b> You're in with a key, so nothing is saved to an account. <a href="/welcome/#signup">Create an account</a> <button type="button" id="gxBtn">Exit guest view</button>`
+        : guest ? `<b>Judge view.</b> You're in with a judge code, so nothing is saved to an account. <button type="button" id="gxBtn">Exit judge view</button>`
             : `Your progress is saved on this device. <a href="/welcome/">Sign in</a> to keep it everywhere.`;
       const so = document.getElementById("soBtn"); if (so) so.addEventListener("click", signOut);
       const gx = document.getElementById("gxBtn");

@@ -555,12 +555,11 @@
     d.showModal(); $("#rwhat", d).focus();
   });
 
-  // ---------- hackathon judge code (?judge=SPARK2026 or form[data-judge]) ----------
+  // ---------- hackathon judge code: typed on /welcome/ (the wall) or form[data-judge]; no URL shortcut ----------
   const JCODE = "SPARK2026";
   const urlJ = new URLSearchParams(location.search).get("judge");
-  let urlHit = false;
-  if (urlJ !== null) { const u = new URL(location.href); u.searchParams.delete("judge"); try { history.replaceState(null, "", u.pathname + u.search + u.hash); } catch {} }   // keep the code out of shared links
-  if (urlJ && urlJ.trim().toUpperCase() === JCODE) { urlHit = ls.get("lv-judge") !== JCODE; ls.set("lv-judge", JCODE); }
+  const urlHit = false;
+  if (urlJ !== null) { const u = new URL(location.href); u.searchParams.delete("judge"); try { history.replaceState(null, "", u.pathname + u.search + u.hash); } catch {} }   // strip old ?judge= links; they no longer unlock anything
   const syncJudge = () => {
     const on = ls.get("lv-judge") === JCODE;
     $$('[data-locked="1"]').forEach(el => { el.hidden = !on; });
