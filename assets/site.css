@@ -731,23 +731,6 @@ footer .fmsg,.dk .fmsg{color:#E2E8F0;justify-content:flex-start}
 .dk,footer.foot{position:relative;isolation:isolate;overflow:hidden}
 .dk .streak-dk,footer.foot .streak-foot{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .dk > :not(.streak-dk),footer.foot > :not(.streak-foot){position:relative;z-index:1}
-/* footer details (2026-11-18): data status, label key, sources row */
-.fbrand .fstat{margin:14px 0 0;font-size:13px;line-height:1.55;color:#CBD5E1}
-.fbrand .fstat b{color:#6EE7B7;font-weight:600}
-.fbrand .fstat em{color:#FB7185}
-.fkey{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 32px;margin-top:48px;padding-top:28px;border-top:1px solid rgba(255,255,255,.08)}
-.fkey h4,.fsrc h4{margin:0;font:600 14px var(--fd);color:#F8FAFC}
-.fkey h4{grid-column:1/-1}
-.fkey div{display:flex;flex-direction:column;align-items:flex-start;gap:6px;font-size:13px;line-height:1.45;color:#CBD5E1}
-footer.foot .lb.v{color:#6EE7B7;background:rgba(16,185,129,.14)}footer.foot .lb.l{color:#7DD3FC;background:rgba(14,165,233,.16)}
-footer.foot .lb.w{color:#F0ABFC;background:rgba(217,70,239,.18)}footer.foot .lb.c{color:#C4B5FD;background:rgba(139,92,246,.2)}
-footer.foot .lb.x{color:#FCA5A5;background:rgba(229,83,61,.16)}footer.foot .lb.n{color:#E2E8F0;background:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28)}
-.fsrc{margin-top:32px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px}
-.fsrc h4{margin-right:4px}
-.fsrc span{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:#E2E8F0}
-.fsrc img{width:18px;height:18px;border-radius:4px;object-fit:contain;background:#fff;padding:1px}
-@media (max-width:900px){.fkey{grid-template-columns:1fr 1fr}}
-@media (max-width:560px){.fkey{grid-template-columns:1fr}}
 
 /* Beta lifetime offer under the plans */
 #pricing .beta{margin-top:20px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:28px 32px;border-radius:16px;background:#0B1220;color:#fff;box-shadow:0 0 0 1px rgba(225,29,72,.35),0 24px 60px -30px rgba(225,29,72,.55)}

@@ -139,26 +139,23 @@
   .ptab .cr.th .tp{font-size:12px}
 }
 
-/* ================= footer ================= */
-footer.foot{padding:72px 0 28px}
+/* ================= footer (2026-11-20): brand + CTA, link columns, "Data from" strip, slim bottom bar ================= */
+footer.foot{padding:80px 0 28px}
 footer .em{color:#93B4FF}
-.fnl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:24px 48px;align-items:center;padding:28px 32px;margin-bottom:64px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.025)}
-.fnl h3{font-size:24px;line-height:1.25;letter-spacing:-.02em;color:#F8FAFC}
-.fnl p{margin:6px 0 0;font-size:14px;color:#94A3B8}
-.fnl .nl{margin:0;max-width:none;width:100%}
-.fnl .nl input{height:48px;transition:border-color .2s,background-color .2s}
-.fnl .nl input:hover{border-color:rgba(255,255,255,.22)}
-.fnl .nl input:focus{border-color:#60A5FA;background:rgba(255,255,255,.06);outline:0}
-.fnl .nl .btn{height:48px}
-footer .fmsg{margin-top:8px}
-.ftop{grid-template-columns:1.7fr repeat(4,minmax(0,1fr))}
-.fcol a{display:block;padding:6px 0;color:#94A3B8;transition:color .2s}
-.fcol a span{background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;padding-bottom:2px;transition:background-size .4s var(--out)}
+footer.foot :focus-visible{outline-color:#93B4FF}
+.ftop{grid-template-columns:minmax(0,1.6fr) repeat(4,minmax(0,1fr));gap:40px 32px}
+.fbrand{display:flex;flex-direction:column;align-items:flex-start}
+footer p.tl{color:#CBD5E1;font-size:15px}
+.fcta{margin-top:24px;gap:10px}
+.fcta span,.fhow span{display:inline-block}
+.fcol h4{margin:0 0 6px}
+.fcol a{display:flex;align-items:center;min-height:44px;padding:0;color:#94A3B8;transition:color .2s}
+.fcol a span{background:linear-gradient(#93B4FF,#93B4FF) 0 100%/0 1px no-repeat;padding-bottom:2px}
 .fcol a:hover{color:#F8FAFC}
 .fcol a:hover span{background-size:100% 1px}
-.fbrand .logo{transition:opacity .2s}
+.fbrand .logo{min-height:44px;display:inline-flex;align-items:center;transition:opacity .2s}
 .fbrand .logo:hover{opacity:.85}
-.socs{display:flex;gap:8px;margin-top:22px}
+/* .soc stays: the blog post share row (pages.css .post-links) builds on it */
 .soc{position:relative;display:grid;place-items:center;width:44px;height:44px;border-radius:10px;border:1px solid rgba(255,255,255,.1);color:#94A3B8;cursor:default;
   transition:color .2s,border-color .2s,background-color .2s,translate .35s var(--out)}
 .soc svg{fill:currentColor}
@@ -166,21 +163,32 @@ footer .fmsg{margin-top:8px}
 .soc::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);padding:5px 8px;border-radius:6px;background:#F8FAFC;color:var(--ink);font:500 12px/1.2 var(--fd);white-space:nowrap;
   pointer-events:none;opacity:0;transform:translate(-50%,4px);transition:opacity .2s,transform .3s var(--out)}
 .soc:hover::after,.soc:focus::after{opacity:1;transform:translate(-50%,0)}
-.fbot{align-items:center}
+/* data sources: real logo colours on light chips */
+.fsrc{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:56px;padding:24px 0;border-top:1px solid rgba(255,255,255,.08)}
+.fsrc h4{margin:0;font:600 14px var(--fd);color:#F8FAFC}
+.fsrc ul{order:1;flex-basis:100%;display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.fsrc li{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px 0 6px;border-radius:999px;background:#F8FAFC;color:#0B1020;font:500 13px/1 var(--fd);white-space:nowrap}
+.fsrc img{width:20px;height:20px;border-radius:5px;object-fit:contain;flex:none}
+.fhow{margin-left:auto;display:inline-flex;align-items:center;gap:6px;min-height:44px;color:#93B4FF;font-weight:600;transition:color .2s}
+.fhow:hover{color:#F8FAFC}
+.fbot{align-items:center;margin-top:0}
+.fbot .lgl{gap:4px 24px}
 .fbot .lgl a{color:#94A3B8;transition:color .2s}
 .fbot .lgl a:hover{color:#F8FAFC}
 .fbot .lgl a span{margin-left:4px}
+@media (prefers-reduced-motion:no-preference){
+  .fcol a span{transition:background-size .4s var(--out)}
+  .fcta span,.fhow span{transition:transform .3s var(--out)}
+  .fcta:hover span,.fhow:hover span{transform:translateX(3px)}
+}
 @media (max-width:1100px){
   .ftop{grid-template-columns:repeat(4,minmax(0,1fr))}.ftop .fbrand{grid-column:1/-1}
 }
-@media (max-width:900px){
-  .fnl{grid-template-columns:1fr}
-}
 @media (max-width:720px){
   footer.foot{padding:56px 0 24px}
-  .fnl{padding:22px 20px;margin-bottom:48px}
-  .fnl h3{font-size:21px}
-  .fnl .nl input,.fnl .nl .btn{height:48px}
-  .ftop{grid-template-columns:1fr 1fr;gap:28px 16px}
-  .fcol a{padding:0;min-height:44px;display:flex;align-items:center}
+  .ftop{grid-template-columns:1fr 1fr;gap:32px 16px}
+  .fsrc{margin-top:40px}
+}
+@media (max-width:359px){
+  .ftop{grid-template-columns:1fr}
 }
