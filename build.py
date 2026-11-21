@@ -28,6 +28,7 @@ PAGES = [
     ("legal/privacy/index.html", "privacy.body.html", "Privacy policy (draft) · LaunchVault", "LaunchVault's privacy policy. Draft, not yet reviewed by a lawyer.", "", False, False, ""),
     ("legal/terms/index.html", "terms.body.html", "Terms of use (draft) · LaunchVault", "LaunchVault's terms of use. Draft, not yet reviewed by a lawyer.", "", False, False, ""),
     ("legal/cookies/index.html", "legal-cookies.body.html", "Cookie policy (draft) · LaunchVault", "Every cookie and storage key LaunchVault uses, and why. Draft, not yet reviewed by a lawyer.", "", False, False, ""),
+    ("legal/community/index.html", "legal-community.body.html", "Community Guidelines (draft) · LaunchVault", "The rules for LaunchVault's community chat, how moderation works, and how to report or appeal. Draft, not yet reviewed by a lawyer.", "", False, False, ""),
     ("legal/accessibility/index.html", "legal-accessibility.body.html", "Accessibility statement · LaunchVault", "How LaunchVault works for everyone, known gaps, and how to tell us about a problem.", "", False, False, ""),
     ("welcome/index.html", "welcome.body.html", "Welcome · LaunchVault", "Sign in or make a free LaunchVault account.", "welcome", False, False, ""),
     ("404.html", "404.body.html", "Page not found · LaunchVault", "This page isn't here.", "", False, False, ""),
@@ -127,7 +128,7 @@ FCOLS = [("Explore", [("/#stories", "Stories"), ("/#sources", "How we check"), (
          ("Blog", [("/blog/", "All posts"), ("/blog/postiz/", "The Postiz breakdown"), ("/blog/what-verified-means/", "What Verified means"),
                    ("/blog/how-to-read-a-revenue-chart/", "Reading a revenue chart"), ("/blog/three-ways-to-start-small/", "Three ways to start small")]),
          ("Account", [("/welcome/", "Sign in"), ("/welcome/#signup", "Sign up")]),
-         ("Legal", [("/legal/privacy/", "Privacy (draft)"), ("/legal/terms/", "Terms (draft)"), ("/legal/cookies/", "Cookies (draft)"), ("/legal/accessibility/", "Accessibility")])]
+         ("Legal", [("/legal/privacy/", "Privacy (draft)"), ("/legal/terms/", "Terms (draft)"), ("/legal/cookies/", "Cookies (draft)"), ("/legal/community/", "Community Guidelines (draft)"), ("/legal/accessibility/", "Accessibility")])]
 FCOLS_HTML = "".join(f'<nav class="fcol" aria-label="{h}"><h4>{h}</h4>' + "".join(f'<a href="{u}"><span>{t}</span></a>' for u, t in ls) + "</nav>" for h, ls in FCOLS)
 def footer():
     return '''<footer class="foot">

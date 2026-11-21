@@ -209,8 +209,14 @@ button.cm-po:hover{border-color:var(--brand);background:#F5F8FF}
 .cm-rules{list-style:none;margin:12px 0;padding:0}
 .cm-rules li{display:grid;gap:2px;padding:12px 0;border-bottom:1px solid var(--line)}
 .cm-rules b{color:var(--ink)}.cm-rules span{color:#4B5563}
-.cm-agree{display:flex;align-items:center;gap:12px;min-height:56px;padding:0 14px;border:1px solid #CBD5E1;border-radius:10px;margin-top:12px;color:var(--ink);cursor:pointer}
-.cm-agree input{width:22px;height:22px;accent-color:var(--brand)}
+.cm-agree{display:flex;align-items:center;gap:12px;min-height:56px;padding:10px 14px;border:1px solid #CBD5E1;border-radius:10px;margin-top:12px;color:var(--ink);cursor:pointer}
+.cm-agree input{width:22px;height:22px;accent-color:var(--brand);flex:none}
+.cm-agree a{color:var(--brand2);text-decoration:underline;text-underline-offset:3px}
+.cm-gl{list-style:none;margin:12px 0 4px;padding:0;display:grid;gap:8px;font-size:15px;line-height:1.4}
+.cm-gl li{display:flex;gap:10px;align-items:flex-start;color:#374151}
+.cm-gl svg{flex:none;margin-top:2px;color:var(--brand2)}
+.cm-gl b{color:var(--ink)}
+.cm-gll{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-weight:600;color:var(--brand2);text-decoration:underline;text-underline-offset:3px}
 /* settings */
 .cm-set{display:grid;gap:16px;align-content:start;max-width:640px}
 .cm-set .card{padding:0;margin:0}
