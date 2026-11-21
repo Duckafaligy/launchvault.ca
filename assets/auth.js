@@ -4,7 +4,7 @@
      LV_AUTH      false = accounts are off for now (no sign-in UI, no third-party requests). true = use Clerk (+ Supabase sync).
      LV_GATE      false = the app opens without signing in (current choice). true = signed-out visitors go to /sign-in/.
    While LV_CLERK_PK is empty the site runs in PREVIEW mode: sign-in buttons go straight to /app/ and a preview bar shows. */
-const LV_CLERK_PK = "pk_test_ZGFzaGluZy1zcGlkZXItNDg2LmNsZXJrLmFjY291bnRzLmRldiQ";   // development instance (dashing-spider-486)
+const LV_CLERK_PK = "pk_live_Y2xlcmsubGF1bmNodmF1bHQuY2Ek";   // PRODUCTION instance (clerk.launchvault.ca), 2026-11-21. Dev was pk_test_ZGFzaGluZy1zcGlkZXItNDg2LmNsZXJrLmFjY291bnRzLmRldiQ
 const LV_AUTH = true;    // login ON (Clerk prebuilt sign-in on /sign-in/ and /sign-up/). Stories stay readable without an account (LV_GATE false)
 const LV_GATE = true;    // 2026-11-21: the app is for account holders only; hackathon judges type a judge code on /sign-in/ (judge view)
 const LV_GUEST_KEY = "SPARK2026";   // same value as JCODE in app.js; stored as lv-judge. ponytail: client-side key, swap for a server check if it must stay secret
