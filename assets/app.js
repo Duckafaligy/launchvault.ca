@@ -500,21 +500,26 @@
     const summary = () => [age, ...ans.map((a, i) => a == null ? null : D.quiz[i].o[a])].filter(Boolean).join(" · ");
     const why = t => t ? ans.map((a, i) => a != null && (D.quiz[i].w[a] || {})[t] ? D.quiz[i].o[a] : null).filter(Boolean) : [];
     const save = () => { const t = topOf(), m = score(); ls.set("lv-quiz-app", {answers: ans, matches: m, top: t, why: why(t), whys: Object.fromEntries(m.map(k => [k, why(k)])), summary: summary(), date: today()}); D.path = t ? pathFor(m) : PATH0; };
-    const render = () => {
-      if (step < D.quiz.length) { const Q = D.quiz[step];
+    const main = $(".ob"), out = $(".obout");
+    const render = (dir = "f") => {
+      const n = D.quiz.length; main.dataset.s = step < n ? step : "end"; obc.dataset.dir = dir;
+      if (out) out.hidden = step >= n;
+      if (step < n) { const Q = D.quiz[step];
         H.innerHTML = "Eight questions. <em>Under two minutes.</em>"; P.textContent = "Your answers pick 3 stories that started a lot like you. Skip any question you don't want to answer.";
-        obc.innerHTML = `<div class="qp"><span class="bar v"><i style="--w:${step / D.quiz.length * 100}%"></i></span><span>${step + 1} of ${D.quiz.length}</span></div><h2 id="qh">${esc(Q.q)}</h2>${Q.h ? `<p class="qhint" id="qhint">${esc(Q.h)}</p>` : ""}<div class="opts" role="radiogroup" aria-labelledby="qh"${Q.h ? ' aria-describedby="qhint"' : ""}>${Q.o.map((o, i) => opt(o, ans[step] === i, i)).join("")}</div>
-          <div class="obnav">${step ? '<button class="bk" type="button" data-back>Back</button>' : ""}<span class="sp"></span><button class="sk" type="button" data-skip>Skip</button><button class="btn btn-p" type="button" data-next>${step === D.quiz.length - 1 ? "See my path" : "Next"}</button></div><a class="tl obskip" href="/app/" data-skipall>Skip the quiz for now</a>`; }
+        obc.innerHTML = `<div class="obq"><div class="qp"><span>${step + 1} of ${n}</span><span class="bar" role="progressbar" aria-label="Question ${step + 1} of ${n}" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${step + 1}"><i style="--w:${(step + 1) / n * 100}%"></i></span></div><h2 id="qh">${esc(Q.q)}</h2>${Q.h ? `<p class="qhint" id="qhint">${esc(Q.h)}</p>` : ""}<div class="opts" role="radiogroup" aria-labelledby="qh"${Q.h ? ' aria-describedby="qhint"' : ""}>${Q.o.map((o, i) => opt(o, ans[step] === i, i)).join("")}</div>
+          <div class="obnav">${step ? '<button class="bk" type="button" data-back>Back</button>' : ""}<span class="sp"></span><button class="sk" type="button" data-skip>Skip</button><button class="btn btn-p" type="button" data-next>${step === n - 1 ? "See my path" : "Next"}</button></div></div>`; }
       else { save(); ls.set("lv-pathnote", "new"); const m = score(), qq = quiz(), x = S[m[0]];
         H.innerHTML = "Your path <em>is ready.</em>";
         P.innerHTML = `${D.path.steps.length + 1} steps${ADULT() ? "" : " that fit around school"}, from the ${esc(D.path.name || "Postiz")} breakdown.`
           + (qq.top ? "" : `<small>Your answers didn't point to one story more than the others, so this is the general path. The 3 stories below are the closest.</small>`);
-        const chips = k => { const w = why(k).slice(0, 4); return w.length ? `<span class="wchips"><span>Matched on</span>${w.map(a => `<span class="wc">${esc(a)}</span>`).join("")}</span>` : ""; };
-        obc.innerHTML = `<h2>${qq.top ? "Your top match" : "The closest stories"}</h2>
-          <div class="mtop"><div class="mth"><span class="logo">${logo(x, 40)}</span><span><b>${esc(x.name)}</b><small>${esc(x.pattern)}</small></span></div><p class="mtt">${esc(x.title || x.what)}</p>${x.first ? `<p class="mtf">First customers: ${esc(x.first)} ${chip(x.firstl)}</p>` : ""}${chips(m[0])}<a class="btn btn-p" href="${x.href}">Read the ${esc(x.name)} breakdown</a></div>
-          ${m.slice(1).map(k => { const y = S[k]; return `<a class="mrow2" href="${y.href}">${logo(y, 24)}<span><b>${esc(y.name)}</b><small>${esc(y.pattern)}</small>${chips(k)}</span><i aria-hidden="true">›</i></a>`; }).join("")}
-          <div class="obend"><a class="btn btn-s" href="/app/path/">See my path</a><a class="tl" href="/app/">Go to Home</a><a class="tl" href="/app/start/?quiz=1">Edit answers</a></div><p class="fine">Saved on this device.</p>`; }
+        const on = k => { const w = why(k).slice(0, 4); return w.length ? `<p class="obw">Matched on ${w.map(a => `<em>${esc(a)}</em>`).join(", ")}</p>` : ""; };
+        obc.innerHTML = `<div class="obq obe"><h2>${qq.top ? "Your top match" : "The closest stories"}</h2>
+          <div class="obm"><div class="obmh">${logo(x, 44)}<span><b>${esc(x.name)}</b><small>${esc(x.pattern)}</small></span></div><p class="obmt">${esc(x.title || x.what)}</p>${x.first ? `<p class="obmf">First customers: ${esc(x.first)} ${chip(x.firstl)}</p>` : ""}${on(m[0])}<a class="btn btn-s" href="${x.href}">Read the ${esc(x.name)} breakdown</a></div>
+          <h3>Also close to your answers</h3>
+          ${m.slice(1).map(k => { const y = S[k]; return `<a class="obr" href="${y.href}">${logo(y, 32)}<span><b>${esc(y.name)}</b><small>${esc(y.pattern)}</small>${on(k)}</span></a>`; }).join("")}
+          <div class="obend"><a class="btn btn-p" href="/app/path/">See my path</a><a class="tl" href="/app/">Go to Home</a><a class="tl" href="/app/start/?quiz=1">Edit answers</a></div><p class="fine">Saved on this device.</p></div>`; }
       if (render.n++) obc.focus({preventScroll: true});
+      if (render.n > 1) scrollTo({top: 0});
     };
     render.n = 0;
     obc.addEventListener("click", e => {
@@ -522,10 +527,15 @@
       if (o) { const i = +o.dataset.o; ans[step] = ans[step] === i ? null : i; $$(".opt", obc).forEach(x => x.setAttribute("aria-checked", +x.dataset.o === i && ans[step] === i)); return; }
       if (e.target.closest("[data-next]")) { step++; render(); return; }
       if (e.target.closest("[data-skip]")) { ans[step] = null; step++; render(); return; }
-      if (e.target.closest("[data-back]")) { step = Math.max(0, step - 1); render(); return; }
+      if (e.target.closest("[data-back]")) { step = Math.max(0, step - 1); render("b"); return; }
     });
-    obc.addEventListener("keydown", e => { if (!["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(e.key)) return; const os = $$(".opt", obc); if (!os.length) return; e.preventDefault();
-      const i = Math.max(0, os.indexOf(document.activeElement)), j = (i + (e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : -1) + os.length) % os.length; os[j].focus(); os[j].click(); });
+    // arrows move and pick; Enter on an option picks it and goes on to the next question
+    obc.addEventListener("keydown", e => { const os = $$(".opt", obc); if (!os.length) return;
+      const k = os.indexOf(document.activeElement);
+      if (e.key === "Enter" && k >= 0) { e.preventDefault(); if (ans[step] !== k) os[k].click(); step++; render(); return; }
+      if (!["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(e.key)) return; e.preventDefault();
+      const fw = e.key === "ArrowDown" || e.key === "ArrowRight", j = k < 0 ? (fw ? 0 : os.length - 1) : (k + (fw ? 1 : -1) + os.length) % os.length;
+      os[j].focus(); if (ans[step] !== j) os[j].click(); });
     render();
   }
 

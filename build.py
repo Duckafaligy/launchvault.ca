@@ -188,7 +188,7 @@ def write(path, text):
 def og(out):
     # ponytail: blog posts get their cover; every other page uses the Postiz cover
     slug = out.split("/")[1] if out.startswith("blog/") and out.count("/") == 2 else "postiz"
-    return f'<meta property="og:image" content="https://launchvault-site.vercel.app/assets/covers/{slug}.png">' + chr(10)
+    return f'<meta property="og:image" content="https://www.launchvault.ca/assets/covers/{slug}.png">' + chr(10)
 
 def main():
     css = "/* LaunchVault site styles. Part 1: the round 10 homepage system (design/round10/final/mockup.html). Part 2: the other pages. Built by build.py. */\n"
@@ -206,7 +206,7 @@ def main():
         b = read(body)
         for k, v in frag.items(): b = b.replace(k, v)
         b = b.replace("{{WEEK_HREF}}", week_href()).replace("{{NREADY}}", str(NREADY))
-        html = (HEAD.format(title=title, desc=desc, og=og(out)) + f'<body{" class=" + chr(34) + cls + chr(34) if cls else ""}>\n' + sprite + "\n" + nav(active)
+        html = (HEAD.format(title=title, desc=desc, og=og(out)) + f'<body{" class=" + chr(34) + cls + chr(34) if cls else ""}>\n' + sprite + "\n" + (nav(active) if out != "welcome/index.html" else "")   # welcome: its own logo + back link, no site nav or footer
                 + '\n<main id="main">\n' + b + ("\n" + strip if bstrip else "") + "\n</main>\n"
                 + (footer() if out != "welcome/index.html" else "") + '\n<script src="/assets/consent.js" defer></script>\n<script src="/assets/nav.js" defer></script>\n<script src="/assets/site.js" defer></script>\n<script src="/assets/home.js" defer></script>\n<script src="/assets/streak.js" defer></script>\n</body>\n</html>\n')
         path = os.path.join(ROOT, out); os.makedirs(os.path.dirname(path), exist_ok=True)

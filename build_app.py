@@ -217,7 +217,7 @@ SIDE_SOON = ["dm-champ", "stencil-ai", "windmill-growth", "gojiberry"]
 GATE = '\n<script src="/assets/gate.js"></script>'   # the age gate: every /app/ page, in the head, before anything else runs (not deferred, on purpose)
 def head(title, desc, extra="", og_slug="", gate=True):
     og = (NL + f'<meta property="og:title" content="{esc(title)}">' + NL + f'<meta property="og:description" content="{esc(desc)}">' + NL
-          + f'<meta property="og:image" content="https://launchvault-site.vercel.app/assets/covers/{og_slug or "postiz"}.png">')
+          + f'<meta property="og:image" content="https://www.launchvault.ca/assets/covers/{og_slug or "postiz"}.png">')
     return f'''<!doctype html>
 <html lang="en">
 <head>
@@ -715,7 +715,7 @@ def update_story_cards(ready):
     sec2 = re.sub(r'<article class="bcard[^"]*" data-cat="[^"]*" data-story="([^"]+)">.*?</article>', one, sec, flags=re.S)
     if sec2 != sec: wr(p, s[:a] + sec2 + s[b:])
 
-BASE = "https://launchvault-site.vercel.app"   # the preview address (same as the og:image links); change it here and in build.py at launch
+BASE = "https://www.launchvault.ca"   # the live domain (primary on Vercel; launchvault.ca and launchvault-site.vercel.app redirect here); same as the og:image links in build.py
 def add_meta():
     """Every built page gets a canonical link, og:title/description/type/url and a Twitter card (build.py's head only has og:image).
     The 404 pages get no canonical or og:url. Runs after both builds; pages are rewritten on every build, so this never stacks."""
@@ -739,7 +739,7 @@ def add_meta():
 def write_sitemap():
     """Public pages and posts. The preview stays noindex (robots.txt Disallow + X-Robots-Tag); the sitemap is ready for launch."""
     urls = ["/"] + ["/" + out[:-len("index.html")] for out, *_ in build.PAGES if out.endswith("index.html") and out != "index.html"]
-    body = "".join(f"  <url><loc>https://launchvault-site.vercel.app{u}</loc></url>{NL}" for u in sorted(set(urls), key=lambda u: (u != "/", u)))
+    body = "".join(f"  <url><loc>https://www.launchvault.ca{u}</loc></url>{NL}" for u in sorted(set(urls), key=lambda u: (u != "/", u)))
     wr(os.path.join(ROOT, "sitemap.xml"), '<?xml version="1.0" encoding="UTF-8"?>' + NL
        + "<!-- Preview build: robots.txt says Disallow and every page sends noindex, on purpose, until launch. This sitemap lists the public pages for then. -->" + NL
        + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + NL + body + "</urlset>" + NL)

@@ -35,8 +35,8 @@ window.LVGate = (() => {
   const ask = () => {
     const now = new Date().getFullYear(); let rows = "";
     for (let y = now; y >= now - 100; y--) rows += `<label><input type="radio" name="year" value="${y}"><span>${y}</span>${CHECK}</label>`;
-    frame(`<form class="agc" novalidate><h1 id="agq" tabindex="-1">What year were you born?</h1><p>One quick question before you start.</p><p>We only keep an age range, never your birth year.</p>
-<div class="agy" role="radiogroup" aria-labelledby="agq">${rows}</div><p class="agn">Scroll to find your year.</p><p class="age" role="alert" hidden></p>
+    frame(`<form class="agc" novalidate><h1 id="agq" tabindex="-1">What year were you born?</h1><p>One question before you start. We only keep an age range, never your birth year.</p>
+<div class="agy" role="radiogroup" aria-labelledby="agq">${rows}</div><p class="age" role="alert" hidden></p>
 <div class="aga"><button class="btn btn-p" type="submit" disabled>Continue</button></div></form>`);
     const f = el.querySelector("form"), list = el.querySelector(".agy"), go = f.querySelector("button");
     f.addEventListener("change", () => { go.disabled = false; });

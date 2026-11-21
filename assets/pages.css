@@ -364,21 +364,46 @@ main .tlink{min-height:44px}
 @media (max-width:720px){.nf-links{grid-template-columns:1fr}.nf-fc .fr{grid-template-columns:1fr;gap:6px}}
 .ltoc a{min-height:44px}
 
-/* ---------- /welcome/: one page, Sign in | Sign up ---------- */
-.welcome{place-items:center}
-.wl{width:min(1040px,100%);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:64px;align-items:center}
-.wl-copy h1{font-size:clamp(32px,3.6vw,48px);max-width:14ch}
-.wl-copy .lede{max-width:40ch}
-.wl-copy .aget{border-top:0;padding-top:0;margin-top:24px;font-size:15px;gap:10px}
-.wl-back{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-bottom:12px;font:500 14px var(--fd);color:var(--muted);transition:color .2s}
-.wl-back span{transition:transform .25s var(--out)}
-.wl-back:hover{color:var(--ink)}.wl-back:hover span{transform:translateX(-3px)}
-.welcome .acard{width:100%}
-.wtabs{display:flex;width:100%;position:relative;margin-bottom:24px}
+/* ---------- /welcome/: one full-viewport split. Left: a deep panel with what you get + a real story card. Right: the sign-in form. Phones: logo row, then the form. ---------- */
+.welcome{position:relative;min-height:100vh;min-height:100dvh;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);background:#fff}
+main>section.welcome{padding:0}
+.wside{display:flex;flex-direction:column;gap:40px;padding:36px clamp(32px,4.4vw,64px) 40px;background:#0E1A3A;color:#fff}
+.wlogo{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;min-height:44px;font:700 17px var(--fd);color:#fff}.wlogo svg{color:#7FA6FF}
+.wl-copy{margin:auto 0}
+.wl-copy h1{font:700 clamp(34px,3.4vw,46px)/1.08 var(--fd);letter-spacing:-.03em;color:#fff;max-width:13ch}
+.wl-copy h1 em{font-style:italic;color:#9DBBFF}
+.wl-copy .lede{margin-top:18px;max-width:38ch;font-size:17px;line-height:1.55;color:#C9D3EA;background:none;box-shadow:none}
+.wl-copy .aget{list-style:none;margin:28px 0 0;padding:0;border:0;display:grid;gap:12px;font-size:15px;color:#E4E9F5}
+.wl-copy .aget li{display:flex;gap:12px;align-items:center}
+.wl-copy .aget li::before{content:"";width:20px;height:20px;border-radius:6px;flex:none;background:rgba(127,166,255,.16) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%239DBBFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
+.wprev{display:flex;flex-direction:column;gap:12px;max-width:440px;padding:20px 22px;border-radius:14px;background:#fff;color:var(--ink);box-shadow:0 24px 48px -28px rgba(0,0,0,.6);transition:transform .35s var(--out),box-shadow .35s var(--out)}
+.wprev:hover{transform:translateY(-2px);box-shadow:0 28px 56px -28px rgba(0,0,0,.7)}
+.wprev:focus-visible{outline:2px solid #9DBBFF;outline-offset:3px}
+.wph{display:flex;align-items:center;gap:12px}.wph img{flex:none;border-radius:10px}
+.wph b{display:block;font:600 16px/1.3 var(--fd)}.wph small{display:block;font-size:13.5px;line-height:1.4;color:var(--text)}
+.wpt{font:600 18px/1.4 var(--fd);letter-spacing:-.01em}
+.wpf{font-size:13.5px;color:var(--brand2);font-weight:500}
+.wmain{display:flex;align-items:center;justify-content:center;padding:96px 32px 48px}
+.wl-back{position:absolute;top:24px;right:32px;z-index:2;display:inline-flex;align-items:center;min-height:44px;padding:0 4px;font:500 14px var(--fd);color:var(--text);transition:color .2s}
+.wl-back:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.welcome .acard{width:min(400px,100%);padding:0;border:0;border-radius:0;background:none;box-shadow:none}
+.wtabs{display:flex;width:100%;position:relative;margin-bottom:28px}
 .wtabs>button{flex:1;justify-content:center}
-.wpanel h2{font-size:26px;letter-spacing:-.02em}
+.wpanel h2{font:700 28px/1.15 var(--fd);letter-spacing:-.02em;color:var(--ink)}
+.wpanel .sub{margin-top:8px;font-size:15px;line-height:1.5;color:var(--text)}
 @media (prefers-reduced-motion:no-preference){.wpanel:not([hidden]){animation:lv-up .4s var(--out) both}}
-@media (max-width:900px){.wl{grid-template-columns:1fr;gap:28px;justify-items:center}.wl-copy{width:min(440px,100%)}.wl-copy .aget{display:none}}
+@media (max-width:999px){
+  .welcome{grid-template-columns:1fr;grid-template-rows:auto 1fr;background:var(--alt)}
+  .wside{gap:16px;padding:12px 16px 0;background:none;color:var(--ink)}
+  .wlogo{color:var(--ink)}.wlogo svg{color:var(--brand)}
+  .wl-copy .lede,.wl-copy .aget,.wprev{display:none}
+  .wl-copy{margin:0 auto;width:min(560px,100%)}
+  .wl-copy h1{font-size:clamp(26px,5vw,34px);max-width:none;color:var(--ink)}.wl-copy h1 em{color:var(--brand)}
+  .wl-back{top:12px;right:16px}
+  .wmain{align-items:flex-start;padding:20px 16px 48px}
+  .welcome .acard{width:min(560px,100%);padding:28px 24px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+}
+@media (max-width:600px){.wl-copy h1{font-size:26px}.welcome .acard{padding:24px 18px}.wpanel h2{font-size:24px}.wl-back{font-size:14px}}
 .blog-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .bf-spark{display:block;width:100%;height:84px;margin:2px 0 8px}
 @media (max-width:1100px){.blog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.blog-grid>.post:nth-child(4){grid-column:1/-1}}
