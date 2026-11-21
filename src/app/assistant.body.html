@@ -1,0 +1,40 @@
+<div class="pg as" id="as" data-state="loading">
+  <div class="as-head">
+    <div><h1 class="pg-h">Ask LaunchVault</h1><p class="pg-s">Tell it about your idea or paste your website. It finds the verified stories that fit and turns their checklists into steps you can do this week.</p></div>
+    <button class="btn btn-s sm as-open" type="button" data-asdrawer aria-controls="asSide" aria-expanded="false" hidden>Your chats</button>
+  </div>
+  <div class="as-grid">
+    <aside class="as-side card" id="asSide" aria-label="Your chats" hidden>
+      <div class="as-sh"><h2>Your chats</h2><button class="tl" type="button" data-asnew>New chat</button></div>
+      <ul class="as-convs" data-asconvs></ul>
+      <p class="as-note">Chats are saved to your account. Delete one any time; Account, Delete your data erases them all.</p>
+    </aside>
+    <section class="as-main" aria-label="Chat">
+      <div class="as-gate card" data-asgate hidden>
+        <h2 data-asgateh>Ask LaunchVault is for members</h2>
+        <p data-asgatep>Sign in or create a free account to ask about your idea. You get 10 questions a day; Pro and Builder get 100.</p>
+        <a class="btn btn-p" href="/sign-in/?next=/app/assistant/" data-asgatebtn>Sign in to ask</a>
+      </div>
+      <div class="as-log" data-aslog>
+        <div class="as-empty" data-asempty>
+          <h2>Where do you want to start?</h2>
+          <p>Answers use only the numbers in LaunchVault's breakdowns, with their labels and dates. It won't guess revenue it can't see.</p>
+          <div class="as-starts" role="group" aria-label="Starter questions">
+            <button type="button" data-asstart="Here's my website: https://">Here's my website: …</button>
+            <button type="button" data-asstart="I want to sell [what] to [who]. Which stories fit?">I want to sell X to Y. Which stories fit?</button>
+            <button type="button" data-asstart="Make me a 2-week plan from the Rezi story for my idea: ">Make me a 2-week plan from the Rezi story</button>
+            <button type="button" data-asstart="I have no customers yet. How did these founders get their first 10?">How did founders get their first 10 customers?</button>
+          </div>
+        </div>
+      </div>
+      <p class="sr" role="status" aria-live="polite" data-assr></p>
+      <form class="as-comp" data-ascomp novalidate>
+        <label class="sr" for="asIn">Your message</label>
+        <div class="as-box"><textarea id="asIn" rows="2" maxlength="4000" placeholder="Paste your website or describe your idea" disabled></textarea>
+        <button class="btn btn-p as-send" type="submit" disabled>Send</button></div>
+        <p class="as-foot"><span data-asuse></span><span>Don't share personal details like your school, address or phone number.</span></p>
+      </form>
+    </section>
+  </div>
+</div>
+<noscript><div class="pg"><p class="note">Ask LaunchVault needs JavaScript.</p></div></noscript>

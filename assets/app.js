@@ -211,6 +211,7 @@
       + (st === "new" ? "" : `<span class="sp">${bar(k / nph(s))}<span>${k} of ${nph(s)} phases seen</span></span>`)
       + `<span class="scta${st === "prog" ? "" : " sec"}">${st === "prog" ? "Continue reading" : st === "done" ? "Read again" : "Read the breakdown"}</span>`
       + `</span></a>${s.site ? `<a class="web" href="${esc(s.site)}" target="_blank" rel="noopener" aria-label="${esc(s.name)} website"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></a>` : ""}<button class="star" type="button" data-star="${s.slug}" aria-pressed="${sv}" aria-label="${sv ? "Remove" : "Save"} ${esc(s.name)}">${STAR}</button></article>`; };
+  window.LVStoryCard = storyCard;   // Ask LaunchVault (assistant.js) shows the stories a reply links with the same card
   const syncStars = () => { const L = savedList(), I = savedItems();
     $$("[data-star]").forEach(b => { const on = L.includes(b.dataset.star); b.setAttribute("aria-pressed", on); const t = b.querySelector("span"); if (t) t.textContent = on ? "Saved" : "Save"; });
     $$("[data-staritem]").forEach(b => b.setAttribute("aria-pressed", I.includes(b.dataset.staritem)));

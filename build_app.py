@@ -62,7 +62,8 @@ I = {"saved": '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.
      "acct": '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
      "srch": '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>', "chev": '<path d="M9 6l6 6-6 6"/>', "back": '<path d="M15 6l-6 6 6 6"/>',
      "lock": '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>', "ext": '<path d="M7 17L17 7M9 7h8v8"/>', "dev": '<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/>',
-     "chat": '<path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-8l-4.5 3.5V16H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/>', "user": '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-3.6 3.4-5.5 7-5.5s6.4 1.9 7 5.5"/>'}
+     "chat": '<path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-8l-4.5 3.5V16H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/>',
+     "ask": '<path d="M12 3.5l1.7 4.6 4.6 1.7-4.6 1.7L12 16.1l-1.7-4.6-4.6-1.7 4.6-1.7z"/><path d="M18.5 15l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>', "user": '<circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-3.6 3.4-5.5 7-5.5s6.4 1.9 7 5.5"/>'}
 LV = '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19.99 14.91A8.5 8.5 0 1 1 10.52 3.63"/><path d="M6.8 15.6l3.7-3.7 2.6 2.6 6.7-6.7"/><path d="M16 7.8h3.8v3.8"/></g></svg>'
 CHK = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
 
@@ -241,16 +242,16 @@ def head(title, desc, extra="", og_slug="", gate=True):
 def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_slug=""):
     ready = [e for e in E if e["status"] == "ready"]; week = next((e for e in ready if not e["stale"]), ready[0])
     byslug = {e["slug"]: e for e in E}
-    nav = [("home", "/app/", "Home", ""), ("lib", "/app/library/", "Library", ""), ("saved", "/app/saved/", "Saved", '<span class="cnt" data-cnt="saved"></span>'), ("chat", "/app/community/", "Community", ""), ("path", "/app/path/", "My path", '<span class="cnt" data-cnt="path"></span>'),
+    nav = [("home", "/app/", "Home", ""), ("lib", "/app/library/", "Library", ""), ("ask", "/app/assistant/", "Ask LaunchVault", ""), ("saved", "/app/saved/", "Saved", '<span class="cnt" data-cnt="saved"></span>'), ("chat", "/app/community/", "Community", ""), ("path", "/app/path/", "My path", '<span class="cnt" data-cnt="path"></span>'),
            ("ck", "/app/checklists/", "Checklists", '<span class="cnt" data-cnt="ck"></span>')]
     cur = lambda k: ' aria-current="page"' if k == active else ""
     side = "".join(f'<a class="si" href="{h}"{cur(k)}>{ic(I[k])}<span class="t">{t}</span>{c}</a>' for k, h, t, c in nav)
     soon = "".join(f'<a class="si co soon" href="{byslug[s]["href"]}"><img class="lgo" src="{byslug[s]["logo"]}" alt="" width="16" height="16" loading="lazy"><span class="t">{esc(byslug[s]["name"])}</span><span class="cnt">{"Stale" if byslug[s]["stale"] else "Soon"}</span></a>'
                    for s in [e["slug"] for e in E if e["status"] == "soon"][:4])
     wk = f'<a class="si week" href="{week["href"]}"{cur("story-" + week["slug"])}><img class="lgo" src="{week["logo"]}" alt="" width="16" height="16"><span class="t">{esc(week["name"])}</span><span class="cnt pc" data-pct="{week["slug"]}"></span></a>'
-    tabs = "".join(f'<a href="{h}"{cur(k)}>{ic(I[k], 22)}<span>{t}</span></a>' for k, h, t, _ in nav)   # six tabs; Account is the person icon in the header on phones
+    tabs = "".join(f'<a href="{h}"{cur(k)}>{ic(I[k], 22)}<span>{t}</span></a>' for k, h, t, _ in nav if k != "ask")   # six tabs (Ask LaunchVault is the sparkle icon in the phone header); Account is the person icon in the header on phones
     ttl = (" ".join(f'<a href="{h}">{esc(t)}</a><span class="sep">/</span>' for h, t in crumbs[:-1]) + f'<span>{esc(crumbs[-1][1])}</span>') if crumbs else f"<span>{esc(title)}</span>"
-    return (head(title + " · LaunchVault", desc, ('\n<link rel="stylesheet" href="/assets/chart.css">' if "chart.js" in scripts else "") + ('\n<link rel="stylesheet" href="/assets/community.css">' if "community.js" in scripts else ""), og_slug) + f'''<body{' class="has-back"' if crumbs else ""}>
+    return (head(title + " · LaunchVault", desc, ('\n<link rel="stylesheet" href="/assets/chart.css">' if "chart.js" in scripts else "") + ('\n<link rel="stylesheet" href="/assets/community.css">' if "community.js" in scripts else "") + ('\n<link rel="stylesheet" href="/assets/assistant.css">' if "assistant.js" in scripts else ""), og_slug) + f'''<body{' class="has-back"' if crumbs else ""}>
 <a class="skip" href="#main">Skip to content</a>
 <div class="shell">
 <aside class="side" aria-label="App">
@@ -267,7 +268,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
     <div class="ttl">{ttl}</div>
     <button class="srch" type="button" data-cmd>{ic(I["srch"], 16)}<span>Search breakdowns</span><kbd>⌘K</kbd></button>
     <a class="chip" href="/app/account/#plan"><span data-plan-chip>Free</span> <small data-plan-sm>plan</small></a>
-    <button class="ibtn" type="button" data-cmd aria-label="Search">{ic(I["srch"], 20)}</button><a class="ibtn macct" href="/app/account/" aria-label="Account">{ic(I["user"], 20)}</a>
+    <button class="ibtn" type="button" data-cmd aria-label="Search">{ic(I["srch"], 20)}</button><a class="ibtn macct" href="/app/assistant/" aria-label="Ask LaunchVault"{cur("ask")}>{ic(I["ask"], 20)}</a><a class="ibtn macct" href="/app/account/" aria-label="Account">{ic(I["user"], 20)}</a>
   </header>
   <main id="main">
 {body}
@@ -876,6 +877,7 @@ def main():
     out("path", static_page(E, "path", "My path", "Your path, built from your quiz answers.", "path"))
     out("checklists", static_page(E, "checklists", "Checklists", "Every checklist, ticked on this device.", "ck").replace("{{NCK}}", str(len(ready[0]["checklist"]))))
     out("community", shell(E, "Community", "Talk with other LaunchVault members.", "chat", rd(os.path.join(SRC, "app", "community.body.html")), scripts='\n<script src="/assets/community.js" defer></script>'))
+    out("assistant", shell(E, "Ask LaunchVault", "Ask about your idea and get matched stories and a plan.", "ask", rd(os.path.join(SRC, "app", "assistant.body.html")), scripts='\n<script src="/assets/assistant.js" defer></script>'))
     out("account", static_page(E, "account", "Account", "Your account, plan, email and data.", "acct"))
     out("not-found", static_page(E, "notfound", "Not found", "This page isn't in the app.", ""))
     wr(os.path.join(ROOT, "app", "start", "index.html"), head("Welcome · LaunchVault", "Set up your LaunchVault path.") + "<body>\n" + rd(os.path.join(SRC, "app", "start.body.html"))
