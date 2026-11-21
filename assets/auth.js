@@ -87,8 +87,12 @@ window.LVAuth = (() => {
     if (wall) document.documentElement.style.visibility = "hidden";
     const paint = () => {
       const e = email(); if (!bar) return;
+      // signed-in members: paying plans get no bar at all; Free gets one calm upgrade line (sign out lives on the Account page)
+      let paid = false; try { const p = JSON.parse(localStorage.getItem("lv-plan") || "null");
+        paid = !!p && (p.plan === "pro" || p.plan === "builder") && (p.status === "active" || p.status === "trialing"); } catch {}
+      bar.style.display = e && paid && !guest ? "none" : "";
       bar.innerHTML = !LV_AUTH ? "Preview: accounts open soon. Your progress stays on this device."
-        : e ? `Signed in as <b>${e.replace(/</g, "")}</b> <button type="button" id="soBtn">Sign out</button>`
+        : e ? `You're on the <b>Free plan</b>. Upgrade to Pro for every phase of every breakdown. <a href="/app/account/#plan">See plans</a>`
         : guest ? `<b>Judge view.</b> You're in with a judge code, so nothing is saved to an account. <button type="button" id="gxBtn">Exit judge view</button>`
             : `Your progress is saved on this device. <a href="/welcome/">Sign in</a> to keep it everywhere.`;
       const so = document.getElementById("soBtn"); if (so) so.addEventListener("click", signOut);
@@ -97,7 +101,7 @@ window.LVAuth = (() => {
       document.querySelectorAll("[data-auth-email]").forEach(n => { n.textContent = e || "Not signed in"; });
       document.querySelectorAll("[data-auth-out]").forEach(n => { n.hidden = !e; });
     };
-    paint();
+    paint(); addEventListener("lv:plan", paint);   // repaint once the account's plan arrives from Supabase
     document.querySelectorAll("[data-auth-only]").forEach(n => { n.hidden = !LV_AUTH; });
     document.querySelectorAll("[data-noauth-only]").forEach(n => { n.hidden = LV_AUTH; });
     const ageQ = () => { if (window.LVGate && !LVGate.ok && LVGate.start) LVGate.start(); };   // age question only after the wall
