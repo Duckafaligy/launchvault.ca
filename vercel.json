@@ -112,11 +112,11 @@
  ],
  "rewrites": [
   {
-   "source": "/sign-in/:path+",
+   "source": "/sign-in/(.+)",
    "destination": "/sign-in/index.html"
   },
   {
-   "source": "/sign-up/:path+",
+   "source": "/sign-up/(.+)",
    "destination": "/sign-up/index.html"
   }
  ]
