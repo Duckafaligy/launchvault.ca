@@ -113,11 +113,11 @@
  "rewrites": [
   {
    "source": "/sign-in/(.+)",
-   "destination": "/sign-in/index.html"
+   "destination": "/sign-in/"
   },
   {
    "source": "/sign-up/(.+)",
-   "destination": "/sign-up/index.html"
+   "destination": "/sign-up/"
   }
  ]
 }
