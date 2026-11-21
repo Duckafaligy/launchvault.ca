@@ -12,9 +12,9 @@
 
 .qres{display:flex;flex-direction:column;gap:14px;padding-bottom:6px;outline:0}
 .qr-h{font-size:22px;letter-spacing:-.015em}
-.qr-s{font-size:14.5px;line-height:1.5;margin:-4px 0 0;max-width:52ch}
+.qr-s{font-size:max(14.5px,calc(12px/var(--z,1)));line-height:1.5;margin:-4px 0 0;max-width:52ch}
 .qr-c{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
-.qr-c li{display:inline-flex;align-items:center;height:26px;padding:0 9px;border-radius:6px;background:rgba(124,58,237,.07);color:#5B21B6;font:500 12.5px/1 var(--fd)}
+.qr-c li{display:inline-flex;align-items:center;height:26px;padding:0 9px;border-radius:6px;background:rgba(124,58,237,.07);color:#5B21B6;font:500 max(12.5px,calc(12px/var(--z,1)))/1 var(--fd)}
 .qr-p{list-style:none;margin:2px 0 0;padding:0;display:grid;gap:8px;position:relative}
 .qr-p::before{content:"";position:absolute;left:25px;top:26px;bottom:26px;width:2px;border-radius:1px;background:#DDD6FE;transform-origin:top}
 .qr-p a{position:relative;display:grid;grid-template-columns:28px minmax(0,1fr) 16px;gap:12px;align-items:center;min-height:64px;padding:10px 14px 10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:inherit;
@@ -22,11 +22,11 @@
 .qr-p a:hover{border-color:#C4B5FD;box-shadow:var(--lift);translate:0 -2px}
 .qr-p a > svg{color:var(--faint);transition:transform .35s var(--out),color .2s}
 .qr-p a:hover > svg{color:var(--violet);transform:translateX(3px)}
-.qn{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--violet);color:#fff;font:600 13px/1 var(--fn);box-shadow:0 0 0 4px #fff}
+.qn{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--violet);color:#fff;font:600 max(13px,calc(12px/var(--z,1)))/1 var(--fn);box-shadow:0 0 0 4px #fff}
 .qt b{display:block;font:600 15px/1.3 var(--fd);color:var(--ink)}
-.qt small{display:block;font-size:13px;line-height:1.45;color:var(--text);margin-top:2px}
+.qt small{display:block;font-size:max(13px,calc(12px/var(--z,1)));line-height:1.45;color:var(--text);margin-top:2px}
 .qt small i{font-style:italic;color:var(--violet)}
-.qin{display:block;font-size:12px;color:var(--muted);margin-top:4px}
+.qin{display:block;font-size:max(12px,calc(12px/var(--z,1)));color:var(--muted);margin-top:4px}
 .qr-a{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
 .qr-a .btn{height:44px}
 
@@ -104,30 +104,30 @@
 .pricing .cmp{margin-top:56px}
 .pricing .cmp > h3:first-child{margin-bottom:20px}
 
-.ptab{overflow:clip;font-size:14px}
+.ptab{overflow:clip;font-size:max(14px,calc(12px/var(--z,1)))}
 .ptab .cr{grid-template-columns:1.5fr 1fr 1fr 1fr;align-items:stretch}
 .ptab .cr > div{display:flex;align-items:center;justify-content:center;text-align:center;padding:13px 16px;min-height:50px}
 .ptab .cr > .rl{justify-content:flex-start;text-align:left;color:var(--ink);font-weight:500;transition:color .2s}
 .ptab .cr > div:nth-child(3){background:rgba(37,99,235,.045);color:var(--ink);font-weight:500;transition:background-color .2s}
 /* sticky plan headers: stay under the floating nav while you read the rows */
 .ptab .cr.th{position:sticky;top:84px;z-index:3;background:rgba(255,255,255,.94);-webkit-backdrop-filter:saturate(1.4) blur(10px);backdrop-filter:saturate(1.4) blur(10px);
-  box-shadow:0 1px 0 var(--line);font-size:14px;color:var(--ink)}
+  box-shadow:0 1px 0 var(--line);font-size:max(14px,calc(12px/var(--z,1)));color:var(--ink)}
 .ptab .cr.th > div{flex-direction:column;gap:2px;padding:14px 12px 12px}
 .ptab .cr.th b{font:600 16px/1.2 var(--fd);color:var(--ink)}
-.ptab .cr.th .tp{font:500 13px/1.3 var(--fn);color:var(--muted);font-variant-numeric:tabular-nums}
+.ptab .cr.th .tp{font:500 max(13px,calc(12px/var(--z,1)))/1.3 var(--fn);color:var(--muted);font-variant-numeric:tabular-nums}
 .ptab .cr.th .tp > span{display:inline-block}
 .ptab .cr.th > div:nth-child(3){background:rgba(37,99,235,.08);box-shadow:inset 0 3px 0 var(--brand)}
 .ptab .cr.th > div:nth-child(3) b{color:var(--brand)}
 .ptab .cr.th > div:nth-child(3) .tp{color:var(--brand-ink)}
 .ptab .y svg{color:var(--brand)}
 .ptab .no i{display:block;width:12px;height:2px;border-radius:1px;background:#CBD5E1}
-.ptab .cs{font-size:12px}
+.ptab .cs{font-size:max(12px,calc(12px/var(--z,1)))}
 .ptab .cr:not(.th):not(.cta):hover{background:#F8FAFC}
 .ptab .cr:not(.th):not(.cta):hover > .rl{color:var(--brand)}
 .ptab .cr:not(.th):not(.cta):hover > div:nth-child(3){background:rgba(37,99,235,.09)}
 .ptab .amt.swap{animation:rise .45s var(--out)}
 @media (max-width:720px){
-  .ptab{font-size:13px}
+  .ptab{font-size:max(13px,calc(12px/var(--z,1)))}
   .ptab .cr{grid-template-columns:repeat(3,minmax(0,1fr))}
   .ptab .cr > .rl{grid-column:1/-1;padding:12px 12px 0;min-height:0}
   .ptab .cr > div{padding:8px 8px 12px;min-height:44px}
@@ -136,7 +136,7 @@
   .ptab .cr.th > .rl,.ptab .cr.cta{display:none}
   .ptab .cr.th > div{padding:10px 6px}
   .ptab .cr.th b{font-size:15px}
-  .ptab .cr.th .tp{font-size:12px}
+  .ptab .cr.th .tp{font-size:max(12px,calc(12px/var(--z,1)))}
 }
 
 /* ================= footer (2026-11-20): brand + CTA, link columns, "Data from" strip, slim bottom bar ================= */
@@ -158,7 +158,7 @@ footer p.tl{color:#CBD5E1;font-size:15px}
   transition:color .2s,border-color .2s,background-color .2s,translate .35s var(--out)}
 .soc svg{fill:currentColor}
 .soc:hover,.soc:focus-visible{color:#F8FAFC;border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.05);translate:0 -2px}
-.soc::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);padding:5px 8px;border-radius:6px;background:#F8FAFC;color:var(--ink);font:500 12px/1.2 var(--fd);white-space:nowrap;
+.soc::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);padding:5px 8px;border-radius:6px;background:#F8FAFC;color:var(--ink);font:500 max(12px,calc(12px/var(--z,1)))/1.2 var(--fd);white-space:nowrap;
   pointer-events:none;opacity:0;transform:translate(-50%,4px);transition:opacity .2s,transform .3s var(--out)}
 .soc:hover::after,.soc:focus::after{opacity:1;transform:translate(-50%,0)}
 .fbot{align-items:center;margin-top:56px;padding-top:24px;border-top:1px solid rgba(255,255,255,.08)}

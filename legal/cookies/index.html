@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>(function(){var d=document.documentElement,z=0,q=0;function f(){var w=innerWidth,v=1,p;if(w>=1000){v=Math.max(.8,Math.min(1,w/1440,innerHeight/860));try{p=JSON.parse(localStorage.getItem('lv-display'))}catch(e){}if(p=='smaller')v*=.9;else if(p=='larger')v=Math.min(1.15,v*1.1)}v=Math.round(v*100)/100;if(v==z)return;z=window.lvZ=v;d.style.zoom=v==1?'':v;d.style.setProperty('--z',v);return 1}function g(){f()&&dispatchEvent(new Event('resize'))}f();window.lvZoom=g;addEventListener('resize',function(){q||(q=requestAnimationFrame(function(){q=0;g()}))})})()</script>
 <title>Cookie policy (draft) · LaunchVault</title>
 <meta name="description" content="Every cookie and storage key LaunchVault uses, and why. Draft, not yet reviewed by a lawyer.">
 <meta property="og:image" content="https://www.launchvault.ca/assets/covers/postiz.png">
@@ -99,6 +100,7 @@
           <tr><td><code>lv-read-[story]</code></td><td>Local storage</td><td>How far you've read each story in the app.</td><td>Until you delete it</td></tr>
           <tr><td><code>lv-age</code></td><td>Local storage</td><td>Your age range, worked out from the birth year you pick when you first open the app. The year itself is never saved. Never saved for under 13s.</td><td>Until you delete it</td></tr>
           <tr><td><code>lv-age-block</code></td><td>Local storage and cookie</td><td>Set only if the birth year you pick means you could be under 13. It keeps the app closed on this device. It doesn't hold your birth year.</td><td>12 months</td></tr>
+          <tr><td><code>lv-display</code></td><td>Local storage</td><td>The display size you pick in Account (Smaller or Larger). Set only when you change it from Auto.</td><td>Until you delete it</td></tr>
           <tr><td><code>lv-seen-[story]</code></td><td>Local storage</td><td>Which phases of each story you've seen in the app.</td><td>Until you delete it</td></tr>
           <tr><td><code>lv-last</code></td><td>Local storage</td><td>The story you were reading last, so Home can offer to resume it.</td><td>Until you delete it</td></tr>
           <tr><td><code>lv-saved, lv-saved-items</code></td><td>Local storage</td><td>The stories and checklist steps you starred.</td><td>Until you delete it</td></tr>

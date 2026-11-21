@@ -31,7 +31,7 @@ main > section .shead .lede{max-width:58ch}
 .sb-t{grid-area:t;display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;min-width:0}
 .sb-n{font:700 16px/1.2 var(--fd);letter-spacing:-.01em;color:var(--h);color:color-mix(in srgb,var(--h) 72%,#000);white-space:nowrap}   /* brand hue, darkened to pass AA on white */
 .sbg.big .sb-n{font-size:18px}
-.sb-d{grid-area:d;font-size:14px;line-height:1.4;color:var(--text)}
+.sb-d{grid-area:d;font-size:max(14px,calc(12px/var(--z,1)));line-height:1.4;color:var(--text)}
 .sb-flow .sbg{flex:1 1 calc(50% - 5px);min-width:0}
 
 /* ---------- how we check (dark): one picture, one headline (<= 12 words); readouts + chart in pages.css ---------- */
@@ -49,19 +49,19 @@ main > section .shead .lede{max-width:58ch}
 .fybtn:hover em,.fybtn[aria-expanded=true] em,.fybtn:hover .chev,.fybtn[aria-expanded=true] .chev{color:#fff}
 .fybtn[aria-expanded=true] .chev{transform:rotate(180deg)}
 .fybtn:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
-.fy-n{font:600 12px/1 var(--fn);padding:5px 7px;border-radius:6px;background:rgba(124,58,237,.1);color:#5B21B6;transition:background-color .25s,color .25s}
+.fy-n{font:600 max(12px,calc(12px/var(--z,1)))/1 var(--fn);padding:5px 7px;border-radius:6px;background:rgba(124,58,237,.1);color:#5B21B6;transition:background-color .25s,color .25s}
 .fybtn:hover .fy-n,.fybtn[aria-expanded=true] .fy-n{background:rgba(255,255,255,.2);color:#fff}
 .quiz{margin:0 0 16px;overflow:clip;overflow-clip-margin:24px}
 .quiz .qcard{box-shadow:none;border-color:#DDD6FE}
 .quiz .qbody{min-height:0;padding:18px 20px 6px}
 .quiz .qbody h3{font-size:20px}
 .quiz .opts{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
-.quiz .qtop{font-size:12.5px;color:var(--text)}
-.bgrid .fyr{position:absolute;top:-11px;right:14px;z-index:1;font:600 12px/1 var(--fd);padding:5px 8px;border-radius:6px;background:var(--violet);color:#fff;white-space:nowrap}
+.quiz .qtop{font-size:max(12.5px,calc(12px/var(--z,1)));color:var(--text)}
+.bgrid .fyr{position:absolute;top:-11px;right:14px;z-index:1;font:600 max(12px,calc(12px/var(--z,1)))/1 var(--fd);padding:5px 8px;border-radius:6px;background:var(--violet);color:#fff;white-space:nowrap}
 @media (min-width:1101px){.bgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .bc-num{row-gap:6px}
-.bc-sub{flex-basis:100%;font:500 12.5px/1.3 var(--fn);color:var(--text)}
-.bc-num .nv small{font:500 13px var(--fd);color:var(--text)}
+.bc-sub{flex-basis:100%;font:500 max(12.5px,calc(12px/var(--z,1)))/1.3 var(--fn);color:var(--text)}
+.bc-num .nv small{font:500 max(13px,calc(12px/var(--z,1))) var(--fd);color:var(--text)}
 .hero h1 .nw{white-space:nowrap}
 .bfoot{display:flex;justify-content:space-between;align-items:center;gap:8px 24px;flex-wrap:wrap;margin-top:12px}
 .bfoot .bnote{margin:0}
@@ -74,8 +74,8 @@ main > section .shead .lede{max-width:58ch}
 @keyframes fy-in{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
 /* story sparklines: one style; a card with no public series keeps the same frame */
 .bc-viz.none .spk{display:grid;place-items:center;border:1px dashed #CBD5E1;border-radius:6px}
-.bc-viz.none .nod{font:500 12.5px var(--fd);color:var(--text)}
-.feat .fyr{flex:none;font:600 12px/1 var(--fd);padding:6px 8px;border-radius:6px;background:var(--violet);color:#fff;white-space:nowrap;margin-left:auto}
+.bc-viz.none .nod{font:500 max(12.5px,calc(12px/var(--z,1))) var(--fd);color:var(--text)}
+.feat .fyr{flex:none;font:600 max(12px,calc(12px/var(--z,1)))/1 var(--fd);padding:6px 8px;border-radius:6px;background:var(--violet);color:#fff;white-space:nowrap;margin-left:auto}
 .feat .fyr + .lb{margin-left:8px}
 .feat.fy{border-color:#DDD6FE}
 
@@ -86,20 +86,20 @@ main > section .shead .lede{max-width:58ch}
 .wbi{display:grid;grid-template-columns:96px minmax(0,1fr);column-gap:16px;row-gap:2px;padding:12px 16px;border:0;border-radius:0;background:none;
   transition:background-color .25s}
 .wbi:hover{background:#F8FAFC;transform:none;box-shadow:none}
-.wb-d{grid-row:1 / span 3;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:4px;font:600 14px/1.3 var(--fn);color:var(--ink);font-variant-numeric:tabular-nums}
-.wb-l{font-size:14px}
+.wb-d{grid-row:1 / span 3;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:4px;font:600 max(14px,calc(12px/var(--z,1)))/1.3 var(--fn);color:var(--ink);font-variant-numeric:tabular-nums}
+.wb-l{font-size:max(14px,calc(12px/var(--z,1)))}
 .wb-h{font-size:16px}
-.wb-w{font-size:14px}
+.wb-w{font-size:max(14px,calc(12px/var(--z,1)))}
 .wbt li.turn .wbi{background:rgba(225,29,72,.04)}
 .wbt li.turn .wb-d{color:var(--pop)}
 .wbt li.turn mark{background:rgba(225,29,72,.1);color:var(--pop)}
 .feat .txt{gap:12px}
 /* captions: never under 12px */
-.bc-foot .ch{font-size:13px}
-.bnote{font-size:13px;color:var(--text)}
+.bc-foot .ch{font-size:max(13px,calc(12px/var(--z,1)))}
+.bnote{font-size:max(13px,calc(12px/var(--z,1)));color:var(--text)}
 
 /* ---------- pricing: tiers + parent box; the plan table opens under "Compare plans" ---------- */
-.pricing .pnote{font-size:13px;color:var(--text)}
+.pricing .pnote{font-size:max(13px,calc(12px/var(--z,1)));color:var(--text)}
 .cmpx{max-width:1080px;margin:20px auto 0;text-align:center}
 .cmpbtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border:1px solid var(--line);border-radius:10px;background:#fff;
   font:600 15px/1 var(--fd);color:var(--ink);cursor:pointer;transition:background-color .2s,border-color .2s,color .2s}
@@ -111,16 +111,16 @@ main > section .shead .lede{max-width:58ch}
 .pricing .parent{margin-top:20px}
 
 /* ---------- inside, tab 4: the checklist, the move not to copy, first moves from the other stories ---------- */
-#inside .nocopy{display:flex;gap:10px;align-items:flex-start;padding:11px 16px;border-top:1px solid var(--line2);font-size:13.5px;line-height:1.45;color:var(--text)}
+#inside .nocopy{display:flex;gap:10px;align-items:flex-start;padding:11px 16px;border-top:1px solid var(--line2);font-size:max(13.5px,calc(12px/var(--z,1)));line-height:1.45;color:var(--text)}
 #inside .nocopy b{color:var(--ink);font-weight:600}
 #inside .nocopy .nx{flex:none;display:grid;place-items:center;width:16px;height:16px;margin-top:2px;border-radius:4px;background:rgba(229,83,61,.12);color:#C2410C}
 #inside .omv{padding:12px 16px 14px;border-top:1px solid var(--line2);background:#FAFBFC}
-#inside .omv-h{display:block;font:600 13px/1.3 var(--fd);color:var(--ink);margin-bottom:8px}
+#inside .omv-h{display:block;font:600 max(13px,calc(12px/var(--z,1)))/1.3 var(--fd);color:var(--ink);margin-bottom:8px}
 #inside .omv ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 #inside .omv li{display:flex;gap:10px;align-items:flex-start}
-#inside .omv .tile{width:26px;height:26px;font-size:12px;border-radius:6px;background:#334155}
-#inside .omv li b{display:block;font:600 13.5px/1.35 var(--fd);color:var(--ink)}
-#inside .omv li small{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:12.5px;line-height:1.4;color:var(--text)}
+#inside .omv .tile{width:26px;height:26px;font-size:max(12px,calc(12px/var(--z,1)));border-radius:6px;background:#334155}
+#inside .omv li b{display:block;font:600 max(13.5px,calc(12px/var(--z,1)))/1.35 var(--fd);color:var(--ink)}
+#inside .omv li small{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:max(12.5px,calc(12px/var(--z,1)));line-height:1.4;color:var(--text)}
 @media (prefers-reduced-motion:no-preference){
   #inside .tpanel.play .nocopy{animation:in-rise .5s var(--out) .32s both}
   #inside .tpanel.play .omv li{animation:in-left .5s var(--out) both}
@@ -152,7 +152,7 @@ main > section .shead .lede{max-width:58ch}
 
 /* ---------- hero: fills the first screen exactly on desktop; the headline block and the dashboard centre as one group ---------- */
 @media (min-width:1024px){
-  header.hero{min-height:100vh;min-height:100svh;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;padding-bottom:16px}
+  header.hero{min-height:calc(100vh/var(--z,1));min-height:calc(100svh/var(--z,1));box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;padding-bottom:16px}
   header.hero > .wrap{width:100%}
 }
 
@@ -171,18 +171,18 @@ main > section .bcard,main > section .post,main > section .plan,main > section .
 
 /* ---------- type scale below the hero: 14 · 16 · 18 · 24 · 32 · 48 (product pictures keep their own sizes) ---------- */
 main > section h2{font-size:48px}
-main > section .lb{font-size:14px;height:24px;padding:0 9px}
-main > section .cwin .lb{font-size:12px;height:20px;padding:0 7px}
+main > section .lb{font-size:max(14px,calc(12px/var(--z,1)));height:24px;padding:0 9px}
+main > section .cwin .lb{font-size:max(12px,calc(12px/var(--z,1)));height:20px;padding:0 7px}
 main > section .btn,main > section .tlink,main > section .tlink .arr,.cmpbtn,.fybtn{font-size:16px}
 #stories small,#stories dt,#stories .ft > span,#stories .ax,#stories .ax span,#stories .bc-n small,#stories .wb-pr i,#stories .wb-pr small,
 #stories .qh,#stories .qtop span,#stories .nv small,#stories .ch,#stories .bnote,#stories .bc-sub,#stories .nod,
-#pricing small,#pricing .tg,#pricing .cs,#pricing .ps,#pricing .pnote,#pricing .tp,#pricing .tp .amt,#inside .part .i,#blog .by{font-size:14px}
+#pricing small,#pricing .tg,#pricing .cs,#pricing .ps,#pricing .pnote,#pricing .tp,#pricing .tp .amt,#inside .part .i,#blog .by{font-size:max(14px,calc(12px/var(--z,1)))}
 #stories .ftag b,#stories .sub2,#stories .facts dd,#stories .copy,#stories .bc-n b,#faq .qa-a p,#faq p{font-size:16px}
 #stories .qt b{font-size:18px}
 #stories .feat h3,#stories .qbody h3,.qr-h{font-size:24px}
 #stories .bc-num b{font-size:32px}
 #pricing .plan .pr,#pricing .plan .pr .amt{font-size:48px}
-@media (max-width:720px){main > section h2,#check .rc-top h2{font-size:32px}#pricing .ptab,#pricing .ptab .cr > div{font-size:14px}#pricing .ptab .cr.th b{font-size:16px}#pricing .plan .pr,#pricing .plan .pr .amt{font-size:48px}#stories .bc-num b{font-size:32px}}
+@media (max-width:720px){main > section h2,#check .rc-top h2{font-size:32px}#pricing .ptab,#pricing .ptab .cr > div{font-size:max(14px,calc(12px/var(--z,1)))}#pricing .ptab .cr.th b{font-size:16px}#pricing .plan .pr,#pricing .plan .pr .amt{font-size:48px}#stories .bc-num b{font-size:32px}}
 
 /* ---------- tap targets: 44px at every width ---------- */
 .bcard .go{min-height:44px}
@@ -211,7 +211,7 @@ footer .fbot .lgl a{display:inline-flex;align-items:center;min-height:44px}
     padding:14px 4px 8px;margin:-10px -4px 0;scrollbar-width:none}
   .bgrid::-webkit-scrollbar{display:none}
   .bgrid > *{scroll-snap-align:start}
-  .bgrid .empty{grid-column:auto;min-width:80vw}
+  .bgrid .empty{grid-column:auto;min-width:calc(80vw/var(--z,1))}
   .fybtn{justify-content:center}
   .quiz .qbody{padding:16px 16px 4px}
   .quiz .qtop > span:last-child{display:none}

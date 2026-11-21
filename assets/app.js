@@ -462,6 +462,10 @@
       $('[data-ps="pro"]').textContent = y ? "a month, billed yearly ($77.88). Monthly is $7.99" : "a month, or $6.49 a month billed yearly ($77.88)";
       $('[data-ps="developer"]').textContent = y ? "a month, billed yearly ($287.88). Monthly is $29.99" : "a month, or $23.99 a month billed yearly ($287.88)"; };
     $$("[data-bill]").forEach(b => b.addEventListener("click", () => bill(b.dataset.bill === "y"))); bill(false);
+    // Display size: read by the zoom script in every page's head (lv-display), so it applies on every page of this device
+    const disp = v => $$("[data-display]").forEach(b => b.setAttribute("aria-pressed", b.dataset.display === v)); disp(ls.get("lv-display") || "auto");
+    $$("[data-display]").forEach(b => b.addEventListener("click", () => { const v = b.dataset.display; v === "auto" ? ls.del("lv-display") : ls.set("lv-display", v); disp(v); if (window.lvZoom) lvZoom();
+      toast(innerWidth < 1000 ? "Saved. It applies on wider screens." : "Display size saved on this device."); }));
     const link = location.origin + "/#pricing", flow = () => { const s = ls.get("lv-parent"); $$("[data-pflow] span").forEach((x, i) => x.className = s ? (i === 0 ? "d" : i === 1 ? "c" : "t") : "t");
       if (s) $("[data-pflow] span").innerHTML = `<i></i>Link sent ${esc(s)}`; };
     flow();

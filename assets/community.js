@@ -408,7 +408,7 @@
     S.cats = cats; S.rooms = rooms; S.mods = new Set(mods.map(m => m.user_id)); S.isMod = S.mods.has(S.me.id); S.known = new Set(known.map(k => k.domain)); S.signed = true;
   };
 
-  const fit = () => { const t = document.querySelector(".tabs"), tb = t && getComputedStyle(t).display !== "none" ? t.offsetHeight : 0; /* the phone tab bar is position:fixed, so offsetParent is null */ root.style.height = Math.max(420, innerHeight - root.getBoundingClientRect().top - tb) + "px"; };
+  const fit = () => { const t = document.querySelector(".tabs"), tb = t && getComputedStyle(t).display !== "none" ? t.offsetHeight : 0; /* the phone tab bar is position:fixed, so offsetParent is null */ root.style.height = Math.max(420, (innerHeight - root.getBoundingClientRect().top) / (window.lvZ || 1) - tb) + "px"; };   // window px -> CSS px under the auto zoom
   const boot = async () => {
     fit(); addEventListener("resize", fit); addEventListener("load", fit); const pv = document.getElementById("prevbar"); if (pv && window.ResizeObserver) new ResizeObserver(fit).observe(pv);
     window.addEventListener("hashchange", () => route());

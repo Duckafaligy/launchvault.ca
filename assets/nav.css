@@ -29,10 +29,10 @@
 .mbtn:hover .mic i:nth-child(3),.mbtn:focus-visible .mic i:nth-child(3),.nav.open .mic i:nth-child(3){transform:translateY(-3px)}
 
 /* mega card. The transparent padding-top is the hover bridge between the button and the card. */
-.mega{position:absolute;top:calc(100% - 8px);left:50%;width:min(920px,calc(100vw - 32px));padding-top:18px;
+.mega{position:absolute;top:calc(100% - 8px);left:50%;width:min(920px,calc(calc(100vw/var(--z,1)) - 32px));padding-top:18px;
   opacity:0;visibility:hidden;transform:translate(-50%,-8px);transition:opacity .14s ease,transform .22s var(--out),visibility 0s linear .14s}
 .nav.open .mega{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .14s ease,transform .22s var(--out)}
-.mega{width:min(840px,calc(100vw - 32px))}
+.mega{width:min(840px,calc(calc(100vw/var(--z,1)) - 32px))}
 /* card: sidebar list (left) + detail pane (right). Fixed height, so switching items never moves anything. */
 .mgc{display:grid;grid-template-columns:232px 1fr;height:392px;padding:10px;gap:0 10px;overflow:hidden;
   background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:18px;box-shadow:0 28px 56px -20px rgba(15,23,42,.22),0 2px 6px rgba(15,23,42,.05)}
@@ -54,33 +54,33 @@
 .mpt:hover{color:var(--brand)}
 .ar{display:inline-block;margin-left:6px;color:var(--brand);transition:transform .2s var(--out)}
 a:hover > .ar,a:hover > b > .ar,a:focus-visible .ar{transform:translateX(3px)}
-.mlede{margin:0 0 10px;font:400 14px/1.45 var(--fn);color:var(--muted)}
-.mnote{margin:8px 0 0;font:400 12.5px/1.4 var(--fn);color:var(--muted)}
+.mlede{margin:0 0 10px;font:400 max(14px,calc(12px/var(--z,1)))/1.45 var(--fn);color:var(--muted)}
+.mnote{margin:8px 0 0;font:400 max(12.5px,calc(12px/var(--z,1)))/1.4 var(--fn);color:var(--muted)}
 .mgrps{display:grid;gap:6px}
 .mgrp{display:block;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);transition:background-color .2s,border-color .2s}
 .mgrp:hover{background:var(--alt);border-color:var(--line)}
 .mgrp b{display:block;font:600 15px/1.3 var(--fd);color:var(--ink)}
 .mcos{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:6px}
-.mcos span{display:inline-flex;align-items:center;gap:6px;font:500 13px/1 var(--fn);color:var(--text)}
+.mcos span{display:inline-flex;align-items:center;gap:6px;font:500 max(13px,calc(12px/var(--z,1)))/1 var(--fn);color:var(--text)}
 .mcos img{width:20px;height:20px;border-radius:5px;object-fit:contain}
 .mchips{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 12px}
 .mlinks{display:flex;flex-wrap:wrap;gap:0 6px}
-.mlinks a{display:inline-flex;align-items:center;min-height:44px;padding:0 10px;margin-left:-10px;margin-right:8px;border-radius:8px;font:500 14px/1 var(--fn);color:var(--brand)}
+.mlinks a{display:inline-flex;align-items:center;min-height:44px;padding:0 10px;margin-left:-10px;margin-right:8px;border-radius:8px;font:500 max(14px,calc(12px/var(--z,1)))/1 var(--fn);color:var(--brand)}
 .mlinks a:hover{background:rgba(37,99,235,.07)}
 .mlist{display:grid;gap:2px}
 .mrow{display:flex;align-items:center;gap:12px;min-height:52px;padding:6px 10px;margin:0 -10px;border-radius:10px;transition:background-color .2s}
 .mrow:hover{background:var(--alt)}
 .mrow > span{flex:1;min-width:0}
 .mrow b{display:block;font:500 15px/1.3 var(--fd);color:var(--ink)}
-.mrow > span > span{display:block;margin-top:2px;font:400 13px/1.4 var(--fn);color:var(--muted)}
-.mrow em{font:600 14px/1 var(--fn);font-style:normal;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.mrow > span > span{display:block;margin-top:2px;font:400 max(13px,calc(12px/var(--z,1)))/1.4 var(--fn);color:var(--muted)}
+.mrow em{font:600 max(14px,calc(12px/var(--z,1)))/1 var(--fn);font-style:normal;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
 .mrow.big{align-items:flex-start;padding:10px;margin-bottom:8px}.mrow.big img{border-radius:8px;flex:none}
-.mno{flex:none;width:30px;font:600 13px/1 var(--fn);font-style:normal;color:var(--brand);font-variant-numeric:tabular-nums}
+.mno{flex:none;width:30px;font:600 max(13px,calc(12px/var(--z,1)))/1 var(--fn);font-style:normal;color:var(--brand);font-variant-numeric:tabular-nums}
 .mposts{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-bottom:2px}
 .mpost{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:center;padding:6px;margin:0 -6px;border-radius:10px;transition:background-color .2s}
 .mpost:hover{background:var(--alt)}
 .mpost img{width:96px;height:54px;object-fit:cover;border-radius:6px;border:1px solid var(--line2)}
-.mpost b{font:500 13.5px/1.35 var(--fd);color:var(--ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.mpost b{font:500 max(13.5px,calc(12px/var(--z,1)))/1.35 var(--fd);color:var(--ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .mpost:hover b{color:var(--brand)}
 
 @media (max-width:1100px){
@@ -96,7 +96,7 @@ a:hover > .ar,a:hover > b > .ar,a:focus-visible .ar{transform:translateX(3px)}
   .nav .mbtn{width:48px;left:-3px}   /* padding 14px / 8px */
   .mega{top:calc(100% + 8px);left:0;width:100%;padding-top:0;transform:translateY(-8px)}
   .nav.open .mega{transform:none}
-  .mgc{display:block;height:auto;max-height:calc(100dvh - 92px);overflow:auto;overscroll-behavior:contain;padding:6px 10px 12px;border-radius:16px}
+  .mgc{display:block;height:auto;max-height:calc(calc(100dvh/var(--z,1)) - 92px);overflow:auto;overscroll-behavior:contain;padding:6px 10px 12px;border-radius:16px}
   .mhead{display:flex;align-items:center;gap:4px;min-height:48px}
   .mhead b{flex:1;padding-left:6px;font:600 16px var(--fd);color:var(--ink)}
   .mx,.mback{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border:0;border-radius:10px;background:transparent;color:var(--ink);cursor:pointer}

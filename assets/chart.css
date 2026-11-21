@@ -6,13 +6,13 @@
 .chartc{border:1px solid #E5E7EB;border-radius:12px;padding:16px 18px}
 .chartc .hd{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
 .chartc .big{font:600 26px/32px var(--fn);color:#0B1220;letter-spacing:-.02em}
-.chartc .big small{font:400 14px var(--fd);color:#4B5563;margin-left:8px;letter-spacing:0}
-.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12.5px;color:#4B5563}
+.chartc .big small{font:400 max(14px,calc(12px/var(--z,1))) var(--fd);color:#4B5563;margin-left:8px;letter-spacing:0}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:max(12.5px,calc(12px/var(--z,1)));color:#4B5563}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{width:8px;height:8px;border-radius:50%;flex:none}
 .legend .lv{background:var(--okd)}.legend .lc{box-shadow:inset 0 0 0 1.5px #2563EB}.legend .lx{background:#E5533D;border-radius:1px;transform:rotate(45deg);width:7px;height:7px}
 .legend .lm{width:14px;height:14px;border-radius:3px;box-shadow:inset 0 0 0 1px #94A3B8;font:600 9px/14px var(--fn);text-align:center;color:#374151}
-.readout{display:flex;align-items:center;gap:10px;height:44px;margin-top:10px;padding:0 12px;border:1px solid var(--line2);border-radius:8px;background:var(--alt);font-size:13px;color:#4B5563;overflow:hidden;white-space:nowrap}
+.readout{display:flex;align-items:center;gap:10px;height:44px;margin-top:10px;padding:0 12px;border:1px solid var(--line2);border-radius:8px;background:var(--alt);font-size:max(13px,calc(12px/var(--z,1)));color:#4B5563;overflow:hidden;white-space:nowrap}
 .readout b{font:600 15px var(--fn);color:#0B1220;min-width:76px}
 .readout .rd-d{min-width:92px;color:#4B5563}
 .readout .rd-s{overflow:hidden;text-overflow:ellipsis}
@@ -29,26 +29,26 @@
 .plot .note{font:400 11px var(--fd);fill:#4B5563}
 .pband{display:flex;gap:2px;margin-top:10px;overflow-x:auto;scrollbar-width:none;padding:2px 0;scroll-padding:0 16px}
 .pband::-webkit-scrollbar{display:none}
-.pband button{flex:1 1 0;min-width:72px;min-height:44px;padding:0 8px;border:0;border-radius:6px;background:#F1F3F6;font:500 13px var(--fd);color:#374151;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pband button{flex:1 1 0;min-width:72px;min-height:44px;padding:0 8px;border:0;border-radius:6px;background:#F1F3F6;font:500 max(13px,calc(12px/var(--z,1))) var(--fd);color:#374151;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pband button[aria-pressed=true]{background:#2563EB;color:#fff}
 .moves{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px;margin-top:14px;padding:0;list-style:none}
-.moves button{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;min-height:36px;padding:4px 8px;border:0;border-radius:6px;background:none;text-align:left;cursor:pointer;font-size:14px;color:#0B1220}
+.moves button{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;min-height:36px;padding:4px 8px;border:0;border-radius:6px;background:none;text-align:left;cursor:pointer;font-size:max(14px,calc(12px/var(--z,1)));color:#0B1220}
 .moves button:hover,.moves button.on{background:#EEF3FE}
 .moves .n{width:20px;height:20px;border-radius:4px;box-shadow:inset 0 0 0 1px #CBD5E1;font:600 11px/20px var(--fn);text-align:center;color:#374151}
 .moves .on .n,.moves .turn .n{background:#2563EB;box-shadow:none;color:#fff}
-.moves .w{font:400 12.5px var(--fn);color:#4B5563;white-space:nowrap}
-.cprov{margin-top:12px;font-size:12.5px;color:#4B5563}
+.moves .w{font:400 max(12.5px,calc(12px/var(--z,1))) var(--fn);color:#4B5563;white-space:nowrap}
+.cprov{margin-top:12px;font-size:max(12.5px,calc(12px/var(--z,1)));color:#4B5563}
 .pzchart{margin-top:16px}
 @media (max-width:720px){.moves{grid-template-columns:1fr}}
 @media (pointer:coarse){.pband button,.moves button{min-height:44px}}
-.mvh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:16px;padding:10px 8px 6px;border-top:1px solid #EEF0F3;font-size:14px;color:#0B1220}.mvh span{font-size:12.5px;color:#4B5563}
+.mvh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:16px;padding:10px 8px 6px;border-top:1px solid #EEF0F3;font-size:max(14px,calc(12px/var(--z,1)));color:#0B1220}.mvh span{font-size:max(12.5px,calc(12px/var(--z,1)));color:#4B5563}
 .ctab{margin-top:12px}
-.ctab summary{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid #E5E7EB;border-radius:8px;font:500 13.5px "Schibsted Grotesk",system-ui,sans-serif;color:#0B1220;cursor:pointer;list-style:none}
+.ctab summary{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid #E5E7EB;border-radius:8px;font:500 max(13.5px,calc(12px/var(--z,1))) "Schibsted Grotesk",system-ui,sans-serif;color:#0B1220;cursor:pointer;list-style:none}
 .ctab summary::-webkit-details-marker{display:none}
 .ctab[open] summary{background:#F8FAFC}
-.ctab table{width:100%;margin-top:10px;border-collapse:collapse;font-size:13.5px}
+.ctab table{width:100%;margin-top:10px;border-collapse:collapse;font-size:max(13.5px,calc(12px/var(--z,1)))}
 .ctab th,.ctab td{text-align:left;padding:8px 10px;border-top:1px solid #EEF0F3;color:#374151;font-weight:400}
-.ctab thead th{font-size:12.5px;color:#4B5563;border-top:0}
+.ctab thead th{font-size:max(12.5px,calc(12px/var(--z,1)));color:#4B5563;border-top:0}
 .ctab tbody th{color:#0B1220;font-weight:500;white-space:nowrap}
 .ctab td:nth-child(2){font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;color:#0B1220}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -59,12 +59,12 @@ table.sr{display:block}
 .ctab table{display:block;overflow-x:auto}
 .plot .pt.kd{fill:#fff;stroke:#2563EB;stroke-width:3}.plot .kdl{font-weight:600;fill:#0B1220}
 /* 2026-11-19: 12px axis text, first/last month always named, "before the chart" stack, single-column moves list, phase chips that wrap, load-failure message */
-.plot .ax{font-size:12px}
-.plot .bf rect{fill:#F1F3F6}.plot .bf text{font:600 12px var(--fn);fill:#374151}
+.plot .ax{font-size:max(12px,calc(12px/var(--z,1)))}
+.plot .bf rect{fill:#F1F3F6}.plot .bf text{font:600 max(12px,calc(12px/var(--z,1))) var(--fn);fill:#374151}
 .legend .lm.bfk{width:auto;padding:0 4px}
 .moves{grid-template-columns:1fr}
 .moves button{grid-template-columns:88px 22px minmax(0,1fr);align-items:start;min-height:44px;padding:11px 8px;font-size:15px;line-height:22px}
-.moves .w{font:400 13px/18px var(--fn);color:#4B5563;white-space:normal;padding-top:2px}
+.moves .w{font:400 max(13px,calc(12px/var(--z,1)))/18px var(--fn);color:#4B5563;white-space:normal;padding-top:2px}
 .moves .n{width:22px;height:22px;line-height:22px}
 .ctab summary{min-height:44px}
 @media (min-width:900px){.pband{flex-wrap:wrap;overflow:visible}}
@@ -73,18 +73,18 @@ table.sr{display:block}
 .cfail .btn{min-height:44px}
 @media (max-width:600px){.moves button{grid-template-columns:72px 22px minmax(0,1fr);gap:8px}}
 /* X3: 12px minimum in the chart */
-.legend .lm{width:18px;height:18px;font:600 12px/18px var(--fn)}
-.plot .mk text,.plot .note{font-size:12px}
-.moves .n{font-size:12px}
+.legend .lm{width:18px;height:18px;font:600 max(12px,calc(12px/var(--z,1)))/18px var(--fn)}
+.plot .mk text,.plot .note{font-size:max(12px,calc(12px/var(--z,1)))}
+.moves .n{font-size:max(12px,calc(12px/var(--z,1)))}
 .moves button.future{opacity:.52;transition:opacity .2s}.moves button.future:hover{opacity:.88}
 .plot .mk.future{opacity:.42}
 /* checkpoint stepper (chart.js): Prev · Move X of N · Next, plus Auto-play */
 .mstep{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px;padding:0 8px}
-.mstep button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;min-width:44px;padding:0 12px;border:1px solid #E5E7EB;border-radius:8px;background:#fff;font:600 13.5px var(--fd,system-ui);color:#0B1220;cursor:pointer;transition:background-color .2s,border-color .2s,color .2s}
+.mstep button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;min-width:44px;padding:0 12px;border:1px solid #E5E7EB;border-radius:8px;background:#fff;font:600 max(13.5px,calc(12px/var(--z,1))) var(--fd,system-ui);color:#0B1220;cursor:pointer;transition:background-color .2s,border-color .2s,color .2s}
 .mstep button:hover:not(:disabled){border-color:#2563EB;color:#2563EB}
 .mstep button:focus-visible{outline:2px solid #2563EB;outline-offset:2px}
 .mstep button:disabled{color:#6B7280;background:#F8FAFC;cursor:default}
-.mstep .ms-t{flex:1 1 0;min-width:112px;text-align:center;font:500 13.5px/1.35 var(--fn,system-ui);color:#0B1220;font-variant-numeric:tabular-nums}
+.mstep .ms-t{flex:1 1 0;min-width:112px;text-align:center;font:500 max(13.5px,calc(12px/var(--z,1)))/1.35 var(--fn,system-ui);color:#0B1220;font-variant-numeric:tabular-nums}
 .mstep .ms-play{margin-left:auto;border-color:transparent;background:#EEF3FE;color:#1D4ED8}
 .mstep .ms-play[aria-pressed=true],.mstep .ms-play[aria-pressed=true]:hover{background:#2563EB;border-color:#2563EB;color:#fff}
 /* phones: the readout gets a fixed 3-line box (no clipped text, still no jump on hover); Auto-play takes its own full row under Prev/Next */

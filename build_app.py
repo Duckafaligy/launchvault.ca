@@ -224,6 +224,7 @@ def head(title, desc, extra="", og_slug="", gate=True):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{build.ZOOM}
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
 <meta name="robots" content="noindex">{og}
@@ -575,7 +576,7 @@ def home(E):
 <section class="card"><div class="ch"><h2>Open checklists</h2><a class="tl" href="/app/checklists/">All checklists</a></div><div data-homecl></div></section>
 </div><div class="hrail">
 <section class="card" data-hpath></section>
-<section class="card hcomm"><div class="ch"><h2>Community</h2><a class="tl" href="/app/community/">Open Community</a></div><div class="cb"><p>Talk with other builders in the channels:</p><ul class="chans"><li><a href="/app/community/#general">#general</a></li><li><a href="/app/community/#breakdowns">#breakdowns</a></li><li><a href="/app/community/#what-im-trying">#what-im-trying</a></li></ul></div></section>
+<section class="card hcomm"><div class="ch"><h2>Community</h2><a class="tl" href="/app/community/">Open Community</a></div><div class="cb"><p>Talk with other members in Chat, or browse Threads by topic.</p><ul class="chans"><li><a href="/app/community/">Open Chat</a></li><li><a href="/app/community/#threads">Browse threads</a></li></ul></div></section>
 </div></div>
 <section class="card hsec jsonly"><div class="ch"><h2 data-hrowt>Top breakdowns</h2><a class="tl" href="/app/library/">Browse all {len(ready)} breakdowns in Library</a></div><div class="scards" data-hcards></div></section>
 {noscript_list(ready)}

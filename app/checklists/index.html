@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>(function(){var d=document.documentElement,z=0,q=0;function f(){var w=innerWidth,v=1,p;if(w>=1000){v=Math.max(.8,Math.min(1,w/1440,innerHeight/860));try{p=JSON.parse(localStorage.getItem('lv-display'))}catch(e){}if(p=='smaller')v*=.9;else if(p=='larger')v=Math.min(1.15,v*1.1)}v=Math.round(v*100)/100;if(v==z)return;z=window.lvZ=v;d.style.zoom=v==1?'':v;d.style.setProperty('--z',v);return 1}function g(){f()&&dispatchEvent(new Event('resize'))}f();window.lvZoom=g;addEventListener('resize',function(){q||(q=requestAnimationFrame(function(){q=0;g()}))})})()</script>
 <title>Checklists · LaunchVault</title>
 <meta name="description" content="Every checklist, ticked on this device.">
 <meta name="robots" content="noindex">
@@ -49,7 +50,7 @@
 <div class="pg"><h1 class="pg-h">Checklists</h1><p class="pg-s">The 6 steps at the end of each breakdown. Ticks stay on this device.</p>
 <div data-clnext></div>
 <div class="clacc" data-cllists></div>
-<section class="card lvlift" style="margin-top:16px"><a class="row" href="/app/path/" style="min-height:64px"><span style="color:var(--brand)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 6h7a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h7"/></svg></span><span style="flex:1;min-width:0"><b style="color:#0B1220;font-weight:600"><span data-pathlabel>Starter path</span> · <span data-pathname>Ship something small first</span></b><small style="display:block;color:#4B5563;font-size:13px" data-pathshare></small></span><span class="bar" style="max-width:120px"><i data-pathbar></i></span><span class="meta" data-pathcount2></span><span class="tl">My path</span></a></section>
+<section class="card lvlift" style="margin-top:16px"><a class="row" href="/app/path/" style="min-height:64px"><span style="color:var(--brand)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 6h7a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h7"/></svg></span><span style="flex:1;min-width:0"><b style="color:#0B1220;font-weight:600"><span data-pathlabel>Starter path</span> · <span data-pathname>Ship something small first</span></b><small style="display:block;color:#4B5563;font-size:max(13px,calc(12px/var(--z,1)))" data-pathshare></small></span><span class="bar" style="max-width:120px"><i data-pathbar></i></span><span class="meta" data-pathcount2></span><span class="tl">My path</span></a></section>
 </div>
 
   </main>

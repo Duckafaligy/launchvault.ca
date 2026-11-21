@@ -143,11 +143,23 @@ def footer():
   </div>
 </footer>'''
 
+# Auto display size, before any CSS so nothing flashes. Windows 1000px+ wide are zoomed out to fit a 1440x860 design
+# (never below 0.8, never above 1); phones and portrait tablets stay at 1. Account > Display size (lv-display) nudges it
+# x0.9 / x1.1 (max 1.15). CSS divides viewport units by --z and floors small text at 12px rendered (scripts/zoomcss.py).
+# window.lvZ is the current zoom for JS that turns window pixels into CSS pixels; lvZoom() re-applies after a setting change.
+ZOOM = ("<script>(function(){var d=document.documentElement,z=0,q=0;function f(){var w=innerWidth,v=1,p;if(w>=1000){"
+        "v=Math.max(.8,Math.min(1,w/1440,innerHeight/860));try{p=JSON.parse(localStorage.getItem('lv-display'))}catch(e){}"
+        "if(p=='smaller')v*=.9;else if(p=='larger')v=Math.min(1.15,v*1.1)}v=Math.round(v*100)/100;if(v==z)return;"
+        "z=window.lvZ=v;d.style.zoom=v==1?'':v;d.style.setProperty('--z',v);return 1}"
+        "function g(){f()&&dispatchEvent(new Event('resize'))}f();window.lvZoom=g;"
+        "addEventListener('resize',function(){q||(q=requestAnimationFrame(function(){q=0;g()}))})})()</script>")
+
 HEAD = '''<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{zoom}
 <title>{title}</title>
 <meta name="description" content="{desc}">
 {og}<meta name="robots" content="noindex">
@@ -215,7 +227,7 @@ def main():
             up = out.startswith("sign-up"); cur, hid = ' aria-current="page"', " hidden"
             b = (b.replace("{{MODE}}", "signup" if up else "signin").replace("{{CUR_IN}}", "" if up else cur).replace("{{CUR_UP}}", cur if up else "")
                   .replace("{{HID_IN}}", hid if up else "").replace("{{HID_UP}}", "" if up else hid))
-        html = (HEAD.format(title=title, desc=desc, og=og(out)) + f'<body{" class=" + chr(34) + cls + chr(34) if cls else ""}>\n' + sprite + "\n" + (nav(active) if not auth else "")
+        html = (HEAD.format(title=title, desc=desc, og=og(out), zoom=ZOOM) + f'<body{" class=" + chr(34) + cls + chr(34) if cls else ""}>\n' + sprite + "\n" + (nav(active) if not auth else "")
                 + '\n<main id="main">\n' + b + ("\n" + strip if bstrip else "") + "\n</main>\n"
                 + (footer() if not auth else "") + '\n<script src="/assets/consent.js" defer></script>\n<script src="/assets/nav.js" defer></script>\n<script src="/assets/site.js" defer></script>\n<script src="/assets/home.js" defer></script>\n<script src="/assets/streak.js" defer></script>\n</body>\n</html>\n')
         path = os.path.join(ROOT, out); os.makedirs(os.path.dirname(path), exist_ok=True)

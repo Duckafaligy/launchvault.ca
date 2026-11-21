@@ -62,7 +62,7 @@
         if (!b) { b = document.createElement("span"); b.className = "fyr"; row.insertBefore(b, row.querySelector(".lb")); }
         b.textContent = "#" + (i + 1) + " for you"; });
       if (reduce || !animate) return;
-      cards.forEach(c => { if (c.hidden) return; const a = first.get(c), r = c.getBoundingClientRect(), dx = a.left - r.left, dy = a.top - r.top;
+      cards.forEach(c => { if (c.hidden) return; const a = first.get(c), r = c.getBoundingClientRect(), z = window.lvZ || 1, dx = (a.left - r.left) / z, dy = (a.top - r.top) / z;
         if (Math.abs(dx) + Math.abs(dy) > 1) c.animate([{transform: `translate(${dx}px,${dy}px)`}, {transform: "none"}], {duration: 700, easing: OUT}); });
     };
     const result = () => {

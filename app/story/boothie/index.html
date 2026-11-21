@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>(function(){var d=document.documentElement,z=0,q=0;function f(){var w=innerWidth,v=1,p;if(w>=1000){v=Math.max(.8,Math.min(1,w/1440,innerHeight/860));try{p=JSON.parse(localStorage.getItem('lv-display'))}catch(e){}if(p=='smaller')v*=.9;else if(p=='larger')v=Math.min(1.15,v*1.1)}v=Math.round(v*100)/100;if(v==z)return;z=window.lvZ=v;d.style.zoom=v==1?'':v;d.style.setProperty('--z',v);return 1}function g(){f()&&dispatchEvent(new Event('resize'))}f();window.lvZoom=g;addEventListener('resize',function(){q||(q=requestAnimationFrame(function(){q=0;g()}))})})()</script>
 <title>Boothie · LaunchVault</title>
 <meta name="description" content="A two-person team launched an AI selfie app in June 2026, aimed it at people already posting on TikTok, and passed $56K in a single month by October. Then they put it up for sale.">
 <meta name="robots" content="noindex">

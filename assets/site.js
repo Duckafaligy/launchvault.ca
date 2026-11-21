@@ -312,7 +312,7 @@
     if (redraw) redraw();
     if (innerWidth <= 1100 || !canHover) return;   // touch tablets scroll naturally and keep 44px targets
     let top = 0; for (let n = wf; n; n = n.offsetParent) top += n.offsetTop;   // layout position, ignores the load-in transform
-    const pv = wf.nextElementSibling, avail = innerHeight - top - (pv ? pv.offsetHeight + parseFloat(getComputedStyle(pv).marginTop) + 8 : 14);
+    const pv = wf.nextElementSibling, avail = innerHeight / (window.lvZ || 1) - top - (pv ? pv.offsetHeight + parseFloat(getComputedStyle(pv).marginTop) + 8 : 14);
     let nat = w.offsetHeight; if (nat <= avail) return;
     let s = Math.max(.6, avail / nat);
     w.style.width = (wf.clientWidth / s) + "px"; if (redraw) redraw();
@@ -425,7 +425,8 @@
     const STOP = {}, CANCEL = {}, ABORT = {}; let gen = 0, epoch = 0, active = false, raf = 0, S = null;
     const box = () => wf.getBoundingClientRect();
     let wfW = wf.clientWidth; if ("ResizeObserver" in window) new ResizeObserver(() => { wfW = wf.clientWidth; }).observe(wf);   // cached: no layout read inside the 60 fps loop
-    const place = (c, x, y) => { c.el.style.transform = `translate3d(${(x - 2).toFixed(1)}px,${(y - 2).toFixed(1)}px,0)`; c.el.classList.toggle("flip", x > wfW - 200); };
+    const place = (c, x, y) => { const z = window.lvZ || 1; x /= z; y /= z;   // window px (rects) -> CSS px under the auto zoom
+      c.el.style.transform = `translate3d(${(x - 2).toFixed(1)}px,${(y - 2).toFixed(1)}px,0)`; c.el.classList.toggle("flip", x > wfW - 200); };
     // one rAF loop: segments (Kumaraswamy time warp = quick start, long tail; optional mid-move pause) + smoothed tremor
     const tick = now => { if (!active) { raf = 0; return; }
       ALL.forEach(c => { const s = c.seg;
@@ -796,7 +797,8 @@
     const lerp = (a, b, t) => a + (b - a) * t;
     let mx = -100, my = -100, rx = -100, ry = -100, run = false;
     const loop = () => { rx = lerp(rx, mx, .2); ry = lerp(ry, my, .2);
-      dot.style.transform = `translate3d(${mx}px,${my}px,0)`; ring.style.transform = `translate3d(${rx}px,${ry}px,0)`;
+      const z = window.lvZ || 1;   // pointer is in window px; the dot lives in the zoomed page
+      dot.style.transform = `translate3d(${mx / z}px,${my / z}px,0)`; ring.style.transform = `translate3d(${rx / z}px,${ry / z}px,0)`;
       run = Math.abs(rx - mx) > .1 || Math.abs(ry - my) > .1; if (run) requestAnimationFrame(loop); };
     const go = () => { if (!run) { run = true; requestAnimationFrame(loop); } };
     const off = () => H.classList.remove("cur-on", "cur-show", "cur-lbl", "cur-text", "cur-dark");

@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>(function(){var d=document.documentElement,z=0,q=0;function f(){var w=innerWidth,v=1,p;if(w>=1000){v=Math.max(.8,Math.min(1,w/1440,innerHeight/860));try{p=JSON.parse(localStorage.getItem('lv-display'))}catch(e){}if(p=='smaller')v*=.9;else if(p=='larger')v=Math.min(1.15,v*1.1)}v=Math.round(v*100)/100;if(v==z)return;z=window.lvZ=v;d.style.zoom=v==1?'':v;d.style.setProperty('--z',v);return 1}function g(){f()&&dispatchEvent(new Event('resize'))}f();window.lvZoom=g;addEventListener('resize',function(){q||(q=requestAnimationFrame(function(){q=0;g()}))})})()</script>
 <title>Sign in · LaunchVault</title>
 <meta name="description" content="Sign in to your LaunchVault account.">
 <meta property="og:image" content="https://www.launchvault.ca/assets/covers/postiz.png">
@@ -51,7 +52,7 @@
 <main id="main">
 <style>@media (min-width:1100px){body:has(.welcome) .lvc{right:auto;left:20px}}.welcome #clerkui{max-width:100%;overflow:visible;margin-top:16px}@media (max-width:600px){body:has(.lvc:not([hidden])) main>section.welcome{padding-bottom:180px}}
 .gkey{margin-top:16px;border-top:1px solid #E5E7EB;padding-top:4px}
-.gkey summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;cursor:pointer;list-style:none;font:600 14px var(--fd);color:#1D4ED8;border-radius:8px}
+.gkey summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;cursor:pointer;list-style:none;font:600 max(14px,calc(12px/var(--z,1))) var(--fd);color:#1D4ED8;border-radius:8px}
 .gkey summary::-webkit-details-marker{display:none}
 .gkey summary svg{flex:none;transition:transform .25s}.gkey[open] summary svg{transform:rotate(180deg)}
 .gkey summary:hover{color:#1E40AF}.gkey summary:focus-visible{outline:2px solid #2563EB;outline-offset:2px}
@@ -60,9 +61,9 @@
 .welcome .gkr:focus-within{border-color:#2563EB;box-shadow:0 0 0 3px rgba(37,99,235,.18)}
 .welcome .gkr input{flex:1 1 auto;width:100%;min-width:0;height:100%;min-height:0;margin:0;padding:0;border:0;outline:0;background:transparent;box-shadow:none;font:500 15px var(--fn);letter-spacing:.06em;text-transform:uppercase;color:#0B1220}
 .welcome .gkr input::placeholder{text-transform:none;letter-spacing:0;color:#6B7280}
-.welcome .gkr .btn{flex:none;width:auto;height:40px;min-height:40px;margin:0;padding:0 18px;border-radius:9px;font-size:14px}
+.welcome .gkr .btn{flex:none;width:auto;height:40px;min-height:40px;margin:0;padding:0 18px;border-radius:9px;font-size:max(14px,calc(12px/var(--z,1)))}
 .gkey.bad .gkr{border-color:#DC2626}
-.gke{margin-top:8px;font-size:13px;color:#B91C1C}
+.gke{margin-top:8px;font-size:max(13px,calc(12px/var(--z,1)));color:#B91C1C}
 @media (prefers-reduced-motion:reduce){.gkey summary svg,.welcome .gkr{transition:none}}</style>
 <section class="welcome" data-mode="signin">
   <a class="wl-back" href="/">Back to the homepage</a>
