@@ -1,5 +1,5 @@
 // Site streak (spacefs-style): thousands of tiny red-to-orange particles drifting along an S-shaped wave.
-// One fixed full-screen canvas behind all light sections, plus section canvases inside dark sections and the footer.
+// One fixed full-screen canvas behind the light sections only; dark sections and the footer cover it.
 (() => {
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches, small = innerWidth < 760, LANES = 34;
   const A = [225, 29, 72], B = [255, 138, 0], CQ = 16, AQ = 10, STY = [];             // #E11D48 -> #FF8A00, pre-built colour x alpha styles
@@ -45,13 +45,5 @@
   const bg = make("streak"); document.body.prepend(bg);
   const kickBg = wave(bg, () => [innerWidth, innerHeight], small ? 11000 : 36000, bgLive); kickBg();
   addEventListener("scroll", kickBg, { passive: true });
-
-  // Dark sections (.dk) and footer have opaque #0B1020 backgrounds; give each its own wave layer so the streak never vanishes on dark blocks
-  for (const el of document.querySelectorAll(".dk, footer.foot")) {
-    const sc = make(el.tagName === "FOOTER" ? "streak-foot" : "streak-dk");
-    el.prepend(sc);
-    let seen = false;
-    const kick = wave(sc, () => [el.clientWidth || innerWidth, el.clientHeight || innerHeight], small ? 6000 : 20000, () => seen);
-    new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) kick(); }).observe(el);
-  }
+  // Dark sections (.dk) and the footer are opaque, so they cover the wave: dots show on light sections only (owner's call).
 })();
