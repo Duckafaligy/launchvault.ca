@@ -153,7 +153,7 @@
     list.insertAdjacentHTML("beforebegin", `<div class="mstep" role="group" aria-label="Step through the moves"><button type="button" class="ms-b" data-d="-1" aria-label="Previous move">${tri("M7 1 2 5l5 4z")}Prev</button><span class="ms-t" aria-live="polite"></span><button type="button" class="ms-b" data-d="1" aria-label="Next move">Next${tri("M3 1l5 4-5 4z")}</button>${reduce ? "" : '<button type="button" class="ms-play" aria-pressed="false">Auto-play</button>'}</div>`);
     const ms = list.previousElementSibling, [pv, nx] = ms.querySelectorAll(".ms-b"), tx = ms.querySelector(".ms-t"), pl = ms.querySelector(".ms-play"), N = api.N;
     let auto = 0;
-    const sync = () => { const i = api.cur(), t = i < 0 ? `${N} moves · press Next to step through` : `Move ${i + 1} of ${N} · ${M[i].when.replace(/ /g, " ")}`, f = document.activeElement;
+    const sync = () => { const i = api.cur(), t = i < 0 ? `${N} moves · tap Next` : `Move ${i + 1} of ${N} · ${M[i].when.replace(/ /g, " ")}`, f = document.activeElement;
       if (tx.textContent !== t) tx.textContent = t; pv.disabled = i <= 0; nx.disabled = i >= N - 1;
       if (f === nx && nx.disabled && !pv.disabled) pv.focus(); else if (f === pv && pv.disabled && !nx.disabled) nx.focus(); };
     const stop = () => { if (!auto) return; clearInterval(auto); auto = 0; pl.setAttribute("aria-pressed", "false"); pl.textContent = "Auto-play"; };
