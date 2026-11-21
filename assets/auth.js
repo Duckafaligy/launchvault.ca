@@ -87,9 +87,11 @@ window.LVAuth = (() => {
       const e = email(); if (!bar) return;
       bar.innerHTML = !LV_AUTH ? "Preview: accounts open soon. Your progress stays on this device."
         : e ? `Signed in as <b>${e.replace(/</g, "")}</b> <button type="button" id="soBtn">Sign out</button>`
-        : guest ? `<b>Guest view.</b> You're in with a key, so nothing is saved to an account. <a href="/welcome/#signup">Create an account</a>`
+        : guest ? `<b>Guest view.</b> You're in with a key, so nothing is saved to an account. <a href="/welcome/#signup">Create an account</a> <button type="button" id="gxBtn">Exit guest view</button>`
             : `Your progress is saved on this device. <a href="/welcome/">Sign in</a> to keep it everywhere.`;
       const so = document.getElementById("soBtn"); if (so) so.addEventListener("click", signOut);
+      const gx = document.getElementById("gxBtn");
+      if (gx) gx.addEventListener("click", () => { try { localStorage.removeItem("lv-judge"); } catch {} location.href = "/welcome/#signin"; });
       document.querySelectorAll("[data-auth-email]").forEach(n => { n.textContent = e || "Not signed in"; });
       document.querySelectorAll("[data-auth-out]").forEach(n => { n.hidden = !e; });
     };
