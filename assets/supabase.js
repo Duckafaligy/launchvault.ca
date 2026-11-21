@@ -36,11 +36,16 @@ window.LVSync = (() => {
       const local = ls.get(c.key) || []; const merged = c.items.map((_, i) => !!local[i] || r.ticks.includes(i + 1)); ls.set(c.key, merged);   // merge, never lose a tick
       const rd = ls.get("lv-read-" + c.slug) || {}; if ((r.read_pct || 0) > (rd.pct || 0)) ls.set("lv-read-" + c.slug, {...rd, pct: r.read_pct}); });
   };
+  // paid plan (written only by the stripe-webhook Edge Function): app.js listens for "lv:plan" and unlocks Pro like the judge pass
+  const plan = async () => { if (!sb) return;
+    const {data, error} = await sb.from("plans").select("plan,billing,status").maybeSingle(); if (error) return;
+    ls.set("lv-plan", data ? {...data, t: Date.now()} : null); dispatchEvent(new CustomEvent("lv:plan", {detail: data})); };
   const start = async clerk => {
     if (!clerk || !clerk.user) return;
     try {
       await loadLib();
       sb = window.supabase.createClient(URL, KEY, {accessToken: async () => (await clerk.session.getToken()) || null});
+      plan().catch(() => {});
       await pull(); dispatchEvent(new Event("storage"));   // repaint with what came from the account (no push loop)
       await push(clerk);
       addEventListener("lv:changed", () => { clearTimeout(start.t); start.t = setTimeout(() => push(clerk).catch(() => {}), 800); });
@@ -51,5 +56,5 @@ window.LVSync = (() => {
   };
   // community chat (assets/community.js) gets its own client with the same Clerk token; same under-13 rule applies (the age gate already blocked them)
   const make = async clerk => { await loadLib(); return window.supabase.createClient(URL, KEY, {accessToken: async () => (await clerk.session.getToken()) || null}); };
-  return {start, make};
+  return {start, make, plan};
 })();

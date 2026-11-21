@@ -1245,6 +1245,11 @@ html.gated body{background:var(--alt)}
 .plan2.dev .pbadge{background:#F1EEFF;color:#5B21B6}
 .plan2.dev .pfeats li::before{background-color:#F1EEFF;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9.4l2.6 2.6L13 6.6' fill='none' stroke='%235B21B6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
 .plan2.dev .pact .btn{background:#F1F5F9;color:var(--text);cursor:default}
+/* Stripe buttons (shown only when payments are set up): real actions look like actions; the judge link steps back beside "Choose Pro" */
+.plan2.dev .pact button.btn{background:#5B21B6;color:#fff;cursor:pointer}.plan2.dev .pact button.btn:hover{background:#4C1D95}
+.plan2.pro .pact [data-buy]:not([hidden])~[data-jfocus]{background:transparent;color:#F8FAFC;box-shadow:inset 0 0 0 1px #475569}
+.plan2.pro .pact [data-buy]:not([hidden])~[data-jfocus]:hover{background:rgba(148,163,184,.14)}
+.pact button.btn[disabled]{opacity:.7;cursor:progress}
 @media (max-width:1180px) and (min-width:901px){.plans{grid-template-columns:1fr}}
 /* reader readability: a comfortable measure and clear rhythm between story, number box and lesson */
 .ptl .body{max-width:65ch}

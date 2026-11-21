@@ -77,7 +77,7 @@ window.LVAuth = (() => {
     const c = await load();
     await c.handleRedirectCallback({signInForceRedirectUrl: "/app/", signUpForceRedirectUrl: "/app/start/", signInUrl: "/welcome/", signUpUrl: "/welcome/#signup"});
   };
-  const signOut = async () => { if (!live) return; const c = await load(); await c.signOut({redirectUrl: "/welcome/"}); };
+  const signOut = async () => { if (!live) return; try { localStorage.removeItem("lv-plan"); } catch {} const c = await load(); await c.signOut({redirectUrl: "/welcome/"}); };
   // app pages: show who is signed in (email only); only redirect when the wall is on
   const app = async () => {
     const bar = document.getElementById("prevbar"), guest = lvGuest(), wall = LV_GATE && live && !guest;

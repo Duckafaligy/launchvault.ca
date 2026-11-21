@@ -572,17 +572,78 @@
   const urlJ = new URLSearchParams(location.search).get("judge");
   const urlHit = false;
   if (urlJ !== null) { const u = new URL(location.href); u.searchParams.delete("judge"); try { history.replaceState(null, "", u.pathname + u.search + u.hash); } catch {} }   // strip old ?judge= links; they no longer unlock anything
+  // paid plan = the account's public.plans row (cached as lv-plan by supabase.js; written only by the stripe-webhook function)
+  const paidRow = () => { const p = ls.get("lv-plan"); return p && (p.plan === "pro" || p.plan === "builder") && (p.status === "active" || p.status === "trialing") ? p : null; };
+  const paidName = p => p.plan === "pro" ? "Pro" : p.billing === "lifetime" ? "Lifetime" : "Developer";
+  // a paid plan unlocks Pro content exactly like the judge pass; the judge view keeps its own label
   const syncJudge = () => {
-    const on = ls.get("lv-judge") === JCODE;
+    const j = ls.get("lv-judge") === JCODE, p = paidRow(), on = j || !!p, name = j ? "Judge pass" : p ? paidName(p) : "";
     $$('[data-locked="1"]').forEach(el => { el.hidden = !on; });
     $$(".gatewrap, #gate").forEach(el => { el.hidden = on; });
-    $$("[data-plan]").forEach(el => { el.textContent = on ? "Judge pass" : "Free plan"; });
+    $$("[data-plan]").forEach(el => { el.textContent = j ? name : on ? name + " plan" : "Free plan"; });
     $$("[data-upg]").forEach(el => { el.textContent = on ? "Manage" : "Upgrade"; });
-    $$("[data-plan-chip]").forEach(el => { el.textContent = on ? "Judge pass" : "Free"; });
+    $$("[data-plan-chip]").forEach(el => { el.textContent = on ? name : "Free"; });
     $$("[data-plan-sm]").forEach(el => { el.hidden = on; });
-    $$("[data-judge-off]").forEach(el => { el.hidden = !on; });
+    $$("[data-judge-off]").forEach(el => { el.hidden = !j; });
     $$(".jcard form[data-judge]").forEach(el => { el.hidden = on; });
+    $$(".jcard").forEach(el => { el.hidden = !j && !!p; });   // paying members don't need the judge code box
+    syncPay();
   };
+
+  // ---------- payments: Stripe Checkout + customer portal through Supabase Edge Functions (db/supabase/functions/billing-*) ----------
+  // Honest by default: buttons only appear when the function says that price is set up; otherwise "Payments open soon" stays.
+  const FN = SB_URL + "/functions/v1/";
+  let payCfg = null;   // {"pro:monthly": true, ...} from GET billing-checkout; null = not set up or unreachable
+  const signedIn = () => !!(window.LVAuth && LVAuth.email && LVAuth.email());
+  const yearly = () => !!$('[data-bill="y"][aria-pressed="true"]');
+  const minor = () => ["13 to 15", "16 to 17"].includes(ls.get("lv-age"));
+  function syncPay() {
+    if (!$("[data-paynote]")) return;
+    const j = ls.get("lv-judge") === JCODE, p = j ? null : paidRow(), y = yearly() ? "yearly" : "monthly";
+    const can = k => !j && !p && signedIn() && !!payCfg && !!payCfg[k];
+    const ok = {pro: can("pro:" + y), builder: can("builder:" + y), lifetime: can("lifetime:once")}, any = ok.pro || ok.builder || ok.lifetime;
+    $$("[data-buy]").forEach(b => { if (b.dataset.buy !== "lifetime") b.hidden = !ok[b.dataset.buy]; });
+    $$("[data-buywrap]").forEach(w => { w.hidden = !ok.lifetime; });
+    $$("[data-paysoon]").forEach(s => { const k = s.dataset.paysoon; s.hidden = !!p || (k === "parent" ? any : ok[k]); });
+    $$("[data-paylive]").forEach(s => { s.hidden = !any; });
+    $$("[data-portal]").forEach(b => { b.hidden = !p || p.plan !== b.dataset.portal; });
+    $$(".plan2[data-tier]").forEach(c => { const t = c.dataset.tier, cur = p ? p.plan === t : t === "free", bd = $("[data-badge]", c);
+      c.classList.toggle("cur", cur); bd.dataset.orig = bd.dataset.orig || bd.textContent;
+      bd.textContent = p && cur ? (p.billing === "lifetime" ? "Lifetime" : "Current plan") : bd.dataset.orig; bd.hidden = (t === "free" && !!p) || (t === "builder" && !cur && ok.builder); });
+    $$("[data-freestat]").forEach(s => { s.hidden = !!p; });
+    $$(".plan2.pro [data-jfocus]").forEach(a => { a.hidden = !!p; });
+    $("[data-paynote]").textContent = p ? `You're on ${paidName(p)}${p.billing === "lifetime" ? "" : ", billed " + p.billing}. Change or cancel any time with Manage billing.`
+      : any ? "Pay securely through Stripe. Cancel any time." : "Payments open soon. Nothing to pay yet.";
+    $("[data-paynote2]").textContent = p || any ? "Payments run through Stripe and receipts go to whoever pays." : "Payments will run through Stripe and receipts go to whoever pays. Nothing can be bought yet.";
+  }
+  if ($("[data-paynote]")) {
+    const cfg = () => { if (cfg.p || !signedIn()) return; cfg.p = fetch(FN + "billing-checkout").then(r => r.ok ? r.json() : null).then(d => { payCfg = d && d.configured || null; syncPay(); }).catch(() => {}); };
+    if (window.LVAuth && LVAuth.live) LVAuth.load().then(() => { cfg(); syncPay(); }).catch(() => {});
+    addEventListener("lv:plan", () => cfg());   // the account sync is running, so someone is signed in
+    document.addEventListener("click", e => { if (e.target.closest("[data-bill]")) syncPay(); });
+    document.addEventListener("click", async e => {
+      const b = e.target.closest("[data-buy], [data-portal]"); if (!b || b.disabled) return;
+      const label = b.textContent; b.disabled = true; b.textContent = "Opening Stripe…";
+      const fail = t => { toast(t); b.disabled = false; b.textContent = label; };
+      try {
+        const c = await LVAuth.load(), tok = c && c.session ? await c.session.getToken() : null;
+        if (!tok) return fail("Sign in again to continue. Nothing was charged.");
+        const r = await fetch(FN + (b.dataset.buy ? "billing-checkout" : "billing-portal"), {method: "POST", headers: {Authorization: "Bearer " + tok, "Content-Type": "application/json"},
+          body: JSON.stringify(b.dataset.buy ? {plan: b.dataset.buy, billing: yearly() ? "yearly" : "monthly", parent_pays: minor()} : {})});
+        const d = await r.json().catch(() => ({}));
+        if (d.url) { location.href = d.url; return; }
+        if (d.error === "payments_not_configured") { payCfg = null; syncPay(); return fail("Payments open soon. Nothing was charged."); }
+        if (d.error === "already_subscribed") { if (window.LVSync) LVSync.plan().catch(() => {}); return fail("You already have a plan. Use Manage billing to change it."); }
+        fail("Couldn't reach Stripe. Nothing was charged. Try again in a minute.");
+      } catch { fail("Couldn't reach Stripe. Nothing was charged. Try again in a minute."); }
+    });
+    // back from Stripe: the webhook writes the plan a moment later, so re-read it a few times
+    const ck = new URLSearchParams(location.search).get("checkout");
+    if (ck) { try { history.replaceState(null, "", location.pathname + location.hash); } catch {}
+      if (ck === "success") { toast("Payment received. Your plan updates in a few seconds.");
+        let n = 0; const poll = () => { if (paidRow() || ++n > 6) return; if (window.LVSync) LVSync.plan().catch(() => {}); setTimeout(poll, 3000); }; setTimeout(poll, 1500); } }
+  }
+  addEventListener("lv:plan", () => { syncJudge(); renderAll(); });
   $$("form[data-judge]").forEach(f => f.addEventListener("submit", e => {
     e.preventDefault();
     const inp = $("input[name=code]", f), err = $(".jerr", f), v = (inp ? inp.value : "").trim().toUpperCase();
