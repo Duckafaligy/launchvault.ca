@@ -1701,3 +1701,7 @@ dialog.rdlg[open]{transform:none;opacity:1}
 dialog.lfs::backdrop,dialog.rdlg::backdrop{transition:background-color .25s ease,overlay .25s allow-discrete,display .25s allow-discrete}
 @starting-style{dialog.lfs[open]::backdrop,dialog.rdlg[open]::backdrop{background-color:rgba(11,18,32,0)}}
 @media (prefers-reduced-motion:reduce){dialog.lfs,dialog.rdlg,dialog.lfs::backdrop,dialog.rdlg::backdrop{transition:none}}
+/* F13 story section strip: the blue pill slides between sections */
+.snav:not(.anavm) .snav-in .lvind{background:var(--brand);border-radius:999px}
+.snav:not(.anavm) .snav-in.has-ind a.on{background:none;border-color:transparent}
+.snav:not(.anavm) .snav-in.has-ind a{transition:color .2s ease,border-color .2s ease}

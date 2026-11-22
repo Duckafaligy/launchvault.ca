@@ -20,6 +20,7 @@
     ind.style.transform = `translate(${a.offsetLeft}px, ${a.offsetTop}px)`;
     if (ind.style.transition === "none") requestAnimationFrame(() => requestAnimationFrame(() => { ind.style.transition = ""; }));
   };
+  if (document.fonts) document.fonts.ready.then(() => GLIDE.forEach(([b, s]) => glide(b, s)));
   addEventListener("resize", () => { clearTimeout(glide.t); glide.t = setTimeout(() => GLIDE.forEach(([b, s]) => glide(b, s)), 120); }, {passive: true});
   const esc =s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
   // preference-type keys are only saved when cookie consent allows Preferences (necessary keys, like ticks you save, always are)
@@ -377,7 +378,9 @@
     if (innerWidth < 600) $$("details.ph", rd).forEach((d, i) => { if (i && !(location.hash === "#" + d.id)) d.open = false; });
     if (innerWidth < 600) $$("details.cow", rd).forEach(d => { if (location.hash !== "#" + d.id) d.open = false; });
     const hp = location.hash && document.getElementById(location.hash.slice(1)); if (hp && hp.tagName === "DETAILS") hp.open = true;
-    const nav = $(".snav-in"); let lastOn = null;
+    const nav = $(".snav-in"); let lastOn = null, gq = 0;
+    // the section pill slides along the strip as you read (another script moves .on; follow it once per frame)
+    if (nav) { requestAnimationFrame(() => glide(nav, "a.on")); if (document.fonts) document.fonts.ready.then(() => glide(nav, "a.on")); addEventListener("load", () => glide(nav, "a.on")); addEventListener("scroll", () => { if (!gq) gq = requestAnimationFrame(() => { gq = 0; glide(nav, "a.on"); }); }, {passive: true}); }
     addEventListener("scroll", () => { const on = nav && $("a.on", nav); if (on && on !== lastOn) { lastOn = on; nav.scrollTo({left: on.offsetLeft - nav.clientWidth / 2 + on.clientWidth / 2, behavior: reduce ? "auto" : "smooth"}); } }, {passive: true});
   }
   // "Mark as read": one click logs the story complete in lv-done-<slug>; click again to undo. No quiz.
