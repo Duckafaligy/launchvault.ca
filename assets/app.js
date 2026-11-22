@@ -507,10 +507,17 @@
     const so = $("#so"); if (so && window.LVAuth) so.addEventListener("click", () => LVAuth.signOut());
     const nav = $$(".anav a, .anavm a"), strip = $(".anavm .snav-in");
     // the section in view is highlighted in both navs; at the very bottom the last section wins (it may never reach the top)
-    const spy = () => { const H = ["#profile", "#prefs", "#plan", "#parent", "#email", "#data"]; let cur = H[0]; H.forEach(h => { const t = document.querySelector(h); if (t && !t.hidden && t.getBoundingClientRect().top < 160) cur = h; });
-      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = H.at(-1);
-      nav.forEach(a => { const on = a.getAttribute("href") === cur; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); });
+    const H = ["#profile", "#prefs", "#plan", "#parent", "#email", "#data"];
+    const mark = cur => { nav.forEach(a => { const on = a.getAttribute("href") === cur; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); });
       const on = strip && $("a.on", strip); if (on && strip.scrollWidth > strip.clientWidth) strip.scrollTo({left: on.offsetLeft - 16}); };
+    // a section counts as current once its top passes ~a third of the window (a jump lands it just under the top bar, never exactly at 0)
+    let lock = 0;
+    const spy = () => { if (Date.now() < lock) return; const line = Math.max(200, innerHeight * 0.35); let cur = H[0];
+      H.forEach(h => { const t = document.querySelector(h); if (t && !t.hidden && t.getBoundingClientRect().top < line) cur = h; });
+      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = H.at(-1);
+      mark(cur); };
+    // a click highlights its own tab straight away and holds it while the page scrolls there
+    nav.forEach(a => a.addEventListener("click", () => { mark(a.getAttribute("href")); lock = Date.now() + 1200; }));
     let spyQ = 0; addEventListener("scroll", () => { if (!spyQ) spyQ = requestAnimationFrame(() => { spyQ = 0; spy(); }); }, {passive: true}); spy();   // once per frame, not per scroll event
   }
 
