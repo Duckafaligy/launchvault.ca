@@ -6,7 +6,20 @@
   if (!window.LVGate || !LVGate.ok) { if (window.LVAuth) LVAuth.app(); return; }
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  // glide: one shared highlight that slides to the active item of a tab row / segmented control (app.css .lvind).
+  // The first placement doesn't animate; later ones slide. Re-placed on resize.
+  const GLIDE = new Set();
+  const glide = (box, sel = ".on, [aria-pressed=\"true\"], [aria-checked=\"true\"][role=\"radio\"]") => {
+    if (!box) return; let ind = box.querySelector(":scope > .lvind");
+    if (!ind) { ind = document.createElement("span"); ind.className = "lvind"; ind.setAttribute("aria-hidden", "true"); ind.style.transition = "none"; box.prepend(ind); box.classList.add("has-ind"); GLIDE.add([box, sel]); }
+    const a = [...box.querySelectorAll(sel)].find(x => x.parentElement === box || x.parentElement.parentElement === box);
+    if (!a || !a.offsetWidth) { ind.style.opacity = "0"; return; }
+    ind.style.opacity = "1"; ind.style.width = a.offsetWidth + "px"; ind.style.height = a.offsetHeight + "px";
+    ind.style.transform = `translate(${a.offsetLeft}px, ${a.offsetTop}px)`;
+    if (ind.style.transition === "none") requestAnimationFrame(() => requestAnimationFrame(() => { ind.style.transition = ""; }));
+  };
+  addEventListener("resize", () => { clearTimeout(glide.t); glide.t = setTimeout(() => GLIDE.forEach(([b, s]) => glide(b, s)), 120); }, {passive: true});
+  const esc =s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
   // preference-type keys are only saved when cookie consent allows Preferences (necessary keys, like ticks you save, always are)
   const PREF = new Set(["lv-lib", "lv-pathnote"]);
   const prefOK = () => { try { if (window.LVConsent) return LVConsent.allowed("preferences"); const c = JSON.parse(localStorage.getItem("lv-consent")); return !!(c && c.preferences); } catch { return false; } };
@@ -502,7 +515,8 @@
     // the section in view is highlighted in both navs; at the very bottom the last section wins (it may never reach the top)
     const H = ["#profile", "#prefs", "#plan", "#email", "#data"];
     const mark = cur => { nav.forEach(a => { const on = a.getAttribute("href") === cur; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); });
-      const on = strip && $("a.on", strip); if (on && strip.scrollWidth > strip.clientWidth) strip.scrollTo({left: on.offsetLeft - 16}); };
+      const on = strip && $("a.on", strip); if (on && strip.scrollWidth > strip.clientWidth) strip.scrollTo({left: on.offsetLeft - 16, behavior: reduce ? "auto" : "smooth"});
+      glide($(".acc .anav"), "a.on"); glide(strip, "a.on"); };
     // a section counts as current once its top passes ~a third of the window (a jump lands it just under the top bar, never exactly at 0)
     let lock = 0;
     const spy = () => { if (Date.now() < lock) return; const line = Math.max(200, innerHeight * 0.35); let cur = H[0];
@@ -690,6 +704,10 @@
   });
 
   syncJudge(); if (urlHit) toast("Judge pass on. All 10 breakdowns are unlocked in this browser."); syncChecklists(); renderAll();
+
+  // segmented controls: the white chip slides to the pressed button (handlers set aria-pressed first, so place it a frame later)
+  $$(".seg").forEach(s => glide(s, '[aria-pressed="true"]'));
+  document.addEventListener("click", e => { const s = e.target.closest(".seg"); if (s) requestAnimationFrame(() => glide(s, '[aria-pressed="true"]')); });
 
   // scroll reveal: blocks that start below the fold fade up as they come into view (app.css .rv/.in). Nothing above the fold is
   // touched, so a slow or failed script never hides what's on screen; reduced motion skips it.
