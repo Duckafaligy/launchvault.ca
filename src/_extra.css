@@ -332,3 +332,5 @@ main .dk .lede{background:none;box-shadow:none}
 #win :is(#pband button,#wcrumb button,.side .si,.splan a,.sd-h button){position:relative}
 #win :is(#pband button,#wcrumb button,.side .si,.splan a,.sd-h button)::after{content:"";position:absolute;inset:-5px -2px}
 .mk.v,.n.v{background:#047857!important;border-color:#047857!important}
+/* blog byline: the homepage preview also uses .pmeta (_hero.css), which turned this row into one run-on line ("LaunchVault6 min readNov 17 2026") */
+.phero .pmeta{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:20px;font-size:max(14px,calc(12px/var(--z,1)));color:var(--muted)}
