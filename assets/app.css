@@ -1646,3 +1646,4 @@ main .card .card{box-shadow:none}
 .cm-load,.as-wait,.skl{color:transparent!important;user-select:none;background-repeat:no-repeat}
 .cm-load,.as-wait{min-height:132px;margin:0;padding:24px!important;background-image:linear-gradient(#E9EDF2,#E9EDF2),linear-gradient(#EEF1F5,#EEF1F5),linear-gradient(#EEF1F5,#EEF1F5),linear-gradient(#E9EDF2,#E9EDF2),linear-gradient(#EEF1F5,#EEF1F5);background-size:36px 36px,46% 12px,72% 12px,36px 36px,58% 12px;background-position:24px 24px,72px 28px,72px 48px,24px 84px,72px 96px;border-radius:12px}
 .skl{display:block;width:60%;height:12px;margin-top:6px;border-radius:6px;background:#EEF1F5}
+.lsearch:focus-within{box-shadow:0 0 0 3px rgba(37,99,235,.28)}
