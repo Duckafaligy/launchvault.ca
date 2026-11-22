@@ -495,7 +495,7 @@
           ? notes.map((n, i) => `<div class="prefn"><span>${esc(n)}</span><button class="tl" type="button" data-rmnote="${i}" aria-label="Remove: ${esc(n)}">Remove</button></div>`).join("")
             + `<div class="prefa"><button class="tl" type="button" data-clrnotes>Clear all</button></div>`
           : `<p class="prefe">Nothing saved from chats yet. Tell <a href="/app/assistant/">Ask LaunchVault</a> about your project and it keeps the useful parts here.</p>`; };
-        box.addEventListener("click", e => { const r = e.target.closest("[data-rmnote]"); if (r) return save(notes.filter((_, i) => i !== +r.dataset.rmnote));
+        box.addEventListener("click", e => { const r = e.target.closest("[data-rmnote]"); if (r) { const i = +r.dataset.rmnote; r.closest(".prefn").classList.add("bye"); return setTimeout(() => save(notes.filter((_, j) => j !== i)), reduce ? 0 : 180); }
           if (e.target.closest("[data-clrnotes]") && confirm("Clear everything Ask LaunchVault remembers?")) save([]); });
         const {data} = await sb.from("profiles").select("assistant_notes").eq("user_id", c.user.id).maybeSingle();
         notes = (data && data.assistant_notes) || []; draw();

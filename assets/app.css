@@ -1624,3 +1624,11 @@ details[open]::details-content{height:auto}
 .avm{transform-origin:top right;transition:opacity .15s ease,transform .16s var(--out),display .16s allow-discrete}
 .avm[hidden]{display:none;opacity:0;transform:translateY(-4px) scale(.98)}
 @media (prefers-reduced-motion:reduce){.avm{transition:none}}
+/* ---- A8 ticks and list changes ---- */
+.ck .bx{transition:background-color .18s ease,box-shadow .18s ease,transform .12s ease}
+.ck:active .bx{transform:scale(.9)}
+.ck .bx svg{opacity:1}.ck .bx svg path{stroke-dasharray:22;stroke-dashoffset:22;transition:stroke-dashoffset .28s var(--out) .04s}
+.ck[aria-checked=true] .bx svg path{stroke-dashoffset:0}
+.ck .ct{transition:color .2s ease}
+.prefn{transition:opacity .18s ease,transform .18s ease}.prefn.bye{opacity:0;transform:translateX(10px)}
+@media (prefers-reduced-motion:reduce){.ck .bx svg path{transition:none}}
