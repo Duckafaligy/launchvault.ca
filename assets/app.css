@@ -1632,3 +1632,6 @@ details[open]::details-content{height:auto}
 .ck .ct{transition:color .2s ease}
 .prefn{transition:opacity .18s ease,transform .18s ease}.prefn.bye{opacity:0;transform:translateX(10px)}
 @media (prefers-reduced-motion:reduce){.ck .bx svg path{transition:none}}
+/* A9: the plan/judge bar keeps one height whatever it says (its button used to grow it after load = layout shift); tap area stays >= 32 px */
+.prev{min-height:40px}
+.prev a,.prev button{min-height:0!important;padding-block:7px;margin-block:-7px}

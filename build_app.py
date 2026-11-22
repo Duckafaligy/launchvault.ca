@@ -265,7 +265,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
   <div class="foot"><div class="plan" data-state="free"><div class="pl-h"><span class="pl-ok" aria-hidden="true"><svg viewBox="0 0 16 16" width="12" height="12"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="pl-n" data-plan>Free plan</span></div><p class="pl-v">Unlock every phase of every breakdown.</p><p class="pl-p">From $6.49/mo billed yearly</p><a href="/app/account/#plan" data-upg>Upgrade to Pro</a></div><a class="si" href="/app/account/"{cur("acct")}>{"<span class=\"sion\" aria-hidden=\"true\"></span>" if active == "acct" else ""}{ic(I["acct"])}<span class="t">Account</span></a></div>
 </aside>
 <div class="main">
-  <div class="prev" id="prevbar" role="status">Preview: accounts open soon. Your progress stays on this device.</div>
+  <div class="prev" id="prevbar" role="status">&nbsp;</div>
   <header class="top">
     {f'<a class="mback" href="{crumbs[0][0]}" aria-label="Back to {esc(crumbs[0][1])}">' + ic(I["back"], 22) + '</a>' if crumbs else ""}<a class="mlogo" href="/app/" aria-label="LaunchVault app home">{LV}</a>
     <div class="ttl">{ttl}</div>
