@@ -33,15 +33,19 @@
     const S = D.series, pts = S.points.map(p => ({x: mi(p[0]), v: p[1], l: p[2] || S.label, s: p[3] || "", d: ((S.kind || {})[p[0]] ? S.kind[p[0]] + " · " : "") + ((S.point_dates || {})[p[0]] || mlab(mi(p[0]))), k: (S.kind || {})[p[0]]}));
     const alt = (S.alt || []).map(p => ({x: mi(p[0]) + .4, v: p[1], l: p[2] || "Sources differ", s: p[3] || "", d: mlab(mi(p[0])) + ", second source", alt: 1}));
     const x0 = Math.min(S.start ? mi(S.start) : Infinity, pts[0].x), x1 = pts.at(-1).x;
-    // only moves inside the chart's months get an axis marker (earlier moves stay in the list)
-    const moves = (D.moves || []).map((m, i) => ({...m, i, x: m.at ? mi(m.at) : NaN})).filter(m => m.x >= x0 && m.x <= x1);
-    const before = (D.moves || []).filter(m => m.w === "before").length;   // moves dated before the first month: counted at the left edge, listed below
+    // every move gets a marker: moves inside the chart's months sit on their month; earlier moves (before the revenue data)
+    // sit in order in a shaded "before the numbers" stretch at the left, so stepping through the moves walks the whole story
+    const moves = (D.moves || []).map((m, i) => ({...m, i, x: m.at ? Math.min(mi(m.at), x1) : NaN}));   // a move after the last data point sits at the right edge
+    const preM = moves.filter(m => !(m.x >= x0)); preM.forEach((m, k) => { m.pre = true; m.k = k; });
+    const before = preM.length;
     const top = nice(Math.max(...pts.map(p => p.v), ...alt.map(p => p.v)) * 1.05);
     let G = null, cur = -1, pinned = null, glide = false, tw = 0;
     const turnI = (moves.find(m => m.turn) || {i: -1}).i;   // the move shown when nothing is pinned (-1: show the latest point)
     const draw = () => { cancelAnimationFrame(tw);
-      const W = Math.max(280, plot.clientWidth), narrow = W < 560, H = narrow ? 230 : 300, L = 48, R = 12, T = 30, B = moves.length || before ? 54 : 30;
-      const X = x => L + (x - x0) / Math.max(1, x1 - x0) * (W - L - R), Y = v => T + (1 - v / top) * (H - T - B);
+      const W = Math.max(280, plot.clientWidth), narrow = W < 560, H = narrow ? 230 : 300, L = 48, R = 12, T = 30, B = moves.length ? 54 : 30;
+      const BW = before ? Math.min(narrow ? 22 * before + 8 : 150, Math.max(56, before * (narrow ? 22 : 30) + 8), W * .34) : 0, L2 = L + BW;   // the before stretch
+      const X = x => L2 + (x - x0) / Math.max(1, x1 - x0) * (W - L2 - R), Y = v => T + (1 - v / top) * (H - T - B);
+      const PX = m => L + (m.k + .5) * (BW - 8) / before;
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("height", H); svg.innerHTML = "";
       const defs = el("defs", {}, svg);
       const gr = el("linearGradient", {id: "lvcg", x1: 0, x2: 0, y1: 0, y2: 1}, defs);
@@ -55,8 +59,10 @@
       el("text", {x: X(x0), y: H - 4, "text-anchor": "start", class: "ax"}, svg).textContent = mlab(x0);
       if (x1 > x0) el("text", {x: X(x1), y: H - 4, "text-anchor": "end", class: "ax"}, svg).textContent = mlab(x1);
       for (let y = Math.ceil(x0 / 12) * 12; y <= x1; y += 12) if (X(y) - X(x0) > 110 && X(x1) - X(y) > 110) el("text", {x: X(y), y: H - 4, "text-anchor": "middle", class: "ax"}, svg).textContent = narrow ? String(y / 12) : "Jan " + y / 12;
-      if (before) { const g = el("g", {class: "bf", "aria-hidden": "true"}, svg); el("rect", {x: L, y: H - B + 8, width: 34, height: 18, rx: 4}, g);
-        el("text", {x: L + 17, y: H - B + 21, "text-anchor": "middle"}, g).textContent = "← " + before; el("title", {}, g).textContent = `${before} move${before > 1 ? "s" : ""} before ${mlab(x0)}`; }
+      if (before) { const g = el("g", {class: "bfz", "aria-hidden": "true"}, svg); el("rect", {x: L, y: T, width: BW - 8, height: H - B - T, rx: 6}, g);
+        el("text", {x: L + (BW - 8) / 2, y: T + 15, "text-anchor": "middle", class: "bfl"}, g).textContent = narrow || BW < 110 ? "Before" : "Before the numbers";
+        el("line", {x1: L + 6, x2: L + BW - 14, y1: Y(0), y2: Y(0), class: "bfd"}, g);
+        if (BW >= 70) el("text", {x: L, y: H - 4, "text-anchor": "start", class: "ax"}, svg).textContent = preM[0].when; }
       if (S.empty_note && pts[0].x - x0 > 4 && !narrow) el("text", {x: X(x0) + 4, y: Y(0) - 8, class: "note"}, svg).textContent = S.empty_note;
       const P = pts.map(p => [X(p.x), Y(p.v)]), line = monotone(P);
       const fg = el("g", {mask: "url(#lvmask)"}, svg);
@@ -73,14 +79,14 @@
         if (p.k) el("text", {x: cx - (cy < 48 ? 12 : 8), y: cy < 48 ? cy + 4 : cy - 10, "text-anchor": "end", class: "ax kdl"}, fg).textContent = p.k; });
       const hl = el("circle", {r: 7, class: "hl"}, svg);
       const mks = moves.map((m, i) => { const g = el("g", {class: "mk" + (m.turn ? " turn" : ""), tabindex: "-1", "aria-hidden": "true"}, svg);
-        const cx = Math.min(Math.max(X(m.x), L + (before ? 48 : 9)), W - R - 9) + (moves[i - 1] && Math.abs(X(moves[i - 1].x) - X(m.x)) < 18 ? 9 : 0);
+        const cx = m.pre ? PX(m) : Math.min(Math.max(X(m.x), L2 + 9), W - R - 9) + (moves[i - 1] && !moves[i - 1].pre && Math.abs(X(moves[i - 1].x) - X(m.x)) < 18 ? 9 : 0);
         el("rect", {x: cx - 9, y: H - B + 8, width: 18, height: 18, rx: 4}, g); el("text", {x: cx, y: H - B + 21, "text-anchor": "middle"}, g).textContent = m.i + 1;
         g.addEventListener("pointerenter", () => showMove(i)); g.addEventListener("click", () => pin(m.i, true)); return g; });
-      const hit = el("rect", {x: L, y: T, width: W - L - R, height: H - B - T, fill: "transparent"}, svg);
+      const hit = el("rect", {x: L2, y: T, width: W - L2 - R, height: H - B - T, fill: "transparent"}, svg);
       hit.addEventListener("pointermove", ev => { const r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width;
         let b = 0; all.forEach((p, i) => { if (Math.abs(X(p.x) - mx) < Math.abs(X(all[b].x) - mx)) b = i; }); showPoint(all[b]); });
       hit.addEventListener("pointerleave", () => showDefault());
-      G = {X, Y, W, cross, hl, mks, area, ln, H, B, ms1, ms2, tsPill, tsRect, tsTxt};
+      G = {X, PX, Y, W, cross, hl, mks, area, ln, H, B, ms1, ms2, tsPill, tsRect, tsTxt};
       // the line is visible by default (print, screenshots, no IntersectionObserver); it only replays a draw-in once, when first scrolled into view
       if (!reduce && !root.dataset.drawn && "IntersectionObserver" in window) { root.dataset.drawn = 1;
         const io = new IntersectionObserver(es => { if (!es[0].isIntersecting) return; io.disconnect(); const l = G.ln, a = G.area, len = l.getTotalLength(); if (!len) return;
@@ -96,7 +102,7 @@
     const mark = (x, y, label) => { cancelAnimationFrame(tw);
       const hx = x, pm = pinned != null && moves.find(m => m.i === pinned);
       if (pinned != null && !pm) { G.hl.setAttribute("cx", x); G.hl.style.opacity = y == null ? 0 : 1; if (y != null) G.hl.setAttribute("cy", y); return; }   // pinned move sits before the chart: no line, no pill
-      if (pm) { x = G.X(pm.x); label = pm.when; }
+      if (pm) { x = pm.pre ? G.PX(pm) : G.X(pm.x); label = pm.when; }
       const fx = G.mx, fy = G.my; G.mx = x; G.my = y;
       if (!glide || reduce || fx == null || fx === x) return place(x, y, label, hx);
       const t0 = performance.now(), f = now => { const k = Math.min(1, (now - t0) / 360), e = 1 - (1 - k) ** 3, mx = fx + (x - fx) * e;
@@ -120,7 +126,7 @@
       if (hooks.move) hooks.move(i < 0 ? -1 : moves[i].i);
     };
     function showPoint(p) { mark(G.X(p.x), G.Y(p.v), p.d); activate(-1); setRO(money(p.v) + (S.unit || ""), p.d, chip(p.l) + " " + esc(p.s)); }
-    function showMove(i) { const m = moves[i], p = pts.find(q => q.x === m.x); mark(G.X(m.x), p ? G.Y(p.v) : null, m.when); activate(i);
+    function showMove(i) { const m = moves[i], p = !m.pre && pts.find(q => q.x === m.x); mark(m.pre ? G.PX(m) : G.X(m.x), p ? G.Y(p.v) : null, m.when); activate(i);
       setRO(`Move ${m.i + 1}`, esc(m.when), `<span style="color:#0B1220;font-weight:600">${esc(m.text)}</span> · ${esc(m.detail || "")} ${chip(m.label)}`); }
     // n indexes D.moves (the full list); moves before the chart's months only fill the readout
     function showN(n) { const k = moves.findIndex(m => m.i === n); if (k >= 0) return showMove(k); const m = (D.moves || [])[n]; if (!m) return;

@@ -91,3 +91,7 @@ table.sr{display:block}
 @media (max-width:720px){.readout{height:80px;white-space:normal;flex-wrap:wrap;align-content:center;row-gap:2px;padding:8px 12px}.readout .rd-s{flex-basis:100%;line-height:18px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}}
 @media (max-width:600px){.mstep .ms-play{flex:1 1 100%;margin-left:0}}
 .tspill text{font-family:"Inter Tight",system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+/* every move on the chart: the shaded "before the numbers" stretch for moves dated before the revenue data */
+.plot .bfz rect{fill:#F3F5F9}
+.plot .bfz .bfl{font:600 11px var(--fn);fill:#64748B;letter-spacing:.01em}
+.plot .bfz .bfd{stroke:#CBD5E1;stroke-width:1.5;stroke-dasharray:3 4}
