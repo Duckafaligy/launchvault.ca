@@ -20,7 +20,7 @@
     if (!ok) { m.textContent = "That email address doesn't look right. Check it and try again."; m.classList.add("on"); inp.setAttribute("aria-invalid", "true"); inp.focus(); return; }
     inp.removeAttribute("aria-invalid");
     try { localStorage.setItem("lv-email-sub", v); } catch {}
-    m.textContent = "Saved on this device. Emails start when sign-ups open."; m.classList.add("on", "ok");
+    m.textContent = "Saved on this device. We’ll email you when the weekly story starts."; m.classList.add("on", "ok");
   }); });
   // ?plan=pro|developer|builder(alias)|full on /signup/ shows the plan note; .pname (if present) gets the plan's name
   const plan = new URLSearchParams(location.search).get("plan"), pn = $("#plannote");
