@@ -1661,3 +1661,11 @@ main .card .card{box-shadow:none}
 .agef .opt2{margin-left:0}.agef .opt2:first-of-type{margin-left:54px}.agef>legend{margin-bottom:4px}
 @media (max-width:600px){.agef .opt2:first-of-type{margin-left:0}}
 .agef>p{flex-basis:100%;order:9;margin-top:6px}.agef>p:empty{display:none}
+/* F3 story header on phones: logo, name and Save share the top row; the description and pattern get the full width */
+@media (max-width:600px){
+  .sumc .rh{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"l c s" "w w w" "p p p";column-gap:12px;row-gap:6px;align-items:center}
+  .sumc .rhm{display:contents}
+  .sumc .rh .logo{grid-area:l}.sumc .rh .co{grid-area:c;margin:0}.sumc .rh .star{grid-area:s}
+  .sumc .rh .what:not(.pat){grid-area:w;margin:4px 0 0}.sumc .rh .pat{grid-area:p;margin:0}
+  .sumc .rh .logo.big img{width:40px;height:40px}
+}
