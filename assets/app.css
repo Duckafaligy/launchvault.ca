@@ -1647,3 +1647,9 @@ main .card .card{box-shadow:none}
 .cm-load,.as-wait{min-height:132px;margin:0;padding:24px!important;background-image:linear-gradient(#E9EDF2,#E9EDF2),linear-gradient(#EEF1F5,#EEF1F5),linear-gradient(#EEF1F5,#EEF1F5),linear-gradient(#E9EDF2,#E9EDF2),linear-gradient(#EEF1F5,#EEF1F5);background-size:36px 36px,46% 12px,72% 12px,36px 36px,58% 12px;background-position:24px 24px,72px 28px,72px 48px,24px 84px,72px 96px;border-radius:12px}
 .skl{display:block;width:60%;height:12px;margin-top:6px;border-radius:6px;background:#EEF1F5}
 .lsearch:focus-within{box-shadow:0 0 0 3px rgba(37,99,235,.28)}
+/* F1 checklists page: no triple repeats. An open checklist drops its own "Next:" line (the list shows it), its second counter (the row already has one; phones keep it since the row bar hides there) and its footer line (the page subtitle says it) */
+.cla[open]>summary small[data-cknext]{display:none}
+@media (min-width:601px){.cla .ckh{display:none}}
+.cla .ckf{display:none}
+.cla .ckl{margin-bottom:4px}
+.cla .ckh{display:none}
