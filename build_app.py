@@ -482,9 +482,9 @@ def reader(E, S, gate=True):
     ckey = f"lv-{slug}-checks"
     cl = [c if isinstance(c, dict) else {"id": f"c{i + 1}", "text": c, "from": ""} for i, c in enumerate(S["checklist"])]
     ck = sec("todo", "Your checklist", '<span data-school="Small steps that copy what worked here, at low cost.">Small steps that copy what worked here, at low cost and around school.</span> Tick them as you go; star one to keep it in Saved.',
-             f'<div class="ckl" data-store="{ckey}" data-slug="{slug}"><div class="ckh"><span class="ckp">0 of {len(cl)}</span><span class="bar"><i></i></span><span class="dev">{ic(I["dev"], 14)}On this device</span></div>'
+             f'<div class="ckl" data-store="{ckey}" data-slug="{slug}"><div class="ckh"><span class="ckp">0 of {len(cl)}</span><span class="bar"><i></i></span><span class="dev">Saves as you go</span></div>'
              + "".join(f'<div class="ckw"><button class="ck" type="button" role="checkbox" aria-checked="false"><span class="bx">{CHK}</span><span class="ct">{esc(c["text"])}</span><span class="cf">{esc(c.get("from", ""))}</span></button><button class="ckstar" type="button" data-staritem="{slug}:{i}" aria-pressed="false" aria-label="Save this item">{ic(I["saved"], 16)}</button></div>' for i, c in enumerate(cl))
-             + '<div class="ckf"><span>Ticks stay on this device.</span></div></div>')
+             + '<div class="ckf"><span>Your ticks save as you go.</span></div></div>')
     grp = {"Revenue data": [], "Interviews and posts": [], "Archives": []}
     for x in S["sources"]:
         u = (x.get("url") or "") + " " + x["name"]
