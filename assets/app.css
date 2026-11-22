@@ -1602,3 +1602,18 @@ details[open]::details-content{height:auto}
 /* settings: jumping between sections glides instead of snapping */
 :root:has(.acc){scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){.lvind{transition:none}:root:has(.acc){scroll-behavior:auto}}
+
+/* ---- A5 sidebar: the active pill slides between pages (view transition on .sion), brand tint like the settings rail ---- */
+.si{position:relative;transition:background-color .18s ease,color .18s ease}
+.si>:not(.sion){position:relative;z-index:1}
+.si[aria-current=page]{background:none;color:#1D4ED8}
+.si[aria-current=page] svg{color:var(--brand)}
+.sion{position:absolute;inset:0;border-radius:8px;background:#EEF3FE;view-transition-name:lv-sion;pointer-events:none}
+.sion::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:2px;background:var(--brand)}
+::view-transition-group(lv-sion){animation-duration:.34s;animation-timing-function:cubic-bezier(.16,1,.3,1)}
+::view-transition-old(lv-sion),::view-transition-new(lv-sion){animation:none;mix-blend-mode:normal;height:100%}
+@media (max-width:1100px){.sion::before{display:none}}
+/* A5 refinement: tint sits on the item; only the thin brand bar slides, so it never covers a label mid-move */
+.si[aria-current=page]{background:#EEF3FE}
+.sion{inset:auto;left:0;top:9px;bottom:9px;width:3px;border-radius:2px;background:var(--brand)}.sion::before{display:none}
+@media (max-width:1100px){.sion{display:none}}

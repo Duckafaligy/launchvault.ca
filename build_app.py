@@ -246,7 +246,8 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
     nav = [("home", "/app/", "Home", ""), ("lib", "/app/library/", "Library", ""), ("ask", "/app/assistant/", "Ask LaunchVault", ""), ("saved", "/app/saved/", "Saved", '<span class="cnt" data-cnt="saved"></span>'), ("chat", "/app/community/", "Community", ""), ("path", "/app/path/", "My path", '<span class="cnt" data-cnt="path"></span>'),
            ("ck", "/app/checklists/", "Checklists", '<span class="cnt" data-cnt="ck"></span>')]
     cur = lambda k: ' aria-current="page"' if k == active else ""
-    side = "".join(f'<a class="si" href="{h}"{cur(k)}>{ic(I[k])}<span class="t">{t}</span>{c}</a>' for k, h, t, c in nav)
+    # the active item carries an empty pill (.sion) with a view-transition name, so switching pages slides the pill to the new item
+    side = "".join(f'<a class="si" href="{h}"{cur(k)}>{"<span class=\"sion\" aria-hidden=\"true\"></span>" if k == active else ""}{ic(I[k])}<span class="t">{t}</span>{c}</a>' for k, h, t, c in nav)
     soon = "".join(f'<a class="si co soon" href="{byslug[s]["href"]}"><img class="lgo" src="{byslug[s]["logo"]}" alt="" width="16" height="16" loading="lazy"><span class="t">{esc(byslug[s]["name"])}</span><span class="cnt">{"Stale" if byslug[s]["stale"] else "Soon"}</span></a>'
                    for s in [e["slug"] for e in E if e["status"] == "soon"][:4])
     wk = f'<a class="si week" href="{week["href"]}"{cur("story-" + week["slug"])}><img class="lgo" src="{week["logo"]}" alt="" width="16" height="16"><span class="t">{esc(week["name"])}</span><span class="cnt pc" data-pct="{week["slug"]}"></span></a>'
@@ -261,7 +262,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
   <nav aria-label="Main">{side}</nav>
   <p class="sgrp">This week</p>{wk}
   
-  <div class="foot"><div class="plan" data-state="free"><div class="pl-h"><span class="pl-ok" aria-hidden="true"><svg viewBox="0 0 16 16" width="12" height="12"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="pl-n" data-plan>Free plan</span></div><p class="pl-v">Unlock every phase of every breakdown.</p><p class="pl-p">From $6.49/mo billed yearly</p><a href="/app/account/#plan" data-upg>Upgrade to Pro</a></div><a class="si" href="/app/account/"{cur("acct")}>{ic(I["acct"])}<span class="t">Account</span></a></div>
+  <div class="foot"><div class="plan" data-state="free"><div class="pl-h"><span class="pl-ok" aria-hidden="true"><svg viewBox="0 0 16 16" width="12" height="12"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="pl-n" data-plan>Free plan</span></div><p class="pl-v">Unlock every phase of every breakdown.</p><p class="pl-p">From $6.49/mo billed yearly</p><a href="/app/account/#plan" data-upg>Upgrade to Pro</a></div><a class="si" href="/app/account/"{cur("acct")}>{"<span class=\"sion\" aria-hidden=\"true\"></span>" if active == "acct" else ""}{ic(I["acct"])}<span class="t">Account</span></a></div>
 </aside>
 <div class="main">
   <div class="prev" id="prevbar" role="status">Preview: accounts open soon. Your progress stays on this device.</div>
