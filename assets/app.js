@@ -544,8 +544,9 @@
     // a real match needs a clear lead over every other PATTERN (two stories with one pattern always score the same); a tie or no answers is said plainly
     const topOf = () => { const sc = scores(), t = score()[0]; if (!t || !(sc[t] > 0)) return null;
       return sc[t] > Math.max(0, ...base.filter(k => S[k].pattern !== S[t].pattern).map(k => sc[k] || 0)) ? t : null; };
-    const summary = () => [age, ...ans.map((a, i) => a == null ? null : D.quiz[i].o[a])].filter(Boolean).join(" · ");
-    const why = t => t ? ans.map((a, i) => a != null && (D.quiz[i].w[a] || {})[t] ? D.quiz[i].o[a] : null).filter(Boolean) : [];
+    const lab = (i, a) => (D.quiz[i].t ? D.quiz[i].t + ": " : "") + D.quiz[i].o[a];   // "Coding: Not yet" reads on its own
+    const summary = () => [age ? "Age " + age : null, ...ans.map((a, i) => a == null ? null : lab(i, a))].filter(Boolean).join(" · ");
+    const why = t => t ? ans.map((a, i) => a != null && (D.quiz[i].w[a] || {})[t] ? lab(i, a) : null).filter(Boolean) : [];
     const save = () => { const t = topOf(), m = score(); ls.set("lv-quiz-app", {answers: ans, matches: m, top: t, why: why(t), whys: Object.fromEntries(m.map(k => [k, why(k)])), summary: summary(), date: today()}); D.path = t ? pathFor(m) : PATH0; };
     const main = $(".ob"), out = $(".obout");
     const render = (dir = "f") => {

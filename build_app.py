@@ -822,8 +822,10 @@ QW = [[{"CLOSE": 2}, {"SERVICE": 1, "FREE": 1, "AUD": 1, "TOOLS": 1}, {"FREE": 2
       [{"REBUILD": 2, "SERVICE": 1, "TOOLS": 1}, {"WORK": 1, "CLOSE": 1, "WAVE": 1}, {"FREE": 2, "AUD": 2}, {"SERVICE": 2, "TOOLS": 1, "REBUILD": 1}],
       [{"FREE": 2, "WAVE": 1, "TOOLS": 1}, {"SERVICE": 3}, {"CLOSE": 2, "REBUILD": 1}, {"AUD": 3}, {"CLOSE": 2, "WORK": 1, "REBUILD": 1}],
       [{"CLOSE": 2, "WORK": 2}, {"REBUILD": 2, "SERVICE": 1}, {"AUD": 2, "FREE": 1, "WAVE": 1}, {"SERVICE": 2, "FREE": 1}, {"AUD": 1, "REBUILD": 1}]]
+# a short topic per question, so a saved answer reads on its own ("Coding: Not yet") in Preferences, the match reasons and Ask LaunchVault
+QTOPIC = ["Time", "Budget", "Coding", "Good at", "Could help", "Enjoys", "Online", "First sale", "Idea", "Hardest part"]
 # every question needs one weight dict per answer, in the same order
-assert len(QW) == len(QUIZ) and all(len(w) == len(q[1]) for w, q in zip(QW, QUIZ)), "QUIZ and QW are out of step"
+assert len(QW) == len(QUIZ) == len(QTOPIC) and all(len(w) == len(q[1]) for w, q in zip(QW, QUIZ)), "QUIZ and QW are out of step"
 def quiz_weights(ready):
     """QW by pattern -> weights by story slug, for the ready stories. Warns when a story's pattern is not in PAT (it can't be matched until it is)."""
     by = {}
@@ -866,7 +868,7 @@ def main():
                               "lead": {"id": "x1", "text": (S["checklist"][0]["text"] if isinstance(S["checklist"][0], dict) else S["checklist"][0]), "from": "Pattern from " + S["name"], "href": f"/app/story/{S['slug']}/"}} for S in ready},
         "path": {"title": "Ship something small first", "source": "postiz", "steps": steps,
                  "extra": {"id": "x1", "text": "Ask for money early: offer the easy paid version to your 5 most active users.", "from": "Pattern from Gojiberry", "href": "/app/story/gojiberry/" if "gojiberry" in rslugs else ""}},
-        "quiz": [{"q": t[0], "o": t[1], "w": w, **({"h": t[2]} if len(t) > 2 else {})} for t, w in zip(QUIZ, quiz_weights(ready))],
+        "quiz": [{"q": t[0], "t": tp, "o": t[1], "w": w, **({"h": t[2]} if len(t) > 2 else {})} for t, w, tp in zip(QUIZ, quiz_weights(ready), QTOPIC)],
         "search_extra": [x for S in ready for x in (
                             [{"t": f"{S['name']} · phase {i + 1}: {ph['name']}", "k": " ".join([ph["name"], ph["story"], ph["lesson"]]), "h": f"/app/story/{S['slug']}/#ph{i + 1}", "g": "Phases"} for i, ph in enumerate(S["phases"])]
                             + [{"t": f"{S['name']} move {i + 1}: {m['text']} · {m['when']}", "h": f"/app/story/{S['slug']}/#chart", "g": "Moves"} for i, m in enumerate(S["moves"])]
