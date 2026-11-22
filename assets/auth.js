@@ -84,7 +84,11 @@ window.LVAuth = (() => {
   const app = async () => {
     const bar = document.getElementById("prevbar"), guest = lvGuest(), wall = LV_GATE && live && !guest;
     // hide the page until Clerk says who this is, so signed-out visitors never see a flash of the app before the redirect
-    if (wall) document.documentElement.style.visibility = "hidden";
+    // ...but only when this browser has no sign-in on record. Clerk keeps __client_uat on our domain (0 = signed out, a timestamp =
+    // signed in); for members it's set, so pages show at once and page-to-page fades aren't blank while Clerk loads.
+    // If Clerk then says nobody is signed in, the redirect below still runs.
+    const likelyIn = /(?:^|;\s*)__client_uat(?:_[^=]*)?=(?!0(?:;|$))\d+/.test(document.cookie);
+    if (wall && !likelyIn) document.documentElement.style.visibility = "hidden";
     const paint = () => {
       const e = email(); if (!bar) return;
       // signed-in members: paying plans get no bar at all; Free gets one calm upgrade line (sign out lives on the Account page)
