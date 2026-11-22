@@ -43,7 +43,8 @@
   function state(s, h, p, btn) {
     root.dataset.state = s;
     const gate = $("[data-asgate]"); gate.hidden = s === "ready" || s === "loading";
-    log.hidden = !gate.hidden;   // the gate card takes the chat's place (no starter questions under a locked box, and nothing gets pushed down)
+    log.hidden = !gate.hidden;
+    const demo = $("[data-asdemo]"); if (demo) demo.hidden = gate.hidden;   // locked: show an example of a real answer instead of an empty page   // the gate card takes the chat's place (no starter questions under a locked box, and nothing gets pushed down)
     if (h) { $("[data-asgateh]").textContent = h; $("[data-asgatep]").textContent = p; }
     const b = $("[data-asgatebtn]"); if (btn === false) b.hidden = true;
     input.disabled = send.disabled = s !== "ready"; form.hidden = s !== "ready" && s !== "loading";
