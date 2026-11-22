@@ -790,6 +790,11 @@ main .dk .lede{background:none;box-shadow:none}
 .post-figs:empty{display:none}
 #blog .posts > a.post:nth-of-type(n+5){display:none!important}  /* homepage shows 4; /blog/ lists all */
 #blog .bmore{display:flex;justify-content:center;margin-top:28px}
+/* page-to-page cross-fade on the public site too (matches the app; also stops the "opt-in disabled" console error when the app hands off to /sign-in/) */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:lvOut .16s ease both}::view-transition-new(root){animation:lvIn .3s cubic-bezier(.16,1,.3,1) both}
+@keyframes lvOut{to{opacity:0}}@keyframes lvIn{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
 
 /* =====================================================================
    Round 11: remodel + motion. Shared components (see COMPONENTS.md).
