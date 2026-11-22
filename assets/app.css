@@ -1547,3 +1547,39 @@ html.gated body{background:var(--alt)}
 .dzone .dzt p{margin:3px 0 0;font-size:max(13px,calc(12px/var(--z,1)));line-height:1.5;color:var(--muted)}
 .dzone .danger{color:#BE123C;background:transparent;box-shadow:inset 0 0 0 1.5px #E11D48}.dzone .danger:hover{background:#E11D48;color:#fff;box-shadow:none}
 .dzone .delmsg{flex-basis:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;border-top:1px solid #FECDD3}.dzone .delmsg p{margin:0;font-size:max(14px,calc(12px/var(--z,1)))}
+
+/* ================= motion pass (2026-11-22): calm, quick, no bounce. Everything here is off under prefers-reduced-motion (global rule above + the block at the end). */
+/* 1. page to page: the browser cross-fades between app pages; the sidebar and top bar stay put */
+@view-transition{navigation:auto}
+.side{view-transition-name:lv-side}.top{view-transition-name:lv-top}
+::view-transition-old(root){animation:lvOut .16s ease both}
+::view-transition-new(root){animation:lvIn .34s var(--out) both}
+::view-transition-group(lv-side),::view-transition-group(lv-top){animation-duration:0s}
+@keyframes lvOut{to{opacity:0}}
+@keyframes lvIn{from{opacity:0}}
+/* 2. page content rises in, a few blocks at a time */
+.pg>*{animation:lvRise .5s var(--out) backwards}
+.pg>:nth-child(2){animation-delay:.04s}.pg>:nth-child(3){animation-delay:.08s}.pg>:nth-child(4){animation-delay:.12s}
+.pg>:nth-child(5){animation-delay:.16s}.pg>:nth-child(n+6){animation-delay:.2s}
+@keyframes lvRise{from{opacity:0;transform:translateY(10px)}}
+/* 3. blocks further down fade up as they scroll into view (app.js adds .rv only to blocks below the fold, then .in) */
+.rv{opacity:0;transform:translateY(14px);transition:opacity .55s var(--out),transform .55s var(--out)}
+.rv.in{opacity:1;transform:none}
+/* 4. hover and press */
+a.card,.scard,.sc,.mrow,.lrow,a.row{transition:transform .22s var(--out),box-shadow .22s var(--out),border-color .22s ease,background-color .2s ease}
+@media (hover:hover){a.card:hover,a.sc:hover,a.mrow:hover,a.lrow:hover{transform:translateY(-2px);box-shadow:0 10px 28px -18px rgba(11,18,32,.35);border-color:var(--line2,#CBD5E1)}}
+.btn{transition:background-color .18s ease,color .18s ease,box-shadow .18s ease,transform .12s ease}
+.btn:active:not(:disabled),.tl:active{transform:scale(.97)}
+.side a,.anav a,.snav-in a,.arow{transition:background-color .18s ease,color .18s ease}
+.side a svg,.anav a svg{transition:transform .2s var(--out)}
+@media (hover:hover){.side a:hover svg,.anav a:hover svg{transform:translateX(2px)}}
+.tgl .sw,.tgl .sw::after,.tgl .sw::before{transition:background-color .2s ease,transform .22s var(--out)}
+/* 5. expanding panels open smoothly (browsers that support it; others just open) */
+:root{interpolate-size:allow-keywords}
+details::details-content{height:0;overflow:clip;transition:height .3s var(--out),content-visibility .3s allow-discrete}
+details[open]::details-content{height:auto}
+/* 6. small things */
+.toast{transition:opacity .22s ease,transform .3s var(--out)}
+.cmd .box{animation:lvPop .2s var(--out) both}
+@keyframes lvPop{from{opacity:0;transform:translateY(-6px) scale(.985)}}
+@media (prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}.rv{opacity:1;transform:none}details::details-content{transition:none}}

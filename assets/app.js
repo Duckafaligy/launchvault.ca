@@ -690,4 +690,13 @@
   });
 
   syncJudge(); if (urlHit) toast("Judge pass on. All 10 breakdowns are unlocked in this browser."); syncChecklists(); renderAll();
+
+  // scroll reveal: blocks that start below the fold fade up as they come into view (app.css .rv/.in). Nothing above the fold is
+  // touched, so a slow or failed script never hides what's on screen; reduced motion skips it.
+  if ("IntersectionObserver" in window && !reduce) requestAnimationFrame(() => {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), {rootMargin: "0px 0px -6% 0px"});
+    $$(".pg .asec, .pg .card, .pg .hsec, .pg .lrow, .pg .scard, .pg .plan2").forEach(el => {
+      if (el.closest(".rv") || el.getBoundingClientRect().top < innerHeight) return;
+      el.classList.add("rv"); io.observe(el); });
+  });
 })();
