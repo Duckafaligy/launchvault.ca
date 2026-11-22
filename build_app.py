@@ -794,13 +794,15 @@ def make_cover(S):
 # (question, answers, optional hint). Answer COUNT and ORDER must not change without updating QW below.
 QUIZ = [
     ("How many hours a week could you spend on a project of your own?", ["Under 5 hours", "About 10 hours", "15 hours or more"]),
-    ("How much money could you spend to get a project started?", ["$0", "Under $100", "Under $1,000"], "Think of a domain, a tool subscription or ads. $0 is a fine answer."),
+    ("How much money could you spend to get a project started?", ["$0", "Under $100", "Under $1,000", "More than $1,000"], "Think of a domain, a tool subscription or ads. $0 is a fine answer."),
     ("Do you know how to code, even a little?", ["Yes, I can code", "A little", "Not yet"]),
-    ("What are you already good at, even a little?", ["Design, video or writing", "Talking to people", "Not sure yet, and that's fine"]),
-    ("Who around you has a problem you could help fix?", ["Someone in my family", "A local shop or business", "People in an online group I'm in", "No one comes to mind yet"]),
-    ("Which would you most enjoy doing?", ["Building an app people use", "Doing a job for real clients", "Testing an idea fast and changing it"]),
-    ("Where do you and your friends spend time online?", ["Reddit or Discord", "TikTok or Instagram", "Not sure"]),
-    ("When would you like to make your first sale?", ["This month", "By the end of this school term", "No rush"]),
+    ("What are you already good at, even a little?", ["Design, video or writing", "Talking to people", "Not sure yet, and that's fine", "Building things or coding", "Selling or organizing things", "Making posts people share"]),
+    ("Who around you has a problem you could help fix?", ["Someone in my family", "A local shop or business", "People in an online group I'm in", "No one comes to mind yet", "Classmates or a club at school", "Gamers or a fan community"]),
+    ("Which would you most enjoy doing?", ["Building an app people use", "Doing a job for real clients", "Testing an idea fast and changing it", "Making videos or posts people follow", "Making and selling a product"]),
+    ("Where do you and your friends spend time online?", ["Reddit or Discord", "TikTok or Instagram", "Not sure", "YouTube", "X or Threads", "LinkedIn", "Group chats"]),
+    ("When would you like to make your first sale?", ["This month", "By the end of this school term", "No rush", "I already have customers"]),
+    ("What kind of idea are you leaning towards?", ["An app or website", "A service I do myself, like design or tutoring", "A physical product", "Content or a community", "No idea yet"]),
+    ("What feels hardest right now?", ["Finding an idea", "Building it", "Getting the first users", "Getting people to pay", "Sticking with it"]),
 ]
 # answer -> patterns it points to. Each key is a story's real pattern line (PAT); main() expands it to every ready story with that pattern,
 # so a new story with a known pattern is matched without touching this table. Editorial mapping, not data.
@@ -808,13 +810,18 @@ PAT = {"FREE": "Give it away free, charge for the easy version", "CLOSE": "Start
        "SERVICE": "Start with a small, cheap service, then sell the bigger one", "WORK": "Start with a problem you saw at work", "WAVE": "Ride a wave",
        "TOOLS": "Sell the tools to people already in the game", "AUD": "Build the audience first, then the app"}
 QW = [[{"CLOSE": 2}, {"SERVICE": 1, "FREE": 1, "AUD": 1, "TOOLS": 1}, {"FREE": 2, "WORK": 1, "WAVE": 1}],
-      [{"FREE": 2, "CLOSE": 2, "AUD": 2}, {"CLOSE": 2, "SERVICE": 1, "REBUILD": 1, "WAVE": 1}, {"SERVICE": 2, "WORK": 2, "TOOLS": 2}],
+      [{"FREE": 2, "CLOSE": 2, "AUD": 2}, {"CLOSE": 2, "SERVICE": 1, "REBUILD": 1, "WAVE": 1}, {"SERVICE": 2, "WORK": 2, "TOOLS": 2}, {"SERVICE": 1, "WORK": 2, "TOOLS": 2}],
       [{"FREE": 2, "CLOSE": 1, "WAVE": 1}, {"CLOSE": 1, "REBUILD": 1, "WAVE": 1}, {"SERVICE": 2, "AUD": 2, "TOOLS": 1}],
-      [{"SERVICE": 2, "FREE": 1, "AUD": 3}, {"SERVICE": 2, "REBUILD": 2, "TOOLS": 1}, {"CLOSE": 1, "REBUILD": 1, "WAVE": 1}],
-      [{"CLOSE": 3}, {"SERVICE": 3}, {"FREE": 2, "WORK": 1, "TOOLS": 2, "AUD": 1}, {"REBUILD": 2, "FREE": 1, "WAVE": 2}],
-      [{"FREE": 2, "CLOSE": 2, "WAVE": 1, "AUD": 1}, {"SERVICE": 3, "TOOLS": 1}, {"REBUILD": 2, "WORK": 2, "WAVE": 2}],
-      [{"FREE": 2, "TOOLS": 1}, {"CLOSE": 1, "SERVICE": 1, "WAVE": 2, "AUD": 2}, {}],
-      [{"REBUILD": 2, "SERVICE": 1, "TOOLS": 1}, {"WORK": 1, "CLOSE": 1, "WAVE": 1}, {"FREE": 2, "AUD": 2}]]
+      [{"SERVICE": 2, "FREE": 1, "AUD": 3}, {"SERVICE": 2, "REBUILD": 2, "TOOLS": 1}, {"CLOSE": 1, "REBUILD": 1, "WAVE": 1},
+       {"FREE": 2, "TOOLS": 2, "WAVE": 1}, {"SERVICE": 3, "CLOSE": 1}, {"AUD": 3, "FREE": 1}],
+      [{"CLOSE": 3}, {"SERVICE": 3}, {"FREE": 2, "WORK": 1, "TOOLS": 2, "AUD": 1}, {"REBUILD": 2, "FREE": 1, "WAVE": 2}, {"CLOSE": 3, "FREE": 1}, {"AUD": 2, "TOOLS": 2, "WAVE": 1}],
+      [{"FREE": 2, "CLOSE": 2, "WAVE": 1, "AUD": 1}, {"SERVICE": 3, "TOOLS": 1}, {"REBUILD": 2, "WORK": 2, "WAVE": 2}, {"AUD": 3, "WAVE": 1}, {"SERVICE": 1, "REBUILD": 2, "CLOSE": 1}],
+      [{"FREE": 2, "TOOLS": 1}, {"CLOSE": 1, "SERVICE": 1, "WAVE": 2, "AUD": 2}, {}, {"AUD": 2, "FREE": 1}, {"WAVE": 2, "FREE": 1, "TOOLS": 1}, {"WORK": 3, "SERVICE": 1}, {"CLOSE": 2, "SERVICE": 1}],
+      [{"REBUILD": 2, "SERVICE": 1, "TOOLS": 1}, {"WORK": 1, "CLOSE": 1, "WAVE": 1}, {"FREE": 2, "AUD": 2}, {"SERVICE": 2, "TOOLS": 1, "REBUILD": 1}],
+      [{"FREE": 2, "WAVE": 1, "TOOLS": 1}, {"SERVICE": 3}, {"CLOSE": 2, "REBUILD": 1}, {"AUD": 3}, {"CLOSE": 2, "WORK": 1, "REBUILD": 1}],
+      [{"CLOSE": 2, "WORK": 2}, {"REBUILD": 2, "SERVICE": 1}, {"AUD": 2, "FREE": 1, "WAVE": 1}, {"SERVICE": 2, "FREE": 1}, {"AUD": 1, "REBUILD": 1}]]
+# every question needs one weight dict per answer, in the same order
+assert len(QW) == len(QUIZ) and all(len(w) == len(q[1]) for w, q in zip(QW, QUIZ)), "QUIZ and QW are out of step"
 def quiz_weights(ready):
     """QW by pattern -> weights by story slug, for the ready stories. Warns when a story's pattern is not in PAT (it can't be matched until it is)."""
     by = {}

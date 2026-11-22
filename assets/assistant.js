@@ -131,6 +131,7 @@
       else {
         if (ended.cut) note(el, "This reply was cut short. Ask me to continue.", "as-soft");
         cards(el, ended.stories || []);
+        if (ended.remembered) note(el, 'Saved to your <a href="/app/account/#prefs">preferences</a>. You can remove it any time.', "as-soft");
         const isNew = !cid; cid = ended.conversation_id;
         if (info) { info.used = ended.used; info.limit = ended.limit; usage();
           const c = info.conversations.find(x => x.id === cid);

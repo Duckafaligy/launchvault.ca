@@ -273,7 +273,7 @@
     const st = pathSteps(), dn = pathDone(), nx = q ? st.find(s => !s.done) : null, hp = $("[data-hpath]");
     hp.innerHTML = q ? `<div class="ch"><h2>Your path</h2><a class="tl" href="/app/start/?quiz=1">Retake quiz</a></div><div class="cb"><p class="hpt">${esc(D.path.title)}</p><div class="hpr">${bar(dn / st.length)}<span>${dn} of ${st.length} steps</span></div>`
         + (nx ? `<p class="hps">Step ${st.indexOf(nx) + 1} of ${st.length}</p><p class="hpx">${esc(nx.task || nx.text)}</p><button class="btn btn-p" type="button" data-hdone>Mark step done</button><a class="tl hpo" href="/app/path/">Open My path</a>` : `<p class="hpx">All steps done.</p><a class="btn btn-s" href="/app/path/">Open My path</a>`) + `</div>`
-      : `<div class="ch"><h2>Your path</h2><a class="tl" href="/app/path/">Open My path</a></div><div class="hlike"><h3>Start with these</h3>${matches().map(miniRow).join("")}</div><div class="cb" style="padding-top:10px"><a class="btn btn-s" style="width:100%" href="/app/start/?quiz=1">Personalize with 8 quick questions</a></div>`;
+      : `<div class="ch"><h2>Your path</h2><a class="tl" href="/app/path/">Open My path</a></div><div class="hlike"><h3>Start with these</h3>${matches().map(miniRow).join("")}</div><div class="cb" style="padding-top:10px"><a class="btn btn-s" style="width:100%" href="/app/start/?quiz=1">Personalize with 10 quick questions</a></div>`;
     // 3 matched (after the quiz) or top breakdowns, excluding the hero story so it isn't duplicated
     const heroSlug = H ? H.slug : WEEKS;
     const pool = q ? matches() : READY.map(s => s.slug).filter(k => k !== heroSlug), pick = [...new Set(pool)].map(k => S[k]).filter(s => s && s.status === "ready").slice(0, 3);
@@ -472,6 +472,26 @@
     $("#pcopy").addEventListener("click", async () => { try { await navigator.clipboard.writeText(link); } catch {} ls.set("lv-parent", today()); flow(); toast("Parent link copied"); });
     $("#psend").addEventListener("click", () => { const e = $("#pemail").value.trim(); if (!/.+@.+\..+/.test(e)) { $("#pemail").focus(); return; }
       ls.set("lv-parent", today()); flow(); location.href = `mailto:${encodeURIComponent(e)}?subject=${encodeURIComponent("LaunchVault")}&body=${encodeURIComponent("Could you look at LaunchVault for me? Plans and prices are here: " + link)}`; });
+    // Preferences: welcome answers (this device) are the base; notes Ask LaunchVault saved live on the account (profiles.assistant_notes)
+    { const base = $("[data-pref-base]"), box = $("[data-pref-notes]");
+      if (base) { const q = quiz(); base.textContent = q && q.summary ? q.summary : "Not answered yet"; }
+      if (box) (async () => {
+        const c = window.LVAuth && LVAuth.live ? await LVAuth.load().catch(() => null) : null;
+        if (!c || !c.user) { box.innerHTML = `<p class="prefe">Sign in to see what Ask LaunchVault remembers.</p>`; return; }
+        for (let i = 0; i < 40 && !window.LVSync; i++) await new Promise(r => setTimeout(r, 250));
+        const sb = window.LVSync ? await LVSync.make(c).catch(() => null) : null; if (!sb) return;
+        let notes = [];
+        const save = async next => { const {error} = await sb.from("profiles").update({assistant_notes: next}).eq("user_id", c.user.id);
+          if (error) return toast("Couldn't save. Try again."); notes = next; draw(); };
+        const draw = () => { box.innerHTML = notes.length
+          ? notes.map((n, i) => `<div class="prefn"><span>${esc(n)}</span><button class="tl" type="button" data-rmnote="${i}" aria-label="Remove: ${esc(n)}">Remove</button></div>`).join("")
+            + `<div class="prefa"><button class="tl" type="button" data-clrnotes>Clear all</button></div>`
+          : `<p class="prefe">Nothing saved from chats yet. Tell <a href="/app/assistant/">Ask LaunchVault</a> about your project and it keeps the useful parts here.</p>`; };
+        box.addEventListener("click", e => { const r = e.target.closest("[data-rmnote]"); if (r) return save(notes.filter((_, i) => i !== +r.dataset.rmnote));
+          if (e.target.closest("[data-clrnotes]") && confirm("Clear everything Ask LaunchVault remembers?")) save([]); });
+        const {data} = await sb.from("profiles").select("assistant_notes").eq("user_id", c.user.id).maybeSingle();
+        notes = (data && data.assistant_notes) || []; draw();
+      })(); }
     const prefs = Object.assign({new_story: false, path: false, news: false}, ls.get("lv-prefs", {}));
     $$("[data-pref]").forEach(b => { b.setAttribute("aria-checked", !!prefs[b.dataset.pref]); b.addEventListener("click", () => { prefs[b.dataset.pref] = !prefs[b.dataset.pref]; b.setAttribute("aria-checked", prefs[b.dataset.pref]); ls.set("lv-prefs", prefs); }); });
     $("#dl").addEventListener("click", () => { const o = {}; ls.keys().forEach(k => o[k] = ls.get(k)); const a = document.createElement("a");
@@ -494,7 +514,7 @@
     let spyQ = 0; addEventListener("scroll", () => { if (!spyQ) spyQ = requestAnimationFrame(() => { spyQ = 0; spy(); }); }, {passive: true}); spy();   // once per frame, not per scroll event
   }
 
-  // ---------- onboarding: 8 questions (Skip any) -> result -> Home. The age question is the gate (assets/gate.js), asked once, before this. ----------
+  // ---------- onboarding: 10 questions (Skip any) -> result -> Home. The age question is the gate (assets/gate.js), asked once, before this. ----------
   const obc = $("#obc");
   if (obc) {
     const age = ls.get("lv-age"); let step = 0, ans = ((quiz() || {}).answers || []).slice();
