@@ -453,8 +453,7 @@
   if (ageR.length) {
     const cur = () => (ageR.find(r => r.checked) || {}).value || "";
     ageR.forEach(r => { r.checked = r.value === ls.get("lv-age"); });
-    const note = () => { const a = cur(); $("[data-agenote]").textContent = !a ? "Set your age range so the right rules apply." : (a === "13 to 15" || a === "16 to 17") ? "A parent pays for paid plans." : a === "21 or older" ? "LaunchVault is built for 15 to 20, but anyone is welcome to read." : "You can pay for a plan yourself.";
-      const minor = !a || a === "13 to 15" || a === "16 to 17"; const ps = $("#parent"); if (ps) ps.hidden = !minor; $$('nav a[href="#parent"]').forEach(l => { l.hidden = !minor; }); };
+    const note = () => { const a = cur(); $("[data-agenote]").textContent = !a ? "Set your age range so the right rules apply." : a === "21 or older" ? "LaunchVault is built for 15 to 20, but anyone is welcome to read." : ""; };
     note(); ageR.forEach(r => r.addEventListener("change", () => { ls.set("lv-age", cur()); note(); toast("Saved on this device."); }));
     // the stated monthly prices lead; yearly is the secondary line (and the other way round on the Yearly toggle)
     const bill = y => { $$("[data-bill]").forEach(b => b.setAttribute("aria-pressed", (b.dataset.bill === "y") === y));
@@ -466,12 +465,6 @@
     const disp = v => $$("[data-display]").forEach(b => b.setAttribute("aria-pressed", b.dataset.display === v)); disp(ls.get("lv-display") || "auto");
     $$("[data-display]").forEach(b => b.addEventListener("click", () => { const v = b.dataset.display; v === "auto" ? ls.del("lv-display") : ls.set("lv-display", v); disp(v); if (window.lvZoom) lvZoom();
       toast(innerWidth < 1000 ? "Saved. It applies on wider screens." : "Display size saved on this device."); }));
-    const link = location.origin + "/#pricing", flow = () => { const s = ls.get("lv-parent"); $$("[data-pflow] span").forEach((x, i) => x.className = s ? (i === 0 ? "d" : i === 1 ? "c" : "t") : "t");
-      if (s) $("[data-pflow] span").innerHTML = `<i></i>Link sent ${esc(s)}`; };
-    flow();
-    $("#pcopy").addEventListener("click", async () => { try { await navigator.clipboard.writeText(link); } catch {} ls.set("lv-parent", today()); flow(); toast("Parent link copied"); });
-    $("#psend").addEventListener("click", () => { const e = $("#pemail").value.trim(); if (!/.+@.+\..+/.test(e)) { $("#pemail").focus(); return; }
-      ls.set("lv-parent", today()); flow(); location.href = `mailto:${encodeURIComponent(e)}?subject=${encodeURIComponent("LaunchVault")}&body=${encodeURIComponent("Could you look at LaunchVault for me? Plans and prices are here: " + link)}`; });
     // Preferences: welcome answers (this device) are the base; notes Ask LaunchVault saved live on the account (profiles.assistant_notes)
     { const base = $("[data-pref-base]"), box = $("[data-pref-notes]");
       if (base) { const q = quiz(); base.textContent = q && q.summary ? q.summary : "Not answered yet"; }
@@ -507,7 +500,7 @@
     const so = $("#so"); if (so && window.LVAuth) so.addEventListener("click", () => LVAuth.signOut());
     const nav = $$(".anav a, .anavm a"), strip = $(".anavm .snav-in");
     // the section in view is highlighted in both navs; at the very bottom the last section wins (it may never reach the top)
-    const H = ["#profile", "#prefs", "#plan", "#parent", "#email", "#data"];
+    const H = ["#profile", "#prefs", "#plan", "#email", "#data"];
     const mark = cur => { nav.forEach(a => { const on = a.getAttribute("href") === cur; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); });
       const on = strip && $("a.on", strip); if (on && strip.scrollWidth > strip.clientWidth) strip.scrollTo({left: on.offsetLeft - 16}); };
     // a section counts as current once its top passes ~a third of the window (a jump lands it just under the top bar, never exactly at 0)
