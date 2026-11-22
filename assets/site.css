@@ -801,6 +801,8 @@ main .dk .lede{background:none;box-shadow:none}
 .mk.v,.n.v{background:#047857!important;border-color:#047857!important}
 /* blog byline: the homepage preview also uses .pmeta (_hero.css), which turned this row into one run-on line ("LaunchVault6 min readNov 17 2026") */
 .phero .pmeta{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:20px;font-size:max(14px,calc(12px/var(--z,1)));color:var(--muted)}
+/* long reading pages (legal with a contents list, blog articles): the dot field stays but fades so body text sits on a calm background */
+body:has(.ltoc) canvas.streak,body:has(.phero) canvas.streak{opacity:.35}
 
 /* =====================================================================
    Round 11: remodel + motion. Shared components (see COMPONENTS.md).
