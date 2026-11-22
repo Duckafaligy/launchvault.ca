@@ -499,7 +499,7 @@
       a.download = "launchvault-data.json"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); });
     // Delete your data: the device is cleared straight away. assets/supabase.js listens for "lv:delete-account" when someone is signed in,
     // deletes the server copy and calls detail.done(null) (or done("server") if it couldn't). Signed out: nobody calls done.
-    $("#del").addEventListener("click", () => { if (!confirm("Delete everything LaunchVault saved on this device? This can't be undone.")) return;
+    $("#del").addEventListener("click", () => { if (!confirm(window.LVAuth && LVAuth.email && LVAuth.email() ? "Delete your progress, quiz answers, preferences and profile from this device and your account? This can't be undone." : "Delete everything LaunchVault saved on this device? This can't be undone.")) return;
       const msg = $("[data-delmsg]"), say = t => { $("p", msg).textContent = t; };
       dispatchEvent(new CustomEvent("lv:delete-account", {detail: {done: err => say(err ? "Your device data is cleared, but we couldn't reach the server. Try again in a minute." : "Your device data is cleared. Also removed from your account.")}}));
       wiped = true; ls.keys().forEach(ls.del); try { Object.keys(sessionStorage).filter(k => k.startsWith("lv-")).forEach(k => sessionStorage.removeItem(k)); } catch {}
@@ -507,7 +507,7 @@
     const so = $("#so"); if (so && window.LVAuth) so.addEventListener("click", () => LVAuth.signOut());
     const nav = $$(".anav a, .anavm a"), strip = $(".anavm .snav-in");
     // the section in view is highlighted in both navs; at the very bottom the last section wins (it may never reach the top)
-    const spy = () => { const H = ["#profile", "#plan", "#parent", "#email", "#data"]; let cur = H[0]; H.forEach(h => { const t = document.querySelector(h); if (t && !t.hidden && t.getBoundingClientRect().top < 160) cur = h; });
+    const spy = () => { const H = ["#profile", "#prefs", "#plan", "#parent", "#email", "#data"]; let cur = H[0]; H.forEach(h => { const t = document.querySelector(h); if (t && !t.hidden && t.getBoundingClientRect().top < 160) cur = h; });
       if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = H.at(-1);
       nav.forEach(a => { const on = a.getAttribute("href") === cur; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); });
       const on = strip && $("a.on", strip); if (on && strip.scrollWidth > strip.clientWidth) strip.scrollTo({left: on.offsetLeft - 16}); };

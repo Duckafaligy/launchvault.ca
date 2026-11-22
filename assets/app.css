@@ -1538,3 +1538,12 @@ html.gated body{background:var(--alt)}
 .prefn{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line2);font-size:max(14px,calc(12px/var(--z,1)));color:var(--text)}
 .prefn:first-child{border-top:0;margin-top:2px}.prefn span{min-width:0;overflow-wrap:anywhere}.prefn .tl{flex-shrink:0}
 .prefa{padding-top:4px}.prefe{margin:3px 0 0;font-size:max(13.5px,calc(12px/var(--z,1)));color:var(--muted)}
+/* Account -> Your data: promises, then a calm card, then a separate outlined delete zone */
+.dpromise{list-style:none;margin:2px 0 14px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.dpromise li{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:var(--surface2,#F1F5F9);color:var(--text);font-size:max(13px,calc(12px/var(--z,1)));font-weight:500}
+.dpromise svg{color:var(--okd,#059669);flex-shrink:0}
+.dzone{margin-top:14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 20px;border:1px solid #FECDD3;border-radius:14px;background:var(--bg,#fff)}
+.dzone .dzt{flex:1;min-width:240px}.dzone .dzt b{display:block;color:#BE123C;font-size:15px}
+.dzone .dzt p{margin:3px 0 0;font-size:max(13px,calc(12px/var(--z,1)));line-height:1.5;color:var(--muted)}
+.dzone .danger{color:#BE123C;background:transparent;box-shadow:inset 0 0 0 1.5px #E11D48}.dzone .danger:hover{background:#E11D48;color:#fff;box-shadow:none}
+.dzone .delmsg{flex-basis:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;border-top:1px solid #FECDD3}.dzone .delmsg p{margin:0;font-size:max(14px,calc(12px/var(--z,1)))}
