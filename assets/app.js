@@ -135,7 +135,9 @@
       inp.setAttribute("aria-activedescendant", hits.length ? "ci" + sel : ""); return hits; };
     let hits = draw();
     inp.addEventListener("input", () => { sel = 0; hits = draw(); });
-    const close = () => { cmdEl.remove(); cmdEl = null; if (prev) prev.focus(); };
+    // closing fades out (app.css .cmd.out) before the element goes; a new ⌘K during the fade opens a fresh one
+    const close = () => { const el = cmdEl; cmdEl = null; if (prev) prev.focus();
+      if (reduce) return el.remove(); el.classList.add("out"); setTimeout(() => el.remove(), 160); };
     cmdEl.addEventListener("click", e => { if (e.target === cmdEl) close(); });
     cmdEl.addEventListener("keydown", e => {
       if (e.key === "Escape") { e.preventDefault(); close(); }
