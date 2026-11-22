@@ -6,6 +6,7 @@
   if (!window.LVGate || !LVGate.ok) { if (window.LVAuth) LVAuth.app(); return; }
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const savedTo = () => window.LVAuth && LVAuth.email && LVAuth.email() ? "Saved to your account." : "Saved on this device.";
   // glide: one shared highlight that slides to the active item of a tab row / segmented control (app.css .lvind).
   // The first placement doesn't animate; later ones slide. Re-placed on resize.
   const GLIDE = new Set();
@@ -96,7 +97,7 @@
     const dates = tickDates(slug); if (t[i]) dates[i] = today(); else delete dates[i]; ls.set("lv-" + slug + "-checkdates", dates);
     syncChecklists(); paint(); renderPath();
     if (t[i] && CL[slug]) logAct(`Ticked "${CL[slug].items[i].text.slice(0, 48)}${CL[slug].items[i].text.length > 48 ? "…" : ""}" in ${CL[slug].name}`);
-    toast(t[i] ? "Ticked. Saved on this device." : "Unticked.", () => { setTicks(slug, before); syncChecklists(); paint(); renderPath(); });
+    toast(t[i] ? "Ticked. " + savedTo() : "Unticked.", () => { setTicks(slug, before); syncChecklists(); paint(); renderPath(); });
   };
   const syncChecklists = () => $$(".ckl[data-slug]").forEach(box => { const s = box.dataset.slug, t = ticks(s);
     $$(".ck", box).forEach((b, i) => b.setAttribute("aria-checked", !!t[i]));
@@ -104,9 +105,9 @@
     const bar = box.querySelector(".ckh .bar i"); if (bar) bar.style.width = (n / t.length * 100) + "%"; });
   document.addEventListener("click", e => { const b = e.target.closest(".ckl[data-slug] .ck"); if (!b) return;
     const box = b.closest(".ckl"); toggleTick(box.dataset.slug, $$(".ck", box).indexOf(b)); });
-  const ckListHTML = (c, open = true) => `<div class="ckl" data-slug="${c.slug}"><div class="ckh"><span class="ckp"></span><span class="bar"><i></i></span><span class="dev">On this device</span></div>` +
+  const ckListHTML = (c, open = true) => `<div class="ckl" data-slug="${c.slug}"><div class="ckh"><span class="ckp"></span><span class="bar"><i></i></span><span class="dev">Saves as you go</span></div>` +
     c.items.map(it => `<button class="ck" type="button" role="checkbox" aria-checked="false"><span class="bx"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="ct">${esc(it.text)}</span><span class="cf">${esc(it.from || "")}</span></button>`).join("") +
-    `<div class="ckf"><span>Ticks stay on this device.</span></div></div>`;
+    `<div class="ckf"><span>Your ticks save as you go.</span></div></div>`;
   $$("[data-ckmirror]").forEach(n => { const c = CL[n.dataset.ckmirror]; if (c) n.innerHTML = ckListHTML(c); });
 
   // ---------- ⌘K search ----------
@@ -256,7 +257,7 @@
   const CKS = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   const notPublic = f => /^not public$/i.test(f) ? "Not public" : f;
   const markDone = () => { const nx = pathSteps().find(s => !s.done); if (!nx) return;
-    if (nx.extra) { ls.set("lv-path-extra", today()); logAct("Finished a step on your path"); toast("Step done. Saved on this device."); } else toggleTick(D.path.source, nx.n - 1); };
+    if (nx.extra) { ls.set("lv-path-extra", today()); logAct("Finished a step on your path"); toast("Step done. " + savedTo()); } else toggleTick(D.path.source, nx.n - 1); };
   document.addEventListener("click", e => { if (e.target.closest("[data-hdone]")) markDone();
     const h = e.target.closest("[data-hck]"); if (h) { const [s, i] = h.dataset.hck.split(":"); toggleTick(s, +i); } });
   const renderHome = () => {
@@ -307,7 +308,7 @@
     $("[data-saveditems]").innerHTML = I.map(({k, c, i, it}) => { const tk = ticks(c.slug)[i];
       return `<div class="sitem lvsitem"><a href="${c.href}#todo">${logo(c, 20)}<span><b>${esc(it.text)}</b><small>${esc(c.name)} · step ${i + 1}</small>${pill(tk ? "done" : "ready", tk ? "Ticked" : "To do")}</span></a><button class="ckstar" type="button" data-staritem="${k}" aria-pressed="true" aria-label="Remove this step">${STAR}</button></div>`; }).join("");
     const sug = [...new Set([WEEKS, ...matches()])].map(k => S[k]).filter(Boolean).slice(0, 3);
-    $("[data-savedempty]").innerHTML = L.length || I.length ? "" : emptyCard("star", "Nothing saved yet", "Star a story or a checklist step to keep it here. Saved on this device.", "/app/library/", "Browse the Library")
+    $("[data-savedempty]").innerHTML = L.length || I.length ? "" : emptyCard("star", "Nothing saved yet", "Star a story or a checklist step to keep it here.", "/app/library/", "Browse the Library")
       + (sug.length ? `<section class="card hsec lvsug"><div class="ch"><h2>Stories to start with</h2></div><div class="scards">${sug.map(storyCard).join("")}</div></section>` : ""); };
   // warm empty state: icon badge, one honest sentence, one primary action (and an optional secondary)
   function emptyCard(icon, h, p, href, label, extra = "") {
@@ -446,7 +447,7 @@
       const d = e.target.closest("[data-stepdone],[data-stepundo]"); if (!d) return;
       const i = +(d.dataset.stepdone ?? d.dataset.stepundo), s = pathSteps()[i];
       openStep = s.done ? i : null;   // after finishing a step the next open one unfolds; undoing keeps this one open
-      if (s.extra) { const v = s.done ? null : today(); ls.set("lv-path-extra", v); renderPath(); toast(v ? "Step done. Saved on this device." : "Step reopened."); }
+      if (s.extra) { const v = s.done ? null : today(); ls.set("lv-path-extra", v); renderPath(); toast(v ? "Step done. " + savedTo() : "Step reopened."); }
       else toggleTick(D.path.source, s.n - 1);
     });
     renderPath();
@@ -469,7 +470,7 @@
     const cur = () => (ageR.find(r => r.checked) || {}).value || "";
     ageR.forEach(r => { r.checked = r.value === ls.get("lv-age"); });
     const note = () => { const a = cur(); $("[data-agenote]").textContent = !a ? "Set your age range so the right rules apply." : a === "21 or older" ? "LaunchVault is built for 15 to 20, but anyone is welcome to read." : ""; };
-    note(); ageR.forEach(r => r.addEventListener("change", () => { ls.set("lv-age", cur()); note(); toast("Saved on this device."); }));
+    note(); ageR.forEach(r => r.addEventListener("change", () => { ls.set("lv-age", cur()); note(); toast(savedTo()); }));
     // the stated monthly prices lead; yearly is the secondary line (and the other way round on the Yearly toggle)
     const bill = y => { $$("[data-bill]").forEach(b => b.setAttribute("aria-pressed", (b.dataset.bill === "y") === y));
       $('[data-pr="pro"]').textContent = y ? "$6.49" : "$7.99"; $('[data-pr="developer"]').textContent = y ? "$23.99" : "$29.99";
@@ -551,7 +552,7 @@
       const n = D.quiz.length; main.dataset.s = step < n ? step : "end"; obc.dataset.dir = dir;
       if (out) out.hidden = step >= n;
       if (step < n) { const Q = D.quiz[step];
-        H.innerHTML = "Eight questions. <em>Under two minutes.</em>"; P.textContent = "Your answers pick 3 stories that started a lot like you. Skip any question you don't want to answer.";
+        H.innerHTML = "Ten questions. <em>Under two minutes.</em>"; P.textContent = "Your answers pick 3 stories that started a lot like you. Skip any question you don't want to answer.";
         obc.innerHTML = `<div class="obq"><div class="qp"><span>${step + 1} of ${n}</span><span class="bar" role="progressbar" aria-label="Question ${step + 1} of ${n}" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${step + 1}"><i style="--w:${(step + 1) / n * 100}%"></i></span></div><h2 id="qh">${esc(Q.q)}</h2>${Q.h ? `<p class="qhint" id="qhint">${esc(Q.h)}</p>` : ""}<div class="opts" role="radiogroup" aria-labelledby="qh"${Q.h ? ' aria-describedby="qhint"' : ""}>${Q.o.map((o, i) => opt(o, ans[step] === i, i)).join("")}</div>
           <div class="obnav">${step ? '<button class="bk" type="button" data-back>Back</button>' : ""}<span class="sp"></span><button class="sk" type="button" data-skip>Skip</button><button class="btn btn-p" type="button" data-next>${step === n - 1 ? "See my path" : "Next"}</button></div></div>`; }
       else { save(); ls.set("lv-pathnote", "new"); const m = score(), qq = quiz(), x = S[m[0]];
@@ -563,7 +564,7 @@
           <div class="obm"><div class="obmh">${logo(x, 44)}<span><b>${esc(x.name)}</b><small>${esc(x.pattern)}</small></span></div><p class="obmt">${esc(x.title || x.what)}</p>${x.first ? `<p class="obmf">First customers: ${esc(x.first)} ${chip(x.firstl)}</p>` : ""}${on(m[0])}<a class="btn btn-s" href="${x.href}">Read the ${esc(x.name)} breakdown</a></div>
           <h3>Also close to your answers</h3>
           ${m.slice(1).map(k => { const y = S[k]; return `<a class="obr" href="${y.href}">${logo(y, 32)}<span><b>${esc(y.name)}</b><small>${esc(y.pattern)}</small>${on(k)}</span></a>`; }).join("")}
-          <div class="obend"><a class="btn btn-p" href="/app/path/">See my path</a><a class="tl" href="/app/">Go to Home</a><a class="tl" href="/app/start/?quiz=1">Edit answers</a></div><p class="fine">Saved on this device.</p></div>`; }
+          <div class="obend"><a class="btn btn-p" href="/app/path/">See my path</a><a class="tl" href="/app/">Go to Home</a><a class="tl" href="/app/start/?quiz=1">Edit answers</a></div><p class="fine">${savedTo()}</p></div>`; }
       if (render.n++) obc.focus({preventScroll: true});
       if (render.n > 1) scrollTo({top: 0});
     };
