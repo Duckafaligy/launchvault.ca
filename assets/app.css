@@ -1563,7 +1563,7 @@ html.gated body{background:var(--alt)}
 .pg>:nth-child(5){animation-delay:.16s}.pg>:nth-child(n+6){animation-delay:.2s}
 @keyframes lvRise{from{opacity:0;transform:translateY(10px)}}
 /* 3. blocks further down fade up as they scroll into view (app.js adds .rv only to blocks below the fold, then .in) */
-.rv{opacity:0;transform:translateY(14px);transition:opacity .55s var(--out),transform .55s var(--out)}
+.rv{opacity:0;transform:translateY(12px);transition:opacity .45s var(--out),transform .45s var(--out)}
 .rv.in{opacity:1;transform:none}
 /* 4. hover and press */
 a.card,.scard,.sc,.mrow,.lrow,a.row{transition:transform .22s var(--out),box-shadow .22s var(--out),border-color .22s ease,background-color .2s ease}
