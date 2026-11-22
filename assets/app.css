@@ -1686,3 +1686,6 @@ main .card .card{box-shadow:none}
 .as-demo-a{margin-top:16px;max-width:640px;font-size:15px;line-height:1.6;color:var(--text)}
 .as-demo-a h3{margin:12px 0 4px;font:600 15px/1.4 var(--fd);color:var(--ink)}.as-demo-a ul,.as-demo-a ol{margin:0;padding-left:20px}.as-demo-a li{margin:4px 0}
 .as-demo-a a{color:var(--brand);font-weight:600}.as-demo-a>p:last-child{margin:12px 0 0;color:var(--ink)}
+/* F10 plans: prices line up with the plan name; Lifetime card uses the normal card border (pink read as an error) */
+.plan2 .pp{padding-left:0;padding-right:0}
+.life{border-color:var(--line)}.life:hover{border-color:#BFD3FB}.life[open]{border-color:#BFD3FB}
