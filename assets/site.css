@@ -795,6 +795,10 @@ main .dk .lede{background:none;box-shadow:none}
 ::view-transition-old(root){animation:lvOut .16s ease both}::view-transition-new(root){animation:lvIn .3s cubic-bezier(.16,1,.3,1) both}
 @keyframes lvOut{to{opacity:0}}@keyframes lvIn{from{opacity:0}}
 @media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
+/* a11y on the homepage app preview: small controls get an invisible >= 24 px hit area (same trick as .dtabs), and the green "verified" markers use the darker green so white numbers pass 4.5:1 */
+#win :is(#pband button,#wcrumb button,.side .si,.splan a,.sd-h button){position:relative}
+#win :is(#pband button,#wcrumb button,.side .si,.splan a,.sd-h button)::after{content:"";position:absolute;inset:-5px -2px}
+.mk.v,.n.v{background:#047857!important;border-color:#047857!important}
 
 /* =====================================================================
    Round 11: remodel + motion. Shared components (see COMPONENTS.md).
