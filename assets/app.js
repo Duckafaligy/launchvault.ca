@@ -525,7 +525,7 @@
     const so = $("#so"); if (so && window.LVAuth) so.addEventListener("click", () => LVAuth.signOut());
     const nav = $$(".anav a, .anavm a"), strip = $(".anavm .snav-in");
     // the section in view is highlighted in both navs; at the very bottom the last section wins (it may never reach the top)
-    const H = ["#profile", "#prefs", "#plan", "#email", "#data"];
+    const H = ["#profile", "#prefs", "#site", "#plan", "#email", "#data"];
     const mark = cur => { nav.forEach(a => { const on = a.getAttribute("href") === cur; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); });
       const on = strip && $("a.on", strip); if (on && strip.scrollWidth > strip.clientWidth) strip.scrollTo({left: on.offsetLeft - 16, behavior: reduce ? "auto" : "smooth"});
       glide($(".acc .anav"), "a.on"); glide(strip, "a.on"); };
@@ -723,6 +723,61 @@
   document.addEventListener("click", e => { const s = e.target.closest(".seg"); if (s) requestAnimationFrame(() => glide(s, '[aria-pressed="true"]')); });
   // a sheet or dialog opening makes its controls measurable: place their sliders then
   document.addEventListener("toggle", e => { if (e.target.tagName === "DIALOG" && e.target.open) requestAnimationFrame(() => $$(".seg", e.target).forEach(s => glide(s, '[aria-pressed="true"]'))); }, true);
+
+  // ---------- Your website: connect + prove ownership (DNS TXT or meta tag) + AI review. Account #site and a Home card. ----------
+  // Server: Edge Function "site" (db/supabase/functions/site). Nothing here is trusted: the server re-checks everything.
+  { const acct = $("[data-site]"), homeRail = $(".home2 .hrail");
+    if (acct || homeRail) {
+      const home = homeRail ? Object.assign(document.createElement("section"), {className: "card hsite"}) : null;
+      if (home) { home.setAttribute("aria-labelledby", "hsiteH"); homeRail.prepend(home); }
+      const ERR = {bad_domain: "That doesn't look like a website address. Try something like yourproject.com.", not_found: "We couldn't find the code yet. A DNS record can take up to an hour to show up; the meta tag works as soon as your site is published.",
+        review_daily: "You can get one review a day. Try again tomorrow.", daily_limit: "You've used today's Ask LaunchVault messages. Try again tomorrow.", site_unreachable: "We couldn't open your site. Check it loads at https:// and try again.",
+        assistant_not_configured: "Site reviews open soon.", busy: "Lots of people are asking right now. Try again in a minute.", refused: "We couldn't review this site.", not_signed_in: "Sign in again to continue."};
+      const call = async (method, body) => { try { const c = window.LVAuth && LVAuth.live ? await LVAuth.load() : null, tok = c && c.session ? await c.session.getToken() : null;
+        if (!tok) return {error: "not_signed_in"};
+        const r = await fetch(FN + "site", {method, headers: {Authorization: "Bearer " + tok, "Content-Type": "application/json"}, ...(body ? {body: JSON.stringify(body)} : {})});
+        return await r.json().catch(() => ({error: "server"})); } catch { return {error: "server"}; } };
+      let site = null, ai = false;
+      const story = s => S[s] ? `<a href="${esc(S[s].href)}">${esc(S[s].name)}</a>` : "";
+      const reviewHTML = (rv, max, short) => `<ol class="sgl">${rv.suggestions.slice(0, max).map(x => `<li><b>${esc(x.title)}</b>${short ? "" : `<p>${esc(x.why)}</p>`}<p class="sgs"><span>This week:</span> ${esc(x.step)}</p>${x.story ? `<p class="sgf">From the ${story(x.story)} story</p>` : ""}</li>`).join("")}</ol>`;
+      const copyBtn = (v, l) => `<button class="btn btn-s sm" type="button" data-copy="${esc(v)}">${l}</button>`;
+      const drawAcct = (msg = "") => { if (!acct) return; const say = msg ? `<p class="smsg" role="status">${esc(msg)}</p>` : "";
+        if (!site) { acct.innerHTML = `<form class="sform" data-sclaim novalidate><label for="sDom">Website address</label><div class="srow"><input id="sDom" type="text" inputmode="url" autocomplete="url" autocapitalize="none" spellcheck="false" placeholder="yourproject.com" maxlength="253"><button class="btn btn-p" type="submit">Connect</button></div>${say}<p class="fine">Use a site you made or run. We only read your homepage, and only after you prove it's yours.</p></form>`; return; }
+        if (!site.verified) { acct.innerHTML = `<div class="spend"><p class="sdom"><b>${esc(site.domain)}</b> <span class="lb n">Not verified yet</span></p><p>Add <b>one</b> of these, then press Verify.</p>
+          <div class="sopt"><h3>Option 1: a DNS record</h3><p>In your domain's DNS settings, add a <b>TXT</b> record.</p><dl><dt>Name</dt><dd><code>${esc(site.txt_name)}</code>${copyBtn(site.txt_name, "Copy")}</dd><dt>Value</dt><dd><code>${esc(site.txt_value)}</code>${copyBtn(site.txt_value, "Copy")}</dd></dl><p class="fine">Some DNS screens want only <code>_launchvault</code> as the name. Changes can take up to an hour.</p></div>
+          <div class="sopt"><h3>Option 2: a tag on your homepage</h3><p>Paste this into your site's <b>head</b> (Wix, Squarespace, Shopify and Carrd all have a "custom code" or "header code" box).</p><dl><dt>Tag</dt><dd><code>${esc(site.meta)}</code>${copyBtn(site.meta, "Copy")}</dd></dl></div>
+          ${say}<div class="sact"><button class="btn btn-p" type="button" data-sverify>Verify</button><button class="tl" type="button" data-sremove>Use a different site</button></div></div>`; return; }
+        const rv = site.review;
+        acct.innerHTML = `<div class="sok"><p class="sdom"><b>${esc(site.domain)}</b> <span class="lb v">Verified</span><small>${site.method === "dns" ? "by DNS record" : "by homepage tag"}</small></p>
+          <p>Ask LaunchVault can now read this site when you chat about your project.</p>
+          ${rv ? `<div class="srev"><h3>Your site review</h3>${rv.summary ? `<p class="ssum">${esc(rv.summary)}</p>` : ""}${reviewHTML(rv, 5)}<p class="fine">Reviewed ${esc(new Date(site.reviewed_at).toLocaleDateString(undefined, {month: "short", day: "numeric", year: "numeric"}))}. Suggestions come from AI and the stories in the library; they're ideas, not guarantees.</p></div>` : ""}
+          ${say}<div class="sact">${ai ? `<button class="btn btn-p" type="button" data-sreview>${rv ? "Review again" : "Review my site"}</button>` : `<span class="fine">Site reviews open soon.</span>`}<button class="tl" type="button" data-sremove>Remove website</button></div></div>`; };
+      const drawHome = (state) => { if (!home) return;
+        const head = `<div class="ch"><h2 id="hsiteH">Your website</h2>${site ? `<a class="tl" href="/app/account/#site">Manage</a>` : ""}</div>`;
+        if (state === "judge") { home.innerHTML = head + `<div class="cb"><p>Members connect their project's website here. Ask LaunchVault then reviews it and suggests what to fix first, each idea tied to a story in the library.</p></div>`; return; }
+        if (state === "out") { home.innerHTML = head + `<div class="cb"><p>Sign in to connect your website and get suggestions made for it.</p></div>`; return; }
+        if (!site) { home.innerHTML = head + `<div class="cb"><p>Connect your project's site. Once it's verified, Ask LaunchVault reads it and tells you what to fix first.</p><a class="btn btn-s" href="/app/account/#site">Connect your website</a></div>`; return; }
+        if (!site.verified) { home.innerHTML = head + `<div class="cb"><p><b>${esc(site.domain)}</b> is waiting for you to finish verifying.</p><a class="btn btn-s" href="/app/account/#site">Finish verifying</a></div>`; return; }
+        const rv = site.review;
+        home.innerHTML = head + `<div class="cb"><p class="sdom"><b>${esc(site.domain)}</b> <span class="lb v">Verified</span></p>${rv ? reviewHTML(rv, 3, true) + `<a class="tl" href="/app/account/#site">See why, and the full review</a>` : ai ? `<p>Get a review: what to fix first on your site, and which story to copy.</p><button class="btn btn-s" type="button" data-sreview>Review my site</button>` : `<p>Site reviews open soon. Ask LaunchVault can already read your site when you chat.</p>`}</div>`; };
+      const draw = (msg, state) => { drawAcct(msg); drawHome(state); };
+      const busy = (b, t) => { b.disabled = true; b.dataset.l = b.textContent; b.textContent = t; };
+      document.addEventListener("click", async e => {
+        const cp = e.target.closest("[data-copy]"); if (cp) { try { await navigator.clipboard.writeText(cp.dataset.copy); toast("Copied"); } catch { toast("Couldn't copy. Select it and copy by hand."); } return; }
+        const v = e.target.closest("[data-sverify]"), rm = e.target.closest("[data-sremove]"), rvb = e.target.closest("[data-sreview]");
+        if (v) { busy(v, "Checking…"); const d = await call("POST", {action: "verify"}); if (d.site) site = d.site; draw(d.ok ? "" : ERR[d.error] || "Something went wrong. Try again.", null); if (d.ok) toast("Website verified"); return; }
+        if (rm) { if (!confirm(site && site.verified ? "Remove this website? Its review is deleted too." : "Use a different website?")) return; const d = await call("POST", {action: "remove"}); if (!d.error) site = null; draw(ERR[d.error] || ""); return; }
+        if (rvb) { busy(rvb, "Reviewing… (about 20 seconds)"); const d = await call("POST", {action: "review"}); if (d.site) site = d.site; draw(d.error ? ERR[d.error] || "The review didn't work. Try again in a minute." : ""); if (!d.error) toast("Review ready"); }
+      });
+      document.addEventListener("submit", async e => { const f = e.target.closest("[data-sclaim]"); if (!f) return; e.preventDefault();
+        const b = $("button", f), val = $("#sDom", f).value.trim(); if (!val) return $("#sDom", f).focus(); busy(b, "Connecting…");
+        const d = await call("POST", {action: "claim", domain: val}); if (d.site) site = d.site; ai = !!d.ai; draw(ERR[d.error] || (d.error ? "Something went wrong. Try again." : "")); });
+      (async () => {
+        const judge = ls.get("lv-judge") === JCODE, c = window.LVAuth && LVAuth.live ? await LVAuth.load().catch(() => null) : null;
+        if (!c || !c.user) { if (acct) acct.innerHTML = `<div class="arow"><span class="v"><small>${judge ? "Judge view has no account, so there's no website to connect. Members connect theirs here." : "Sign in to connect your website."}</small></span></div>`; drawHome(judge ? "judge" : "out"); return; }
+        const d = await call("GET"); site = d.site || null; ai = !!d.ai; draw("");
+      })();
+    } }
 
   // scroll reveal: blocks that start below the fold fade up as they come into view (app.css .rv/.in). Nothing above the fold is
   // touched, so a slow or failed script never hides what's on screen; reduced motion skips it.
