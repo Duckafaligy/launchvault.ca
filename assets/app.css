@@ -1653,3 +1653,11 @@ main .card .card{box-shadow:none}
 .cla .ckf{display:none}
 .cla .ckl{margin-bottom:4px}
 .cla .ckh{display:none}
+/* F2 account: age range as a row of chips (was four full-width bars) */
+.agef{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.agef>legend{flex-basis:100%}
+.agef .opt2{margin-top:0;flex:0 0 auto;min-height:40px;padding:6px 14px 6px 10px;border-radius:999px}
+@media (pointer:coarse){.agef .opt2{min-height:44px}}
+.agef .opt2{margin-left:0}.agef .opt2:first-of-type{margin-left:54px}.agef>legend{margin-bottom:4px}
+@media (max-width:600px){.agef .opt2:first-of-type{margin-left:0}}
+.agef>p{flex-basis:100%;order:9;margin-top:6px}.agef>p:empty{display:none}
