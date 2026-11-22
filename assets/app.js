@@ -643,6 +643,8 @@
         if (d.url) { location.href = d.url; return; }
         if (d.error === "payments_not_configured") { payCfg = null; syncPay(); return fail("Payments open soon. Nothing was charged."); }
         if (d.error === "already_subscribed") { if (window.LVSync) LVSync.plan().catch(() => {}); return fail("You already have a plan. Use Manage billing to change it."); }
+        if (d.error === "no_customer") { try { localStorage.removeItem("lv-plan"); } catch {} if (window.LVSync) LVSync.plan().catch(() => {}); syncJudge(); return fail("This account has no billing yet. Pick a plan below to start one."); }
+        if (d.error === "not_signed_in") return fail("Sign in again to continue. Nothing was charged.");
         fail("Couldn't reach Stripe. Nothing was charged. Try again in a minute.");
       } catch { fail("Couldn't reach Stripe. Nothing was charged. Try again in a minute."); }
     });

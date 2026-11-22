@@ -37,11 +37,16 @@ window.LVSync = (() => {
       const rd = ls.get("lv-read-" + c.slug) || {}; if ((r.read_pct || 0) > (rd.pct || 0)) ls.set("lv-read-" + c.slug, {...rd, pct: r.read_pct}); });
   };
   // paid plan (written only by the stripe-webhook Edge Function): app.js listens for "lv:plan" and unlocks Pro like the judge pass
+  // the cache is tagged with the Clerk user id, so one account's plan never shows up for another account on the same device
+  let uid = null;
   const plan = async () => { if (!sb) return;
     const {data, error} = await sb.from("plans").select("plan,billing,status").maybeSingle(); if (error) return;
-    ls.set("lv-plan", data ? {...data, t: Date.now()} : null); dispatchEvent(new CustomEvent("lv:plan", {detail: data})); };
+    ls.set("lv-plan", data ? {...data, uid, t: Date.now()} : null); dispatchEvent(new CustomEvent("lv:plan", {detail: data})); };
   const start = async clerk => {
     if (!clerk || !clerk.user) return;
+    uid = clerk.user.id;
+    const cached = ls.get("lv-plan");
+    if (cached && cached.uid !== uid) { ls.set("lv-plan", null); dispatchEvent(new CustomEvent("lv:plan", {detail: null})); }
     try {
       await loadLib();
       sb = window.supabase.createClient(URL, KEY, {accessToken: async () => (await clerk.session.getToken()) || null});
