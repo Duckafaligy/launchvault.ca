@@ -1669,3 +1669,5 @@ main .card .card{box-shadow:none}
   .sumc .rh .what:not(.pat){grid-area:w;margin:4px 0 0}.sumc .rh .pat{grid-area:p;margin:0}
   .sumc .rh .logo.big img{width:40px;height:40px}
 }
+/* F6 home hero on phones: logo sits above the title so the headline uses the full card width */
+@media (max-width:600px){.hhero .hh{flex-direction:column;align-items:flex-start;gap:12px}.hhero .hh>.logo img{width:40px;height:40px}.hhero .hhm,.hhero .hhn{width:100%}}
