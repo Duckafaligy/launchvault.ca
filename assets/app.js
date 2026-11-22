@@ -286,7 +286,7 @@
         + `<div class="hact"><a class="btn btn-p" href="${L ? `${H.href}#ph${ph}` : H.href}">${L ? "Continue reading" + (pct ? ` (${pct}%)` : "") : "Read this week's breakdown"} <span class="arr" aria-hidden="true">→</span></a></div>`; }
     // stats strip: only once there is real activity
     const stat = (v, l) => `<div><b>${v}</b><span>${l}</span></div>`;
-    $("[data-hstats]").innerHTML = prog ? `<div class="hstrip">${stat(`${started.length} of ${READY.length}`, "Stories started")}${stat(`${seenPh} of ${totPh}`, "Lessons seen")}${stat(`${tk[0]} of ${tk[1]}`, "Steps ticked")}${stat(sc.length ? avg + "%" : "Not taken yet", "Check average")}</div>` : "";
+    $("[data-hstats]").innerHTML = prog ? `<div class="hstrip">${stat(`${started.length} of ${READY.length}`, "Stories started")}${stat(`${seenPh} of ${totPh}`, "Lessons seen")}${stat(`${tk[0]} of ${tk[1]}`, "Steps ticked")}${stat(`${READY.filter(s => doneOf(s.slug)).length} of ${READY.length}`, "Stories finished")}</div>` : "";
     // right rail: the path
     const st = pathSteps(), dn = pathDone(), nx = q ? st.find(s => !s.done) : null, hp = $("[data-hpath]");
     hp.innerHTML = q ? `<div class="ch"><h2>Your path</h2><a class="tl" href="/app/start/?quiz=1">Retake quiz</a></div><div class="cb"><p class="hpt">${esc(D.path.title)}</p><div class="hpr">${bar(dn / st.length)}<span>${dn} of ${st.length} steps</span></div>`
