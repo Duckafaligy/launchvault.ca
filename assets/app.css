@@ -1638,3 +1638,7 @@ details[open]::details-content{height:auto}
 /* B4: one card look across the app: 12 px corners, hairline border, the same soft shadow */
 main .card{border-radius:12px;box-shadow:0 1px 2px rgba(11,18,32,.04),0 8px 24px -18px rgba(11,18,32,.16)}
 main .card .card{box-shadow:none}
+/* B3: home side rail spacing comes from the grid gap only, so side-by-side cards line up (tablet) and stacked ones sit 20 px apart */
+.hrail{gap:20px;align-content:start}.hrail>*{margin-top:0!important}
+.hgrid{row-gap:clamp(16px,calc(1.8vw/var(--z,1)),28px)}.hrail{gap:clamp(16px,calc(1.8vw/var(--z,1)),28px)}
+.hmain>*{margin-top:0!important}
