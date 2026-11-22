@@ -455,10 +455,40 @@ def reader(E, S, gate=True):
     sec = lambda id_, h, t, body, extra="": f'<section class="rsec rcard" id="{id_}"{extra}><div class="sh"><h2>{h}</h2></div>{intro(t)}{body}</section>'
     # "Check our work" panels: open on desktop, app.js folds them on phones
     panel = lambda id_, h, t, body: f'<details class="cow" id="{id_}" open><summary><span class="cwh"><b>{h}</b><span>{t}</span></span><span class="chev" aria-hidden="true"></span></summary><div class="cwb">{body}</div></details>'
+    # visuals inside each phase, from data the story already has: the founder's moves and the saved homepage quotes, matched
+    # to the phase by year (each item goes to the phase that starts latest on or before its year)
+    yr = lambda t: (lambda m: int(m.group(0)) if m else None)(re.search(r"(?:19|20)\d\d", t or ""))
+    starts = [yr(p["when"]) for p in S["phases"]]
+    def owner(y):
+        if y is None: return None
+        k = [i for i, s in enumerate(starts) if s is not None and s <= y]
+        return k[-1] if k else 0
+    moves_by = {}; wb_by = {}
+    for j, m in enumerate(S.get("moves") or []): moves_by.setdefault(owner(yr(m.get("when"))), []).append((j, m))
+    for w in S.get("wayback") or []: wb_by.setdefault(owner(yr(w.get("date"))), []).append(w)
+    def visuals(i):
+        mv, wb = moves_by.get(i, []), wb_by.get(i, [])
+        if not mv and not wb: return ""
+        out = '<div class="phv">'
+        if mv:
+            out += ('<div class="phm"><h3>Moves in this phase</h3><ol>' + "".join(
+                f'<li><span class="mn" aria-hidden="true">{j + 1}</span><span class="mw">{esc(m.get("when", ""))}</span><span class="mt">{esc(m["text"])} {lb(m.get("label"))}</span></li>'
+                for j, m in mv) + '</ol></div>')
+        if wb:
+            w = wb[0]; pr = w.get("prices") or ""; pr = ", ".join(map(str, pr)) if isinstance(pr, list) else str(pr)
+            out += (f'<figure class="phw"><figcaption>What their homepage said <span>{esc(w.get("date", ""))}</span> {lb("Wayback")}</figcaption>'
+                    f'<blockquote><p class="hq">&ldquo;{esc(w.get("headline", ""))}&rdquo;</p>' + (f'<p class="hs">{esc(w.get("sub", ""))}</p>' if w.get("sub") else "") + '</blockquote>'
+                    + (f'<p class="hp"><b>Prices shown:</b> {esc(pr)}</p>' if pr and not pr.lower().startswith(("not on", "not captured", "not shown", "none")) else "")
+                    + (f'<a class="tl" href="{esc(w["source"])}" target="_blank" rel="noopener">See the saved page ↗</a>' if w.get("source") else "") + '</figure>')
+        return out + '</div>'
+    # the phase's own number box is dropped when it is the same saved-homepage quote the card above already shows
+    def dup(i, p):
+        n = p.get("number"); n = n[0] if isinstance(n, list) and n else n
+        return bool(n) and isinstance(n, dict) and n.get("label") == "Wayback" and bool(wb_by.get(i))
     def phase(i, p):
-        body = "".join(f"<p>{esc(t)}</p>" for t in p["story"].split("\n\n"))
+        body = "".join(f"<p>{esc(t)}</p>" for t in p["story"].split("\n\n")) + visuals(i)
         return (f'<details class="ph" id="ph{i + 1}" data-ph="{i + 1}" open><summary><span class="pn">{i + 1}</span><span class="phh"><b>{esc(p["name"])}</b><span class="when">{esc(p["when"])}</span></span><span class="chev" aria-hidden="true"></span></summary>'
-                f'<div class="phb"><div class="body">{body}</div>{nbox(p.get("number") or [])}<p class="lesson"><b>Lesson:</b> {esc(p["lesson"])}</p></div></details>')
+                f'<div class="phb"><div class="body">{body}</div>{"" if dup(i, p) else nbox(p.get("number") or [])}<p class="lesson"><b>Lesson:</b> {esc(p["lesson"])}</p></div></details>')
     phases_free = phase(0, S["phases"][0]); phases_rest = "".join(phase(i, p) for i, p in enumerate(S["phases"]) if i)
     kmoves = ""
     if S.get("highlights"):

@@ -1711,3 +1711,19 @@ dialog.lfs::backdrop,dialog.rdlg::backdrop{transition:background-color .25s ease
 .snav:not(.anavm) .snav-in.more{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent)}
 /* account: the last section is at least a screen tall, so Email and Your data can both scroll to the top when their tab is clicked (before, the page ran out of room and the highlight jumped to Your data) */
 .acc #data{min-height:calc(100vh/var(--z,1) - var(--top,56px) - 120px)}
+/* lesson visuals: moves in the phase (numbered like the chart markers) + what the homepage said at the time */
+.ph .phv{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px;margin:18px 0 6px}
+.ph .phm,.ph .phw{margin:0;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#F8FAFC}
+.ph .phm h3{margin:0 0 10px;font:600 max(13px,calc(12px/var(--z,1)))/1.3 var(--fd);color:var(--ink)}
+.ph .phm ol{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ph .phm li{display:grid;grid-template-columns:22px minmax(0,1fr);column-gap:10px;align-items:start}
+.ph .phm .mn{grid-row:span 2;width:22px;height:22px;border-radius:6px;background:#fff;border:1px solid #CBD5E1;display:grid;place-items:center;font:600 max(12px,calc(12px/var(--z,1))) var(--fn);color:#374151;margin-top:1px}
+.ph .phm .mw{font-size:max(12px,calc(12px/var(--z,1)));line-height:16px;color:var(--muted)}
+.ph .phm .mt{font-size:max(14px,calc(12px/var(--z,1)));line-height:20px;color:var(--ink)}
+.ph .phw figcaption{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0 0 10px;font:600 max(13px,calc(12px/var(--z,1)))/1.3 var(--fd);color:var(--ink)}
+.ph .phw figcaption span:not(.lb){font:500 max(12px,calc(12px/var(--z,1))) var(--fn);color:var(--muted)}
+.ph .phw blockquote{margin:0;padding:10px 12px;border-left:3px solid var(--brand);background:#fff;border-radius:0 8px 8px 0}
+.ph .phw .hq{margin:0;font:600 15px/1.4 var(--fd);color:var(--ink)}
+.ph .phw .hs{margin:6px 0 0;font-size:max(13px,calc(12px/var(--z,1)));line-height:19px;color:var(--text)}
+.ph .phw .hp{margin:10px 0 0;font-size:max(13px,calc(12px/var(--z,1)));color:var(--text)}
+.ph .phw .tl{display:inline-flex;margin-top:8px;font-size:max(13px,calc(12px/var(--z,1)))}
