@@ -1689,3 +1689,15 @@ main .card .card{box-shadow:none}
 /* F10 plans: prices line up with the plan name; Lifetime card uses the normal card border (pink read as an error) */
 .plan2 .pp{padding-left:0;padding-right:0}
 .life{border-color:var(--line)}.life:hover{border-color:#BFD3FB}.life[open]{border-color:#BFD3FB}
+/* F11 bottom sheet (library filters on phones) and report dialogs slide/fade in and out */
+@media (max-width:720px){
+  dialog.lfs{transition:transform .3s var(--out),opacity .2s ease,overlay .3s allow-discrete,display .3s allow-discrete;transform:translateY(100%);opacity:0}
+  dialog.lfs[open]{transform:none;opacity:1}
+  @starting-style{dialog.lfs[open]{transform:translateY(100%);opacity:0}}
+}
+dialog.rdlg{transition:transform .22s var(--out),opacity .18s ease,overlay .22s allow-discrete,display .22s allow-discrete;transform:translateY(8px) scale(.98);opacity:0}
+dialog.rdlg[open]{transform:none;opacity:1}
+@starting-style{dialog.rdlg[open]{transform:translateY(8px) scale(.98);opacity:0}}
+dialog.lfs::backdrop,dialog.rdlg::backdrop{transition:background-color .25s ease,overlay .25s allow-discrete,display .25s allow-discrete}
+@starting-style{dialog.lfs[open]::backdrop,dialog.rdlg[open]::backdrop{background-color:rgba(11,18,32,0)}}
+@media (prefers-reduced-motion:reduce){dialog.lfs,dialog.rdlg,dialog.lfs::backdrop,dialog.rdlg::backdrop{transition:none}}

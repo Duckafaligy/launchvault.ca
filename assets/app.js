@@ -12,10 +12,11 @@
   const GLIDE = new Set();
   const glide = (box, sel = ".on, [aria-pressed=\"true\"], [aria-checked=\"true\"][role=\"radio\"]") => {
     if (!box) return; let ind = box.querySelector(":scope > .lvind");
-    if (!ind) { ind = document.createElement("span"); ind.className = "lvind"; ind.setAttribute("aria-hidden", "true"); ind.style.transition = "none"; box.prepend(ind); box.classList.add("has-ind"); GLIDE.add([box, sel]); }
+    if (!ind) { ind = document.createElement("span"); ind.className = "lvind"; ind.setAttribute("aria-hidden", "true"); ind.style.transition = "none"; box.prepend(ind); GLIDE.add([box, sel]); }
     const a = [...box.querySelectorAll(sel)].find(x => x.parentElement === box || x.parentElement.parentElement === box);
-    if (!a || !a.offsetWidth) { ind.style.opacity = "0"; return; }
-    ind.style.opacity = "1"; ind.style.width = a.offsetWidth + "px"; ind.style.height = a.offsetHeight + "px";
+    // hidden (e.g. inside a closed sheet): keep the normal highlight until the slider can be placed
+    if (!a || !a.offsetWidth) { ind.style.opacity = "0"; ind.style.transition = "none"; box.classList.remove("has-ind"); return; }
+    box.classList.add("has-ind"); ind.style.opacity = "1"; ind.style.width = a.offsetWidth + "px"; ind.style.height = a.offsetHeight + "px";
     ind.style.transform = `translate(${a.offsetLeft}px, ${a.offsetTop}px)`;
     if (ind.style.transition === "none") requestAnimationFrame(() => requestAnimationFrame(() => { ind.style.transition = ""; }));
   };
@@ -712,6 +713,8 @@
   // segmented controls: the white chip slides to the pressed button (handlers set aria-pressed first, so place it a frame later)
   $$(".seg").forEach(s => glide(s, '[aria-pressed="true"]'));
   document.addEventListener("click", e => { const s = e.target.closest(".seg"); if (s) requestAnimationFrame(() => glide(s, '[aria-pressed="true"]')); });
+  // a sheet or dialog opening makes its controls measurable: place their sliders then
+  document.addEventListener("toggle", e => { if (e.target.tagName === "DIALOG" && e.target.open) requestAnimationFrame(() => $$(".seg", e.target).forEach(s => glide(s, '[aria-pressed="true"]'))); }, true);
 
   // scroll reveal: blocks that start below the fold fade up as they come into view (app.css .rv/.in). Nothing above the fold is
   // touched, so a slow or failed script never hides what's on screen; reduced motion skips it.
