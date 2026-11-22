@@ -1707,3 +1707,5 @@ dialog.lfs::backdrop,dialog.rdlg::backdrop{transition:background-color .25s ease
 .snav:not(.anavm) .snav-in.has-ind a{transition:color .2s ease,border-color .2s ease}
 /* F14 My path: closed steps show up to two full lines instead of one cut-off line */
 .rstep:not(.open) .rsh .rst{white-space:normal;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;text-overflow:clip}
+/* F23 story strip: soft fade on the right while more sections are off-screen */
+.snav:not(.anavm) .snav-in.more{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent)}

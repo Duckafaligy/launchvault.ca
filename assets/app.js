@@ -382,6 +382,9 @@
     const hp = location.hash && document.getElementById(location.hash.slice(1)); if (hp && hp.tagName === "DETAILS") hp.open = true;
     const nav = $(".snav-in"); let lastOn = null, gq = 0;
     // the section pill slides along the strip as you read (another script moves .on; follow it once per frame)
+    // a soft right-edge fade only while more sections are off to the right (reads as "scroll", not as cut-off text)
+    const edge = () => nav && nav.classList.toggle("more", nav.scrollLeft + nav.clientWidth < nav.scrollWidth - 2);
+    if (nav) { nav.addEventListener("scroll", edge, {passive: true}); addEventListener("resize", edge); requestAnimationFrame(edge); if (document.fonts) document.fonts.ready.then(edge); }
     if (nav) { requestAnimationFrame(() => glide(nav, "a.on")); if (document.fonts) document.fonts.ready.then(() => glide(nav, "a.on")); addEventListener("load", () => glide(nav, "a.on")); addEventListener("scroll", () => { if (!gq) gq = requestAnimationFrame(() => { gq = 0; glide(nav, "a.on"); }); }, {passive: true}); }
     addEventListener("scroll", () => { const on = nav && $("a.on", nav); if (on && on !== lastOn) { lastOn = on; nav.scrollTo({left: on.offsetLeft - nav.clientWidth / 2 + on.clientWidth / 2, behavior: reduce ? "auto" : "smooth"}); } }, {passive: true});
   }
