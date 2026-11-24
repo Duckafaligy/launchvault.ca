@@ -818,3 +818,27 @@
 .nv .acard .bday{padding:16px 0 4px;border-top:1px solid var(--line)}
 .nv .acard .bday input{max-width:220px;color-scheme:dark}
 
+/* Ask composer: one slim row. + for files on the left, send on the right; picked files sit as chips above it. */
+.nv .as-comp{gap:8px}
+.nv .as-box{min-height:48px;padding:4px 4px 4px 14px;gap:8px;border-radius:24px}
+.nv .as-box:has(.as-add:not([hidden])){padding-left:4px}
+.nv .as-box:has(.as-add:not([hidden])) .as-ico{display:none}
+.nv .as-box textarea{min-height:24px;padding:8px 0}
+.nv .as-send{width:36px;height:36px;margin-bottom:2px}
+.nv .as-add{display:grid;place-items:center;flex:none;align-self:flex-end;width:36px;height:36px;margin-bottom:2px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.08);color:#fff;cursor:pointer;transition:background-color .15s,transform .2s var(--out)}
+.nv .as-add[hidden]{display:none}
+.nv .as-add:hover{background:rgba(255,255,255,.16);transform:rotate(90deg)}
+.nv .as-add:focus-visible{outline:2px solid var(--hl);outline-offset:2px}
+.nv .as-foot{margin-top:-2px;font-size:var(--f12);line-height:15px}
+.nv .as-files{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.nv .as-files[hidden]{display:none}
+.nv .as-chip{display:inline-flex;align-items:center;gap:6px;max-width:240px;height:30px;padding:0 4px 0 12px;border-radius:999px;background:var(--glass),rgba(12,12,17,.7);box-shadow:var(--edge);font:500 var(--f12)/1 var(--fd);color:#fff}
+.nv .as-chip b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nv .as-chip small{flex:none;color:var(--faint)}
+.nv .as-chip button{flex:none;width:22px;height:22px;border:0;border-radius:50%;background:rgba(255,255,255,.1);color:#fff;font-size:14px;line-height:1;cursor:pointer}
+.nv .as-chip button:hover{background:rgba(255,255,255,.22)}
+.nv .as-files p{flex-basis:100%;margin:0;font:400 var(--f12)/17px var(--fd);color:#FFB49C}
+.nv .as-att{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.nv .as-att span{max-width:200px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.14);font:500 var(--f12)/16px var(--fd);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:720px){.nv .as-add,.nv .as-send{width:44px;height:44px;margin-bottom:0}}
+

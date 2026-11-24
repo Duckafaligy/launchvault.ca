@@ -12,7 +12,7 @@
     <section class="as-main" aria-label="Chat">
       <div class="as-gate card" data-asgate hidden>
         <h2 data-asgateh>Ask LaunchVault is for members</h2>
-        <p data-asgatep>Sign in or create a free account to ask about your idea. You get 10 questions a day; Pro and Builder get 100.</p>
+        <p data-asgatep>Sign in or create a free account to ask about your idea. You get 10 messages a day; Pro and Builder get 100.</p>
         <a class="btn btn-p" href="/sign-in/?next=/app/assistant/" data-asgatebtn>Sign in to ask</a>
       </div>
       <section class="as-demo card" data-asdemo hidden aria-labelledby="asDemoH">
@@ -49,7 +49,8 @@
       <p class="sr" role="status" aria-live="polite" data-assr></p>
       <form class="as-comp" data-ascomp novalidate>
         <label class="sr" for="asIn">Your message</label>
-        <div class="as-box"><textarea id="asIn" rows="2" maxlength="4000" placeholder="Paste your website or describe your idea" disabled></textarea>
+        <div class="as-files" data-asfiles hidden></div>
+        <div class="as-box"><button class="as-add" type="button" data-asadd hidden aria-label="Add files"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><input type="file" id="asFile" class="sr" multiple tabindex="-1" aria-hidden="true" accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,text/*,.md,.csv,.json,.yml,.yaml,.xml,.html,.css,.js,.jsx,.ts,.tsx,.py,.rb,.php,.java,.kt,.swift,.go,.rs,.c,.h,.cpp,.cs,.sql,.sh,.toml,.vue,.svelte,.mp3,.mp4,.mov,.wav"><textarea id="asIn" rows="1" maxlength="4000" placeholder="Paste your website or describe your idea" disabled></textarea>
         <button class="btn btn-p as-send" type="submit" disabled>Send</button></div>
         <p class="as-foot"><span data-asuse></span><span>Don't share personal details like your school, address or phone number.</span></p>
       </form>
