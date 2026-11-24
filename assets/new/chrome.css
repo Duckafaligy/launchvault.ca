@@ -108,3 +108,10 @@
   .nav-shell,.nav-shell::before,.nav-bar,.nav-card,.nav-tab,.nav-menu path{transition:none!important}
   .nav.is-pill :is(.nav-cta,.nav-cta-s,.nav-menu){animation:none}
 }
+
+/* footer between 600 and 719px: the tablet row (brand 236 + three 136 columns) is wider than the content box, so stack like phones */
+@media (min-width:600px) and (max-width:719px){
+  .foot-top{flex-direction:column}
+  .foot-brand{width:auto}.foot-brand p{max-width:none}
+  .foot-cols{flex-wrap:wrap;gap:28px 24px}
+}
