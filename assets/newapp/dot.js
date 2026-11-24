@@ -113,9 +113,10 @@ ${L("M46 72 Q50 76 54 72", "#0B0B10", 2.4)}</svg>`; };
     btn.addEventListener("click", e => { if (drag) { e.preventDefault(); drag = false; return; } open(panel.hidden); });
 
     /* it listens (wide eyes) only while you are typing to it, and settles a moment after you stop */
-    let lt = 0; const inp = $("input", panel);
-    inp.addEventListener("input", () => { clearTimeout(lt); mood(inp.value ? "listening" : "idle"); lt = setTimeout(() => { if (el && el.dataset.mood === "listening") mood("idle"); }, 1600); });
-    inp.addEventListener("blur", () => { clearTimeout(lt); if (el && el.dataset.mood === "listening") mood("idle"); });
+    const inp = $("input", panel);
+    inp.addEventListener("focus", () => { if (el && el.dataset.mood !== "pointing") mood("listening"); });
+    inp.addEventListener("input", () => { if (el && el.dataset.mood !== "pointing") mood("listening"); });
+    inp.addEventListener("blur", () => { if (el && el.dataset.mood === "listening") mood("idle"); });
     panel.addEventListener("click", e => { const t = e.target.closest("[data-tip]"); if (t) { const tip = (TIPS[page()] || [])[+t.dataset.tip]; if (tip) point(tip[1], tip[2]); } });
     $("form", panel).addEventListener("submit", e => { e.preventDefault(); const v = $("input", panel).value.trim(); if (!v) return;
       const a = $("#asIn");                                           // on the Ask page it goes straight into the box
@@ -125,9 +126,17 @@ ${L("M46 72 Q50 76 54 72", "#0B0B10", 2.4)}</svg>`; };
   }
   d.addEventListener("click", e => { if (panel && !panel.hidden && !e.target.closest(".lvdot")) open(false); });
 
+  /* left alone, it looks around: left, up, right, back to you. The pointer takes over again as soon as it moves. */
+  let lastMove = 0, li = 0;
+  const LOOK = [[-3.2, 0], [-3.2, 0], [0, -2.8], [2.6, -1.6], [3.2, 0], [0, 0], [0, 0], [-2, 1.6], [0, -2.8], [0, 0]];
+  if (!reduce) (function wander() {
+    if (el && el.dataset.mood === "idle" && Date.now() - lastMove > 1400) { const g = LOOK[li++ % LOOK.length]; el.style.setProperty("--ex", g[0] + "px"); el.style.setProperty("--ey", g[1] + "px"); }
+    else if (el && el.dataset.mood === "listening" && panel) { el.style.setProperty("--ex", (panel.dataset.x === "l" ? -3 : 3) + "px"); el.style.setProperty("--ey", (panel.dataset.y === "u" ? -1.2 : 1.6) + "px"); }   // it looks at what you are typing
+    setTimeout(wander, 900 + Math.random() * 1500);
+  })();
   /* eyes follow the pointer a little (mouse only); a blink is CSS */
   if (!reduce && matchMedia("(hover:hover) and (pointer:fine)").matches) {
-    let q = 0; addEventListener("pointermove", e => { if (!el || q) return; q = requestAnimationFrame(() => { q = 0; if (!el) return;
+    let q = 0; addEventListener("pointermove", e => { lastMove = Date.now(); if (!el || q) return; q = requestAnimationFrame(() => { q = 0; if (!el) return;
       const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), n = Math.hypot(dx, dy) || 1, k = Math.min(1, n / 240);
       el.style.setProperty("--ex", (dx / n * 3.2 * k).toFixed(2) + "px"); el.style.setProperty("--ey", (dy / n * 2.6 * k).toFixed(2) + "px"); }); }, { passive: true });
   }

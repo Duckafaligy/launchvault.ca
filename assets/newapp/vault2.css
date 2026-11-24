@@ -976,9 +976,12 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 .lvdot-b:hover{transform:scale(1.07) rotate(-4deg)}
 .lvdot-b:focus-visible{outline:2px solid var(--hl,#9DB8FF);outline-offset:4px}
 .lvdot.drag .lvdot-b{cursor:grabbing;transform:scale(1.12) rotate(6deg)}.lvdot.drag .lvdot-b svg{animation:none}
-.lvdot-eyes{transform:translate(var(--ex,0px),var(--ey,0px));transform-box:fill-box;transform-origin:50% 50%;transition:transform .12s linear;animation:dotBlink 5.5s infinite}
+.lvdot-eyes{transform:translate(var(--ex,0px),var(--ey,0px));transform-box:fill-box;transform-origin:50% 50%;transition:transform .32s cubic-bezier(.3,1.3,.5,1);animation:dotBlink 5.5s infinite}
 .lvdot-glad{display:none}
-.lvdot[data-mood=listening] .lvdot-eyes{scale:1.16}
+/* listening: the eyes open wide (its own blink, because the idle blink animates the same property and would win), a small perk-up, a lean toward the box */
+.lvdot[data-mood=listening] .lvdot-eyes{animation:dotWide .38s cubic-bezier(.3,1.6,.5,1) both,dotBlinkBig 4.2s .4s infinite}
+.lvdot[data-mood=listening] .lvdot-b{transform:scale(1.08) rotate(-5deg)}
+.lvdot[data-mood=listening] .lvdot-b svg{animation:dotPerk .45s cubic-bezier(.3,1.5,.5,1),dotBob 2.4s .45s ease-in-out infinite}
 .lvdot[data-mood=thinking] .lvdot-eyes{transform:translate(1.5px,-3px);animation:none}
 .lvdot[data-mood=thinking] .lvdot-b svg{animation:dotThink .9s ease-in-out infinite}
 .lvdot[data-mood=pointing] .lvdot-b{transform:rotate(-10deg)}
@@ -1006,6 +1009,9 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 @keyframes dotBob{50%{transform:translateY(-3px)}}
 @keyframes dotThink{50%{transform:translateY(-4px) rotate(4deg)}}
 @keyframes dotBlink{0%,94%,100%{scale:1 1}96.5%{scale:1 .1}}
+@keyframes dotWide{from{scale:1 1}to{scale:1.26 1.26}}
+@keyframes dotBlinkBig{0%,93%,100%{scale:1.26 1.26}96%{scale:1.26 .12}}
+@keyframes dotPerk{0%{transform:none}45%{transform:translateY(-7px)}100%{transform:none}}
 @keyframes dotRing{50%{outline-offset:8px;box-shadow:0 0 0 14px rgba(255,77,31,.08)}}
 @media (max-width:720px){
   .lvdot{right:14px;bottom:calc(96px + env(safe-area-inset-bottom));left:auto!important;top:auto!important;width:54px;height:54px}
