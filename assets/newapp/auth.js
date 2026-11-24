@@ -75,7 +75,7 @@ window.LVAuth = (() => {
     return r.status;
   };
   // accounts paused: the one email allowed in, as a SHA-256 hash ("" = open to everyone). ponytail: browser-side; the hard lock is Clerk's allowlist
-  const LV_ONLY = "1bed0365d329c0a66c71c85ac5fb79888c0ecb223196a7f795f08f43242e3221";
+  const LV_ONLY = "";
   const lvMails = u => (u && u.emailAddresses || []).filter(a => a.verification && a.verification.status === "verified").map(a => a.emailAddress);
   const lvAny = async u => { if (!LV_ONLY) return true; for (const e of lvMails(u)) if (await lvAllowed(e)) return true; return false; };   // any verified address on the account
   const lvAllowed = async e => { if (!LV_ONLY) return true; try { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(e || "").trim().toLowerCase()));

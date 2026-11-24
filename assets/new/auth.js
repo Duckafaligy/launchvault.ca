@@ -40,7 +40,7 @@
   const cookie = secs => { document.cookie = `${BLOCK}=1; max-age=${Math.round(secs)}; path=/; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`; };
   const wipe = () => [localStorage, sessionStorage].forEach(s => { try { Object.keys(s).filter(k => k.startsWith("lv-") && k !== BLOCK).forEach(k => s.removeItem(k)); } catch {} });
   const blocked = () => { const t = get(BLOCK); return (typeof t === "number" && t + YEAR > Date.now()) || /(?:^|; )lv-age-block=1/.test(document.cookie); };
-  const ageOk = () => RANGES.includes(get(KEY));
+  const ageOk = () => RANGES.includes(get(KEY)) && /^\d{4}-\d\d-\d\d$/.test(get("lv-dob") || "");   // a device that only has the old age range is asked for the birthday once
   const persist = !demo;   // the preview never writes age answers or judge codes
 
   /* ---------- Clerk (same no-bundler setup as assets/auth.js: UI bundle, then clerk-js, both from our Frontend API) ---------- */
@@ -85,7 +85,7 @@
     })[k] || (x && (x.longMessage || x.message)) || "Something went wrong. Try again.";
   };
   // accounts paused: the one email allowed in, as a SHA-256 hash ("" = open to everyone). ponytail: browser-side; the hard lock is Clerk's allowlist
-  const LV_ONLY = "1bed0365d329c0a66c71c85ac5fb79888c0ecb223196a7f795f08f43242e3221";
+  const LV_ONLY = "";
   const lvMails = u => (u && u.emailAddresses || []).filter(a => a.verification && a.verification.status === "verified").map(a => a.emailAddress);
   const lvAny = async u => { if (!LV_ONLY) return true; for (const e of lvMails(u)) if (await lvAllowed(e)) return true; return false; };
   const lvAllowed = async e => { if (!LV_ONLY) return true; try { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(e || "").trim().toLowerCase()));
@@ -162,7 +162,8 @@
   /* ---------- after sign-in: age question -> welcome (new accounts) -> the app ---------- */
   const leave = b => {
     if (demo) { if (window.LV) LV.toast("Preview: this would open " + next, {type: "ok"}); return; }
-    if (b) { tick(b); setTimeout(() => location.assign(next), reduced ? 0 : 500); } else location.replace(next);
+    const to = fresh && next === APP ? APP + "start/" : next;   // a new account goes on to the welcome questions, so its path and Ask start personalised
+    if (b) { tick(b); setTimeout(() => location.assign(to), reduced ? 0 : 500); } else location.replace(to);
   };
   const afterAuth = () => {
     const tried = ss.get("lva-try"); if (tried && persist) put("lv-last-auth", tried);
