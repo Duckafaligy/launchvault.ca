@@ -31,11 +31,11 @@
     return `<svg width="${size}" height="${size}" viewBox="0 -3 100 100" fill="none" aria-hidden="true">
 <ellipse cx="38" cy="90" rx="9" ry="5" fill="${f.feet}"/><ellipse cx="62" cy="90" rx="9" ry="5" fill="${f.feet}"/>
 <path d="M50 13 C74 13 90 31 90 54 C90 76 74 89 50 89 C26 89 10 76 10 54 C10 31 26 13 50 13 Z" fill="${f.body}"/>
-${f.glaze ? `<path d="M11 46 C13 27 29 13 50 13 C71 13 87 27 89 46 C85 51 80 51 76 46 C72 41 67 42 64 48 C61 54 55 54 52 48 C49 42 44 42 41 47 C38 53 32 54 28 48 C24 42 16 43 11 46 Z" fill="${f.glaze}"/>` : ""}${TOP[f.top]}
-<g class="lvdot-eyes"><ellipse cx="38" cy="63" rx="5.5" ry="7" fill="#0B0B10"/><ellipse cx="62" cy="63" rx="5.5" ry="7" fill="#0B0B10"/><g class="lvdot-glint"><circle cx="38" cy="63" r="2.2" fill="#fff"/><circle cx="62" cy="63" r="2.2" fill="#fff"/></g><g class="lvdot-spark"><circle cx="35.6" cy="66.6" r="1.1" fill="#fff"/><circle cx="59.6" cy="66.6" r="1.1" fill="#fff"/></g></g>
+${f.glaze ? `<path class="lvdot-glaze" d="M11 46 C13 27 29 13 50 13 C71 13 87 27 89 46 C85 51 80 51 76 46 C72 41 67 42 64 48 C61 54 55 54 52 48 C49 42 44 42 41 47 C38 53 32 54 28 48 C24 42 16 43 11 46 Z" fill="${f.glaze}"/>` : ""}${TOP[f.top]}
+<g class="lvdot-eyes"><g class="lvdot-eye l"><ellipse cx="38" cy="63" rx="5.5" ry="7" fill="#0B0B10"/><circle class="lvdot-glint" cx="38" cy="63" r="2.1" fill="#fff"/><circle class="lvdot-spark" cx="36.32" cy="65.75" r="1" fill="#fff"/></g><g class="lvdot-eye r"><ellipse cx="62" cy="63" rx="5.5" ry="7" fill="#0B0B10"/><circle class="lvdot-glint" cx="62" cy="63" r="2.1" fill="#fff"/><circle class="lvdot-spark" cx="60.32" cy="65.75" r="1" fill="#fff"/></g></g>
 <g class="lvdot-glad">${L("M31 65 Q38 56 45 65", "#0B0B10", 3.4)}${L("M55 65 Q62 56 69 65", "#0B0B10", 3.4)}</g>
-<ellipse cx="26" cy="72" rx="5.5" ry="3.3" fill="${f.cheek}"/><ellipse cx="74" cy="72" rx="5.5" ry="3.3" fill="${f.cheek}"/>
-${L("M46 72 Q50 76 54 72", "#0B0B10", 2.4)}</svg>`; };
+<ellipse class="lvdot-cheek l" cx="26" cy="72" rx="5.5" ry="3.3" fill="${f.cheek}"/><ellipse class="lvdot-cheek r" cx="74" cy="72" rx="5.5" ry="3.3" fill="${f.cheek}"/>
+<g class="lvdot-smile">${L("M46 72 Q50 76 54 72", "#0B0B10", 2.4)}</g><ellipse class="lvdot-oh" cx="50" cy="76" rx="2.8" ry="3.2" fill="#0B0B10"/></svg>`; };
 
   /* ---------- saved choices, and a draft the Settings save bar commits or throws away ---------- */
   const saved = () => ({ on: ls.get("lv-dot") !== "off", flavour: FL[ls.get("lv-dot-flavour")] ? ls.get("lv-dot-flavour") : "honey" });
@@ -129,7 +129,7 @@ ${L("M46 72 Q50 76 54 72", "#0B0B10", 2.4)}</svg>`; };
   /* left alone, it looks around: left, up, right, back to you. The pointer takes over again as soon as it moves. */
   let lastMove = 0, li = 0;
   /* the look is the white glint moving inside the dark eye; the eye itself stays put. Its rest spot is up and to the right. */
-  const REST = [1.8, -2.8], LOOK = [[-2.8, 0], [-2.8, 0], [0, -4], [2.4, -3], [2.8, 0], REST, REST, [-2, 3], [0, -4], REST];
+  const REST = [2, -2.8], LOOK = [[-2.8, 0], [-2.8, 0], [0, -4], [2.4, -3], [2.8, 0], REST, REST, [-2, 3], [0, -4], REST];
   if (!reduce) (function wander() {
     const using = !!panel && !panel.hidden;                         // it only watches your pointer while its panel is open
     if (el && el.dataset.mood === "idle" && (!using || Date.now() - lastMove > 1400)) { const g = LOOK[li++ % LOOK.length]; el.style.setProperty("--ex", g[0] + "px"); el.style.setProperty("--ey", g[1] + "px"); }
