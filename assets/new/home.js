@@ -221,8 +221,20 @@
   /* ---------- the top bar is designed on load: its frame is drawn, the logo is placed and typed, the links are typed bunched together
      and then spaced out, Log in is typed, the button is dragged out as a box, typed, rounded and filled ---------- */
   (function () {
-    var bar = $('.nav-bar'), run = bar && !reduced && w.innerWidth >= 1100 && w.scrollY < 40 && w.LV && LV.type;
+    var bar = $('.nav-bar'), run = bar && !reduced && w.innerWidth >= 1100 && w.LV && LV.type, started = false;
     if (!run) return html.classList.add('nb-done');
+    /* built the first time you are at the top: straight away on a normal load, or when you scroll up to it after loading further down */
+    function arm() {
+      if (started || w.scrollY >= 40) return;
+      started = true; w.removeEventListener('scroll', arm);
+      setTimeout(function () {
+        if (w.scrollY < 40 && !$('.nav').classList.contains('is-pill')) return build();
+        started = false; w.addEventListener('scroll', arm, { passive: true });
+      }, performance.now() < 1500 ? 380 : 700);                        /* coming back from the pill: let the bar finish widening first */
+    }
+    w.addEventListener('scroll', arm, { passive: true });
+    arm();
+    function build() {
     var logo = $('.nav-logo', bar), box = $('.nav-links', bar), links = $$('a', box), login = $('.nav-login', bar), btn = $('.nav-start', bar);
     var ov = d.createElement('div'); ov.className = 'nb-ov'; ov.setAttribute('aria-hidden', 'true');
     ov.innerHTML = '<div class="lv-sel"><i></i><i></i><i></i><i></i><b></b></div><div class="lv-sel"><i></i><i></i><i></i><i></i></div><div class="lv-chip"></div>' +
@@ -250,6 +262,7 @@
     function bail() { if (w.scrollY > 40) end(); }                    /* scrolled away mid-build: finish at once */
     w.addEventListener('scroll', bail, { passive: true });
 
+    [logo, login, btn].concat(links).forEach(function (el) { el.style.animation = 'none'; el.style.opacity = 0; });
     var B = R(bar), L = R(logo), FY = B.top + 10, FH = B.height - 20;
     btn.classList.add('nb-ghost'); box.style.gap = '6px';             /* links are typed bunched together; spaced out afterwards */
     frame.lastChild.textContent = 'Navbar · ' + Math.round(B.width) + ' × ' + Math.round(FH);
@@ -287,6 +300,7 @@
     step(520, function () { chip.classList.remove('flip'); chip.innerHTML = '<span>Fill</span><u style="--k:#fff" class="sel"></u>'; btn.classList.remove('nb-ghost'); btn.style.removeProperty('border-radius'); });
     step(620, function () { chip.classList.remove('on'); frame.classList.remove('on'); cur.style.opacity = 0; go(B.right + 10, B.bottom + 50, 500); });
     step(520, end);
+    }
   })();
 
   /* ---------- questions: the list keeps the height of its tallest answer, so opening one never moves the page below ---------- */

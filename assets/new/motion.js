@@ -17,6 +17,7 @@
   }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }) : null;
 
   function enter(el) {
+    if (el._lvParked) { el._lvParked = 0; return queue(el); }
     if (el._lvCount) runCount(el);
     if (el._lvDraw) el._lvDraw.forEach(function (p) { p.style.strokeDashoffset = 0; });
     if (el.classList.contains('pin')) return runPin(el);
@@ -129,11 +130,12 @@
   function pinStart(el) {
     var last = '', same = 0, tries = 0, v = el.getBoundingClientRect(), hidden = /type|write|draw/.test(el._lvAct || '');
     var stale = hidden && performance.now() - el._lvQ > 3200;                   /* nothing waits blank for long */
-    if (v.bottom < -40 || v.top > w.innerHeight + 40 || !el.offsetParent || stale) {   /* scrolled past before its turn: it is just there */
+    if (!el.offsetParent || stale) {                       /* waited too long, or hidden at this width: it is just there */
       ready(el);
       if (el._lvPin) el.classList.add('in', 'lit');
       return;
     }
+    if (park(el)) return;
     pinLive++;
     if (el._lvT) el._lvT._lvBusy = true;
     setTimeout(function settle() {                         /* wait until it holds still for about a third of a second */
@@ -143,6 +145,12 @@
       if (same >= 3 || ++tries > 40) return play(el);
       setTimeout(settle, 110);
     }, (pinLive - 1) * 220);                               /* cursors that start together set off a beat apart */
+  }
+  function park(el) {                                      /* off screen when its turn came: it plays when it scrolls back into view */
+    var v = el.getBoundingClientRect();
+    if (v.bottom > -40 && v.top < w.innerHeight + 40) return false;
+    el._lvParked = 1; io.observe(el);
+    return true;
   }
   function pinFree() { pinLive = Math.max(0, pinLive - 1); setTimeout(pinNext, 120 + Math.random() * 300); }
   function at(node, x, y, ms, ease) {
@@ -172,6 +180,7 @@
     })();
   }
   function play(el) {
+    if (park(el)) { if (el._lvT) el._lvT._lvBusy = false; return pinFree(); }      /* the page jumped away while it was getting ready */
     if (!layer) { layer = d.createElement('div'); layer.className = 'lv-layer'; layer.setAttribute('aria-hidden', 'true'); d.body.appendChild(layer); }
     var p = el._lvPin, T = el._lvT, act = el._lvAct, c = el.dataset.c || 'bl', col = CUR_COL[pinN++ % CUR_COL.length], sy = w.scrollY;
     var cur = d.createElement('span');
@@ -205,11 +214,19 @@
       at(cur, P[0], P[1], 520);
       setTimeout(function () { write(P); }, 560);
     }
-    function write(P) {
+    function write(P, placed) {
+      if (placed ? el._lvWrote : el._lvDrag || el._lvWrote) return;      /* one comment is only ever written once */
+      if (!placed && $$('.pin').indexOf(el) % 2 === 0) {                      /* every other comment is written a little off, then dragged to its spot */
+        var pr = el.getBoundingClientRect(), dx = pr.left + pr.width / 2 > w.innerWidth / 2 ? -20 : 20, dy = 14;
+        el._lvDrag = [dx, dy]; el.style.translate = dx + 'px ' + dy + 'px';
+        at(cur, P[0] + dx, P[1] + dy, 220);
+        return setTimeout(function () { write(P, 1); }, 250);
+      }
       var txt = d.createTextNode(''), dom = d.createTextNode(''), post = d.createTextNode(''), arrow = p.b.querySelector('svg');
       var caret = d.createElement('span'); caret.className = 'pin-caret';
       p.t.textContent = ''; p.b.textContent = '';
       p.t.appendChild(txt); p.t.appendChild(p.b); p.b.appendChild(dom); p.t.appendChild(post); p.t.appendChild(caret);
+      el._lvWrote = 1;
       click();
       el.classList.add('in', 'pop', 'typing');
       pinFree();                                            /* the next cursor may set off while this one types */
@@ -223,7 +240,13 @@
         caret.remove();
         if (arrow) p.b.appendChild(arrow);
         el.classList.remove('typing', 'pop'); el.classList.add('lit');
-        leave(P[0], P[1]);
+        if (!el._lvDrag) return leave(P[0], P[1]);
+        setTimeout(function () {                            /* grab the bubble by its corner and put it where it belongs */
+          cur.classList.add('down');
+          el.style.transition = 'translate 560ms ' + EASE; el.style.translate = '0 0';
+          at(cur, P[0], P[1], 560);
+          setTimeout(function () { el.style.transition = ''; el.style.translate = ''; cur.classList.remove('down'); leave(P[0], P[1]); }, 640);
+        }, 260);
       }, 320);
     }
     var ACTS = {
@@ -278,13 +301,18 @@
       color: function () {
         click();
         showChip('<u style="--k:#8A8A93" class="sel"></u><u style="--k:#FF4D1F"></u><u style="--k:#00C27A"></u><u style="--k:#2F6BFF"></u>');
+        var pick = chip.lastChild;
+        setTimeout(function () {                            /* over to the swatch itself */
+          var k = pick.getBoundingClientRect();
+          at(cur, k.left + k.width / 2, k.top + k.height / 2 + w.scrollY, 380, 'cubic-bezier(.45,0,.2,1)');
+        }, 380);
         setTimeout(function () {
           click();
-          if (chip) { chip.firstChild.classList.remove('sel'); chip.lastChild.classList.add('sel'); }
+          if (chip) { chip.firstChild.classList.remove('sel'); pick.classList.add('sel'); }
           T.style.transition = 'filter .7s ' + EASE; T.classList.remove('lv-grey');
           setTimeout(function () { T.style.transition = ''; }, 750);
-        }, 650);
-        setTimeout(function () { hideChip(); comment(); }, 1350);
+        }, 860);
+        setTimeout(function () { hideChip(); comment(); }, 1600);
       },
       move: function () {
         click();
