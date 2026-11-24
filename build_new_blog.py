@@ -456,7 +456,8 @@ def breakdown_parts(p, B):
     # 10 sources
     srcs = d.get("sources", [])
     if srcs:
-        lis = "".join(f'<li><div>{ext(x["url"], f"<span>{E(x["name"])}</span>{B.EXT}")}<p>{E(x["what"])}</p></div>'
+        # a source with no url (Postiz has four) is plain text, like the guides' sources; it used to link to "None"
+        lis = "".join(f'<li><div>{ext(x["url"], f"<span>{E(x["name"])}</span>{B.EXT}") if x.get("url") else f"<b>{E(x["name"])}</b>"}<p>{E(x["what"])}</p></div>'
                       f'<div class="srcs-m"><span>{E(x["date"])}</span>{chip(x["label"])}</div></li>' for x in srcs)
         toc.append(("sources", "Sources"))
         out.append(sec("sources", "Sources", "Each one with its date and its label.", f'<ul class="srcs">{lis}</ul>'
