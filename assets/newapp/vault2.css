@@ -227,7 +227,8 @@
 .nv .acard .tgl .sw{width:40px;height:24px;border-radius:12px;background:rgba(255,255,255,.14);box-shadow:none}
 .nv .acard .tgl .sw::after{left:3px;top:3px;width:18px;height:18px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
 .nv .acard .tgl:hover .sw{box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)}
-.nv .acard .tgl[aria-checked=true] .sw{background:#3D63DD;box-shadow:none}
+.nv .tgl[aria-checked=true]{background:none}
+.nv .acard .tgl[aria-checked=true] .sw{background:var(--brand);box-shadow:none}
 .nv .acard .tgl[aria-checked=true] .sw::after{background:#fff;transform:translateX(16px)}
 .nv .acard .tgl:focus-visible .sw{outline:2px solid var(--hl);outline-offset:3px}
 /* your website */
