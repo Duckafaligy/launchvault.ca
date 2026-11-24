@@ -1,23 +1,23 @@
-"""Build the NEW LaunchVault public site under /new/ (dark "Vault" theme).
+"""Build the LaunchVault public site (dark "Vault" theme): home, blog, legal and the sign-in flow, at the root.
 
     python build_new.py          builds every page: src/new/*.body.html (+ .meta.json) and every page registered by a plugin
 
 Page sources   src/new/<name>.body.html  +  src/new/<name>.meta.json
-               meta keys: title, description, path ("" = /new/, "blog/" = /new/blog/), and optionally
+               meta keys: title, description, path ("" = /, "blog/" = /blog/), and optionally
                active (nav item: Stories | The problem | How it works | Pricing | Blog), css [urls], js [urls],
                end_cta (default true), bg ("off" to drop the particle band), bg_dim (e.g. 0.75), og_image, body_class, head (raw html)
 Generated pages  put a file build_new_<something>.py next to this one with a function  register(B)  that calls
                B.add_page(path="blog/rezi/", body=html, title=..., description=..., active="Blog", ...)   (same keys as the meta file)
 Tokens in a body  {{arrow}} button arrow svg, {{logo}} logo mark svg, {{cta}} the main CTA button, {{ext}} small "opens elsewhere" arrow
-No dependencies. Output is plain HTML in new/. The whole /new/ tree is noindex for now.
+No dependencies. Output is plain HTML at the repo root. Every page is noindex for now.
 """
 import glob, hashlib, html, importlib, json, os, sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, "src", "new")
-OUT = os.path.join(ROOT, "new")
+OUT = ROOT
 SITE = "https://www.launchvault.ca"
-BASE = "/new/"
+BASE = "/"   # public pages (home, blog, legal) live at the root since the 2026-11-24 swap
 CTA = "Read a story for free"   # the main CTA text, everywhere
 CTA_HREF = BASE + "sign-up/"
 NAV = [("Stories", BASE + "#stories", "Ten founder stories, every number checked"),
@@ -151,7 +151,7 @@ PAGES = {}   # path -> kwargs for render()
 
 
 def add_page(path, body, title, description, **kw):
-    """Register a page. path is relative to /new/ and ends with "/" ("" is the /new/ homepage)."""
+    """Register a page. path is relative to / and ends with "/" ("" is the homepage)."""
     assert path == "" or (path.endswith("/") and not path.startswith("/")), f"bad path {path!r}: use '' or 'blog/rezi/'"
     PAGES[path] = dict(body=body, title=title, description=description, path=path, **kw)
 
@@ -177,7 +177,7 @@ def build():
         out = os.path.join(OUT, path.replace("/", os.sep), "index.html")
         os.makedirs(os.path.dirname(out), exist_ok=True)
         open(out, "w", encoding="utf-8", newline="\n").write(render(**kw))
-    print(f"built {len(PAGES)} page(s) into new/: " + ", ".join(BASE + p for p in PAGES))
+    print(f"built {len(PAGES)} page(s): " + ", ".join(BASE + p for p in PAGES))
 
 
 if __name__ == "__main__":

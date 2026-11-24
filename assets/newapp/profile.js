@@ -1,4 +1,4 @@
-/* LaunchVault account bubble (top bar, every /new/app/ page) + the Public profile editor (Account -> Profile).
+/* LaunchVault account bubble (top bar, every /app/ page) + the Public profile editor (Account -> Profile).
    ONE public profile per member, in public.profiles: display_name + name_tag (chat_set_name), username, avatar_path, bio (profile_update).
    Reads/writes use the Supabase client with the Clerk token (supabase.js make()). Judge view and signed-out visitors make no requests.
    Avatars: re-encoded on the device to a 256 px square (no EXIF/location), uploaded to the public "avatars" bucket under <uid>/. */
@@ -39,10 +39,10 @@
     const sub = s ? (P && P.username ? "@" + P.username : "No username yet") : j ? "In with a hackathon judge code" : "Your progress stays on this device";
     const plan = j ? `<div class="avp"><span>Every breakdown unlocked</span><span class="avok">${CHECK}Judge</span></div>`
       : !s ? "" : paid ? `<div class="avp"><span>${esc(paid)}</span><span class="avok">${CHECK}Active</span></div>`
-      : `<div class="avp"><span>Free plan</span><a href="/new/app/account/#plan">Upgrade</a></div>`;
+      : `<div class="avp"><span>Free plan</span><a href="/app/account/#plan">Upgrade</a></div>`;
     return `<div class="avh"><span class="av" data-avm-av aria-hidden="true"></span><div class="avn"><b>${esc(nm)}</b><span>${esc(sub)}</span></div></div>${plan}
-      <a class="avi" href="/new/app/account/#profile">Profile &amp; settings</a>${paid ? '<a class="avi" href="/new/app/account/#plan">Manage billing</a>' : ""}<hr>
-      ${s ? '<button class="avi" type="button" data-so>Sign out</button>' : j ? '<button class="avi" type="button" data-gx>Exit judge view</button>' : '<a class="avi" href="/new/sign-in/">Sign in</a>'}`;
+      <a class="avi" href="/app/account/#profile">Profile &amp; settings</a>${paid ? '<a class="avi" href="/app/account/#plan">Manage billing</a>' : ""}<hr>
+      ${s ? '<button class="avi" type="button" data-so>Sign out</button>' : j ? '<button class="avi" type="button" data-gx>Exit judge view</button>' : '<a class="avi" href="/sign-in/">Sign in</a>'}`;
   };
   const items = () => $$("a,button", box);
   const paint = () => {
@@ -69,7 +69,7 @@
     });
     box.addEventListener("click", e => {
       if (e.target.closest("[data-so]") && window.LVAuth) { LVAuth.signOut(); return; }
-      if (e.target.closest("[data-gx]")) { try { localStorage.removeItem("lv-judge"); } catch {} location.href = "/new/sign-in/"; return; }
+      if (e.target.closest("[data-gx]")) { try { localStorage.removeItem("lv-judge"); } catch {} location.href = "/sign-in/"; return; }
       if (e.target.closest("a")) close(false);
     });
   }

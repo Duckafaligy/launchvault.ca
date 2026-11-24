@@ -20,7 +20,7 @@ DOCS = [("Privacy", "privacy", "privacy", "#2F6BFF", "M12 3l7 3v6c0 4.5-3 7.7-7 
         ("Accessibility", "accessibility", "legal-accessibility", "#00C27A", "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7.5h.01M8 10l4 1 4-1M12 11v3l-2 4M12 14l2 4"),
         ("Community rules", "community", "legal-community", "#2EC4D6",
          "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20c.8-3 3.2-4.5 6-4.5s5.2 1.5 6 4.5M16 5.5a3 3 0 0 1 0 5.5M17.5 15.5c1.8.5 3 1.9 3.5 4.5")]
-BASE = "/new/"
+BASE = "/"
 QUIZ = [("ticks, progress and quiz answers", "ticks and progress"), ("progress and quiz answers", "progress"), (", quiz answers", ""), (" and quiz answers", ""),
         ("quiz answers and path", "path"), ("quiz answers and ticks", "ticks"), ("quiz answers, ", "")]
 CONTACT_IDS = ("contact", "feedback", "appeals")   # the section "Contact us" jumps to, first one the page has

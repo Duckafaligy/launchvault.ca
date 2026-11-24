@@ -1,9 +1,9 @@
-/* LaunchVault /new/ sign-in flow: /new/sign-in/, /new/sign-up/, /new/welcome/ and /new/welcome/callback/ (one template, src/new/auth.part.html).
+/* LaunchVault / sign-in flow: /sign-in/, /sign-up/, /welcome/ and /welcome/callback/ (one template, src/auth.part.html).
    A custom form that drives ClerkJS directly (same production instance and loader as assets/auth.js):
      Google / GitHub / Apple / Discord   signIn.authenticateWithRedirect -> CALLBACK -> WELCOME
      email code (no passwords)           signIn / signUp create -> prepare -> attempt -> setActive
    After sign-in: the age question if this device has no answer yet ("lv-age" / "lv-age-block", the SAME keys and values as
-   assets/gate.js, so the app's gate agrees), "You're in." for new accounts, then `next` (default /new/app/).
+   assets/gate.js, so the app's gate agrees), "You're in." for new accounts, then `next` (default /app/).
    Anything the custom form cannot finish (2-step accounts, extra sign-up fields) falls back to Clerk's own form in the card.
    LV_PK is the Clerk PUBLISHABLE key: public by design. Never put a secret key (sk_...) in this repo.
    Preview: on localhost / 127.0.0.1 only, ?demo=signin|signup|code|age|under13|welcome|wait shows a screen with a fake backend
@@ -15,7 +15,7 @@
   const LV_PK = "pk_live_Y2xlcmsubGF1bmNodmF1bHQuY2Ek";
   const FAPI = atob(LV_PK.split("_")[2]).replace(/\$$/, "");
   const CLERK_UI = `https://${FAPI}/npm/@clerk/ui@1/dist/ui.browser.js`, CLERK_JS = `https://${FAPI}/npm/@clerk/clerk-js@6/dist/clerk.browser.js`;
-  const SIGN_IN = "/new/sign-in/", SIGN_UP = "/new/sign-up/", WELCOME = "/new/welcome/", CALLBACK = "/new/welcome/callback/", APP = "/new/app/";
+  const SIGN_IN = "/sign-in/", SIGN_UP = "/sign-up/", WELCOME = "/welcome/", CALLBACK = "/welcome/callback/", APP = "/app/";
   const JUDGE = "SPARK2026";   // same value as assets/auth.js + gate.js. ponytail: client-side code, swap for a server check if it must stay secret
   const q = new URLSearchParams(location.search);
   const local = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
@@ -25,10 +25,10 @@
   const wait = ms => new Promise(r => setTimeout(r, ms));
   const mode = () => root.dataset.mode;
 
-  /* ---------- where to go afterwards: only our own /new/ or /app/ paths ---------- */
-  const safeNext = v => typeof v === "string" && /^\/(new|app)\/[\w\-./?=&%#]*$/.test(v) && !/\/\/|\.\.|^\/new\/(sign-in|sign-up|welcome)\b/.test(v) ? v : APP;
-  if (local) [["/new/app/x/", "/new/app/x/"], ["/app/start/?a=1", "/app/start/?a=1"], ["//evil.com", APP], ["/new/../x", APP], ["https://evil.com/new/", APP],
-    ["/new//evil.com", APP], ["/new/sign-in/", APP], ["/newer/", APP], [null, APP]].forEach(([a, b]) => console.assert(safeNext(a) === b, "safeNext failed for", a));
+  /* ---------- where to go afterwards: only our own paths, never the sign-in pages ---------- */
+  const safeNext = v => typeof v === "string" && /^\/[\w\-./?=&%#]*$/.test(v) && !/\/\/|\.\.|^\/(sign-in|sign-up|welcome)\b/.test(v) ? v : APP;
+  if (local) [["/app/x/", "/app/x/"], ["/app/start/?a=1", "/app/start/?a=1"], ["/blog/rezi/", "/blog/rezi/"], ["//evil.com", APP], ["/app/../x", APP], ["https://evil.com/app/", APP],
+    ["/app//evil.com", APP], ["/sign-in/", APP], ["/welcome/", APP], [null, APP]].forEach(([a, b]) => console.assert(safeNext(a) === b, "safeNext failed for", a));
   const ss = {get: k => { try { return sessionStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { sessionStorage.setItem(k, v); } catch {} }};
   const next = safeNext(q.get("next") || (/^(welcome|callback)$/.test(mode()) ? ss.get("lva-next") : "") || "");
   const nq = next === APP ? "" : "?next=" + encodeURIComponent(next), nq2 = nq.replace("?", "&");

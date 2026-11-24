@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Preview build: robots.txt says Disallow and every page sends noindex, on purpose, until launch. This sitemap lists the public pages for then. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.launchvault.ca/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/aeo-engine/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/boothie/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/dm-champ/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/gojiberry/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/how-to-read-a-revenue-chart/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/mindset/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/postiz/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/rezi/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/stencil-ai/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/three-ways-to-start-small/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/upscale-b2b/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/what-verified-means/</loc></url>
-  <url><loc>https://www.launchvault.ca/blog/windmill-growth/</loc></url>
-  <url><loc>https://www.launchvault.ca/legal/accessibility/</loc></url>
-  <url><loc>https://www.launchvault.ca/legal/community/</loc></url>
-  <url><loc>https://www.launchvault.ca/legal/cookies/</loc></url>
-  <url><loc>https://www.launchvault.ca/legal/privacy/</loc></url>
-  <url><loc>https://www.launchvault.ca/legal/terms/</loc></url>
-  <url><loc>https://www.launchvault.ca/sign-in/</loc></url>
-  <url><loc>https://www.launchvault.ca/sign-up/</loc></url>
+<url><loc>https://www.launchvault.ca/</loc></url>
+<url><loc>https://www.launchvault.ca/legal/privacy/</loc></url>
+<url><loc>https://www.launchvault.ca/legal/terms/</loc></url>
+<url><loc>https://www.launchvault.ca/legal/cookies/</loc></url>
+<url><loc>https://www.launchvault.ca/legal/accessibility/</loc></url>
+<url><loc>https://www.launchvault.ca/legal/community/</loc></url>
+<url><loc>https://www.launchvault.ca/blog/</loc><lastmod>2026-11-19</lastmod></url>
+<url><loc>https://www.launchvault.ca/blog/windmill-growth/</loc><lastmod>2026-11-19</lastmod></url>
+<url><loc>https://www.launchvault.ca/blog/upscale-b2b/</loc><lastmod>2026-11-19</lastmod></url>
+<url><loc>https://www.launchvault.ca/blog/stencil-ai/</loc><lastmod>2026-11-19</lastmod></url>
+<url><loc>https://www.launchvault.ca/blog/rezi/</loc><lastmod>2026-11-19</lastmod></url>
+<url><loc>https://www.launchvault.ca/blog/mindset/</loc><lastmod>2026-11-19</lastmod></url>
+<url><loc>https://www.launchvault.ca/blog/gojiberry/</loc><lastmod>2026-11-19</lastmod></url>
+<url><loc>https://www.launchvault.ca/blog/dm-champ/</loc><lastmod>2026-11-19</lastmod></url>
+<url><loc>https://www.launchvault.ca/blog/boothie/</loc><lastmod>2026-11-19</lastmod></url>
+<url><loc>https://www.launchvault.ca/blog/aeo-engine/</loc><lastmod>2026-11-19</lastmod></url>
+<url><loc>https://www.launchvault.ca/blog/what-verified-means/</loc><lastmod>2026-11-17</lastmod></url>
+<url><loc>https://www.launchvault.ca/blog/three-ways-to-start-small/</loc><lastmod>2026-11-17</lastmod></url>
+<url><loc>https://www.launchvault.ca/blog/postiz/</loc><lastmod>2026-11-17</lastmod></url>
+<url><loc>https://www.launchvault.ca/blog/how-to-read-a-revenue-chart/</loc><lastmod>2026-11-17</lastmod></url>
 </urlset>

@@ -2,7 +2,7 @@
    Calm by design: no magnetic buttons, no cursor effects, no particles. Respects prefers-reduced-motion. */
 (() => {
   // age gate (assets/gate.js): the app does nothing, and stores nothing, until it passes. The sign-in wall still runs first,
-  // so signed-out visitors go to /new/sign-in/ before being asked anything; auth.js then opens the age question for real accounts.
+  // so signed-out visitors go to /sign-in/ before being asked anything; auth.js then opens the age question for real accounts.
   if (!window.LVGate || !LVGate.ok) { if (window.LVAuth) LVAuth.app(); return; }
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -116,9 +116,9 @@
   const cmdIndex = () => {
     const out = [];
     D.stories.forEach(s => out.push({g: "Breakdowns", t: s.name, r: s.status === "ready" ? s.type : "Coming soon", h: s.href, img: s.logo, k: [s.name, s.what, s.pattern, ...(s.lessons || [])].join(" ")}));
-    [...new Set(D.stories.map(s => s.pattern).filter(p => p && p !== "Pattern not checked yet"))].forEach(p => out.push({g: "Patterns", t: p, h: "/new/app/library/?group=pattern&pattern=" + encodeURIComponent(p), k: p}));
+    [...new Set(D.stories.map(s => s.pattern).filter(p => p && p !== "Pattern not checked yet"))].forEach(p => out.push({g: "Patterns", t: p, h: "/app/library/?group=pattern&pattern=" + encodeURIComponent(p), k: p}));
     (D.search_extra || []).forEach(x => out.push({g: x.g, t: x.t, h: x.h, k: x.t + " " + (x.k || "")}));
-    [["Home", "/new/app/"], ["Library", "/new/app/library/"], ["My path", "/new/app/path/"], ["Checklists", "/new/app/checklists/"], ["Account", "/new/app/account/"], ["Retake the quiz", "/new/app/start/?quiz=1"]].forEach(([t, h]) => out.push({g: "Pages", t, h, k: t}));
+    [["Home", "/app/"], ["Library", "/app/library/"], ["My path", "/app/path/"], ["Checklists", "/app/checklists/"], ["Account", "/app/account/"], ["Retake the quiz", "/app/start/?quiz=1"]].forEach(([t, h]) => out.push({g: "Pages", t, h, k: t}));
     return out;
   };
   let cmdEl = null, idx = null, sel = 0;
@@ -265,7 +265,7 @@
     const list = rows.length ? rows : [{c: pr, t: prT, k: prT.filter(Boolean).length}];
     cl.innerHTML = list.slice(0, 3).map(({c, t, k}) => { const i = t.indexOf(false);
       return `<div class="clrow">${i < 0 ? "" : `<button class="hck" type="button" role="checkbox" aria-checked="false" data-hck="${c.slug}:${i}" aria-label="Tick: ${esc(c.items[i].text)}"><span class="bx">${CKS}</span></button>`}<a class="mid" href="${c.href}#todo"><b>${esc(c.name)}</b><small>${i < 0 ? "All done." : "Next: " + esc(c.items[i].text)}</small></a>${bar(k / t.length)}<span class="ct">${k} of ${t.length}</span></div>`; }).join("")
-      + (q ? `<a class="clrow" href="/new/app/path/"><span style="color:var(--brand)">●</span><span class="mid"><b>Your path · ${esc(D.path.title)}</b><small>${(() => { const s = pathSteps().find(x => !x.done); return s ? "Next: " + esc(s.text) : "All done."; })()}</small></span><span class="bar"><i data-pathbar></i></span><span class="ct" data-pathcount2></span></a>` : ""); };
+      + (q ? `<a class="clrow" href="/app/path/"><span style="color:var(--brand)">●</span><span class="mid"><b>Your path · ${esc(D.path.title)}</b><small>${(() => { const s = pathSteps().find(x => !x.done); return s ? "Next: " + esc(s.text) : "All done."; })()}</small></span><span class="bar"><i data-pathbar></i></span><span class="ct" data-pathcount2></span></a>` : ""); };
   const hcards = $("[data-hcards]");
   const CKS = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   const notPublic = f => /^not public$/i.test(f) ? "Not public" : f;
@@ -304,21 +304,21 @@
     if (hs.dataset.k !== key) { hs.dataset.k = key; hs.classList.remove("sk");
       hs.innerHTML = `<div class="ch"><h2>This week's step</h2><span class="meta em" data-hsc></span></div><span class="bar"><i data-hsb></i></span><div class="hsl">`
         + rows.map(s => `<button class="hck" type="button" role="checkbox" aria-checked="false" ${s.extra ? "data-hx" : `data-hck="${D.path.source}:${s.n - 1}"`}><span class="bx">${CKS}</span><span class="ct">${esc(s.task || s.text)}</span></button>`).join("")
-        + `</div><p class="hsn">From the ${esc(srcName())} story.${adult ? "" : " Small steps that fit around school."} <a class="tl" href="/new/app/path/">Open my path</a></p>`; }
+        + `</div><p class="hsn">From the ${esc(srcName())} story.${adult ? "" : " Small steps that fit around school."} <a class="tl" href="/app/path/">Open my path</a></p>`; }
     $$(".hck", hs).forEach((b, j) => b.setAttribute("aria-checked", !!rows[j].done));
     $("[data-hsc]", hs).innerHTML = `${dn} of ${st.length}<span class="d"> done</span>`; $("[data-hsb]", hs).style.setProperty("--w", (dn / st.length * 100) + "%");
     // ask: goes to Ask LaunchVault with the question filled in (not sent until you press send there)
     const ha = $("[data-hask]"); if (!ha.firstChild) ha.innerHTML = `<div class="ch"><h2>Ask about your idea</h2><span class="meta em" data-askleft></span></div>`
       + `<p class="hasrc"><span class="tiles">${READY.slice(0, 4).map(s => tile(s, 22)).join("")}</span><span>Answers come from ${READY.length} stories and your website</span></p>`
-      + `<form class="askf" action="/new/app/assistant/" method="get"><label class="sr" for="hq">Ask about your idea</label><input id="hq" name="q" placeholder="Ask about your idea..." autocomplete="off" maxlength="400" required><button type="submit" aria-label="Ask">${UP}</button></form>`
-      + `<div class="chips">${["What should I charge?", "Where do I post it?"].map(t => `<a href="/new/app/assistant/?q=${encodeURIComponent(t)}">${t}</a>`).join("")}</div>`;
+      + `<form class="askf" action="/app/assistant/" method="get"><label class="sr" for="hq">Ask about your idea</label><input id="hq" name="q" placeholder="Ask about your idea..." autocomplete="off" maxlength="400" required><button type="submit" aria-label="Ask">${UP}</button></form>`
+      + `<div class="chips">${["What should I charge?", "Where do I post it?"].map(t => `<a href="/app/assistant/?q=${encodeURIComponent(t)}">${t}</a>`).join("")}</div>`;
     // my path: stories in progress first, then the ones matched to you
     const prog = READY.filter(s => stateOf(s) === "prog").sort((x, y) => (y.slug === (last || {}).slug) - (x.slug === (last || {}).slug));
     const pr = [...new Set([...prog, ...matches().map(k => S[k])])].filter(s => s && !doneOf(s.slug)).slice(0, 3);
-    put($("[data-hpath]"), `<div class="ch"><h2>My path</h2><a class="tl" href="/new/app/path/">See all</a></div><div class="hpl">`
+    put($("[data-hpath]"), `<div class="ch"><h2>My path</h2><a class="tl" href="/app/path/">See all</a></div><div class="hpl">`
       + pr.map(s => { const n = nph(s), k = Math.min(seen(s.slug).length, n);
         return `<a class="hpr" href="${s.href}">${cov(s, "cv th")}<span class="m"><span class="t"><b>${esc(s.name)}</b><small>${k ? `<span class="mo">Phase </span>${k} of ${n}` : "Not started"}</small></span>${bar(k / n)}</span>${ARW}</a>`; }).join("")
-      + `</div>` + (q ? "" : `<p class="hsn"><a class="tl" href="/new/app/start/?quiz=1">Take the 2-minute quiz</a> to get a path that fits you.</p>`));
+      + `</div>` + (q ? "" : `<p class="hsn"><a class="tl" href="/app/start/?quiz=1">Take the 2-minute quiz</a> to get a path that fits you.</p>`));
     // read next: matched stories after the quiz, else the newest; never the hero story
     const heroSlug = H ? H.slug : WEEKS, pool = [...(q ? matches() : []), ...READY.map(s => s.slug)].filter(k => k !== heroSlug);
     $("[data-hrowt]").textContent = q ? "Matched to you" : "Read next";
@@ -349,7 +349,7 @@
       if (seg) seg.hidden = !(L.length && I.length); if (note) note.hidden = !any;
       if (pg) pg.dataset.sv = !L.length && I.length ? "steps" : !I.length ? "stories" : pg.dataset.sv; }
     const sug = [...new Set([WEEKS, ...matches()])].map(k => S[k]).filter(Boolean).slice(0, 3);
-    $("[data-savedempty]").innerHTML = L.length || I.length ? "" : emptyCard("star", "Nothing saved yet", "Star a story or a checklist step to keep it here.", "/new/app/library/", "Browse the Library")
+    $("[data-savedempty]").innerHTML = L.length || I.length ? "" : emptyCard("star", "Nothing saved yet", "Star a story or a checklist step to keep it here.", "/app/library/", "Browse the Library")
       + (sug.length ? `<section class="hsec lvsug"><div class="sech"><h2>Stories to start with</h2></div><div class="scards rn">${sug.map(s => nextCard(s, true)).join("")}</div></section>` : ""); };
   // warm empty state: icon badge, one honest sentence, one primary action (and an optional secondary)
   function emptyCard(icon, h, p, href, label, extra = "") {
@@ -502,7 +502,7 @@
   // ---------- checklists page: a "Next up" card, then one accordion per story (in progress first, then this week's) ----------
   // ---------- checklists page (Paper Checklists): one card per story with its image; To do / Done ----------
   const cls = $("[data-cllists]");
-  if (cls && !D.checklists.length) cls.innerHTML = emptyCard("list", "No checklists yet", "Every story ends with one. Open the Library to start ticking.", "/new/app/library/", "Browse the Library");
+  if (cls && !D.checklists.length) cls.innerHTML = emptyCard("list", "No checklists yet", "Every story ends with one. Open the Library to start ticking.", "/app/library/", "Browse the Library");
   else if (cls) {
     const cnt = c => ticks(c.slug).filter(Boolean).length, inprog = c => { const n = cnt(c); return n > 0 && n < c.items.length; };
     const order = D.checklists.slice().sort((a, b) => (inprog(b) - inprog(a)) || ((b.slug === WEEKS) - (a.slug === WEEKS)));
@@ -546,7 +546,7 @@
         const draw = () => { box.innerHTML = notes.length
           ? notes.map((n, i) => `<div class="prefn"><span>${esc(n)}</span><button class="tl" type="button" data-rmnote="${i}" aria-label="Remove: ${esc(n)}">Remove</button></div>`).join("")
             + `<div class="prefa"><button class="tl" type="button" data-clrnotes>Clear all</button></div>`
-          : `<p class="prefe">Nothing saved from chats yet. Tell <a href="/new/app/assistant/">Ask LaunchVault</a> about your project and it keeps the useful parts here.</p>`; };
+          : `<p class="prefe">Nothing saved from chats yet. Tell <a href="/app/assistant/">Ask LaunchVault</a> about your project and it keeps the useful parts here.</p>`; };
         box.addEventListener("click", e => { const r = e.target.closest("[data-rmnote]"); if (r) { const i = +r.dataset.rmnote; r.closest(".prefn").classList.add("bye"); return setTimeout(() => save(notes.filter((_, j) => j !== i)), reduce ? 0 : 180); }
           if (e.target.closest("[data-clrnotes]") && confirm("Clear everything Ask LaunchVault remembers?")) save([]); });
         const {data} = await sb.from("profiles").select("assistant_notes").eq("user_id", c.user.id).maybeSingle();
@@ -615,7 +615,7 @@
         obc.innerHTML = `<div class="obq obe"><section class="card obm"><div class="ch"><h2>${qq.top ? "Your top match" : "The closest stories"}</h2></div>${COV[x.slug] ? cov(x, "cv obcv") : ""}
           <div class="obmh">${tile(x, 44)}<span><b>${esc(x.name)}</b><small>${esc(x.pattern)}</small></span></div><p class="obmt">${esc(x.title || x.what)}</p>${x.first ? `<p class="obmf">First customers: ${esc(x.first)} ${chip(x.firstl)}</p>` : ""}${on(m[0])}<a class="btn btn-s" href="${x.href}">Read the ${esc(x.name)} breakdown</a></section>
           ${m.length > 1 ? `<section class="card oba"><div class="ch"><h2>Also close to your answers</h2></div><div class="obrs">${m.slice(1).map(k => { const y = S[k]; return `<a class="obr" href="${y.href}">${tile(y, 32)}<span class="m"><span class="t"><b>${esc(y.name)}</b><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span><small>${esc(y.pattern)}</small>${on(k)}</span></a>`; }).join("")}</div></section>` : ""}
-          <div class="obend"><a class="btn btn-p" href="/new/app/path/">See my path${ARW}</a><span class="obl"><a class="tl" href="/new/app/">Go to Home</a><a class="tl" href="/new/app/start/?quiz=1">Edit answers</a></span></div><p class="fine">${savedTo()}</p></div>`; }
+          <div class="obend"><a class="btn btn-p" href="/app/path/">See my path${ARW}</a><span class="obl"><a class="tl" href="/app/">Go to Home</a><a class="tl" href="/app/start/?quiz=1">Edit answers</a></span></div><p class="fine">${savedTo()}</p></div>`; }
       if (render.n++) obc.focus({preventScroll: true});
       if (render.n > 1) scrollTo({top: 0});
     };
@@ -663,7 +663,7 @@
     d.showModal(); $("#rwhat", d).focus();
   });
 
-  // ---------- hackathon judge code: typed on /new/sign-in/ (the wall) or form[data-judge]; no URL shortcut ----------
+  // ---------- hackathon judge code: typed on /sign-in/ (the wall) or form[data-judge]; no URL shortcut ----------
   const JCODE = "SPARK2026";
   const urlJ = new URLSearchParams(location.search).get("judge");
   const urlHit = false;
@@ -795,13 +795,13 @@
           ${rv ? `<div class="srev"><h3>Your site review</h3>${rv.summary ? `<p class="ssum">${esc(rv.summary)}</p>` : ""}${reviewHTML(rv, 5)}<p class="fine">Reviewed ${esc(new Date(site.reviewed_at).toLocaleDateString(undefined, {month: "short", day: "numeric", year: "numeric"}))}. Suggestions come from AI and the stories in the library; they're ideas, not guarantees.</p></div>` : ""}
           ${say}<div class="sact">${ai ? `<button class="btn btn-p" type="button" data-sreview>${rv ? "Review again" : "Review my site"}</button>` : `<span class="fine">Site reviews open soon.</span>`}<button class="tl" type="button" data-sremove>Remove website</button></div></div>`; };
       const drawHome = (state) => { if (!home) return;
-        const head = `<div class="ch"><h2 id="hsiteH">Your website</h2>${site ? `<a class="tl" href="/new/app/account/#site">Manage</a>` : ""}</div>`;
+        const head = `<div class="ch"><h2 id="hsiteH">Your website</h2>${site ? `<a class="tl" href="/app/account/#site">Manage</a>` : ""}</div>`;
         if (state === "judge") { home.innerHTML = head + `<div class="cb"><p>Members connect their project's website here. Ask LaunchVault then reviews it and suggests what to fix first, each idea tied to a story in the library.</p></div>`; return; }
         if (state === "out") { home.innerHTML = head + `<div class="cb"><p>Sign in to connect your website and get suggestions made for it.</p></div>`; return; }
-        if (!site) { home.innerHTML = head + `<div class="cb"><p>Connect your project's site. Once it's verified, Ask LaunchVault reads it and tells you what to fix first.</p><a class="btn btn-s" href="/new/app/account/#site">Connect your website</a></div>`; return; }
-        if (!site.verified) { home.innerHTML = head + `<div class="cb"><p><b>${esc(site.domain)}</b> is waiting for you to finish verifying.</p><a class="btn btn-s" href="/new/app/account/#site">Finish verifying</a></div>`; return; }
+        if (!site) { home.innerHTML = head + `<div class="cb"><p>Connect your project's site. Once it's verified, Ask LaunchVault reads it and tells you what to fix first.</p><a class="btn btn-s" href="/app/account/#site">Connect your website</a></div>`; return; }
+        if (!site.verified) { home.innerHTML = head + `<div class="cb"><p><b>${esc(site.domain)}</b> is waiting for you to finish verifying.</p><a class="btn btn-s" href="/app/account/#site">Finish verifying</a></div>`; return; }
         const rv = site.review;
-        home.innerHTML = head + `<div class="cb"><p class="sdom"><b>${esc(site.domain)}</b> <span class="lb v">Verified</span></p>${rv ? reviewHTML(rv, 3, true) + `<a class="tl" href="/new/app/account/#site">See why, and the full review</a>` : ai ? `<p>Get a review: what to fix first on your site, and which story to copy.</p><button class="btn btn-s" type="button" data-sreview>Review my site</button>` : `<p>Site reviews open soon. Ask LaunchVault can already read your site when you chat.</p>`}</div>`; };
+        home.innerHTML = head + `<div class="cb"><p class="sdom"><b>${esc(site.domain)}</b> <span class="lb v">Verified</span></p>${rv ? reviewHTML(rv, 3, true) + `<a class="tl" href="/app/account/#site">See why, and the full review</a>` : ai ? `<p>Get a review: what to fix first on your site, and which story to copy.</p><button class="btn btn-s" type="button" data-sreview>Review my site</button>` : `<p>Site reviews open soon. Ask LaunchVault can already read your site when you chat.</p>`}</div>`; };
       const draw = (msg, state) => { drawAcct(msg); drawHome(state); };
       const busy = (b, t) => { b.disabled = true; b.dataset.l = b.textContent; b.textContent = t; };
       document.addEventListener("click", async e => {

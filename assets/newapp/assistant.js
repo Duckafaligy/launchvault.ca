@@ -1,4 +1,4 @@
-/* Ask LaunchVault (/new/app/assistant/): chat with the assistant Edge Function (db/supabase/functions/assistant).
+/* Ask LaunchVault (/app/assistant/): chat with the assistant Edge Function (db/supabase/functions/assistant).
    Signed-in members only; the Clerk session token goes in the Authorization header (same as the billing buttons).
    Replies stream as server-sent events. Reply text is escaped first, then a small markdown subset is applied
    (headings, lists, bold, code, links to this site or https only). */
@@ -108,11 +108,11 @@
     const tr = $(".as-try", b); [...box.children].forEach(c => c.classList.contains("as-srcs") && tr ? tr.before(c) : b.appendChild(c));
   }
   const note = (el, t, cls = "as-err") => { const p = document.createElement("p"); p.className = cls; p.innerHTML = t; el.appendChild(p); };
-  const ERR = {daily_limit: () => `You've used today's ${info ? info.limit : ""} messages. More tomorrow.${info && !info.paid ? ' Pro and Builder members get 100 a day: <a href="/new/app/account/#plan">see plans</a>.' : ""}`,
+  const ERR = {daily_limit: () => `You've used today's ${info ? info.limit : ""} messages. More tomorrow.${info && !info.paid ? ' Pro and Builder members get 100 a day: <a href="/app/account/#plan">see plans</a>.' : ""}`,
     busy: () => "Ask LaunchVault is busy right now. Your message wasn't counted. Try again in a minute.",
     conversation_full: () => 'This chat is full. <button class="tl" type="button" data-asnew>Start a new chat</button> to keep going; this one stays in your list.',
     message_too_long: () => "That message is over 4,000 characters. Shorten it and send again.",
-    not_signed_in: () => 'Your sign-in ran out. <a href="/new/sign-in/?next=/new/app/assistant/">Sign in again</a> to keep chatting.',
+    not_signed_in: () => 'Your sign-in ran out. <a href="/sign-in/?next=/app/assistant/">Sign in again</a> to keep chatting.',
     upstream: () => "Something went wrong and this message wasn't counted. Try sending it again."};
 
   async function ask(text) {
@@ -152,7 +152,7 @@
       else {
         if (ended.cut) note(el, "This reply was cut short. Ask me to continue.", "as-soft");
         { const mine = slugs(acc); cards(el, [...mine, ...(ended.stories || []).filter(s => BY[s] && !mine.some(x => x.split("#")[0] === s))]); }
-        if (ended.remembered) note(el, 'Saved to your <a href="/new/app/account/#prefs">preferences</a>. You can remove it any time.', "as-soft");
+        if (ended.remembered) note(el, 'Saved to your <a href="/app/account/#prefs">preferences</a>. You can remove it any time.', "as-soft");
         const isNew = !cid; cid = ended.conversation_id;
         if (info) { info.used = ended.used; info.limit = ended.limit; usage();
           const c = info.conversations.find(x => x.id === cid);

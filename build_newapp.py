@@ -1,4 +1,4 @@
-"""Build the NEW LaunchVault dashboard under /new/app/ (Paper "LaunchVault · App" > Dashboard, 1:1). The live /app/ is not touched.
+"""Build the LaunchVault dashboard at /app/ (Paper "LaunchVault · App" > Dashboard, 1:1). Since the root swap (2026-11-24) this IS the live app.
 
 Reuses build_app.py for all data and page bodies (same story JSON, same APPDATA, same hooks), with three changes:
   1. its shell()/head() are swapped for the Vault shell below (floating glass sidebar, top bar, five phone tabs);
@@ -14,11 +14,11 @@ sys.path.insert(0, ROOT); sys.path.insert(0, os.path.join(ROOT, "scripts"))
 import build, build_app as B, darken
 
 esc, NL, ic = B.esc, B.NL, B.ic
-PRE = "/new"                                   # route prefix: the app lives at /new/app/, sign-in at /new/sign-in/
+PRE = ""                                       # route prefix: none since the root swap (2026-11-24); the assets/newapp/*.js paths are unprefixed too
 NA = "/assets/newapp"
 _PATHS = re.compile(r"(?<![\w/.-])/(app/|sign-in|sign-up)")
 def rewrite(t): return _PATHS.sub(lambda m: PRE + "/" + m.group(1), t)
-assert rewrite('href="/app/x/" /assets/app.css https://www.launchvault.ca/app/ next=/app/a /new/app/ "/sign-in/"') == 'href="/new/app/x/" /assets/app.css https://www.launchvault.ca/app/ next=/new/app/a /new/app/ "/new/sign-in/"'
+assert _PATHS.sub(lambda m: "/new/" + m.group(1), 'href="/app/x/" /assets/app.css https://www.launchvault.ca/app/ next=/app/a /new/app/ "/sign-in/"') == 'href="/new/app/x/" /assets/app.css https://www.launchvault.ca/app/ next=/new/app/a /new/app/ "/new/sign-in/"'
 
 _Z = "v=Math.max(.8,Math.min(1,w/1440,innerHeight/860));"
 assert _Z in build.ZOOM, "build.ZOOM changed: update the 90% display scale hook"
@@ -271,7 +271,7 @@ def library(E):
     return shell(E, "Library", "Every LaunchVault story, with its numbers labelled and dated.", "lib", body)
 
 def main():
-    out_dir = os.path.join(ROOT, "new", "app"); app_dir = os.path.join(ROOT, "app") + os.sep
+    out_dir = os.path.join(ROOT, PRE.strip("/"), "app"); app_dir = os.path.join(ROOT, "app") + os.sep
     A = os.path.join(ROOT, "assets"); N = os.path.join(A, "newapp"); os.makedirs(N, exist_ok=True)
     # 1. dark base stylesheets from the live light ones
     darken.selftest()
@@ -301,7 +301,8 @@ def main():
     B.make_cover = B.update_cards = B.update_story_cards = B.write_sitemap = B.add_meta = build.main = noop
     B.shutil = types.SimpleNamespace(rmtree=noop)
     ready, E = B.main()
-    print(f"newapp: {n[0]} pages -> new/app/")
+    print(f"newapp: {n[0]} pages -> {PRE}/app/")
+    return ready, E
 
 if __name__ == "__main__":
     main()

@@ -1,4 +1,4 @@
-/* LaunchVault new dashboard (/new/app/): the Vault shell's own behaviour, on top of app.js (same lv-* storage keys).
+/* LaunchVault new dashboard (/app/): the Vault shell's own behaviour, on top of app.js (same lv-* storage keys).
    Sidebar "Continue" card, recent-activity bell, the paged story reader (one phase at a time, Paper Story reader),
    the upgrade sheet, and the small motion pieces (count-up, chart line draw). Everything honours prefers-reduced-motion. */
 (() => {
@@ -12,7 +12,7 @@
   const arr = k => { const v = get(k, []); return Array.isArray(v) ? v : []; };
   const json = id => { try { return JSON.parse(document.getElementById(id).textContent); } catch { return {}; } };
   const D = json("lvapp"), COV = json("lvcov"), S = Object.fromEntries((D.stories || []).map(s => [s.slug, s]));
-  const APP = "/new/app/";
+  const APP = "/app/";
 
   // ---------- sidebar: continue where you left off (else this week's story stays, as built) ----------
   const cont = () => { const a = $("[data-sbcont]"), l = get("lv-last"), s = l && S[l.slug]; if (!a) return;
