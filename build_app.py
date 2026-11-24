@@ -215,6 +215,12 @@ def spark(series, cls="spark", name=""):
 
 # ============================================================ shell
 SIDE_SOON = ["dm-champ", "stencil-ai", "windmill-growth", "gojiberry"]
+SIDEJS = ("<script>(function(){var d=document.documentElement,k='lv-side';"   # sidebar full / slim (owner 2026-11-23): set before first paint, toggled by [data-sbtog]
+          "function def(){return innerWidth>1100?'full':'min'}function get(){try{return localStorage.getItem(k)}catch(e){return null}}"
+          "var cur=get()||def();function apply(){d.classList.toggle('sb-min',cur==='min');d.classList.toggle('sb-full',cur==='full');"
+          "var b=document.querySelector('[data-sbtog]');if(b){var f=cur==='full';b.setAttribute('aria-expanded',f);b.setAttribute('aria-label',f?'Collapse sidebar':'Expand sidebar');b.title=f?'Collapse sidebar':'Expand sidebar'}}"
+          "apply();document.addEventListener('DOMContentLoaded',apply);document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-sbtog]');"
+          "if(!b)return;cur=cur==='full'?'min':'full';try{localStorage.setItem(k,cur)}catch(x){}apply()})})();</script>")
 GATE = '\n<script src="/assets/gate.js"></script>'   # the age gate: every /app/ page, in the head, before anything else runs (not deferred, on purpose)
 def head(title, desc, extra="", og_slug="", gate=True):
     og = (NL + f'<meta property="og:title" content="{esc(title)}">' + NL + f'<meta property="og:description" content="{esc(desc)}">' + NL
@@ -225,6 +231,7 @@ def head(title, desc, extra="", og_slug="", gate=True):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 {build.ZOOM}
+{SIDEJS}
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
 <meta name="robots" content="noindex">{og}
@@ -261,7 +268,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
 <a class="skip" href="#main">Skip to content</a>
 <div class="shell">
 <aside class="side" aria-label="App">
-  <a class="brand" href="/app/" aria-label="LaunchVault app home">{LV}<span>LaunchVault</span></a>
+  <a class="brand" href="/app/" aria-label="LaunchVault app home">{LV}<span>LaunchVault</span></a><button class="sbtog" type="button" data-sbtog aria-expanded="true" aria-label="Collapse sidebar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button>
   <nav aria-label="Main">{side}</nav>
   <p class="sgrp">This week</p>{wk}
   
