@@ -61,12 +61,12 @@
   },
   {
    "source": "/how-we-check",
-   "destination": "/#sources",
+   "destination": "/blog/what-verified-means/",
    "permanent": true
   },
   {
    "source": "/how-we-check/",
-   "destination": "/#sources",
+   "destination": "/blog/what-verified-means/",
    "permanent": true
   },
   {
