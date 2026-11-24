@@ -222,7 +222,7 @@
   const accessPill = s => pill(s.slug === WEEKS ? "free" : judgeOn() ? "judge" : "pro");
   const statusKey = (k, n) => k <= 0 ? "ready" : k >= n ? "done" : "prog";   // k of n done
   const storyCard = s => { const st = stateOf(s), k = Math.min(seen(s.slug).length, nph(s)), sv = savedList().includes(s.slug), wk = s.slug === WEEKS;
-    return `<article class="scard${wk ? " wk" : ""}"><a class="scl" href="${s.href}"><span class="sct">${logo(s, 32)}<span class="nm"><b>${esc(s.name)}</b><small>${esc(s.type)}</small></span></span>`
+    return `<article class="scard${wk ? " wk" : ""}"><a class="scl" href="${s.href}">${s.cover ? `<span class="scov"><img src="${esc(s.cover)}" alt="" width="960" height="540" loading="lazy"></span>` : ""}<span class="sct">${logo(s, 32)}<span class="nm"><b>${esc(s.name)}</b><small>${esc(s.type)}</small></span></span>`
       + `<span class="spills">${st === "new" ? "" : pill(st)}${accessPill(s)}</span>`
       + `<span class="stt">${esc(s.title || s.what)}</span>`
       + (s.first ? `<span class="sfc">First customers: ${esc(s.first)}${s.firstl ? " " + chip(s.firstl) : ""}</span>` : "")
@@ -281,6 +281,7 @@
     const last = ls.get("lv-last"), L = last && S[last.slug] && S[last.slug].status === "ready" && stateOf(S[last.slug]) !== "new" ? S[last.slug] : null, H = L || W;
     if (H) { const n = nph(H), ph = L ? Math.min(n, last.ph || 1) : 1, pct = readPct(H.slug);
       $("[data-hhero]").innerHTML = `<div class="ch"><h2>${L ? "Continue where you left off" : "This week's breakdown"}</h2><span class="meta">${L ? `Phase ${ph} of ${n} · ` : ""}${H.published ? `Published ${esc(fmtDate(H.published))}` : ""}</span></div>`
+        + (H.cover ? `<a class="hcov" href="${L ? `${H.href}#ph${ph}` : H.href}" tabindex="-1" aria-hidden="true"><img src="${esc(H.cover)}" alt="" width="960" height="540"></a>` : "")
         + `<div class="hh"><span class="logo">${logo(H, 44)}</span><div class="hhm"><h3>${esc(H.title || H.name)}</h3><p>${esc(H.what)}</p><p class="hhc">${esc(H.type)} · ${H.read} min read · ${n} phases</p></div>`
         + `<div class="hhn"><b>${esc(H.hv)}</b><span>${esc(H.hm || H.hu)}</span><span class="hhl">${chip(H.hl)}${staleChip(H)}</span><small>${esc([H.hs, H.hd].filter(Boolean).join(" · "))}</small>${H.spark}</div></div>`
         + hnum(H)

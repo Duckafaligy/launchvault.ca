@@ -196,7 +196,7 @@ def norm_ready(S, legacy):
             "slug": S["slug"], "name": S["name"], "tab": tab, "type": S.get("type_label") or S["category"], "what": S["what"], "logo": S["logo"],
             "pattern": S["pattern"], "lessons": [p["lesson"] for p in S["phases"]], "hv": hv, "hu": hu, "hl": hl, "sub": sub,
             "hd": hd, "hsrc": hsrc, "status": "ready", "stale": stale,
-            "href": f"/app/story/{S['slug']}/", "read": S["read_min"], "published": S["published"],
+            "href": f"/app/story/{S['slug']}/", "read": S["read_min"], "published": S["published"], "cover": f"/assets/real/{S['slug']}.jpg" if os.path.exists(os.path.join(ROOT, "assets", "real", S["slug"] + ".jpg")) else "",
             "mrr": mrr, "series": [[p[0], p[1]] for p in S["series"]["points"]], "title": S["title"], "S": S}
 def growth(series):
     """Average monthly growth between the first and last real point (compound). None when it can't be computed."""
@@ -232,12 +232,13 @@ def head(title, desc, extra="", og_slug="", gate=True):
 <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#2563EB">
+<meta name="theme-color" content="#07070A">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,600;1,700&family=Inter+Tight:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,600;1,700&family=Inter+Tight:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="/assets/app.css">{extra}{GATE if gate else ""}
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/app-dark.css">{extra}
+<link rel="stylesheet" href="/assets/vault.css">{GATE if gate else ""}
 </head>
 '''
 def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_slug=""):
@@ -254,7 +255,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
     SHORT = {"ck": "Lists"}   # six tabs share a 360 px phone: "Checklists" can't fit at a readable size, so the tab says Lists (full name for screen readers)
     tabs = "".join(f'<a href="{h}"{cur(k)}{f" aria-label=\"{t}\"" if k in SHORT else ""}>{ic(I[k], 22)}<span>{SHORT.get(k, t)}</span></a>' for k, h, t, _ in nav if k != "ask")   # six tabs (Ask LaunchVault is the sparkle icon in the phone header); Account is the person icon in the header on phones
     ttl = (" ".join(f'<a href="{h}">{esc(t)}</a><span class="sep">/</span>' for h, t in crumbs[:-1]) + f'<span>{esc(crumbs[-1][1])}</span>') if crumbs else f"<span>{esc(title)}</span>"
-    return (head(title + " · LaunchVault", desc, ('\n<link rel="stylesheet" href="/assets/chart.css">' if "chart.js" in scripts else "") + ('\n<link rel="stylesheet" href="/assets/community.css">' if "community.js" in scripts else "") + ('\n<link rel="stylesheet" href="/assets/assistant.css">' if "assistant.js" in scripts else ""), og_slug) + f'''<body{' class="has-back"' if crumbs else ""}>
+    return (head(title + " · LaunchVault", desc, ('\n<link rel="stylesheet" href="/assets/chart-dark.css">' if "chart.js" in scripts else "") + ('\n<link rel="stylesheet" href="/assets/community-dark.css">' if "community.js" in scripts else "") + ('\n<link rel="stylesheet" href="/assets/assistant-dark.css">' if "assistant.js" in scripts else ""), og_slug) + f'''<body{' class="has-back"' if crumbs else ""}>
 <a class="skip" href="#main">Skip to content</a>
 <div class="shell">
 <aside class="side" aria-label="App">
@@ -886,7 +887,7 @@ def main():
     def phase_of(S, frm): return next(((i + 1, p["lesson"]) for i, p in enumerate(S["phases"]) if p["name"] == frm), (0, ""))
     steps = [{"id": c["id"], "text": c["text"], "from": c["from"], "n": int(c["id"][1:]), "task": TASKS.get(c["id"], ""), "ph": phase_of(pz, c["from"])[0], "why": phase_of(pz, c["from"])[1]} for c in [pz_ck[i] for i in (0, 1, 5, 3, 2)]]
     APPDATA = {
-        "stories": [{k: e[k] for k in ("slug", "name", "title", "tab", "type", "what", "logo", "pattern", "lessons", "hv", "hu", "hl", "hd", "hm", "hs", "first", "firstl", "sub", "status", "stale", "href", "read", "published", "mrr", "growth")}
+        "stories": [{k: e[k] for k in ("slug", "name", "title", "tab", "type", "what", "logo", "pattern", "lessons", "hv", "hu", "hl", "hd", "hm", "hs", "first", "firstl", "sub", "status", "stale", "href", "read", "published", "mrr", "growth", "cover")}
                     | {"spark": spark(e["series"]), "phases": len(e["S"]["phases"]), "nt": [[re.sub(r"\s*\(.*?\)", "", x["k"]), x["v"], x["date"]] for x in e["S"]["numbers"][:3]], "ns": len(e["S"]["sources"]), "nsd": latest_date(x["date"] for x in e["S"]["sources"]), "site": (e["S"].get("links") or {}).get("site") or e["S"].get("site", "")} for e in E if e["status"] == "ready"],
         "tabs": TABS,
         "checklists": [{"slug": S["slug"], "name": S["name"], "logo": S["logo"], "href": next(e["href"] for e in E if e["slug"] == S["slug"]), "key": f"lv-{S['slug']}-checks",
