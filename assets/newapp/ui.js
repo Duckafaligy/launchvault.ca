@@ -115,8 +115,6 @@
   // ---------- Ask: a question typed on Home arrives filled in (not sent) ----------
   { const inp = $("#asIn"), q = new URLSearchParams(location.search).get("q");
     if (inp && q) { inp.value = q.slice(0, 400); inp.dispatchEvent(new Event("input")); try { history.replaceState(null, "", location.pathname); } catch {} } }
-  // links inside assistant replies point at the story pages of this app
-  document.addEventListener("click", e => { const a = e.target.closest('a[href^="/app/"]'); if (a) a.setAttribute("href", "/new" + a.getAttribute("href")); }, true);
 
   // ---------- motion: numbers count up once, the chart line draws in ----------
   if (!reduce) {
