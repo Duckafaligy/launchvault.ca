@@ -76,6 +76,8 @@ window.LVAuth = (() => {
   };
   // accounts paused: the one email allowed in, as a SHA-256 hash ("" = open to everyone). ponytail: browser-side; the hard lock is Clerk's allowlist
   const LV_ONLY = "1bed0365d329c0a66c71c85ac5fb79888c0ecb223196a7f795f08f43242e3221";
+  const lvMails = u => (u && u.emailAddresses || []).filter(a => a.verification && a.verification.status === "verified").map(a => a.emailAddress);
+  const lvAny = async u => { if (!LV_ONLY) return true; for (const e of lvMails(u)) if (await lvAllowed(e)) return true; return false; };   // any verified address on the account
   const lvAllowed = async e => { if (!LV_ONLY) return true; try { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(e || "").trim().toLowerCase()));
     return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join("") === LV_ONLY; } catch { return false; } };
   const callback = async () => {
@@ -115,10 +117,10 @@ window.LVAuth = (() => {
     const ageQ = () => { if (window.LVGate && !LVGate.ok && LVGate.start) LVGate.start(); };   // age question only after the wall
     if (!live) { ageQ(); return; }
     try { await load(); paint();
-      if (clerk.user && !(await lvAllowed(email()))) { try { localStorage.removeItem("lv-plan"); } catch {} await clerk.signOut({redirectUrl: "/sign-in/?closed=1"}); return; }
+      if (clerk.user && !(await lvAny(clerk.user))) { try { localStorage.removeItem("lv-plan"); } catch {} await clerk.signOut({redirectUrl: "/sign-in/?closed=1"}); return; }
       if (clerk.user && window.LVGate && LVGate.ok) { const sc = document.createElement("script"); sc.src = "/assets/supabase.js"; sc.onload = () => window.LVSync && LVSync.start(clerk); document.head.appendChild(sc); }
       if (wall && !clerk.user) { location.replace("/sign-in/?next=" + encodeURIComponent(location.pathname + location.search + location.hash)); return; }
       document.documentElement.style.visibility = ""; ageQ(); } catch (e) { document.documentElement.style.visibility = ""; ageQ(); /* Clerk didn't load: fail open, keep the preview face */ }
   };
-  return {on: LV_AUTH, live, gate: LV_GATE, load, enabled, signInWith, callback, signOut, app, email};
+  return {on: LV_AUTH, live, gate: LV_GATE, locked: !!LV_ONLY, load, enabled, signInWith, callback, signOut, app, email};
 })();

@@ -567,7 +567,8 @@
     $$("[data-display]").forEach(b => b.addEventListener("click", () => { dispV = b.dataset.display; disp(dispV); held(); }));
     // Preferences: welcome answers (this device) are the base; notes Ask LaunchVault saved live on the account (profiles.assistant_notes)
     { const base = $("[data-pref-base]"), box = $("[data-pref-notes]");
-      if (base) { const q = quiz(); base.textContent = q && q.summary ? q.summary : "Not answered yet"; }
+      if (base) { const q = quiz(), parts = q && q.summary ? String(q.summary).split(" \u00b7 ").map(x => x.trim()).filter(Boolean) : [];
+        if (parts.length) base.innerHTML = `<span class="prefchips">${parts.map(x => `<i>${esc(x)}</i>`).join("")}</span>`; else base.textContent = "Not answered yet"; }
       if (box) (async () => {
         const c = window.LVAuth && LVAuth.live ? await LVAuth.load().catch(() => null) : null;
         if (!c || !c.user) { box.innerHTML = `<p class="prefe">Sign in to see what Ask LaunchVault remembers.</p>`; return; }
@@ -587,6 +588,45 @@
       })(); }
     const prefs = Object.assign({new_story: false, path: false, news: false}, ls.get("lv-prefs", {}));
     $$("[data-pref]").forEach(b => { b.setAttribute("aria-checked", !!prefs[b.dataset.pref]); b.addEventListener("click", () => { prefs[b.dataset.pref] = !prefs[b.dataset.pref]; b.setAttribute("aria-checked", prefs[b.dataset.pref]); held(); }); });
+    // ---------- change email: a code to the current address, then a code to the new one; only then does it switch ----------
+    { const eb = $("[data-emchange]");
+      if (eb) eb.addEventListener("click", async () => {
+        const c = window.LVAuth && LVAuth.live ? await LVAuth.load().catch(() => null) : null;
+        if (!c || !c.user || !c.session) return toast("Sign in to change your email.");
+        const cur = c.user.primaryEmailAddress, d = document.createElement("dialog"); d.className = "rdlg emdlg"; d.setAttribute("aria-labelledby", "emh");
+        const why = x => { const e = x && x.errors && x.errors[0]; return (e && (e.longMessage || e.message)) || "That didn't work. Check it and try again."; };
+        const CODE = '<input class="emin" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code" required>';
+        let step = 0, fresh = null, busy = false;
+        const view = (h, p, body, go) => { d.innerHTML = `<form novalidate><p class="emstep">Step ${step + 1} of 3</p><h2 id="emh">${h}</h2><p>${p}</p>${body}<p class="emerr" role="alert"></p><div class="sbdr"><button class="btn btn-s" type="button" data-emx>Cancel</button><button class="btn btn-p" type="submit">${go}</button></div></form>`;
+          const i = $("input", d); if (i) i.focus(); };
+        const say = t => { $(".emerr", d).textContent = t; };
+        const sendOld = async () => { await c.session.startVerification({level: "first_factor"}); await c.session.prepareFirstFactorVerification({strategy: "email_code", emailAddressId: cur.id}); };
+        const s0 = () => { step = 0; view("Confirm it's you", `We sent a 6-digit code to <b>${esc(cur.emailAddress)}</b>. Enter it to continue.`, CODE + '<button class="tl" type="button" data-emre>Send a new code</button>', "Continue"); };
+        const s1 = () => { step = 1; view("Your new email", "We'll send a code there to make sure it's yours.", '<input class="emin" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>', "Send code"); };
+        const s2 = () => { step = 2; view("Check your new inbox", `We sent a 6-digit code to <b>${esc(fresh.emailAddress)}</b>. Your email changes once you enter it.`, CODE + '<button class="tl" type="button" data-emre>Send a new code</button>', "Change email"); };
+        document.body.appendChild(d); d.addEventListener("close", () => { if (fresh && step < 3) Promise.resolve(fresh.destroy()).catch(() => {}); d.remove(); });   // an unconfirmed new address is not left on the account
+        d.addEventListener("click", async e => {
+          if (e.target.closest("[data-emx]")) return d.close();
+          if (e.target.closest("[data-emre]")) { try { step === 0 ? await sendOld() : await fresh.prepareVerification({strategy: "email_code"}); say("New code sent."); } catch (x) { say(why(x)); } } });
+        d.addEventListener("submit", async e => { e.preventDefault(); if (busy) return; busy = true; say("");
+          const v = (($("input", d) || {}).value || "").trim(), go = $('[type="submit"]', d); go.disabled = true;
+          try {
+            if (step === 0) { const r = await c.session.attemptFirstFactorVerification({strategy: "email_code", code: v}); if (r.status !== "complete") throw 0; s1(); }
+            else if (step === 1) {
+              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) throw {errors: [{message: "Enter an email address, like you@example.com."}]};
+              if (v.toLowerCase() === cur.emailAddress.toLowerCase()) throw {errors: [{message: "That's already your email."}]};
+              fresh = await c.user.createEmailAddress({email: v}); await fresh.prepareVerification({strategy: "email_code"}); s2(); }
+            else { const r = await fresh.attemptVerification({code: v}); if (!r.verification || r.verification.status !== "verified") throw 0;
+              await c.user.update({primaryEmailAddressId: fresh.id}); step = 3;
+              // while accounts are paused to one email, the old address stays on the account so this account is not locked out
+              const keep = window.LVAuth && LVAuth.locked; if (!keep) await Promise.resolve(cur.destroy()).catch(() => {});
+              $$("[data-auth-email]").forEach(n => { n.textContent = fresh.emailAddress; }); d.close();
+              toast(keep ? "Email changed. Your old email stays linked until accounts reopen." : "Email changed."); }
+          } catch (x) { say(x ? why(x) : "That code isn't right. Check it and try again."); const g = $('[type="submit"]', d); if (g) g.disabled = false; }
+          busy = false; });
+        s0(); d.showModal();
+        try { await sendOld(); } catch (x) { say(why(x)); }
+      }); }
     // ---------- nothing in Settings saves as you go: changes are held until Save. The bar at the bottom offers Save or Discard,
     //            goes red and shakes if you try to leave, and Discard asks first. (The public profile form saves through the same bar.) ----------
     const ppf = $("[data-pp-form]"), ppNow = () => JSON.stringify(["#ppName", "#ppUser", "#ppBio"].map(q => ($(q) || {}).value || ""));

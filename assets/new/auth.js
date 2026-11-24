@@ -86,6 +86,8 @@
   };
   // accounts paused: the one email allowed in, as a SHA-256 hash ("" = open to everyone). ponytail: browser-side; the hard lock is Clerk's allowlist
   const LV_ONLY = "1bed0365d329c0a66c71c85ac5fb79888c0ecb223196a7f795f08f43242e3221";
+  const lvMails = u => (u && u.emailAddresses || []).filter(a => a.verification && a.verification.status === "verified").map(a => a.emailAddress);
+  const lvAny = async u => { if (!LV_ONLY) return true; for (const e of lvMails(u)) if (await lvAllowed(e)) return true; return false; };
   const lvAllowed = async e => { if (!LV_ONLY) return true; try { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(e || "").trim().toLowerCase()));
     return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join("") === LV_ONLY; } catch { return false; } };
   const needsFullUI = e => (e && e.lv === "incomplete") || (e instanceof TypeError && /not a function|undefined|null/.test(e.message || ""));
@@ -353,8 +355,7 @@
     }
     if (m === "welcome") {
       try { const c = await load(); if (!c.user) return location.replace(SIGN_IN + nq);
-        const em = c.user.primaryEmailAddress ? c.user.primaryEmailAddress.emailAddress : "";
-        if (!(await lvAllowed(em))) { await c.signOut({redirectUrl: SIGN_IN + "?closed=1"}); return; }
+        if (!(await lvAny(c.user))) { await c.signOut({redirectUrl: SIGN_IN + "?closed=1"}); return; }
         fresh = q.get("new") === "1"; afterAuth(); }
       catch { waitFail(); }
       return;
