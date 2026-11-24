@@ -30,16 +30,6 @@
  ],
  "redirects": [
   {
-   "source": "/welcome",
-   "destination": "/sign-in/",
-   "permanent": true
-  },
-  {
-   "source": "/welcome/",
-   "destination": "/sign-in/",
-   "permanent": true
-  },
-  {
    "source": "/signin",
    "destination": "/sign-in/",
    "permanent": true
@@ -111,18 +101,48 @@
   },
   {
    "source": "/new/blogs",
-   "destination": "/new/blog/",
-   "permanent": true
+   "destination": "/blog/",
+   "permanent": false
   },
   {
    "source": "/new/blogs/",
-   "destination": "/new/blog/",
-   "permanent": true
+   "destination": "/blog/",
+   "permanent": false
   },
   {
    "source": "/new/blogs/(.*)",
-   "destination": "/new/blog/$1",
-   "permanent": true
+   "destination": "/blog/$1",
+   "permanent": false
+  },
+  {
+   "source": "/new",
+   "destination": "/",
+   "permanent": false
+  },
+  {
+   "source": "/new/(.*)",
+   "destination": "/$1",
+   "permanent": false
+  },
+  {
+   "source": "/old/sign-in",
+   "destination": "/sign-in/",
+   "permanent": false
+  },
+  {
+   "source": "/old/sign-in/(.*)",
+   "destination": "/sign-in/$1",
+   "permanent": false
+  },
+  {
+   "source": "/old/sign-up",
+   "destination": "/sign-up/",
+   "permanent": false
+  },
+  {
+   "source": "/old/sign-up/(.*)",
+   "destination": "/sign-up/$1",
+   "permanent": false
   }
  ],
  "rewrites": [

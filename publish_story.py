@@ -41,7 +41,8 @@ def main():
     except json.JSONDecodeError as e: fail(f"{slug}.json is not valid JSON: {e}")
     errs = B.validate(S, path)
     if errs: fail(f"{slug}.json has {len(errs)} problem(s):\n  - " + "\n  - ".join(errs))
-    ready, E = B.main()   # rebuilds the app, the blog posts and covers, the cards, then the public site
+    import build_new, build_newapp
+    ready, E = build_newapp.main(); build_new.build()   # rebuilds the app, then the public site (blog posts included)
     legacy = next((s for s in json.load(open(os.path.join(B.DATA, "stories.json"), encoding="utf-8"))["stories"] if s.get("slug") == slug), None)
     up = upsert(S, legacy)
     print(f"""PUBLISHED {S['name']} ({slug})

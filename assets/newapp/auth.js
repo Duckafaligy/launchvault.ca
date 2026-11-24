@@ -2,13 +2,13 @@
    ONE place for the key and the wall:
      LV_CLERK_PK  the Clerk PUBLISHABLE key (pk_...). Public by design. Never put a secret key (sk_...) anywhere in this repo.
      LV_AUTH      false = accounts are off for now (no sign-in UI, no third-party requests). true = use Clerk (+ Supabase sync).
-     LV_GATE      false = the app opens without signing in (current choice). true = signed-out visitors go to /new/sign-in/.
-   While LV_CLERK_PK is empty the site runs in PREVIEW mode: sign-in buttons go straight to /new/app/ and a preview bar shows. */
+     LV_GATE      false = the app opens without signing in (current choice). true = signed-out visitors go to /sign-in/.
+   While LV_CLERK_PK is empty the site runs in PREVIEW mode: sign-in buttons go straight to /app/ and a preview bar shows. */
 const LV_CLERK_PK = "pk_live_Y2xlcmsubGF1bmNodmF1bHQuY2Ek";   // PRODUCTION instance (clerk.launchvault.ca), 2026-11-21. Dev was pk_test_ZGFzaGluZy1zcGlkZXItNDg2LmNsZXJrLmFjY291bnRzLmRldiQ
-const LV_AUTH = true;    // login ON (Clerk prebuilt sign-in on /new/sign-in/ and /new/sign-up/). Stories stay readable without an account (LV_GATE false)
-const LV_GATE = true;    // 2026-11-21: the app is for account holders only; hackathon judges type a judge code on /new/sign-in/ (judge view)
+const LV_AUTH = true;    // login ON (Clerk prebuilt sign-in on /sign-in/ and /sign-up/). Stories stay readable without an account (LV_GATE false)
+const LV_GATE = true;    // 2026-11-21: the app is for account holders only; hackathon judges type a judge code on /sign-in/ (judge view)
 const LV_GUEST_KEY = "SPARK2026";   // same value as JCODE in app.js; stored as lv-judge. ponytail: client-side key, swap for a server check if it must stay secret
-// judges only: the code is typed on /new/sign-in/ (no URL shortcut), then stored as lv-judge
+// judges only: the code is typed on /sign-in/ (no URL shortcut), then stored as lv-judge
 const lvGuest = () => { try { return JSON.parse(localStorage.getItem("lv-judge") || "null") === LV_GUEST_KEY; } catch { return false; } };
 // Clerk's recommended no-bundler setup: clerk-js v6 + its UI bundle, both served from this instance's Frontend API,
 // so the two always match and Clerk never blocks the SDK as outdated. The host comes from the publishable key.
@@ -29,7 +29,7 @@ window.LVAuth = (() => {
       .then(() => script(LV_CLERK_JS, {"data-clerk-publishable-key": LV_CLERK_PK}))
       .then(async () => { clerk = window.Clerk; await clerk.load({ui: {ClerkUI: window.__internal_ClerkUICtor},
       // tell Clerk where OUR pages are; without these it falls back to its hosted pages on *.accounts.dev
-      signInUrl: "/new/sign-in", signUpUrl: "/new/sign-up", signInFallbackRedirectUrl: "/new/app/", signUpFallbackRedirectUrl: "/new/app/start/"}); return clerk; });
+      signInUrl: "/sign-in", signUpUrl: "/sign-up", signInFallbackRedirectUrl: "/app/", signUpFallbackRedirectUrl: "/app/start/"}); return clerk; });
     return loading;
   };
   const email = () => clerk && clerk.user && clerk.user.primaryEmailAddress ? clerk.user.primaryEmailAddress.emailAddress : null;
@@ -44,13 +44,13 @@ window.LVAuth = (() => {
     } catch (e) { out.add("oauth_google"); }
     return out;
   };
-  const CALLBACK = "/new/welcome/callback/";
-  // every option goes through here; new users land on /new/app/start/, returning users on /new/app/
+  const CALLBACK = "/welcome/callback/";
+  // every option goes through here; new users land on /app/start/, returning users on /app/
   const signInWith = async (strategy, opts = {}) => {
-    if (!live) { location.href = opts.isNew ? "/new/app/start/" : "/new/app/"; return; }
+    if (!live) { location.href = opts.isNew ? "/app/start/" : "/app/"; return; }
     const c = await load();
     if (strategy.startsWith("oauth_"))
-      return c.client.signIn.authenticateWithRedirect({strategy, redirectUrl: location.origin + CALLBACK, redirectUrlComplete: location.origin + "/new/app/"});
+      return c.client.signIn.authenticateWithRedirect({strategy, redirectUrl: location.origin + CALLBACK, redirectUrlComplete: location.origin + "/app/"});
     if (strategy === "email_code") return emailCode(c, opts);
   };
   // email code: step 1 sends a code (sign in, or sign up if the address is new); step 2 checks it
@@ -71,15 +71,15 @@ window.LVAuth = (() => {
       return "sent";
     }
     const r = pending.kind === "in" ? await pending.r.attemptFirstFactor({strategy: "email_code", code}) : await pending.r.attemptEmailAddressVerification({code});
-    if (r.status === "complete") { await c.setActive({session: r.createdSessionId}); location.href = pending.kind === "up" ? "/new/app/start/" : "/new/app/"; }
+    if (r.status === "complete") { await c.setActive({session: r.createdSessionId}); location.href = pending.kind === "up" ? "/app/start/" : "/app/"; }
     return r.status;
   };
   const callback = async () => {
-    if (!live) { location.replace("/new/app/"); return; }
+    if (!live) { location.replace("/app/"); return; }
     const c = await load();
-    await c.handleRedirectCallback({signInForceRedirectUrl: "/new/app/", signUpForceRedirectUrl: "/new/app/start/", signInUrl: "/new/sign-in", signUpUrl: "/new/sign-up"});
+    await c.handleRedirectCallback({signInForceRedirectUrl: "/app/", signUpForceRedirectUrl: "/app/start/", signInUrl: "/sign-in", signUpUrl: "/sign-up"});
   };
-  const signOut = async () => { if (!live) return; try { localStorage.removeItem("lv-plan"); } catch {} const c = await load(); await c.signOut({redirectUrl: "/new/sign-in/"}); };
+  const signOut = async () => { if (!live) return; try { localStorage.removeItem("lv-plan"); } catch {} const c = await load(); await c.signOut({redirectUrl: "/sign-in/"}); };
   // app pages: show who is signed in (email only); only redirect when the wall is on
   const app = async () => {
     const bar = document.getElementById("prevbar"), guest = lvGuest(), wall = LV_GATE && live && !guest;
@@ -96,12 +96,12 @@ window.LVAuth = (() => {
         paid = !!p && (p.plan === "pro" || p.plan === "builder") && (p.status === "active" || p.status === "trialing"); } catch {}
       bar.style.display = e && paid && !guest ? "none" : "";
       bar.innerHTML = !LV_AUTH ? "Preview: accounts open soon. Your progress stays on this device."
-        : e ? `You're on the <b>Free plan</b>. Upgrade to Pro for every phase of every breakdown. <a href="/new/app/account/#plan">See plans</a>`
+        : e ? `You're on the <b>Free plan</b>. Upgrade to Pro for every phase of every breakdown. <a href="/app/account/#plan">See plans</a>`
         : guest ? `<b>Judge view.</b> You're in with a judge code, so nothing is saved to an account. <button type="button" id="gxBtn">Exit judge view</button>`
-            : `Your progress is saved on this device. <a href="/new/sign-in/">Sign in</a> to keep it everywhere.`;
+            : `Your progress is saved on this device. <a href="/sign-in/">Sign in</a> to keep it everywhere.`;
       const so = document.getElementById("soBtn"); if (so) so.addEventListener("click", signOut);
       const gx = document.getElementById("gxBtn");
-      if (gx) gx.addEventListener("click", () => { try { localStorage.removeItem("lv-judge"); } catch {} location.href = "/new/sign-in/"; });
+      if (gx) gx.addEventListener("click", () => { try { localStorage.removeItem("lv-judge"); } catch {} location.href = "/sign-in/"; });
       document.querySelectorAll("[data-auth-email]").forEach(n => { n.textContent = e || "Not signed in"; });
       document.querySelectorAll("[data-auth-out]").forEach(n => { n.hidden = !e; });
     };
@@ -112,7 +112,7 @@ window.LVAuth = (() => {
     if (!live) { ageQ(); return; }
     try { await load(); paint();
       if (clerk.user && window.LVGate && LVGate.ok) { const sc = document.createElement("script"); sc.src = "/assets/supabase.js"; sc.onload = () => window.LVSync && LVSync.start(clerk); document.head.appendChild(sc); }
-      if (wall && !clerk.user) { location.replace("/new/sign-in/?next=" + encodeURIComponent(location.pathname + location.search + location.hash)); return; }
+      if (wall && !clerk.user) { location.replace("/sign-in/?next=" + encodeURIComponent(location.pathname + location.search + location.hash)); return; }
       document.documentElement.style.visibility = ""; ageQ(); } catch (e) { document.documentElement.style.visibility = ""; ageQ(); /* Clerk didn't load: fail open, keep the preview face */ }
   };
   return {on: LV_AUTH, live, gate: LV_GATE, load, enabled, signInWith, callback, signOut, app, email};

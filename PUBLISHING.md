@@ -8,7 +8,7 @@ python publish_story.py <slug>
 
 That one command:
 1. validates the file (required fields; every number, note, move, fact check and source has a label, a date and a source). Bad data stops it with a list of problems and nothing is published.
-2. rebuilds everything from the JSON (`build_app.py`, which then runs `build.py`):
+2. rebuilds everything from the JSON (`build_newapp.py` for the app, then `build_new.py` for the public pages):
    - the app reader `/app/story/<slug>/` (Postiz also keeps `/app/postiz/`)
    - the public post `/blog/<slug>/`, with the same chart and labels and a CTA into the app
    - the Library entry, the homepage blog cards and the blog index (newest first)
@@ -17,7 +17,7 @@ That one command:
 
 Companies in `data/stories.json` without a story file stay "Coming soon" automatically.
 
-`python build_app.py` rebuilds everything without publishing anything new.
+`python build_newapp.py` then `python build_new.py` rebuild everything without publishing anything new. (`build.py` and `build_app.py` made the old site, now frozen under `/old/`; they no longer run on their own.)
 
 ## What the build needs
 - Python 3.10+ with Pillow (covers' WebP copy).

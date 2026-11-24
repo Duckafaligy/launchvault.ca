@@ -1,12 +1,12 @@
-<!-- LaunchVault /new/ sign-in flow. ONE template for /new/sign-in/, /new/sign-up/, /new/welcome/ and /new/welcome/callback/
+<!-- LaunchVault / sign-in flow. ONE template for /sign-in/, /sign-up/, /welcome/ and /welcome/callback/
      (build_new_auth.py fills {{mode}} and {{step}}). Ported from the Paper builder app.py auth_board(). Behaviour: assets/new/auth.js. -->
 <div class="auth" data-auth data-mode="{{mode}}" data-step="{{step}}">
 <script>/* a device that failed the 13+ check sees "Come back at 13" before first paint (same flag as assets/gate.js) */
 (function(r){try{var t=JSON.parse(localStorage.getItem("lv-age-block"));if((typeof t=="number"&&t+31536e6>Date.now())||/(?:^|; )lv-age-block=1/.test(document.cookie))r.dataset.step="under13"}catch(e){}})(document.currentScript.parentNode)</script>
 
 <header class="au-top">
-  <a class="nav-logo" href="/new/" aria-label="LaunchVault home">{{logo}}LaunchVault</a>
-  <a class="au-back" href="/new/"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 3.5L5 7l3.5 3.5"/></svg><span>Back<span class="hide-m"> to the site</span></span></a>
+  <a class="nav-logo" href="/" aria-label="LaunchVault home">{{logo}}LaunchVault</a>
+  <a class="au-back" href="/"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 3.5L5 7l3.5 3.5"/></svg><span>Back<span class="hide-m"> to the site</span></span></a>
 </header>
 
 <div class="au-mid">
@@ -51,7 +51,7 @@
             <div id="clerk-captcha" data-cl-theme="dark" data-cl-size="flexible"></div>
             <button class="btn btn-primary au-btn" type="submit"><span data-m="signin">Continue with email</span><span data-m="signup">Create your free account</span>{{arrow}}</button>
           </div>
-          <p class="au-small" data-m="signup">By continuing you agree to the <a class="link" href="/new/legal/terms/">Terms</a> and <a class="link" href="/new/legal/privacy/">Privacy policy</a>.</p>
+          <p class="au-small" data-m="signup">By continuing you agree to the <a class="link" href="/legal/terms/">Terms</a> and <a class="link" href="/legal/privacy/">Privacy policy</a>.</p>
         </form>
         <noscript><p class="au-msg">Signing in needs JavaScript. Turn it on in your browser, then reload this page.</p></noscript>
       </section>
@@ -112,8 +112,8 @@
           <h2>What you can still do</h2>
           <ul><li>Read every post on the blog.</li><li>Read the free story each week on the homepage.</li><li>Come back on your 13th birthday. Nothing is saved until then.</li></ul>
         </div>
-        <a class="btn au-ghost" href="/new/blog/">Read the blog{{arrow}}</a>
-        <p class="au-small"><a class="link" href="/new/">Back to the homepage</a></p>
+        <a class="btn au-ghost" href="/blog/">Read the blog{{arrow}}</a>
+        <p class="au-small"><a class="link" href="/">Back to the homepage</a></p>
       </section>
 
       <!-- Welcome -->
@@ -127,7 +127,7 @@
           <li><span class="au-n" aria-hidden="true">2</span><span class="au-age-t"><b>Do one step</b><span>Every story ends with one thing you can do this week.</span></span></li>
           <li><span class="au-n" aria-hidden="true">3</span><span class="au-age-t"><b>Ask about your idea</b><span>Answers come only from our stories and your own website.</span></span></li>
         </ol>
-        <a class="btn btn-primary au-btn" id="au-enter" href="/new/app/">Go to your dashboard{{arrow}}</a>
+        <a class="btn btn-primary au-btn" id="au-enter" href="/app/">Go to your dashboard{{arrow}}</a>
       </section>
 
       <!-- Waiting (OAuth return, checking who is signed in) and its error state -->
@@ -139,14 +139,14 @@
         <div class="au-spin" id="au-wait-spin" aria-hidden="true"></div>
         <div class="au-wait-act" id="au-wait-act" hidden>
           <button class="btn btn-primary au-btn" type="button" id="au-wait-retry">Try again{{arrow}}</button>
-          <p class="au-small"><a class="link" href="/new/sign-in/">Back to sign in</a></p>
+          <p class="au-small"><a class="link" href="/sign-in/">Back to sign in</a></p>
         </div>
       </section>
 
       <!-- Fallback: Clerk's own form, mounted only when the custom flow cannot finish a sign-in (extra steps, 2-step accounts) -->
       <section class="au-step" data-step="clerk" aria-label="Sign in"><div id="au-clerk"></div></section>
 
-      <p class="au-foot"><span data-m="signin">No account yet? <a class="link" href="/new/sign-up/" data-switch="signup">Sign up free</a></span><span data-m="signup">Have an account? <a class="link" href="/new/sign-in/" data-switch="signin">Sign in</a></span></p>
+      <p class="au-foot"><span data-m="signin">No account yet? <a class="link" href="/sign-up/" data-switch="signup">Sign up free</a></span><span data-m="signup">Have an account? <a class="link" href="/sign-in/" data-switch="signin">Sign in</a></span></p>
     </div>
 
     <p class="au-secured"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Secured by Clerk</p>
@@ -162,5 +162,5 @@
   </div>
 </div>
 
-<footer class="au-legal"><span>© 2026 LaunchVault</span><a href="/new/legal/terms/">Terms</a><a href="/new/legal/privacy/">Privacy</a><a class="hide-m" href="/new/legal/cookies/">Cookies</a><a class="hide-m" href="/new/#how">Help</a></footer>
+<footer class="au-legal"><span>© 2026 LaunchVault</span><a href="/legal/terms/">Terms</a><a href="/legal/privacy/">Privacy</a><a class="hide-m" href="/legal/cookies/">Cookies</a><a class="hide-m" href="/#how">Help</a></footer>
 </div>

@@ -948,4 +948,4 @@ def main():
     return ready, E
 
 if __name__ == "__main__":
-    main()
+    sys.exit("Retired on 2026-11-24 (root swap): this builder made the old site, now frozen under /old/. Run build_new.py (public pages + sign-in) and build_newapp.py (the app); build_newapp.py still imports this file for its data and page bodies.")

@@ -1,8 +1,8 @@
-"""/new/ sign-in flow: four pages from ONE template (src/new/auth.part.html), full-bleed (chrome=False), picked up by build_new.py.
+"""The sign-in flow: four pages from ONE template (src/new/auth.part.html), full-bleed (chrome=False), picked up by build_new.py.
 
-    /new/sign-in/  /new/sign-up/        the form (Clerk through assets/new/auth.js)
-    /new/welcome/                       after sign-in: age question if needed, then "You're in." for new accounts, then the app
-    /new/welcome/callback/              where Google / GitHub / Apple / Discord send people back
+    /sign-in/  /sign-up/        the form (Clerk through assets/new/auth.js)
+    /welcome/                       after sign-in: age question if needed, then "You're in." for new accounts, then the app
+    /welcome/callback/              where Google / GitHub / Apple / Discord send people back
 """
 import os
 

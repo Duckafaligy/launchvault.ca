@@ -1,4 +1,4 @@
-"""The blog under /new/blog/: the index, 10 company breakdowns and 3 guides, plus feed.xml, sitemap.xml and llms.txt.
+"""The blog under /blog/: the index, 10 company breakdowns and 3 guides, plus feed.xml, sitemap.xml and llms.txt.
 
     python build_new.py        picks this file up (register(B) below) and builds everything
     python build_new_blog.py   runs the self-check (titles, JSON-LD, links) without writing pages
@@ -19,7 +19,7 @@ INDEXABLE = False                 # the one switch to flip at launch
 FEATURED = "rezi"
 ROOT = os.path.dirname(os.path.abspath(__file__))
 IMG = "/assets/new/blog/"
-REPORT_HREF = "legal/privacy/"    # "Report a mistake" target, relative to /new/ (no public contact address exists yet)
+REPORT_HREF = "legal/privacy/"    # "Report a mistake" target, relative to / (no public contact address exists yet)
 
 # <= 60 characters each (checked at build). Only facts already in the post title.
 SEO_TITLE = {
@@ -456,7 +456,8 @@ def breakdown_parts(p, B):
     # 10 sources
     srcs = d.get("sources", [])
     if srcs:
-        lis = "".join(f'<li><div>{ext(x["url"], f"<span>{E(x["name"])}</span>{B.EXT}")}<p>{E(x["what"])}</p></div>'
+        # a source with no url (Postiz has four) is plain text, like the guides' sources; it used to link to "None"
+        lis = "".join(f'<li><div>{ext(x["url"], f"<span>{E(x["name"])}</span>{B.EXT}") if x.get("url") else f"<b>{E(x["name"])}</b>"}<p>{E(x["what"])}</p></div>'
                       f'<div class="srcs-m"><span>{E(x["date"])}</span>{chip(x["label"])}</div></li>' for x in srcs)
         toc.append(("sources", "Sources"))
         out.append(sec("sources", "Sources", "Each one with its date and its label.", f'<ul class="srcs">{lis}</ul>'
@@ -623,7 +624,8 @@ def extras(posts, B):
     write(B, "blog/feed.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>\n<title>LaunchVault blog</title>\n<link>{base}</link>\n'
           f'<atom:link href="{base}feed.xml" rel="self" type="application/rss+xml"/>\n<description>One founder breakdown a week, plus short guides on reading the numbers. Every number wears a label and a dated source.</description>\n'
           f"<language>en-ca</language>\n<lastBuildDate>{rfc(new[0]['date'])}</lastBuildDate>\n{items}</channel></rss>\n")
-    urls = f"<url><loc>{base}</loc><lastmod>{new[0]['date'].isoformat()}</lastmod></url>\n" + "".join(f"<url><loc>{base}{p['slug']}/</loc><lastmod>{p['date'].isoformat()}</lastmod></url>\n" for p in new)
+    urls = "".join(f"<url><loc>{B.SITE}{B.BASE}{u}</loc></url>\n" for u in ("", *(f"legal/{s}/" for s in ("privacy", "terms", "cookies", "accessibility", "community"))))   # this is the root sitemap now: home and legal too
+    urls += f"<url><loc>{base}</loc><lastmod>{new[0]['date'].isoformat()}</lastmod></url>\n" + "".join(f"<url><loc>{base}{p['slug']}/</loc><lastmod>{p['date'].isoformat()}</lastmod></url>\n" for p in new)
     write(B, "sitemap.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n')
     line = lambda p: f"- [{p['title']}]({base}{p['slug']}/): {p['summary']}\n"
     write(B, "llms.txt", "# LaunchVault\n\n> Real founder stories, checked number by number. Every number carries a label (Verified, Claimed, Sources differ, Live, Wayback or Couldn't verify), "
