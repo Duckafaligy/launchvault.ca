@@ -121,11 +121,15 @@
     queue(el);
   }
   function pinNext() {
-    while (pinLive < PIN_MAX && pinQ.length) {
-      var i = 0;
-      while (i < pinQ.length && pinQ[i]._lvT && pinQ[i]._lvT._lvBusy) i++;      /* never two cursors on one layer: that job waits its turn */
-      if (i === pinQ.length) return;
-      pinStart(pinQ.splice(i, 1)[0]);
+    while (pinLive < PIN_MAX && pinQ.length) {                 /* build where the reader is: the waiting job nearest the middle of the screen goes next, not the oldest */
+      var best = -1, bestD = Infinity, mid = w.innerHeight / 2;
+      for (var i = 0; i < pinQ.length; i++) {
+        if (pinQ[i]._lvT && pinQ[i]._lvT._lvBusy) continue;                       /* never two cursors on one layer: that job waits its turn */
+        var r = pinQ[i].getBoundingClientRect(), dd = Math.abs((r.top + r.bottom) / 2 - mid);
+        if (dd < bestD) { bestD = dd; best = i; }
+      }
+      if (best < 0) return;
+      pinStart(pinQ.splice(best, 1)[0]);
     }
   }
   function pinStart(el) {
