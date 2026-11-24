@@ -32,7 +32,7 @@
 <ellipse cx="38" cy="90" rx="9" ry="5" fill="${f.feet}"/><ellipse cx="62" cy="90" rx="9" ry="5" fill="${f.feet}"/>
 <path d="M50 13 C74 13 90 31 90 54 C90 76 74 89 50 89 C26 89 10 76 10 54 C10 31 26 13 50 13 Z" fill="${f.body}"/>
 ${f.glaze ? `<path d="M11 46 C13 27 29 13 50 13 C71 13 87 27 89 46 C85 51 80 51 76 46 C72 41 67 42 64 48 C61 54 55 54 52 48 C49 42 44 42 41 47 C38 53 32 54 28 48 C24 42 16 43 11 46 Z" fill="${f.glaze}"/>` : ""}${TOP[f.top]}
-<g class="lvdot-eyes"><ellipse cx="38" cy="63" rx="5.5" ry="7" fill="#0B0B10"/><ellipse cx="62" cy="63" rx="5.5" ry="7" fill="#0B0B10"/><circle cx="40" cy="60.2" r="2.1" fill="#fff"/><circle cx="64" cy="60.2" r="2.1" fill="#fff"/></g>
+<g class="lvdot-eyes"><ellipse cx="38" cy="63" rx="5.5" ry="7" fill="#0B0B10"/><ellipse cx="62" cy="63" rx="5.5" ry="7" fill="#0B0B10"/><g class="lvdot-glint"><circle cx="38" cy="63" r="2.2" fill="#fff"/><circle cx="62" cy="63" r="2.2" fill="#fff"/></g><g class="lvdot-spark"><circle cx="35.6" cy="66.6" r="1.1" fill="#fff"/><circle cx="59.6" cy="66.6" r="1.1" fill="#fff"/></g></g>
 <g class="lvdot-glad">${L("M31 65 Q38 56 45 65", "#0B0B10", 3.4)}${L("M55 65 Q62 56 69 65", "#0B0B10", 3.4)}</g>
 <ellipse cx="26" cy="72" rx="5.5" ry="3.3" fill="${f.cheek}"/><ellipse cx="74" cy="72" rx="5.5" ry="3.3" fill="${f.cheek}"/>
 ${L("M46 72 Q50 76 54 72", "#0B0B10", 2.4)}</svg>`; };
@@ -128,17 +128,19 @@ ${L("M46 72 Q50 76 54 72", "#0B0B10", 2.4)}</svg>`; };
 
   /* left alone, it looks around: left, up, right, back to you. The pointer takes over again as soon as it moves. */
   let lastMove = 0, li = 0;
-  const LOOK = [[-3.2, 0], [-3.2, 0], [0, -2.8], [2.6, -1.6], [3.2, 0], [0, 0], [0, 0], [-2, 1.6], [0, -2.8], [0, 0]];
+  /* the look is the white glint moving inside the dark eye; the eye itself stays put. Its rest spot is up and to the right. */
+  const REST = [1.8, -2.8], LOOK = [[-2.8, 0], [-2.8, 0], [0, -4], [2.4, -3], [2.8, 0], REST, REST, [-2, 3], [0, -4], REST];
   if (!reduce) (function wander() {
     if (el && el.dataset.mood === "idle" && Date.now() - lastMove > 1400) { const g = LOOK[li++ % LOOK.length]; el.style.setProperty("--ex", g[0] + "px"); el.style.setProperty("--ey", g[1] + "px"); }
-    else if (el && el.dataset.mood === "listening" && panel) { el.style.setProperty("--ex", (panel.dataset.x === "l" ? -3 : 3) + "px"); el.style.setProperty("--ey", (panel.dataset.y === "u" ? -1.2 : 1.6) + "px"); }   // it looks at what you are typing
+    else if (el && el.dataset.mood === "listening" && panel) { el.style.setProperty("--ex", REST[0] + "px"); el.style.setProperty("--ey", REST[1] + "px"); }   // it looks at what you are typing
     setTimeout(wander, 900 + Math.random() * 1500);
   })();
   /* eyes follow the pointer a little (mouse only); a blink is CSS */
   if (!reduce && matchMedia("(hover:hover) and (pointer:fine)").matches) {
     let q = 0; addEventListener("pointermove", e => { lastMove = Date.now(); if (!el || q) return; q = requestAnimationFrame(() => { q = 0; if (!el) return;
-      const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), n = Math.hypot(dx, dy) || 1, k = Math.min(1, n / 240);
-      el.style.setProperty("--ex", (dx / n * 3.2 * k).toFixed(2) + "px"); el.style.setProperty("--ey", (dy / n * 2.6 * k).toFixed(2) + "px"); }); }, { passive: true });
+      const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), n = Math.hypot(dx, dy) || 1, k = Math.min(1, n / 200);
+      if (el.dataset.mood === "listening") return;                    // while it listens its eyes stay on you, sparkling
+      el.style.setProperty("--ex", (dx / n * 2.8 * k).toFixed(2) + "px"); el.style.setProperty("--ey", (dy / n * 4 * k).toFixed(2) + "px"); }); }, { passive: true });
   }
   addEventListener("resize", () => { if (!el) return; if (small()) { el.style.left = el.style.top = el.style.right = el.style.bottom = ""; } else { const p = ls.get("lv-dot-pos"); if (Array.isArray(p)) setPos(p[0], p[1]); } });
 
