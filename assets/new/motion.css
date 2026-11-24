@@ -1,0 +1,133 @@
+/* LaunchVault /new/ — motion. One curve (--out), one system; assets/new/motion.js adds the classes.
+   Hidden-before-reveal states only apply under html.js (set by an inline head script), so content is visible without JS.
+   Reduced motion: everything is instant, no transforms (block at the bottom). */
+
+/* ---------- page transitions (cross-document View Transitions; browsers without them just navigate) ---------- */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:lv-vt-out .18s ease-in both}
+::view-transition-new(root){animation:lv-vt-in .45s var(--out) both}
+@keyframes lv-vt-out{to{opacity:0;transform:translateY(-8px)}}
+@keyframes lv-vt-in{from{opacity:0;transform:translateY(14px)}}
+::view-transition-group(lv-nav),::view-transition-group(lv-logo){animation-duration:.45s;animation-timing-function:var(--out)}
+::view-transition-old(lv-bg),::view-transition-new(lv-bg){animation-duration:.45s}
+
+/* ---------- intro: once per session, logo mark draws (350ms), then the page rises in ---------- */
+.intro{display:none}
+.intro-on .intro{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:var(--bg);pointer-events:none;animation:lv-intro-out .3s .35s ease-out both}
+.intro svg{width:44px;height:44px}
+.intro-on .intro path{stroke-dasharray:1;stroke-dashoffset:1;animation:lv-draw .35s var(--out) forwards}
+.intro-on .intro path:nth-child(2){animation-delay:.08s}.intro-on .intro path:nth-child(3){animation-delay:.16s}
+.intro-on main{animation:lv-rise .7s .3s var(--out) both}
+@keyframes lv-intro-out{to{opacity:0;visibility:hidden}}
+@keyframes lv-draw{to{stroke-dashoffset:0}}
+@keyframes lv-rise{from{opacity:0;transform:translateY(24px)}}
+
+/* ---------- background band ---------- */
+.bg{position:fixed;inset:0;z-index:-1;width:100%;height:100%;pointer-events:none;view-transition-name:lv-bg}
+
+/* ---------- scroll reveals (play once) ---------- */
+.js [data-reveal]:not([data-reveal=words]){opacity:0;transform:translateY(24px)}
+.js [data-reveal].in{opacity:1;transform:none;transition:opacity .7s var(--out) var(--d,0s),transform .9s var(--out) var(--d,0s)}
+.js [data-reveal=words] .w{display:inline-block;opacity:.18;transform:translateY(.18em);transition:opacity .5s var(--out),transform .6s var(--out);transition-delay:calc(var(--i)*55ms)}
+.js [data-reveal=words].in .w{opacity:1;transform:none}
+.js [data-stagger]>*{opacity:0;transform:translateY(20px)}
+.js [data-stagger].in>*{opacity:1;transform:none;transition:opacity .6s var(--out),transform .8s var(--out);transition-delay:calc(var(--i,0)*80ms)}
+.js [data-stagger].done>*{transition-delay:0s}
+[data-count]{font-variant-numeric:tabular-nums}
+.js [data-draw] :is(path,polyline,line,circle).lv-d{transition:stroke-dashoffset 1.1s var(--out)}
+
+/* ---------- cursor (fine pointers only; the native cursor is never hidden) ---------- */
+.cur,.cur-ring{position:fixed;left:0;top:0;z-index:120;pointer-events:none;border-radius:50%;opacity:0;transition:opacity .25s}
+.cur{width:6px;height:6px;margin:-3px 0 0 -3px;background:#fff;mix-blend-mode:difference}
+.cur-ring{display:grid;place-items:center;width:34px;height:34px;margin:-17px 0 0 -17px;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4);
+  transition:opacity .25s,width .3s var(--out),height .3s var(--out),margin .3s var(--out),background-color .3s,box-shadow .3s}
+.cur-on .cur,.cur-on .cur-ring{opacity:1}
+.cur-ring.is-hover{width:52px;height:52px;margin:-26px 0 0 -26px;background:rgba(47,107,255,.14);box-shadow:inset 0 0 0 1.5px rgba(157,184,255,.7)}
+.cur-ring.is-label{width:64px;height:64px;margin:-32px 0 0 -32px;background:#fff;box-shadow:0 12px 30px -10px rgba(0,0,0,.7)}
+.cur-ring span{font:600 12px/1 var(--fd);color:var(--night);opacity:0;transition:opacity .2s}
+.cur-ring.is-label span{opacity:1}
+.cur-ring.is-label~.cur,.cur.is-label{opacity:0}
+.cur-ring.is-down{transform-origin:center;box-shadow:inset 0 0 0 2.5px rgba(255,255,255,.7)}
+
+/* ---------- card hover: lift 4px, brighter top edge, soft blue glow ---------- */
+.card-hover{transition:transform .5s var(--out),box-shadow .4s var(--out)}
+@media (hover:hover){
+  .card-hover:hover{transform:translateY(-4px);box-shadow:inset 0 1px 0 rgba(255,255,255,.34),inset 0 -1px 0 rgba(255,255,255,.04),inset 0 0 0 1px rgba(255,255,255,.1),0 28px 56px -24px rgba(0,0,0,.7),0 22px 44px -26px rgba(47,107,255,.6)}
+}
+.card-hover:active{transform:translateY(-1px);transition-duration:.12s}
+a.card:focus-visible{border-radius:var(--r)}
+
+/* ---------- tabs / segmented: sliding indicator (motion.js positions it) ---------- */
+.seg-ind{position:absolute;left:0;top:0;z-index:0;border-radius:999px;background:#fff;pointer-events:none;transition:transform .45s var(--out),width .45s var(--out)}
+.seg-ind.no-anim{transition:none}
+[role=tabpanel][hidden]{display:none}
+[role=tabpanel]{animation:lv-panel .4s var(--out)}
+@keyframes lv-panel{from{opacity:0;transform:translateY(8px)}}
+
+/* ---------- accordion: <details data-acc="group"> ---------- */
+.acc{box-shadow:inset 0 -1px 0 var(--line)}
+.acc:first-of-type{box-shadow:inset 0 1px 0 var(--line),inset 0 -1px 0 var(--line)}
+.acc summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;font:600 16px/22px var(--fd);letter-spacing:-.01em;color:#fff;cursor:pointer;list-style:none;transition:color .15s}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary:hover{color:var(--hl)}
+.acc-body{overflow:hidden}
+.acc-body>div{padding:0 0 18px;max-width:68ch;font-size:14px;line-height:22px;color:var(--muted)}
+.acc[open] .acc-body>div{animation:lv-acc .4s var(--out)}
+@keyframes lv-acc{from{opacity:0;transform:translateY(4px)}}
+
+/* ---------- toast ---------- */
+.toasts{position:fixed;left:50%;bottom:24px;z-index:110;display:flex;flex-direction:column;align-items:center;gap:8px;transform:translateX(-50%);pointer-events:none;width:max-content;max-width:calc(100vw - 32px)}
+.toast{display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:14px;background:var(--glass),rgba(16,16,22,.92);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);box-shadow:var(--glass-edge);
+  font:500 14px/20px var(--fd);color:#fff;pointer-events:auto;animation:lv-toast-in .5s var(--out) both}
+.toast::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--brand)}
+.toast-ok::before{background:var(--mint)}.toast-error::before{background:var(--pop)}
+.toast.out{animation:lv-toast-out .25s ease-in both}
+@keyframes lv-toast-in{from{opacity:0;transform:translateY(16px) scale(.96)}}
+@keyframes lv-toast-out{to{opacity:0;transform:translateY(8px)}}
+
+/* ---------- skeleton loading ---------- */
+.skel{display:block;min-height:14px;border-radius:8px;color:transparent!important;background:linear-gradient(100deg,rgba(255,255,255,.06) 30%,rgba(255,255,255,.14) 50%,rgba(255,255,255,.06) 70%) 0 0/300% 100%;animation:lv-skel 1.4s linear infinite;user-select:none}
+.skel *{visibility:hidden}
+@keyframes lv-skel{from{background-position:100% 0}to{background-position:0 0}}
+
+/* ---------- comment pins (homepage design credits) ----------
+   <a class="pin" data-c="bl" href="https://www.scale.com" target="_blank" rel="noopener"><img src="/assets/new/favs/scale.com.png" alt="" width="24" height="24"><span class="pin-t">Headline type from <b>scale.com</b></span></a>
+   data-c = which corner is sharp (tl|tr|bl|br): it points at the credited part. Position it yourself (position:absolute). */
+.pin{position:absolute;z-index:5;display:inline-flex;align-items:center;gap:9px;height:40px;padding:0 15px 0 8px;border-radius:18px 18px 18px 2px;background:#EDEDED;white-space:nowrap;
+  box-shadow:0 0 0 1px rgba(11,11,15,.14),0 16px 36px -14px rgba(0,0,0,.8);font:500 14px/1 var(--fd);color:var(--night);transition:transform .35s var(--out),box-shadow .35s var(--out)}
+.pin[data-c=tl]{border-radius:2px 18px 18px 18px;transform-origin:0 0}
+.pin[data-c=tr]{border-radius:18px 2px 18px 18px;transform-origin:100% 0}
+.pin[data-c=bl]{transform-origin:0 100%}
+.pin[data-c=br]{border-radius:18px 18px 2px 18px;transform-origin:100% 100%}
+.pin-static{position:relative}
+.pin img{flex:none;width:24px;height:24px;border-radius:6px}
+.pin b{color:var(--ember-t);font-weight:600;border-radius:5px;padding:1px 4px;margin:0 -4px}
+.pin b svg{display:inline-block;width:9px;height:9px;margin-left:4px;vertical-align:0}
+.pin:hover,.pin:focus-visible{transform:translateY(-4px);box-shadow:0 0 0 1px rgba(11,11,15,.14),0 24px 44px -14px rgba(0,0,0,.9)}
+.pin:focus-visible{outline-offset:4px;border-radius:18px}
+.pin::after{content:"Opens in a new tab";position:absolute;left:50%;top:calc(100% + 8px);padding:5px 9px;border-radius:7px;background:#fff;font:600 11px/1 var(--fd);color:var(--night);
+  opacity:0;transform:translate(-50%,-4px);transition:opacity .2s,transform .3s var(--out);pointer-events:none}
+.pin:hover::after,.pin:focus-visible::after{opacity:1;transform:translate(-50%,0)}
+.js .pin:not(.in){opacity:0}
+.pin.pop{animation:lv-pin-pop .22s var(--spring) both}
+.pin.pop img{animation:lv-pin-pop .32s var(--spring) both}
+.pin.typing{padding-right:13px}
+.pin.typing b{color:var(--night)}
+.pin-caret{display:inline-block;width:2px;height:15px;margin-left:1px;vertical-align:-2px;background:var(--night);animation:lv-caret .7s steps(1) infinite}
+.pin.lit b{animation:lv-pin-lit 1s var(--out) both}
+@keyframes lv-pin-pop{from{opacity:0;transform:scale(.4)}}
+@keyframes lv-caret{50%{opacity:0}}
+@keyframes lv-pin-lit{0%{background:rgba(255,77,31,0);box-shadow:inset 0 -2px 0 rgba(255,77,31,0);color:var(--night)}30%{background:rgba(255,77,31,.18);box-shadow:inset 0 -2px 0 var(--ember);color:var(--ember-t)}100%{background:rgba(255,77,31,0);box-shadow:inset 0 -2px 0 rgba(255,77,31,0);color:var(--ember-t)}}
+
+/* ---------- reduced motion: instant, no transforms ---------- */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.01ms!important;transition-delay:0s!important}
+  .js [data-reveal],.js [data-stagger]>*,.js [data-reveal=words] .w{opacity:1!important;transform:none!important}
+  .js .pin:not(.in){opacity:1}
+  .btn{transform:none!important}
+  .card-hover:hover,.card-hover:active,.pin:hover,.pin:focus-visible{transform:none}
+  .skel{animation:none;background:rgba(255,255,255,.08)}
+  .cur,.cur-ring{display:none}
+  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
+}

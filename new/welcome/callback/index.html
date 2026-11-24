@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Signing you in · LaunchVault</title>
+<meta name="description" content="Finishing sign-in.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://www.launchvault.ca/new/welcome/callback/">
+<meta name="theme-color" content="#07070A">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="LaunchVault">
+<meta property="og:title" content="Signing you in · LaunchVault">
+<meta property="og:description" content="Finishing sign-in.">
+<meta property="og:url" content="https://www.launchvault.ca/new/welcome/callback/">
+<meta property="og:image" content="https://www.launchvault.ca/assets/icon-512.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/new/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script>(function(d){var h=d.documentElement;h.classList.add('js');try{if(!sessionStorage.getItem('lvIntro')&&!matchMedia('(prefers-reduced-motion:reduce)').matches){sessionStorage.setItem('lvIntro','1');h.classList.add('intro-on')}}catch(e){}})(document)</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,600&display=swap">
+<link rel="stylesheet" href="/assets/new/base.css?v=7347e157">
+<link rel="stylesheet" href="/assets/new/chrome.css?v=7763096a">
+<link rel="stylesheet" href="/assets/new/motion.css?v=ba2a2f27">
+<link rel="stylesheet" href="/assets/new/auth.css?v=90fa4d19">
+<script defer src="/assets/new/motion.js?v=78d5cb25"></script>
+<script defer src="/assets/new/auth.js?v=4b0ddde9"></script>
+</head>
+<body class="auth-page" data-bg="off">
+<a class="skip" href="#main">Skip to content</a>
+<div class="intro" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#2F6BFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path pathLength="1" d="M19.99 14.91A8.5 8.5 0 1 1 10.52 3.63"/><path pathLength="1" d="M6.8 15.6l3.7-3.7 2.6 2.6 6.7-6.7"/><path pathLength="1" d="M16 7.8h3.8v3.8"/></svg></div>
+
+<main id="main">
+<!-- LaunchVault /new/ sign-in flow. ONE template for /new/sign-in/, /new/sign-up/, /new/welcome/ and /new/welcome/callback/
+     (build_new_auth.py fills callback and wait). Ported from the Paper builder app.py auth_board(). Behaviour: assets/new/auth.js. -->
+<div class="auth" data-auth data-mode="callback" data-step="wait">
+<script>/* a device that failed the 13+ check sees "Come back at 13" before first paint (same flag as assets/gate.js) */
+(function(r){try{var t=JSON.parse(localStorage.getItem("lv-age-block"));if((typeof t=="number"&&t+31536e6>Date.now())||/(?:^|; )lv-age-block=1/.test(document.cookie))r.dataset.step="under13"}catch(e){}})(document.currentScript.parentNode)</script>
+
+<header class="au-top">
+  <a class="nav-logo" href="/new/" aria-label="LaunchVault home"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#2F6BFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path pathLength="1" d="M19.99 14.91A8.5 8.5 0 1 1 10.52 3.63"/><path pathLength="1" d="M6.8 15.6l3.7-3.7 2.6 2.6 6.7-6.7"/><path pathLength="1" d="M16 7.8h3.8v3.8"/></svg>LaunchVault</a>
+  <a class="au-back" href="/new/"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 3.5L5 7l3.5 3.5"/></svg><span>Back<span class="hide-m"> to the site</span></span></a>
+</header>
+
+<div class="au-mid">
+  <aside class="au-story" aria-label="About LaunchVault" data-stagger>
+    <p class="au-story-h">They started small.<br>So can <em class="hl">you.</em></p>
+    <p class="au-story-p">Ten real businesses, checked number by number. Read how each one started, then do one step a week.</p>
+    <div class="au-mini">
+      <div class="au-mini-top"><span class="au-tile"><img src="/assets/logos/rezi.png" alt="" width="14" height="14"></span><b>Rezi</b><span class="chip chip-verified">Verified</span><span class="au-mini-date">Oct 2026</span></div>
+      <p class="au-mini-num" data-count>$216,471</p>
+      <svg width="248" height="46" viewBox="0 0 248 46" aria-hidden="true"><defs><linearGradient id="au-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".26"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient></defs>
+        <line x1="0" y1="40.9" x2="248" y2="40.9" stroke="rgba(255,255,255,.28)" stroke-width="1.2" stroke-dasharray="1.5 6" stroke-linecap="round"/>
+        <path d="M0.0 40.9 L24.8 18.4 L49.6 20.8 L74.4 8.9 L99.2 4.5 L124.0 8.0 L148.8 20.3 L173.6 20.8 L198.4 22.2 L223.2 36.1 L248.0 41.5 L248.0 46 L0 46 Z" fill="url(#au-g)"/>
+        <path data-draw d="M0.0 40.9 L24.8 18.4 L49.6 20.8 L74.4 8.9 L99.2 4.5 L124.0 8.0 L148.8 20.3 L173.6 20.8 L198.4 22.2 L223.2 36.1 L248.0 41.5" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="248.0" cy="41.5" r="11.0" fill="#FFFFFF" fill-opacity=".18"/><circle cx="248.0" cy="41.5" r="4.4" fill="#FFFFFF"/></svg>
+    </div>
+    <div class="au-logos"><span class="au-logos-row" aria-hidden="true"><span class="au-tile"><img src="/assets/logos/postiz.svg" alt="" width="16" height="16"></span><span class="au-tile"><img src="/assets/logos/gojiberry.png" alt="" width="16" height="16"></span><span class="au-tile"><img src="/assets/logos/rezi.png" alt="" width="16" height="16"></span><span class="au-tile"><img src="/assets/logos/aeoengine.png" alt="" width="16" height="16"></span><span class="au-tile"><img src="/assets/logos/windmillgrowth.png" alt="" width="16" height="16"></span><span class="au-tile"><img src="/assets/logos/upscaleb2b.png" alt="" width="16" height="16"></span><span class="au-tile"><img src="/assets/logos/stencilai.png" alt="" width="16" height="16"></span><span class="au-tile"><img src="/assets/logos/boothie.png" alt="" width="16" height="16"></span><span class="au-tile"><img src="/assets/logos/mindset.png" alt="" width="16" height="16"></span><span class="au-tile"><img src="/assets/logos/dmchamp.png" alt="" width="16" height="16"></span></span><span>10 stories</span></div>
+  </aside>
+
+  <div class="au-stack">
+    <div class="au-card">
+
+      <!-- Sign in / Sign up (the two share one form; [data-m] parts show for one mode) -->
+      <section class="au-step" data-step="form" aria-labelledby="au-h-form">
+        <div class="au-head">
+          <h1 id="au-h-form" tabindex="-1"><span data-m="signin">Welcome back.</span><span data-m="signup">Start free.</span></h1>
+          <p><span data-m="signin">Pick up where you left off.</span><span data-m="signup">Only needs an email. For ages 13 and up.</span></p>
+        </div>
+        <div class="au-provs">
+          <button class="au-prov" type="button" data-strategy="oauth_google"><img src="/assets/new/favs/google.com.png" alt="" width="20" height="20"><span>Continue with Google</span></button>
+          <button class="au-prov" type="button" data-strategy="oauth_github"><img src="/assets/new/favs/github.com.png" alt="" width="20" height="20"><span>Continue with GitHub</span></button>
+          <button class="au-prov" type="button" data-strategy="oauth_apple"><img src="/assets/new/favs/apple.com.png" alt="" width="20" height="20"><span>Continue with Apple</span></button>
+          <button class="au-prov" type="button" data-strategy="oauth_discord"><img src="/assets/new/favs/discord.com.png" alt="" width="20" height="20"><span>Continue with Discord</span></button>
+        </div>
+        <div class="au-or" role="separator"><span>or with email</span></div>
+        <form class="au-form" id="au-form" novalidate>
+          <div class="au-field">
+            <div class="au-label"><label for="au-email">Email address</label><span data-m="signup">We send a code, no password</span></div>
+            <input class="au-input" id="au-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="go" placeholder="you@example.com" required aria-describedby="au-msg-form">
+            <p class="au-msg" id="au-msg-form" role="alert"></p>
+          </div>
+          <div class="au-go">
+            <div id="clerk-captcha" data-cl-theme="dark" data-cl-size="flexible"></div>
+            <button class="btn btn-primary au-btn" type="submit"><span data-m="signin">Continue with email</span><span data-m="signup">Create your free account</span><svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></button>
+          </div>
+          <p class="au-small" data-m="signup">By continuing you agree to the <a class="link" href="/new/legal/terms/">Terms</a> and <a class="link" href="/new/legal/privacy/">Privacy policy</a>.</p>
+        </form>
+        <noscript><p class="au-msg">Signing in needs JavaScript. Turn it on in your browser, then reload this page.</p></noscript>
+      </section>
+
+      <!-- Check your email -->
+      <section class="au-step" data-step="code" aria-labelledby="au-h-code">
+        <div class="au-head">
+          <h1 id="au-h-code" tabindex="-1">Check your email.</h1>
+          <p>We sent a 6-digit code to <b id="au-sent-to">your email</b>. It works for 10 minutes.</p>
+        </div>
+        <form class="au-form" id="au-code-form" novalidate>
+          <div class="au-field">
+            <div class="au-code">
+              <input class="au-code-in" id="au-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" autocapitalize="off" spellcheck="false" aria-label="6-digit code" aria-describedby="au-msg-code">
+              <div class="au-boxes" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            </div>
+            <p class="au-msg" id="au-msg-code" role="alert"></p>
+          </div>
+          <button class="btn btn-primary au-btn" type="submit">Verify<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></button>
+          <div class="au-after">
+            <p class="au-small"><span id="au-wait">Didn't get it? You can resend in <span class="tnum" id="au-count">0:30</span>.</span><span id="au-again" hidden>Didn't get it? <button class="link" type="button" id="au-resend">Send a new code</button></span></p>
+            <p class="au-small"><button class="link" type="button" id="au-change">Use a different email</button></p>
+          </div>
+        </form>
+      </section>
+
+      <!-- Age -->
+      <section class="au-step" data-step="age" aria-labelledby="au-h-age">
+        <div class="au-head">
+          <h1 id="au-h-age" tabindex="-1">How old are you?</h1>
+          <p>One quick question before you start.</p>
+        </div>
+        <form class="au-form" id="au-age-form" novalidate>
+          <div class="au-ages" role="radiogroup" aria-labelledby="au-h-age">
+            <span class="au-age-hl" aria-hidden="true"></span>
+            <label class="au-age"><input type="radio" name="age" value="u13"><span class="au-radio"></span><span class="au-age-t"><b>Under 13</b><span>The app stays closed for now. The blog is open to everyone.</span></span></label>
+            <label class="au-age"><input type="radio" name="age" value="teen"><span class="au-radio"></span><span class="au-age-t"><b>13 to 17</b><span>Free is yours. A parent pays for Pro or Developer.</span></span></label>
+            <label class="au-age"><input type="radio" name="age" value="adult"><span class="au-radio"></span><span class="au-age-t"><b>18 or older</b><span>Everything is open, and you pay for your own plan.</span></span></label>
+          </div>
+          <!-- the gate (assets/gate.js) works from a birth year; this compact picker gives it one without the long list -->
+          <div class="au-field au-year" id="au-year-f" hidden>
+            <div class="au-label"><label for="au-year">What year were you born?</label><span>We keep an age range, never the year</span></div>
+            <select class="au-input" id="au-year" name="year" autocomplete="bday-year"><option value="">Pick a year</option></select>
+          </div>
+          <p class="au-msg" id="au-msg-age" role="alert"></p>
+          <button class="btn btn-primary au-btn" type="submit" disabled>Continue<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></button>
+          <p class="au-small">We only use this to keep the app right for you. It is never shown to anyone.</p>
+        </form>
+      </section>
+
+      <!-- Under 13 -->
+      <section class="au-step" data-step="under13" aria-labelledby="au-h-u13">
+        <div class="au-head">
+          <h1 id="au-h-u13" tabindex="-1">Come back at 13.</h1>
+          <p>LaunchVault's app is for ages 13 and up, so it stays closed on this device for now. We kept nothing about you.</p>
+        </div>
+        <div class="au-box au-can">
+          <h2>What you can still do</h2>
+          <ul><li>Read every post on the blog.</li><li>Read the free story each week on the homepage.</li><li>Come back on your 13th birthday. Nothing is saved until then.</li></ul>
+        </div>
+        <a class="btn au-ghost" href="/new/blog/">Read the blog<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></a>
+        <p class="au-small"><a class="link" href="/new/">Back to the homepage</a></p>
+      </section>
+
+      <!-- Welcome -->
+      <section class="au-step" data-step="welcome" aria-labelledby="au-h-wel">
+        <div class="au-head">
+          <h1 id="au-h-wel" tabindex="-1">You're in.</h1>
+          <p>Here is how LaunchVault works. It takes about 20 minutes a week.</p>
+        </div>
+        <ol class="au-box au-steps">
+          <li><span class="au-n" aria-hidden="true">1</span><span class="au-age-t"><b>Read a story</b><span>How a real business actually started, checked number by number.</span></span></li>
+          <li><span class="au-n" aria-hidden="true">2</span><span class="au-age-t"><b>Do one step</b><span>Every story ends with one thing you can do this week.</span></span></li>
+          <li><span class="au-n" aria-hidden="true">3</span><span class="au-age-t"><b>Ask about your idea</b><span>Answers come only from our stories and your own website.</span></span></li>
+        </ol>
+        <a class="btn btn-primary au-btn" id="au-enter" href="/new/app/">Go to your dashboard<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></a>
+      </section>
+
+      <!-- Waiting (OAuth return, checking who is signed in) and its error state -->
+      <section class="au-step" data-step="wait" aria-labelledby="au-h-wait">
+        <div class="au-head">
+          <h1 id="au-h-wait" tabindex="-1">Signing you in.</h1>
+          <p id="au-wait-p" role="status">One moment.</p>
+        </div>
+        <div class="au-spin" id="au-wait-spin" aria-hidden="true"></div>
+        <div class="au-wait-act" id="au-wait-act" hidden>
+          <button class="btn btn-primary au-btn" type="button" id="au-wait-retry">Try again<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></button>
+          <p class="au-small"><a class="link" href="/new/sign-in/">Back to sign in</a></p>
+        </div>
+      </section>
+
+      <!-- Fallback: Clerk's own form, mounted only when the custom flow cannot finish a sign-in (extra steps, 2-step accounts) -->
+      <section class="au-step" data-step="clerk" aria-label="Sign in"><div id="au-clerk"></div></section>
+
+      <p class="au-foot"><span data-m="signin">No account yet? <a class="link" href="/new/sign-up/" data-switch="signup">Sign up free</a></span><span data-m="signup">Have an account? <a class="link" href="/new/sign-in/" data-switch="signin">Sign in</a></span></p>
+    </div>
+
+    <p class="au-secured"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Secured by Clerk</p>
+
+    <details class="au-judge">
+      <summary><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l3 3"/></svg><span>Judging LaunchVault? <b>Enter your judge code</b></span><svg class="au-judge-ch" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <form id="au-judge-form" novalidate>
+        <label class="sr-only" for="au-judge">Judge code</label>
+        <div class="au-judge-row"><input class="au-input" id="au-judge" name="key" type="text" placeholder="Judge code" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="au-msg-judge"><button class="btn btn-glass btn-md" type="submit">Enter</button></div>
+        <p class="au-msg" id="au-msg-judge" role="alert"></p>
+      </form>
+    </details>
+  </div>
+</div>
+
+<footer class="au-legal"><span>© 2026 LaunchVault</span><a href="/new/legal/terms/">Terms</a><a href="/new/legal/privacy/">Privacy</a><a class="hide-m" href="/new/legal/cookies/">Cookies</a><a class="hide-m" href="/new/#how">Help</a></footer>
+</div>
+
+
+</main>
+
+</body>
+</html>

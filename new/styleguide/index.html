@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Style guide · LaunchVault</title>
+<meta name="description" content="Every token, component and motion of the new LaunchVault site, with markup to copy.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://www.launchvault.ca/new/styleguide/">
+<meta name="theme-color" content="#07070A">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="LaunchVault">
+<meta property="og:title" content="Style guide · LaunchVault">
+<meta property="og:description" content="Every token, component and motion of the new LaunchVault site, with markup to copy.">
+<meta property="og:url" content="https://www.launchvault.ca/new/styleguide/">
+<meta property="og:image" content="https://www.launchvault.ca/assets/icon-512.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/new/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<script>(function(d){var h=d.documentElement;h.classList.add('js');try{if(!sessionStorage.getItem('lvIntro')&&!matchMedia('(prefers-reduced-motion:reduce)').matches){sessionStorage.setItem('lvIntro','1');h.classList.add('intro-on')}}catch(e){}})(document)</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,600&display=swap">
+<link rel="stylesheet" href="/assets/new/base.css?v=7347e157">
+<link rel="stylesheet" href="/assets/new/chrome.css?v=7763096a">
+<link rel="stylesheet" href="/assets/new/motion.css?v=ba2a2f27">
+<link rel="stylesheet" href="/assets/new/styleguide.css?v=78151611">
+<script defer src="/assets/new/motion.js?v=78d5cb25"></script>
+<script defer src="/assets/new/styleguide.js?v=bc88598d"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="intro" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#2F6BFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path pathLength="1" d="M19.99 14.91A8.5 8.5 0 1 1 10.52 3.63"/><path pathLength="1" d="M6.8 15.6l3.7-3.7 2.6 2.6 6.7-6.7"/><path pathLength="1" d="M16 7.8h3.8v3.8"/></svg></div>
+<header class="nav" data-nav><div class="nav-shell"><div class="nav-bar"><a class="nav-logo" href="/new/" aria-label="LaunchVault home"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#2F6BFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path pathLength="1" d="M19.99 14.91A8.5 8.5 0 1 1 10.52 3.63"/><path pathLength="1" d="M6.8 15.6l3.7-3.7 2.6 2.6 6.7-6.7"/><path pathLength="1" d="M16 7.8h3.8v3.8"/></svg>LaunchVault</a><nav class="nav-links" aria-label="Main"><a href="/new/#stories">Stories</a><a href="/new/#problem">The problem</a><a href="/new/#how">How it works</a><a href="/new/#pricing">Pricing</a><a href="/new/blog/">Blog</a></nav><span class="nav-sp"></span><a class="nav-login" href="/new/sign-in/">Log in</a><a class="btn btn-white nav-start" href="/new/sign-up/">Start free</a><a class="btn btn-primary btn-sm nav-cta" href="/new/sign-up/">Read a story for free<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></a><a class="btn btn-primary btn-sm nav-cta-s" href="/new/sign-up/">Start free</a><button class="nav-menu" type="button" aria-expanded="false" aria-controls="nav-card" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path class="b1" d="M4 7h16"/><path class="b2" d="M4 12h16"/><path class="b3" d="M4 17h16"/></svg></button></div><div class="nav-card" id="nav-card"><div class="nav-card-in"><nav class="nav-tabs" aria-label="Menu"><a class="nav-tab" href="/new/#stories"><b>Stories</b><span>Ten founder stories, every number checked</span></a><a class="nav-tab" href="/new/#problem"><b>The problem</b><span>Why most success stories can&#x27;t be trusted</span></a><a class="nav-tab" href="/new/#how"><b>How it works</b><span>Read it, do it, ask about it</span></a><a class="nav-tab" href="/new/#pricing"><b>Pricing</b><span>Free, Pro, Lifetime and Developer</span></a><a class="nav-tab" href="/new/blog/"><b>Blog</b><span>Breakdowns and guides</span></a><div class="nav-foot"><a href="/new/sign-in/">Log in</a><span>Ages 13 and up</span></div></nav></div></div></div></header>
+<main id="main">
+<section class="sec sg-hero"><div class="wrap stack" style="--gap:20px">
+  <h1 class="h1" data-reveal="words">One system. Every <em class="hl">page.</em></h1>
+  <p class="lead" data-reveal>The living style guide for the new LaunchVault site. Every token, component and motion on this page comes from <code>base.css</code>, <code>chrome.css</code>, <code>motion.css</code> and <code>motion.js</code>. Copy the markup; do not restyle it.</p>
+  <nav class="seg sg-jump" aria-label="Sections" data-reveal>
+    <a class="seg-i" href="#colour">Colour</a><a class="seg-i" href="#type">Type</a><a class="seg-i" href="#components">Components</a><a class="seg-i" href="#motion">Motion</a><a class="seg-i" href="#chrome">Chrome</a>
+  </nav>
+</div></section>
+
+<section class="sec" id="colour"><div class="wrap sg-row">
+  <div class="sg-side"><h2 class="h2" data-reveal="words">Colour</h2><p class="body">Night, white and cobalt carry the page. Each accent has one job. No yellow, anywhere.</p></div>
+  <div class="stack" style="--gap:28px">
+    <div class="sg-swatches" data-stagger>
+      <div class="sg-sw"><i style="background:var(--bg);box-shadow:inset 0 0 0 1px var(--line)"></i><b>--bg</b><span>#07070A · page</span></div>
+      <div class="sg-sw"><i style="background:var(--surf);box-shadow:inset 0 0 0 1px var(--line)"></i><b>--surf</b><span>#0E0E13 · solid surface</span></div>
+      <div class="sg-sw"><i style="background:var(--ink)"></i><b>--ink</b><span>#FFFFFF · titles</span></div>
+      <div class="sg-sw"><i style="background:var(--brand)"></i><b>--brand</b><span>#2F6BFF · logo, picked, focus</span></div>
+      <div class="sg-sw"><i style="background:var(--btn)"></i><b>--btn</b><span>#1F45B5 · main button</span></div>
+      <div class="sg-sw"><i style="background:var(--word)"></i><b>--word</b><span>#4C7DFF · the italic word</span></div>
+      <div class="sg-sw"><i style="background:var(--ember)"></i><b>--ember</b><span>#FF4D1F · text links</span></div>
+      <div class="sg-sw"><i style="background:var(--mint)"></i><b>--mint</b><span>#00C27A · verified, up</span></div>
+      <div class="sg-sw"><i style="background:var(--violet)"></i><b>--violet</b><span>#7B5CFF · sources differ</span></div>
+      <div class="sg-sw"><i style="background:var(--pink)"></i><b>--pink</b><span>#FF5FA2 · band only</span></div>
+      <div class="sg-sw"><i style="background:var(--pop)"></i><b>--pop</b><span>#FF8A8A · errors</span></div>
+    </div>
+    <div class="sg-texts">
+      <p class="white">--ink · titles and numbers</p><p style="color:var(--text)">--text · long reading text (78%)</p><p class="muted">--muted · supporting text (64%)</p><p class="faint">--faint · captions and footers (56%)</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="sec" id="type"><div class="wrap sg-row">
+  <div class="sg-side"><h2 class="h2" data-reveal="words">Type</h2><p class="body">Inter 400 to 700. One word per headline may be Playfair Display italic in cobalt: <code>&lt;em class="hl"&gt;</code>. No small all-caps labels above titles.</p></div>
+  <div class="stack sg-type" style="--gap:22px">
+    <div><span class="tiny">.h-hero · 40 to 80</span><p class="h-hero">So can <em class="hl">you.</em></p></div>
+    <div><span class="tiny">.h1 · 36 to 64</span><p class="h1">The blog.</p></div>
+    <div><span class="tiny">.h-cta · 32 to 48</span><p class="h-cta">Your first step takes 20 minutes.</p></div>
+    <div><span class="tiny">.h2 · 28 to 40</span><p class="h2">Most founder stories are never checked.</p></div>
+    <div><span class="tiny">.h3 · 20 to 24</span><p class="h3">Rezi started as a resume template on Reddit</p></div>
+    <div><span class="tiny">.h4 · 18 &nbsp; .h5 · 16</span><p class="h4">Why the line moved</p><p class="h5">How it really started</p></div>
+    <div><span class="tiny">.lead · 16/25</span><p class="lead">How real businesses actually started, checked number by number, turned into steps you can do this week.</p></div>
+    <div><span class="tiny">.body · 15/24 &nbsp; .small · 13/19 &nbsp; .tiny · 12/17</span><p class="body">Videos and posts are great for stories, but the numbers are rarely checked. So every number here wears a label, with a source and a date.</p><p class="small">Source: Stripe via TrustMRR, read Nov 18 2026.</p></div>
+    <div><span class="tiny">.hl-box</span><p class="h2">Everything here was <span class="hl-box">learned from someone.</span></p></div>
+  </div>
+</div></section>
+
+<section class="sec" id="components"><div class="wrap stack" style="--gap:72px">
+  <div class="sg-row">
+    <div class="sg-side"><h2 class="h2" data-reveal="words">Buttons</h2><p class="body">Buttons hug their text at every screen size. The main action is always the blue pill and always says <b>Read a story for free</b>. Hover: the chevron slides and grows a line. Press: 97%.</p></div>
+    <div class="stack" style="--gap:20px">
+      <div class="row row-wrap"><a class="btn btn-primary" href="/new/sign-up/">Read a story for free<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></a><a class="btn btn-glass" href="#components">All posts</a><a class="btn btn-white" href="#components">Start free</a></div>
+      <div class="row row-wrap"><a class="btn btn-primary btn-md" href="#components">Get Pro<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></a><a class="btn btn-glass btn-md" href="#components">Read the stories on the blog<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></a><a class="btn btn-primary btn-sm" href="#components">Start free</a></div>
+      <div class="row row-wrap"><button class="btn btn-primary btn-md" disabled>Disabled</button><button class="btn btn-primary btn-md is-loading" aria-busy="true">Saving</button><a class="link-arrow" href="#components">Read the breakdown<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></a><a class="link" href="#components">A text link</a></div>
+      <pre class="sg-code">&lt;a class="btn btn-primary" href="/new/sign-up/"&gt;Read a story for free{<!---->{arrow}}&lt;/a&gt;   or just  {<!---->{cta}}
+&lt;a class="btn btn-glass btn-md" href="…"&gt;All posts&lt;/a&gt;
+&lt;a class="link-arrow" href="…"&gt;Read the breakdown{<!---->{arrow}}&lt;/a&gt;   &lt;a class="link" href="…"&gt;A text link&lt;/a&gt;</pre>
+    </div>
+  </div>
+
+  <div class="sg-row">
+    <div class="sg-side"><h2 class="h2" data-reveal="words">Glass cards</h2><p class="body">Frost is 5px. It was halved twice on purpose, so leave it. Add <code>card-hover</code> to lift on hover, <code>card-pick</code> for the picked plan.</p></div>
+    <div class="stack" style="--gap:16px">
+      <div class="sg-cards" data-stagger>
+        <a class="card card-hover stack" href="#components" data-cursor="Read" style="--gap:10px"><div class="row" style="--gap:8px"><b class="small white">Rezi</b><span class="chip chip-sm chip-verified">Verified</span><span class="tiny" style="margin-left:auto">Nov 18 2026</span></div><h3 class="h5">Rezi started as a resume template on Reddit and made $216K in October 2026</h3><span class="link-arrow">Read<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></span></a>
+        <div class="card card-pick stack" style="--gap:10px"><div class="row between"><b class="white">Pro</b><span class="tag tag-brand">Recommended</span></div><p class="h2 tnum">$7.99 <span class="tiny">a month</span></p><p class="small">For reading every story.</p></div>
+      </div>
+      <pre class="sg-code">&lt;a class="card card-hover" href="…" data-cursor="Read"&gt;…&lt;/a&gt;   &lt;div class="card card-lg"&gt;…&lt;/div&gt;   &lt;div class="card card-pick"&gt;…&lt;/div&gt;</pre>
+    </div>
+  </div>
+
+  <div class="sg-row">
+    <div class="sg-side"><h2 class="h2" data-reveal="words">Labels</h2><p class="body">Every number wears one. The colour means the same thing on every page.</p></div>
+    <div class="stack" style="--gap:16px">
+      <div class="row row-wrap" data-stagger style="--gap:8px"><span class="chip chip-verified">Verified</span><span class="chip chip-live">Live</span><span class="chip chip-wayback">Wayback</span><span class="chip chip-claimed">Claimed</span><span class="chip chip-differ">Sources differ</span><span class="chip chip-unverified">Couldn't verify</span><span class="chip chip-sm chip-verified">Verified</span><span class="tag">Coming soon</span><span class="tag tag-brand">Recommended</span></div>
+      <pre class="sg-code">&lt;span class="chip chip-verified"&gt;Verified&lt;/span&gt;   chip-live · chip-wayback · chip-claimed · chip-differ · chip-unverified · chip-sm</pre>
+    </div>
+  </div>
+
+  <div class="sg-row">
+    <div class="sg-side"><h2 class="h2" data-reveal="words">Pills and tabs</h2><p class="body">The white pill slides between options. Arrow keys move it. Listen for <code>lv:change</code> on the group.</p></div>
+    <div class="stack" style="--gap:16px">
+      <div class="seg" data-tabs role="tablist" aria-label="Posts">
+        <button class="seg-i" role="tab" aria-selected="true" aria-controls="sg-p1">All <span class="n">13</span></button>
+        <button class="seg-i" role="tab" aria-selected="false" aria-controls="sg-p2">Breakdowns <span class="n">10</span></button>
+        <button class="seg-i" role="tab" aria-selected="false" aria-controls="sg-p3">Guides <span class="n">3</span></button>
+      </div>
+      <div id="sg-p1" role="tabpanel" class="small">Every post, newest first.</div>
+      <div id="sg-p2" role="tabpanel" class="small" hidden>Founder breakdowns only.</div>
+      <div id="sg-p3" role="tabpanel" class="small" hidden>Short guides on reading the numbers.</div>
+      <div class="seg seg-sm" data-tabs aria-label="Range"><button class="seg-i" aria-pressed="false">3M</button><button class="seg-i" aria-pressed="false">6M</button><button class="seg-i" aria-pressed="true">1Y</button><button class="seg-i" aria-pressed="false">All</button></div>
+      <pre class="sg-code">&lt;div class="seg" data-tabs role="tablist"&gt;
+  &lt;button class="seg-i" role="tab" aria-selected="true" aria-controls="p1"&gt;All &lt;span class="n"&gt;13&lt;/span&gt;&lt;/button&gt; …
+&lt;/div&gt;
+&lt;div id="p1" role="tabpanel"&gt;…&lt;/div&gt;      toggle group, no panels: &lt;button class="seg-i" aria-pressed="true"&gt;</pre>
+    </div>
+  </div>
+
+  <div class="sg-row">
+    <div class="sg-side"><h2 class="h2" data-reveal="words">Form fields</h2><p class="body">Focus rings wrap the whole box. Errors say what went wrong and how to fix it.</p></div>
+    <div class="stack" style="--gap:16px">
+      <div class="sg-fields">
+        <label class="field"><span class="field-l">Email</span><input class="input" type="email" placeholder="you@example.com" autocomplete="email"><span class="field-msg">We only use it to sign you in.</span></label>
+        <label class="field is-error"><span class="field-l">Email</span><input class="input" type="email" value="ava@school" aria-invalid="true" aria-describedby="sg-e1"><span class="field-msg" id="sg-e1">That email is missing its ending. Try ava@school.ca.</span></label>
+        <label class="field is-ok"><span class="field-l">Email</span><input class="input" type="email" value="ava@school.ca"><span class="field-msg">Looks good.</span></label>
+      </div>
+      <pre class="sg-code">&lt;label class="field is-error"&gt;&lt;span class="field-l"&gt;Email&lt;/span&gt;&lt;input class="input" aria-invalid="true"&gt;&lt;span class="field-msg"&gt;…&lt;/span&gt;&lt;/label&gt;   states: is-error · is-ok</pre>
+    </div>
+  </div>
+
+  <div class="sg-row">
+    <div class="sg-side"><h2 class="h2" data-reveal="words">Questions</h2><p class="body">One answer open at a time; the height animates. Add <code>data-acc-hover</code> on the wrapper to also open on hover.</p></div>
+    <div class="stack" style="--gap:16px">
+      <div>
+        <details class="acc" data-acc="sg" open><summary>Where do your numbers come from?</summary><div class="acc-body"><div>From TrustMRR, which reads them straight from Stripe. Every source has a date, and we say when we could not check something.</div></div></details>
+        <details class="acc" data-acc="sg"><summary>Is it really free to start?</summary><div class="acc-body"><div>Yes. This week's breakdown and the first phase of every other story are free, and you only need an email.</div></div></details>
+        <details class="acc" data-acc="sg"><summary>How old do I need to be?</summary><div class="acc-body"><div>13 or older. If you are under 18, a parent pays for Pro or Developer.</div></div></details>
+      </div>
+      <pre class="sg-code">&lt;details class="acc" data-acc="faq"&gt;&lt;summary&gt;Question&lt;/summary&gt;&lt;div class="acc-body"&gt;&lt;div&gt;Answer&lt;/div&gt;&lt;/div&gt;&lt;/details&gt;</pre>
+    </div>
+  </div>
+
+  <div class="sg-row">
+    <div class="sg-side"><h2 class="h2" data-reveal="words">Loading and toasts</h2><p class="body"><code>.skel</code> shimmers in place of content. <code>LV.toast()</code> confirms an action without stealing focus.</p></div>
+    <div class="stack" style="--gap:16px">
+      <div class="card stack" style="--gap:10px;max-width:420px"><span class="skel" style="width:40%"></span><span class="skel" style="height:22px"></span><span class="skel" style="height:22px;width:80%"></span><span class="skel" style="width:24%"></span></div>
+      <div class="row row-wrap"><button class="btn btn-glass btn-md" data-sg-toast="Step saved to your path.|ok">Show a success toast</button><button class="btn btn-glass btn-md" data-sg-toast="We could not save that. Check your connection and try again.|error">Show an error toast</button></div>
+      <pre class="sg-code">&lt;span class="skel" style="width:40%"&gt;&lt;/span&gt;      LV.toast("Step saved to your path.", {type: "ok"})   type: ok · error · none</pre>
+    </div>
+  </div>
+</div></section>
+
+<section class="sec" id="motion"><div class="wrap stack" style="--gap:72px">
+  <div class="stack" style="--gap:14px"><h2 class="h1" data-reveal="words">Motion</h2><p class="lead" data-reveal>Everything eases out on one curve, plays once when it scrolls in, and is instant when the device asks for less motion.</p>
+    <button class="btn btn-glass btn-md" id="sg-replay">Replay the reveals</button></div>
+
+  <div class="sg-row">
+    <div class="sg-side"><h3 class="h3">Reveal, words, stagger</h3><p class="body"><code>data-reveal</code> fades and rises. <code>data-reveal="words"</code> lights a heading word by word. <code>data-stagger</code> brings children in 80ms apart.</p></div>
+    <div class="stack sg-replay" style="--gap:20px">
+      <p class="h2" data-reveal="words">We learned from them. You will learn from <em class="hl">founders.</em></p>
+      <p class="body" data-reveal>This paragraph fades in and rises 24px.</p>
+      <div class="sg-cards3" data-stagger><div class="card small">First</div><div class="card small">Second</div><div class="card small">Third</div></div>
+      <pre class="sg-code">&lt;h2 class="h2" data-reveal="words"&gt;…&lt;/h2&gt;   &lt;p data-reveal&gt;…&lt;/p&gt;   &lt;div class="grid" data-stagger&gt;&lt;div class="card"&gt;…&lt;/div&gt;…&lt;/div&gt;</pre>
+    </div>
+  </div>
+
+  <div class="sg-row">
+    <div class="sg-side"><h3 class="h3">Numbers count, lines draw</h3><p class="body"><code>data-count</code> counts up to the number already in the text. <code>data-draw</code> draws every unfilled SVG path inside it. Charts are lines only.</p></div>
+    <div class="stack sg-replay" style="--gap:12px">
+      <p class="h-num" data-count>$216,471</p>
+      <svg class="sg-chart" data-draw viewBox="0 0 600 120" fill="none" aria-label="Rezi revenue each month, falling from April to October 2026" role="img"><line x1="0" y1="106" x2="600" y2="106" stroke="rgba(255,255,255,.28)" stroke-width="1.2" stroke-dasharray="1.5 6" stroke-linecap="round" data-skip/><path d="M0 106 L60 48 L120 54 L180 24 L240 12 L300 21 L360 53 L420 54 L480 58 L540 93 L600 108" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <pre class="sg-code">&lt;p class="h-num" data-count&gt;$216,471&lt;/p&gt;      &lt;svg data-draw …&gt;&lt;path fill="none" stroke="#fff" d="…"/&gt;&lt;/svg&gt;</pre>
+    </div>
+  </div>
+
+  <div class="sg-row">
+    <div class="sg-side"><h3 class="h3">Comment pins</h3><p class="body">Design credits on the homepage. The logo pops, the text types itself, the link lights up. The whole bubble opens the site in a new tab. <code>data-c</code> picks the sharp corner.</p></div>
+    <div class="stack sg-replay" style="--gap:16px">
+      <div class="sg-pins">
+        <a class="pin pin-static" data-c="bl" href="https://www.scale.com" target="_blank" rel="noopener"><img src="/assets/new/favs/scale.com.png" alt="" width="24" height="24"><span class="pin-t">Headline type from <b>scale.com</b></span></a>
+        <a class="pin pin-static" data-c="tl" href="https://www.stripe.com" target="_blank" rel="noopener"><img src="/assets/new/favs/stripe.com.png" alt="" width="24" height="24"><span class="pin-t">Button after <b>stripe.com</b></span></a>
+        <a class="pin pin-static" data-c="br" href="https://www.apple.com" target="_blank" rel="noopener"><img src="/assets/new/favs/apple.com.png" alt="" width="24" height="24"><span class="pin-t">Glass cards, like <b>apple.com</b></span></a>
+      </div>
+      <pre class="sg-code">&lt;a class="pin" data-c="bl" style="left:540px;top:396px" href="https://www.scale.com" target="_blank" rel="noopener"&gt;
+  &lt;img src="/assets/new/favs/scale.com.png" alt="" width="24" height="24"&gt;&lt;span class="pin-t"&gt;Headline type from &lt;b&gt;scale.com&lt;/b&gt;&lt;/span&gt;&lt;/a&gt;
+.pin is position:absolute (place it in a position:relative parent); add pin-static to keep it in the flow.</pre>
+    </div>
+  </div>
+
+  <div class="sg-row">
+    <div class="sg-side"><h3 class="h3">Cursor and magnetic buttons</h3><p class="body">Mouse only. A ring eases after the pointer, grows over links, and shows a word when the element has <code>data-cursor</code>. Blue buttons lean a little toward the pointer.</p></div>
+    <div class="row row-wrap" style="--gap:16px"><a class="card card-hover sg-curs" href="#motion" data-cursor="Read"><b class="white">Hover me</b><span class="small">data-cursor="Read"</span></a><a class="card card-hover sg-curs" href="#motion" data-cursor="Open"><b class="white">And me</b><span class="small">data-cursor="Open"</span></a><a class="btn btn-primary" href="/new/sign-up/">Read a story for free<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></a></div>
+  </div>
+</div></section>
+
+<section class="sec" id="chrome"><div class="wrap sg-row">
+  <div class="sg-side"><h2 class="h2" data-reveal="words">Chrome</h2><p class="body">The nav, the closing panel and the footer are stamped onto every page by <code>build_new.py</code>. You never write them.</p></div>
+  <ul class="stack sg-list" style="--gap:14px" data-stagger>
+    <li><b>Navbar.</b> Full bar at the top. Scroll and it shrinks into a floating glass pill. Hover or tap the pill and it grows into a card with the tabs. Esc closes it.</li>
+    <li><b>Page changes.</b> Moving between pages cross-fades with a small rise; the logo and the nav stay put. Browsers without view transitions simply load the page.</li>
+    <li><b>First visit.</b> The logo mark draws once per session (350ms), then the page rises in.</li>
+    <li><b>Background.</b> One band of dots winds down the whole page behind everything. Set <code>"bg": "off"</code> or <code>"bg_dim": 0.75</code> in the page meta.</li>
+    <li><b>Closing panel.</b> Below, on every page unless the meta says <code>"end_cta": false</code>.</li>
+  </ul>
+</div></section>
+
+<section class="sec endcta"><div class="wrap"><div class="endcta-in" data-reveal><h2 class="h-cta" data-reveal="words">Your first step takes 20 minutes.</h2><a class="btn btn-primary" href="/new/sign-up/">Read a story for free<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></a></div></div></section>
+</main>
+<footer class="foot"><div class="wrap"><div class="foot-top"><div class="foot-brand"><a class="nav-logo" href="/new/" aria-label="LaunchVault home"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#2F6BFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path pathLength="1" d="M19.99 14.91A8.5 8.5 0 1 1 10.52 3.63"/><path pathLength="1" d="M6.8 15.6l3.7-3.7 2.6 2.6 6.7-6.7"/><path pathLength="1" d="M16 7.8h3.8v3.8"/></svg>LaunchVault</a><p>Real founder stories, checked number by number, turned into steps you can do this week. For ages 13 and up. Not financial advice.</p></div><nav class="foot-cols" aria-label="Footer"><div class="foot-col"><h2>Homepage</h2><a href="/new/#stories">Stories</a><a href="/new/#problem">The problem</a><a href="/new/#how">How it works</a><a href="/new/#pricing">Pricing</a></div><div class="foot-col"><h2>Blog</h2><a href="/new/blog/">All posts</a><a href="/new/blog/rezi/">Rezi breakdown</a><a href="/new/blog/what-verified-means/">How we check numbers</a></div><div class="foot-col"><h2>Legal</h2><a href="/new/legal/privacy/">Privacy</a><a href="/new/legal/terms/">Terms</a><a href="/new/legal/cookies/">Cookies</a><a href="/new/legal/accessibility/">Accessibility</a><a href="/new/legal/community/">Community rules</a></div></nav></div><div class="foot-end"><span>© 2026 LaunchVault</span><a href="/new/#credits">Design credits <svg viewBox="0 0 10 10" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5l5-5M3.5 2.5h4v4"/></svg></a></div></div></footer>
+</body>
+</html>

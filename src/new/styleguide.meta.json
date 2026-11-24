@@ -1,0 +1,7 @@
+{
+  "title": "Style guide · LaunchVault",
+  "description": "Every token, component and motion of the new LaunchVault site, with markup to copy.",
+  "path": "styleguide/",
+  "css": ["/assets/new/styleguide.css"],
+  "js": ["/assets/new/styleguide.js"]
+}

@@ -1,0 +1,142 @@
+/* LaunchVault app, "Vault" dark look (2026-11-23). Loaded AFTER app-dark.css. Values ported from Paper "LaunchVault · App" > Dashboard
+   (scratchpad dash3.py): glass = MATTE (blur 5px), floating sidebar, glass tab pill, Inter, blue #1F45B5 buttons, orange links. */
+:root{
+  --brand:#2F6BFF;--brand2:#2A55D0;--brand3:#1A3B9C;--ink:#FFFFFF;--text:rgba(255,255,255,.78);--muted:rgba(255,255,255,.64);--faint:rgba(255,255,255,.5);
+  --line:rgba(255,255,255,.1);--line2:rgba(255,255,255,.06);--alt:rgba(255,255,255,.04);--violet:#8B6CFF;--pop:#FF8A8A;--ok:#3BE0A0;--okd:#00C27A;
+  --fd:"Inter",system-ui,sans-serif;--fn:"Inter",system-ui,sans-serif;--side:264px;--top:64px;
+  --ember:#FF4D1F;--btn:#1F45B5;--btn2:#2A55D0;--hl:#9DB8FF;--inkbg:#23232E;
+  --glass:linear-gradient(180deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.035) 55%,rgba(255,255,255,.05) 100%);
+  --glass-edge:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(255,255,255,.04),inset 0 0 0 1px rgba(255,255,255,.07),0 24px 48px -24px rgba(0,0,0,.65);
+  --frost:blur(5px) saturate(118%);
+  color-scheme:dark
+}
+html{background:#07070A}
+body{background:#07070A url(/assets/app-glow.jpg) center/cover fixed no-repeat;color:var(--text)}
+::selection{background:rgba(47,107,255,.45);color:#fff}
+
+/* glass surfaces */
+.card,.hstrip>div,.pathnote{background:var(--glass);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);border:0;box-shadow:var(--glass-edge);border-radius:18px}
+
+/* buttons + links */
+.btn{border-radius:999px}
+.btn-p{background:var(--btn);color:#fff}.btn-p:hover{background:var(--btn2)}.btn-p:active{background:var(--brand3)}
+.btn-s{background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.08));color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(255,255,255,.12),inset 0 0 0 1px rgba(255,255,255,.16),0 8px 20px -8px rgba(0,0,0,.6)}
+.btn-s:hover{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.12));color:#fff}
+.btn:disabled,.btn[aria-disabled=true]{background:rgba(255,255,255,.08);color:rgba(255,255,255,.4)}
+.tl{color:var(--ember);font-weight:600}
+:focus-visible{outline-color:var(--hl)}
+
+/* page head (Paper: title 30/700 -0.04em, sub 14) */
+.pg-h{font:700 30px/36px var(--fd);letter-spacing:-.04em;color:#fff}
+.pg-s{font-size:14px;color:var(--muted)}
+
+/* ---------- shell: floating glass sidebar ---------- */
+.side{top:12px;margin:12px 0 12px 12px;height:calc(100vh/var(--z,1) - 24px);width:240px;padding:16px;border:0;border-radius:22px;
+  background:var(--glass),rgba(12,12,17,.55);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);box-shadow:var(--glass-edge)}
+.side .brand{color:#fff;font:700 16px var(--fd);margin-bottom:8px}
+.side .brand svg{stroke:var(--brand)}
+.si{height:40px;min-height:40px;padding:0 10px;border-radius:11px;color:var(--muted);font:500 14px var(--fd);gap:12px}
+.si:hover{background:rgba(255,255,255,.06);color:#fff}
+.si[aria-current=page]{background:rgba(47,107,255,.16);box-shadow:inset 0 0 0 1px rgba(47,107,255,.38);color:#fff;font-weight:600}
+.si svg{color:var(--muted)}.si[aria-current=page] svg{color:var(--hl)}
+.si .cnt{font:600 11px var(--fd);color:var(--faint);padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.08)}
+.si .cnt:empty{display:none}
+.si .cnt.pc{color:var(--hl)}
+.sgrp{color:var(--faint);margin:16px 10px 6px;font-size:12px}
+.si.week{background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.side .foot{border-top:0;gap:10px}
+.side .plan{display:block;padding:10px 12px;border-radius:12px;background:rgba(255,77,31,.08);box-shadow:inset 0 0 0 1px rgba(255,77,31,.22);color:#fff}
+.side .plan a{color:var(--ember)}
+
+/* top bar: no slab, sits on the glow */
+.top{background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;border-bottom:0;height:var(--top);padding:0 32px}
+.top .ttl{color:#fff}.top .ttl a{color:var(--muted)}.top .ttl a:hover{color:#fff}
+.srch{width:260px;height:40px;border:0;border-radius:12px;background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);color:var(--faint)}
+.srch:hover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+.srch kbd{background:none;border-color:rgba(255,255,255,.16);color:var(--faint)}
+.avb .av{box-shadow:0 0 0 2px rgba(255,255,255,.12)}
+.prev{background:rgba(47,107,255,.12);border-bottom:0;color:var(--hl)}
+.pg{padding:16px 32px 64px}
+
+@media (max-width:1100px){
+  :root{--side:88px}
+  .side{width:64px;padding:14px 8px}
+  .si{width:48px;height:44px;padding:0}
+  .side .plan{display:none}
+}
+.youlinks{display:none}
+@media (max-width:720px){
+  .top{padding:0 8px 0 16px}
+  .pg{padding:12px 16px 120px}
+  /* floating glass tab pill (Paper phone boards) */
+  .tabs{left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));padding:6px;border:0;border-radius:24px;
+    background:var(--glass),rgba(12,12,17,.55);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);box-shadow:var(--glass-edge)}
+  .tabs a{border-radius:16px;color:var(--faint);min-height:52px}
+  .tabs a[aria-current=page]{background:rgba(47,107,255,.18);color:#fff}
+  .tabs a[aria-current=page] svg{color:var(--hl)}
+  .tabs{grid-template-columns:repeat(5,1fr)}
+  .top .macct{display:none}   /* Ask is a tab on phones */
+  .youlinks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 4px}
+  .youlinks a{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:14px;background:var(--glass);box-shadow:var(--glass-edge);color:#fff;font:600 14px var(--fd)}
+}
+
+/* avatar: Paper gradient (a photo, when set, covers it) */
+.av{background:linear-gradient(135deg,#3E63DD,#8E4EC6);color:#fff}
+
+/* ---------- story cards: real image on top (Paper Stories / Read next) ---------- */
+.scard{background:var(--glass);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);border:0;box-shadow:var(--glass-edge);border-radius:18px;overflow:hidden}
+.scard:hover{border:0;box-shadow:var(--glass-edge),0 18px 36px -20px rgba(47,107,255,.5)}
+.scard.wk{box-shadow:var(--glass-edge),inset 0 0 0 1.5px rgba(47,107,255,.6)}
+.scov{display:block;margin:-16px -16px 4px;aspect-ratio:16/9;overflow:hidden;background:#111}
+.scov img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s var(--out)}
+.scard:hover .scov img{transform:scale(1.03)}
+.scard .sct{padding-right:0}
+.scard .star,.scard .web{background:rgba(12,12,17,.6);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-radius:12px;color:#fff}
+
+/* ---------- Home hero: image left, story right (Paper "Continue reading") ---------- */
+.hhero{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);column-gap:28px;row-gap:12px;align-items:start;padding-bottom:20px}
+.hhero>.ch{grid-column:1/-1}
+.hhero>.hcov{grid-column:1;grid-row:2/span 4;margin:0 0 0 20px;border-radius:14px;overflow:hidden;aspect-ratio:16/9;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.hhero>.hcov img{display:block;width:100%;height:100%;object-fit:cover}
+.hhero>:not(.ch):not(.hcov){grid-column:2;min-width:0}
+.hhero .hh{padding-left:0}
+@media (max-width:1100px){.hhero{grid-template-columns:1fr}.hhero>.hcov{grid-column:1;grid-row:auto;margin:0 20px 8px}.hhero>:not(.ch):not(.hcov){grid-column:1}.hhero .hh{padding-left:20px}}
+.hhero .hh{flex-direction:column;align-items:flex-start;gap:12px;padding:0 20px 0 0}
+.hhero .hh .logo{display:none}
+.hhero .hhm h3{font:700 24px/30px var(--fd);letter-spacing:-.03em}
+.hhero .hhn{width:100%}
+.hhero .hnums{grid-template-columns:1fr 1fr;margin:14px 20px 14px 0}
+.hhero .hfc{margin-right:20px}
+@media (max-width:1100px){.hhero .hh{padding:0 20px}.hhero .hnums{margin:14px 20px}.hhero .hfc{margin:0 20px}}
+
+/* ---------- sidebar: full or slim, user's choice (owner 2026-11-23). Default full on desktop, slim on tablet; html.sb-min / html.sb-full set in the head ---------- */
+.shell{transition:grid-template-columns .28s var(--out)}
+.side{transition:width .28s var(--out),padding .28s var(--out)}
+.sbtog{position:absolute;top:20px;right:12px;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:0;border-radius:10px;background:transparent;color:var(--faint);cursor:pointer}
+.sbtog:hover{background:rgba(255,255,255,.08);color:#fff}
+@media (max-width:1100px){.sbtog{position:static;margin:0 auto 10px;flex:none}}
+@media (min-width:1101px){
+  html.sb-min{--side:88px}
+  html.sb-min .side{width:64px;padding:14px 8px;align-items:center}
+  html.sb-min .side .brand span,html.sb-min .si span.t,html.sb-min .si .cnt,html.sb-min .sgrp,html.sb-min .side .plan,html.sb-min .si.co{display:none}
+  html.sb-min .side .brand{padding:0;justify-content:center}
+  html.sb-min .si{width:48px;height:44px;justify-content:center;padding:0}
+  html.sb-min .side .foot{width:100%;justify-items:center}
+  html.sb-min .sbtog{position:static;margin:0 auto 10px}
+}
+@media (min-width:721px) and (max-width:1100px){
+  html.sb-full{--side:264px}
+  html.sb-full .side{width:240px;padding:16px;align-items:stretch}
+  html.sb-full .side .brand span{display:inline}
+  html.sb-full .si span.t{display:inline!important;position:static;transform:none;padding:0;background:none;box-shadow:none;opacity:1;font:inherit;color:inherit;pointer-events:auto}   /* the slim rail turns labels into hover tooltips */
+  html.sb-full .si .cnt{display:inline-block}
+  html.sb-full .si .cnt:empty{display:none}
+  html.sb-full .sgrp,html.sb-full .side .plan{display:block}
+  html.sb-full .side .brand{padding:0 8px;justify-content:flex-start}
+  html.sb-full .si{width:auto;height:40px;justify-content:flex-start;padding:0 10px}
+  html.sb-full .si.week{height:40px}
+  html.sb-full .side .foot{justify-items:stretch}
+  html.sb-full .sbtog{position:absolute;margin:0}
+}
+@media (prefers-reduced-motion:reduce){.shell,.side{transition:none}}

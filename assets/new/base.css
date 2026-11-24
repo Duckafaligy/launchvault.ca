@@ -1,0 +1,195 @@
+/* LaunchVault /new/ — base: tokens, reset, type, layout, components.
+   Values ported from the Paper builders (home_desk.py, site_a.py, pages.py). Token names follow assets/vault.css.
+   Contract for page agents: see src/new/README.md. Do not rename classes; add page CSS in your own file. */
+:root{
+  /* colour: 3 primaries (night, white, cobalt) + accents with one job each */
+  --bg:#07070A;--surf:#0E0E13;--night:#0B0B0F;
+  --ink:#FFFFFF;--text:rgba(255,255,255,.78);--muted:rgba(255,255,255,.64);--faint:rgba(255,255,255,.56);
+  --line:rgba(255,255,255,.1);--line2:rgba(255,255,255,.06);--alt:rgba(255,255,255,.04);
+  --brand:#2F6BFF;      /* logo, picked state, focus */
+  --btn:#1F45B5;--btn2:#2A55D0;--brand3:#1A3B9C; /* primary button rest / hover / press */
+  --word:#4C7DFF;       /* the one highlighted italic word */
+  --hl:#9DB8FF;         /* light blue text on blue tint, focus ring */
+  --ember:#FF4D1F;      /* text links */
+  --ember-t:#C2330A;    /* ember on light surfaces (pins) */
+  --mint:#00C27A;--ok:#3BE0A0;   /* verified / success */
+  --violet:#7B5CFF;--pink:#FF5FA2;--pop:#FF8A8A; /* sources differ / band / error */
+  --glass:linear-gradient(180deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.035) 55%,rgba(255,255,255,.05) 100%);
+  --glass-edge:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(255,255,255,.04),inset 0 0 0 1px rgba(255,255,255,.07),0 24px 48px -24px rgba(0,0,0,.65);
+  --frost:blur(5px) saturate(118%);   /* halved twice at the owner's request: do not increase */
+  --glass-btn:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.08));
+  --glass-btn-edge:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(255,255,255,.12),inset 0 0 0 1px rgba(255,255,255,.16),0 8px 20px -8px rgba(0,0,0,.6);
+  --fd:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fi:"Playfair Display",Georgia,serif;
+  --out:cubic-bezier(.22,1,.36,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  /* layout: content 1200; side margin 24 (<600) / 56 (600-1099) / fluid 56-120 (>=1100) */
+  --mg:24px;--sec:72px;--nav-h:60px;--r:18px;--r-lg:24px;
+  color-scheme:dark
+}
+@media (min-width:600px){:root{--mg:56px;--sec:96px;--nav-h:68px}}
+@media (min-width:1100px){:root{--mg:clamp(56px,calc((100vw - 1200px)/2),120px);--sec:132px;--nav-h:72px}}
+
+/* ---------- reset ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{background:var(--bg);-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:96px;scrollbar-color:rgba(255,255,255,.22) var(--bg)}
+body{margin:0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;font:400 15px/24px var(--fd);color:var(--text);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;caret-color:var(--brand);overflow-x:clip}
+main{flex:1;padding-top:var(--nav-h)}
+h1,h2,h3,h4,h5,p,ul,ol,figure,blockquote{margin:0}
+ul[class],ol[class]{padding:0;list-style:none}
+img,svg,video,canvas{display:block;max-width:100%}
+img{height:auto}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:0;padding:0;cursor:pointer}
+b,strong{font-weight:600;color:var(--ink)}
+::selection{background:rgba(47,107,255,.45);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:999px;border:2px solid var(--bg)}::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.3)}
+:focus{outline:0}
+:focus-visible{outline:2px solid var(--hl);outline-offset:3px;border-radius:6px}
+.skip{position:fixed;left:12px;top:-64px;z-index:200;padding:10px 16px;border-radius:999px;background:#fff;color:var(--night);font-weight:600;transition:top .2s var(--out)}
+.skip:focus{top:12px}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* ---------- type ---------- */
+.h-hero,.h1,.h2,.h3,.h4,.h5,.h-cta,.h-num{font-family:var(--fd);font-weight:700;color:var(--ink);text-wrap:balance}
+.h-hero{font-size:clamp(40px,5.56vw,80px);line-height:1.05;letter-spacing:-.045em}
+.h1{font-size:clamp(36px,4.45vw,64px);line-height:1.07;letter-spacing:-.045em}
+.h2{font-size:clamp(28px,2.78vw,40px);line-height:1.15;letter-spacing:-.035em}
+.h3{font-size:clamp(20px,1.67vw,24px);line-height:1.25;letter-spacing:-.02em}
+.h4{font-size:18px;line-height:24px;letter-spacing:-.01em}
+.h5{font-size:16px;line-height:22px;letter-spacing:-.01em}
+.h-cta{font-size:clamp(32px,3.34vw,48px);line-height:1.13;letter-spacing:-.04em}
+.h-num{font-size:clamp(64px,11.1vw,160px);line-height:.98;letter-spacing:-.055em;font-variant-numeric:tabular-nums}
+.lead{font-size:16px;line-height:25px;color:var(--muted);max-width:52ch;text-wrap:pretty}
+.body{font-size:15px;line-height:24px;color:var(--muted);max-width:68ch;text-wrap:pretty}
+.small{font-size:13px;line-height:19px;color:var(--muted)}
+.tiny{font-size:12px;line-height:17px;color:var(--faint)}
+.muted{color:var(--muted)}.faint{color:var(--faint)}.white{color:var(--ink)}
+.tnum{font-variant-numeric:tabular-nums}
+/* the one highlighted word per headline: Playfair Display italic 600, cobalt. <em class="hl">you.</em> */
+.hl{font-family:var(--fi);font-style:italic;font-weight:600;font-size:1.15em;line-height:0;letter-spacing:-.02em;color:var(--word);padding-right:.05em}
+/* tinted box behind a headline line ("learned from someone.") */
+.hl-box{display:inline-block;margin-left:-9px;padding:0 9px 3px;border-radius:10px;background:rgba(255,77,31,.22)}
+@media (max-width:599px){.lead{font-size:14px;line-height:22px}}
+
+/* ---------- layout ---------- */
+.wrap{width:100%;max-width:calc(1200px + 2*var(--mg));margin-inline:auto;padding-inline:var(--mg)}
+.sec{position:relative;padding-bottom:var(--sec)}
+.sec-top{padding-top:var(--sec)}
+.stack{display:flex;flex-direction:column;gap:var(--gap,16px)}
+.row{display:flex;align-items:center;gap:var(--gap,12px)}
+.row-wrap{flex-wrap:wrap}
+.between{justify-content:space-between}
+.center{align-items:center;text-align:center}
+.grid{display:grid;gap:var(--gap,16px);grid-template-columns:repeat(var(--cols,3),minmax(0,1fr))}
+@media (max-width:1099px){.grid{--cols:2}}
+@media (max-width:599px){.grid{--cols:1;--gap:12px}}
+.hair-t{box-shadow:inset 0 1px 0 var(--line)}
+.hair-b{box-shadow:inset 0 -1px 0 var(--line)}
+.hr{height:1px;border:0;margin:0;background:var(--line)}
+@media (max-width:599px){.hide-m{display:none!important}}
+@media (min-width:600px){.only-m{display:none!important}}
+@media (max-width:1099px){.only-d{display:none!important}}
+
+/* ---------- glass card ---------- */
+.card{position:relative;padding:24px;border-radius:var(--r);background:var(--glass);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);box-shadow:var(--glass-edge)}
+.card-lg{border-radius:var(--r-lg);padding:28px}
+.card-flush{padding:0;overflow:hidden}
+.card-solid{background:var(--glass),rgba(16,16,22,.86)}   /* glass that sits over busy content */
+.card-pick{box-shadow:var(--glass-edge),inset 0 0 0 1.5px var(--brand)}   /* the picked plan */
+@media (max-width:599px){.card{padding:20px}.card-lg{border-radius:20px}}
+
+/* ---------- buttons: hug their content at every size ---------- */
+.btn{--mx:0px;--my:0px;--press:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;align-self:flex-start;flex:none;width:fit-content;height:46px;padding:0 24px;border:0;border-radius:999px;
+  font:600 16px/1 var(--fd);white-space:nowrap;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;
+  transform:translate(var(--mx),var(--my)) scale(var(--press));
+  transition:transform .35s var(--out),background-color .15s,box-shadow .2s,color .15s}
+.center>.btn{align-self:center}
+.btn:active{--press:.97;transition-duration:.12s}
+.btn:focus-visible{outline:2px solid var(--hl);outline-offset:3px;border-radius:999px}
+.btn-md{height:40px;padding:0 18px;font-size:14px}
+.btn-sm{height:36px;padding:0 16px;font-size:13px}
+.btn-primary{background:var(--btn);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 6px 16px -8px rgba(0,0,0,.7)}
+.btn-primary:hover{background:var(--btn2);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 10px 22px -8px rgba(31,69,181,.9)}
+.btn-primary:active{background:var(--brand3)}
+.btn-glass{background:var(--glass-btn);-webkit-backdrop-filter:blur(14px) saturate(180%);backdrop-filter:blur(14px) saturate(180%);color:#fff;box-shadow:var(--glass-btn-edge)}
+.btn-glass:hover{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.12))}
+.btn-white{background:#fff;color:var(--night)}
+.btn-white:hover{background:#E9E9EE}
+.btn:disabled,.btn[aria-disabled=true]{background:rgba(255,255,255,.08);color:rgba(255,255,255,.4);box-shadow:none;cursor:not-allowed;--press:1}
+.btn.is-loading{color:transparent;pointer-events:none;position:relative}
+.btn.is-loading::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:lv-spin .7s linear infinite}
+@keyframes lv-spin{to{transform:rotate(360deg)}}
+@media (max-width:599px){.btn:not(.btn-md):not(.btn-sm){height:48px}}
+/* arrow: {{arrow}} in a body file. Chevron nudges right and grows a line on hover (Stripe "hover arrow"). */
+.arrow{flex:none;width:14px;height:14px;margin-left:2px;overflow:visible}
+.arrow path{transition:transform .15s var(--out),opacity .15s}
+.arrow .arrow-l{opacity:0;transform:translateX(-2px)}
+:is(a,button):hover>.arrow .arrow-c,:is(a,button):focus-visible>.arrow .arrow-c{transform:translateX(3px)}
+:is(a,button):hover>.arrow .arrow-l,:is(a,button):focus-visible>.arrow .arrow-l{opacity:1;transform:none}
+
+/* text link: ember, underline draws in on hover */
+.link{display:inline;color:var(--ember);font-weight:600;background:linear-gradient(currentColor,currentColor) 0 100%/0 1.5px no-repeat;padding-bottom:2px;transition:background-size .3s var(--out)}
+.link:hover,.link:focus-visible{background-size:100% 1.5px}
+.link-arrow{display:inline-flex;align-items:center;gap:4px;color:var(--ember);font-weight:600;font-size:13px}
+.prose a{color:var(--ember);font-weight:500;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:rgba(255,77,31,.45);transition:text-decoration-color .2s}
+.prose a:hover{text-decoration-color:currentColor}
+
+/* ---------- label chips (every number wears one) ---------- */
+.chip{display:inline-flex;align-items:center;flex:none;height:24px;padding:0 10px;border-radius:999px;font:600 12px/1 var(--fd);white-space:nowrap;background:rgba(255,255,255,.08);color:var(--muted)}
+.chip-sm{height:20px;padding:0 8px;font-size:10px}
+.chip-verified,.chip-live{background:rgba(0,194,122,.14);color:var(--mint)}
+.chip-wayback{background:rgba(47,107,255,.16);color:var(--hl)}
+.chip-claimed{background:rgba(255,77,31,.14);color:#FFB49C}
+.chip-differ{background:rgba(123,92,255,.18);color:#C2B4FF}
+.chip-unverified{background:rgba(255,255,255,.08);color:var(--muted)}
+.chip-live::before{content:"";width:6px;height:6px;margin-right:6px;border-radius:50%;background:currentColor}
+/* plan / status tag */
+.tag{display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:999px;font:600 10px/1 var(--fd);background:rgba(255,255,255,.1);color:#fff}
+.tag-brand{background:var(--brand);color:#fff}
+
+/* ---------- pills / segmented ---------- */
+.seg{position:relative;display:inline-flex;gap:4px;padding:4px;border-radius:999px;background:var(--line2);max-width:100%}
+.seg-i{position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:999px;font:600 13px/1 var(--fd);color:var(--muted);white-space:nowrap;cursor:pointer;transition:color .2s}
+.seg-i:hover{color:#fff}
+.seg-i:is([aria-selected=true],[aria-current],[aria-pressed=true]){color:var(--night);background:#fff}
+.seg.has-ind .seg-i{background:none}
+.seg-i .n{opacity:.55;font-weight:600}
+.seg-i:focus-visible{border-radius:999px;outline-offset:1px}
+.seg-sm .seg-i{height:24px;padding:0 11px;font-size:11px}.seg-sm{gap:3px;padding:3px}
+@media (max-width:599px){.seg-i{height:30px;padding:0 12px;font-size:12px}}
+
+/* ---------- form field ---------- */
+.field{display:flex;flex-direction:column;gap:8px;max-width:420px}
+.field-l{font:600 13px/18px var(--fd);color:var(--ink)}
+.input{width:100%;height:48px;padding:0 14px;border:0;border-radius:12px;background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);color:#fff;font:400 15px/1 var(--fd);
+  transition:box-shadow .2s var(--out),background-color .2s}
+textarea.input{height:auto;min-height:112px;padding:12px 14px;line-height:22px;resize:vertical}
+.input::placeholder{color:var(--faint)}
+.input:hover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.24)}
+.input:focus,.input:focus-visible{outline:0;border-radius:12px;background:rgba(47,107,255,.07);box-shadow:inset 0 0 0 1.5px var(--brand),0 0 0 4px rgba(47,107,255,.2)}
+.field-msg{display:flex;align-items:center;gap:6px;min-height:18px;font:400 13px/18px var(--fd);color:var(--faint)}
+.field.is-error .input{box-shadow:inset 0 0 0 1.5px var(--pop),0 0 0 4px rgba(255,138,138,.14);animation:lv-shake .32s var(--out)}
+.field.is-error .field-msg{color:var(--pop)}
+.field.is-ok .input{box-shadow:inset 0 0 0 1.5px var(--mint)}
+.field.is-ok .field-msg{color:var(--ok)}
+.input:disabled{opacity:.5;cursor:not-allowed}
+@keyframes lv-shake{25%{transform:translateX(-4px)}60%{transform:translateX(3px)}100%{transform:none}}
+
+/* ---------- prose (long text: blog, legal) ---------- */
+.prose{font-size:15px;line-height:26px;color:var(--text);max-width:760px}
+.prose>*+*{margin-top:14px}
+.prose h2{font:700 24px/30px var(--fd);letter-spacing:-.02em;color:#fff;margin-top:42px}
+.prose h3{font:700 18px/24px var(--fd);letter-spacing:-.01em;color:#fff;margin-top:28px}
+.prose ul,.prose ol{padding-left:20px}.prose li+li{margin-top:8px}.prose li::marker{color:var(--faint)}
+@media (max-width:599px){.prose{font-size:14px;line-height:23px}.prose h2{font-size:20px;line-height:26px}}
+
+/* ---------- closing CTA panel (auto-added by build_new unless "end_cta": false) ---------- */
+.endcta{padding-bottom:88px}
+.endcta-in{display:flex;flex-direction:column;align-items:center;gap:22px;padding:80px 48px;border-radius:var(--r-lg);text-align:center;
+  background:var(--glass);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);box-shadow:var(--glass-edge)}
+.endcta .btn{align-self:center}
+@media (max-width:599px){.endcta{padding-bottom:64px}.endcta-in{padding:64px 20px;border-radius:20px}}
