@@ -148,7 +148,7 @@ def footer():
 # x0.9 / x1.1 (max 1.15). CSS divides viewport units by --z and floors small text at 12px rendered (scripts/zoomcss.py).
 # window.lvZ is the current zoom for JS that turns window pixels into CSS pixels; lvZoom() re-applies after a setting change.
 ZOOM = ("<script>(function(){var d=document.documentElement,z=0,q=0;function f(){var w=innerWidth,v=1,p;if(w>=1000){"
-        "v=Math.max(.8,Math.min(1,w/1440,innerHeight/860));try{p=JSON.parse(localStorage.getItem('lv-display'))}catch(e){}"
+        "v=Math.max(.8,Math.min(1,w/1440,innerHeight/860));v*=window.LV_BASEZ||1;try{p=JSON.parse(localStorage.getItem('lv-display'))}catch(e){}"
         "if(p=='smaller')v*=.9;else if(p=='larger')v=Math.min(1.15,v*1.1)}v=Math.round(v*100)/100;if(v==z)return;"
         "z=window.lvZ=v;d.style.zoom=v==1?'':v;d.style.setProperty('--z',v);return 1}"
         "function g(){f()&&dispatchEvent(new Event('resize'))}f();window.lvZoom=g;"

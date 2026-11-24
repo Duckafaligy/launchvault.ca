@@ -230,7 +230,7 @@ def head(title, desc, extra="", og_slug="", gate=True):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-{build.ZOOM}
+<script>window.LV_BASEZ=.9</script>{build.ZOOM}
 {SIDEJS}
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
