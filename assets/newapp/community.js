@@ -43,7 +43,7 @@
   // ---------- topics: the channels from the database. #general holds the live chat, and its threads are "Other & questions" ----------
   const S = {signed: false, ready: false, me: null, sb: null, clerk: null, prof: null, mods: new Set(), isMod: false, cats: [], rooms: [], known: new Set(), skipEntry: false, ch: null, pp: new Map()};   // pp: user_id -> public profile (public_profiles view), null while loading
   const CHAT = "general";
-  const NAMES = {introductions: "Introductions", breakdowns: "Story breakdowns", "what-im-trying": "What I'm trying", "apps-and-saas": "Apps and SaaS", "online-stores": "Online stores",
+  const NAMES = {welcome: "Rules", announcements: "Announcements", introductions: "Introductions", breakdowns: "Story breakdowns", "what-im-trying": "What I'm trying", "apps-and-saas": "Apps and SaaS", "online-stores": "Online stores",
     "local-shops-and-restaurants": "Local shops and restaurants", "services-and-freelancing": "Services and freelancing", wins: "Wins", "ask-for-help": "Ask for help", [CHAT]: "Other & questions"};
   const topicName = r => NAMES[r.slug] || r.title;
   const chatRoom = () => roomBy(CHAT) || {id: 0, slug: CHAT, title: CHAT, description: "", allow_threads: true, read_only: false, locked: false, pinned_message_id: null};
@@ -132,6 +132,7 @@
     if (parts[0] === "settings") return {view: "settings"};
     if (parts[0] === "t" && /^\d+$/.test(parts[1] || "")) return {view: "thread", id: +parts[1]};
     if (parts[0] === "threads") return {view: "threads", topic: sp.get("topic") || ""};
+    if (parts[0] === "chat" && parts[1]) return {view: "chat", about, slug: parts[1]};
     if (!parts[0] || parts[0] === "chat" || parts[0] === CHAT || about) return {view: "chat", about};
     // old per-channel links
     if (parts[1] === "t" && /^\d+$/.test(parts[2] || "")) return {view: "thread", id: +parts[2]};
@@ -255,15 +256,25 @@
   const paintPin = async () => { const el = $("#cmPin"); if (!el) return; const id = cur.room.pinned_message_id; if (!id) { el.hidden = true; return; }
     let m = cur.msgs.get(id); if (!m) { try { m = await q(S.sb.from("chat_messages").select("*").eq("id", id).maybeSingle()); } catch {} } if (!m) { el.hidden = true; return; }
     el.hidden = false; el.innerHTML = `${ic("pin", 16)}<b>Pinned</b><span>${esc(m.author_name)}: ${esc(snip(m.body, 90))}</span>${ic("chevr", 16)}`; el.onclick = () => { const row = $(`#m${id}`); if (row) { row.scrollIntoView({block: "center", behavior: "smooth"}); row.classList.add("flash"); setTimeout(() => row.classList.remove("flash"), 1600); } }; };
-  const showChat = async about => {
-    const room = chatRoom(), tok = ++cur.tok; cur = {tok, room, view: "chat", thread: null, msgs: new Map(), replyTo: null}; setView("chan");
+  // the channel list: categories in order, channels inside them. Read-only ones (rules, announcements) carry a lock.
+  const chanList = on => { const cats = S.cats.slice().sort((a, b) => a.position - b.position), seen = new Set();
+    const li = r => { seen.add(r.id); return `<a href="#chat/${r.slug}"${r.id === on.id ? ' aria-current="page"' : ""}><i aria-hidden="true">${r.read_only ? ic("lock", 14) : "#"}</i><span>${esc(topicName(r))}</span></a>`; };
+    const by = id => S.rooms.filter(r => r.category_id === id).sort((a, b) => a.position - b.position);
+    const out = cats.map(c => { const rs = by(c.id); return rs.length ? `<div class="cm-cg"><p>${esc(c.title || c.name || "")}</p>${rs.map(li).join("")}</div>` : ""; }).join("");
+    const rest = S.rooms.filter(r => !seen.has(r.id));
+    return `<nav class="cm-chans" aria-label="Channels">${out}${rest.length ? `<div class="cm-cg">${rest.map(li).join("")}</div>` : ""}</nav>`; };
+  const RULES = `<div class="cm-rulecard"><h2>Community Guidelines</h2><ul><li><b>Be kind.</b> Disagree with ideas, not people.</li><li><b>No personal info.</b> No school, address, phone number or socials, yours or anyone else's.</li><li><b>Stay on topic.</b> Building, stories and what you're trying.</li><li><b>No selling or spam.</b> Share what you made; don't pitch it.</li><li><b>Report, don't fight.</b> Use the menu on any message.</li></ul><p><a href="/legal/community/">Read the full guidelines</a></p></div>`;
+  const showChat = async (about, slug) => {
+    const room = (slug && roomBy(slug)) || chatRoom(), tok = ++cur.tok; cur = {tok, room, view: "chat", thread: null, msgs: new Map(), replyTo: null}; setView("chan");
     if (!S.signed) { pane.innerHTML = header("chat") + `<div class="cm-body">${skeleton("rows", room)}</div>`; return; }
-    pane.innerHTML = header("chat") + `<button type="button" class="cm-pin" id="cmPin" hidden></button><div class="cm-log" id="cmLog" role="log" aria-label="Chat messages" tabindex="0"><p class="cm-load" role="status">Loading messages…</p></div><div id="cmComp"></div>`;
-    let rows; try { rows = (await q(S.sb.from("chat_messages").select("*").eq("room_id", room.id).is("thread_id", null).order("created_at", {ascending: false}).limit(50))).reverse(); } catch { if (tok === cur.tok) { $("#cmLog").innerHTML = `<div class="cm-empty"><p>We couldn't load the messages.</p><button class="btn btn-s" type="button" id="cmRetry">Try again</button></div>`; $("#cmRetry").addEventListener("click", () => showChat(about)); } return; }
+    pane.classList.toggle("has-ch", S.rooms.length > 1);
+    pane.innerHTML = header("chat") + (S.rooms.length > 1 ? chanList(room) : "") + `<div class="cm-chh"><b>${room.read_only ? ic("lock", 16) : "#"} ${esc(topicName(room))}</b><span>${esc(room.description || "")}</span></div><button type="button" class="cm-pin" id="cmPin" hidden></button><div class="cm-log" id="cmLog" role="log" aria-label="Chat messages" tabindex="0"><p class="cm-load" role="status">Loading messages…</p></div><div id="cmComp"></div>`;
+    { const on = $(".cm-chans [aria-current]"), box = $(".cm-chans"); if (on && box && box.scrollWidth > box.clientWidth) box.scrollLeft = on.offsetLeft - 16; }   // phones: the strip shows the channel you are in
+    let rows; try { rows = (await q(S.sb.from("chat_messages").select("*").eq("room_id", room.id).is("thread_id", null).order("created_at", {ascending: false}).limit(50))).reverse(); } catch { if (tok === cur.tok) { $("#cmLog").innerHTML = `<div class="cm-empty"><p>We couldn't load the messages.</p><button class="btn btn-s" type="button" id="cmRetry">Try again</button></div>`; $("#cmRetry").addEventListener("click", () => showChat(about, slug)); } return; }
     if (tok !== cur.tok) return;
     rows.forEach(m => cur.msgs.set(m.id, m)); await fillParents(rows); if (tok !== cur.tok) return;
-    const logEl = $("#cmLog"); logEl.innerHTML = rows.length ? withDays(rows) : `<div class="cm-none cm-empty">${ic("msg", 28)}<p>No messages yet. Say hi.</p></div>`; logEl.scrollTop = logEl.scrollHeight;
-    $("#cmComp").innerHTML = composerHTML("Message everyone"); bindComposer(logEl, {about}); paintPin();
+    const logEl = $("#cmLog"); logEl.innerHTML = rows.length ? withDays(rows) : room.slug === "welcome" ? RULES : `<div class="cm-none cm-empty">${ic("msg", 28)}<p>${room.read_only ? "Nothing posted here yet." : "No messages yet. Say hi."}</p></div>`; logEl.scrollTop = logEl.scrollHeight;
+    $("#cmComp").innerHTML = composerHTML(room.slug === CHAT ? "Message everyone" : "Message #" + topicName(room).toLowerCase()); bindComposer(logEl, {about}); paintPin();
     logEl.addEventListener("click", e => { const mb = e.target.closest("[data-menu]"); if (mb) return menu(+mb.dataset.menu); const j = e.target.closest("[data-jump]"); if (j) { const r = $(`#m${j.dataset.jump}`); if (r) { r.scrollIntoView({block: "center", behavior: "smooth"}); r.classList.add("flash"); setTimeout(() => r.classList.remove("flash"), 1600); } } });
     subscribe(room, m => { if (!m.thread_id) addMsg(m, logEl); }, id => goneRow(id, "This message was removed"));
     S.sb.rpc("chat_mark_read", {p_room: room.id}).then(() => {}, () => {});
@@ -433,7 +444,7 @@
     if (r.view === "settings") return showSettings();
     if (r.view === "threads") return showThreads(r.topic);
     if (r.view === "thread") return showThread(r.id);
-    return showChat(r.about);
+    return showChat(r.about, r.slug);
   };
   const loadProfile = async () => q(S.sb.from("profiles").select("display_name,name_tag,username,chat_rules_at,age_range").eq("user_id", S.me.id).maybeSingle());
   const AGE = {"13 to 15": "13-15", "16 to 17": "16-17", "18 to 20": "18-20", "21 or older": "21+"};
