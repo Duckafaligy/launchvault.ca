@@ -467,7 +467,8 @@
 
 /* ---------- community fixes after the first comparison ---------- */
 .nv .cm{padding-bottom:24px;box-sizing:border-box;margin-bottom:0}
-.nv .cm-h:has(.cm-tabs){right:376px}
+@media (min-width:1101px){.nv .cm-h:has(.cm-tabs){right:376px}}
+@media (min-width:721px) and (max-width:1100px){.nv .cm-h:has(.cm-tabs){right:56px}.nv .cmpg .pg-s{max-width:340px}}
 .nv .cm-find svg{position:static;flex:none;transform:none}
 .nv .cm-find input{padding:0!important}
 .nv .cm-tb,.nv .cm-kind{min-height:0;margin:0}
