@@ -221,7 +221,7 @@
   /* ---------- the top bar is designed on load: its frame is drawn, the logo is placed and typed, the links are typed bunched together
      and then spaced out, Log in is typed, the button is dragged out as a box, typed, rounded and filled ---------- */
   (function () {
-    var bar = $('.nav-bar'), run = bar && !reduced && w.innerWidth >= 1100 && w.LV && LV.type, started = false;
+    var bar = $('.nav-bar'), run = bar && !reduced && w.LV && LV.type, started = false;
     if (!run) return html.classList.add('nb-done');
     /* built the first time you are at the top: straight away on a normal load, or when you scroll up to it after loading further down */
     function arm() {
@@ -235,7 +235,8 @@
     w.addEventListener('scroll', arm, { passive: true });
     arm();
     function build() {
-    var logo = $('.nav-logo', bar), box = $('.nav-links', bar), links = $$('a', box), login = $('.nav-login', bar), btn = $('.nav-start', bar);
+    var logo = $('.nav-logo', bar), box = $('.nav-links', bar), links = $$('a', box), login = $('.nav-login', bar), btn = $('.nav-start', bar), menu = $('.nav-menu', bar);
+    var wide = !!box.offsetParent, hasBtn = !!btn.offsetParent;      /* tablet has no links, phone has no button either: those steps are skipped */
     var ov = d.createElement('div'); ov.className = 'nb-ov'; ov.setAttribute('aria-hidden', 'true');
     ov.innerHTML = '<div class="lv-sel"><i></i><i></i><i></i><i></i><b></b></div><div class="lv-sel"><i></i><i></i><i></i><i></i></div><div class="lv-chip"></div>' +
       '<span class="lv-cur nb-cur"><svg viewBox="0 0 20 22" width="20" height="22"><path d="M4 3.2 C4 2.2 5.1 1.6 6 2.2 L17.2 9.9 C18.1 10.5 17.8 11.9 16.7 12.1 L11.6 13 L9.2 17.6 C8.7 18.6 7.2 18.4 7 17.3 Z"/></svg></span>';
@@ -254,15 +255,15 @@
     function end() {
       if (dead) return; dead = true;
       timers.forEach(clearTimeout);
-      [logo, login, btn, box].concat(links).forEach(function (el) { el.removeAttribute('style'); });
-      btn.classList.remove('nb-ghost'); logo.classList.remove('nb-pop');
+      [logo, login, btn, box, menu].concat(links).forEach(function (el) { el.removeAttribute('style'); });
+      btn.classList.remove('nb-ghost'); logo.classList.remove('nb-pop'); menu.classList.remove('nb-pop');
       html.classList.add('nb-done'); ov.remove();
       w.removeEventListener('scroll', bail);
     }
     function bail() { if (w.scrollY > 40) end(); }                    /* scrolled away mid-build: finish at once */
     w.addEventListener('scroll', bail, { passive: true });
 
-    [logo, login, btn].concat(links).forEach(function (el) { el.style.animation = 'none'; el.style.opacity = 0; });
+    [logo, login, btn, menu].concat(links).forEach(function (el) { el.style.animation = 'none'; el.style.opacity = 0; });
     var B = R(bar), L = R(logo), FY = B.top + 10, FH = B.height - 20;
     btn.classList.add('nb-ghost'); box.style.gap = '6px';             /* links are typed bunched together; spaced out afterwards */
     frame.lastChild.textContent = 'Navbar · ' + Math.round(B.width) + ' × ' + Math.round(FH);
@@ -275,6 +276,7 @@
     });
     step(640, function () { cur.classList.remove('down'); go(L.left - 6, L.bottom + 4, 380); });
     step(400, function () { logo.classList.add('nb-pop'); type(logo, 30); });
+    if (wide) {
     step(430, function () { var r = R(links[0]); go(r.left - 8, r.bottom + 4, 340); });
     links.forEach(function (a, i) {
       step(i ? a.previousElementSibling.textContent.length * 20 + 190 : 360, function () { var r = R(a); go(r.left - 8, r.bottom + 4, 130); type(a, 20); });
@@ -283,6 +285,8 @@
     step(400, function () { chip.lastChild.textContent = '32'; chip.classList.add('flip'); box.style.transition = 'gap .6s cubic-bezier(.22,1,.36,1)'; box.style.gap = ''; });
     step(620, function () { chip.classList.remove('on', 'flip'); var r = R(login); go(r.left + 2, r.bottom - 2, 340); });
     step(360, function () { type(login, 28); });
+    }
+    if (hasBtn) {
     step(380, function () { var r = R(btn); go(r.left, r.top, 300); });
     step(320, function () {                                           /* drag the button out as a box */
       var r = R(btn);
@@ -298,6 +302,11 @@
     step(460, function () { say('<span>Radius</span><b>6</b>', btn); });
     step(380, function () { chip.lastChild.textContent = '999'; chip.classList.add('flip'); btn.style.setProperty('border-radius', '999px', 'important'); });
     step(520, function () { chip.classList.remove('flip'); chip.innerHTML = '<span>Fill</span><u style="--k:#fff" class="sel"></u>'; btn.classList.remove('nb-ghost'); btn.style.removeProperty('border-radius'); });
+    }
+    if (!wide) {                                                      /* the menu button goes in last */
+    step(hasBtn ? 520 : 420, function () { chip.classList.remove('on'); var r = R(menu); go(r.left + r.width / 2, r.top + r.height / 2, 340); });
+    step(380, function () { menu.style.opacity = 1; menu.classList.add('nb-pop'); });
+    }
     step(620, function () { chip.classList.remove('on'); frame.classList.remove('on'); cur.style.opacity = 0; go(B.right + 10, B.bottom + 50, 500); });
     step(520, end);
     }

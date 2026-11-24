@@ -607,8 +607,8 @@
 }
 
 /* ---------- the top bar is designed on load (home.js drives it): until then its parts are hidden. If the script never runs they show after 9s ---------- */
-@media (prefers-reduced-motion:no-preference) and (min-width:1100px){
-  html:not(.nb-done) .nav:not(.is-pill) .nav-bar>:is(.nav-logo,.nav-login,.nav-start),html:not(.nb-done) .nav:not(.is-pill) .nav-links a{opacity:0;animation:nb-safe 0s 9s forwards}
+@media (prefers-reduced-motion:no-preference){
+  html:not(.nb-done) .nav:not(.is-pill) .nav-bar>:is(.nav-logo,.nav-login,.nav-start,.nav-menu),html:not(.nb-done) .nav:not(.is-pill) .nav-links a{opacity:0;animation:nb-safe 0s 9s forwards}
   @keyframes nb-safe{to{opacity:1}}
   .nb-ov{position:fixed;inset:0;z-index:60;pointer-events:none}
   .nb-ov>*{position:absolute;left:0;top:0}
@@ -618,6 +618,7 @@
   .nb-cur{--c:#7B5CFF;opacity:0;transition:opacity .25s}
   .nb-cur.down svg{transform:scale(.84)}
   .nb-pop svg{animation:nb-pop .5s var(--spring) both}
+  .nav-menu.nb-pop{animation:nb-pop .5s var(--spring) both!important}
   @keyframes nb-pop{from{opacity:0;transform:scale(.3) rotate(-30deg)}}
   .nb-ghost{background-color:rgba(255,255,255,0)!important;color:#fff!important;box-shadow:0 0 0 1.5px #7B5CFF!important;border-radius:6px!important}
 }

@@ -149,6 +149,7 @@
   function park(el) {                                      /* off screen when its turn came: it plays when it scrolls back into view */
     var v = el.getBoundingClientRect();
     if (v.bottom > -40 && v.top < w.innerHeight + 40) return false;
+    if (el._lvPin && el._lvT) { ready(el); el._lvT._lvBusy = false; el._lvT = null; }   /* its layer is not left grey or out of place meanwhile: later it just comments */
     el._lvParked = 1; io.observe(el);
     return true;
   }
@@ -180,7 +181,9 @@
     })();
   }
   function play(el) {
-    if (park(el)) { if (el._lvT) el._lvT._lvBusy = false; return pinFree(); }      /* the page jumped away while it was getting ready */
+    if (el._lvT) el._lvT._lvBusy = false;
+    if (park(el)) return pinFree();
+    if (el._lvT) el._lvT._lvBusy = true;      /* the page jumped away while it was getting ready */
     if (!layer) { layer = d.createElement('div'); layer.className = 'lv-layer'; layer.setAttribute('aria-hidden', 'true'); d.body.appendChild(layer); }
     var p = el._lvPin, T = el._lvT, act = el._lvAct, c = el.dataset.c || 'bl', col = CUR_COL[pinN++ % CUR_COL.length], sy = w.scrollY;
     var cur = d.createElement('span');
@@ -635,14 +638,15 @@
         }
       }
     }
-    if (fine) {
-      d.addEventListener('pointermove', function (e) {
-        if (e.pointerType !== 'mouse' || reduced) return;
-        mx = e.clientX; my = e.clientY;
-        if (!has) { has = true; ex = mx; ey = my; }
-      }, { passive: true });
-      html.addEventListener('mouseleave', function () { has = false; });
+    function point(e) {                                    /* mouse, pen or finger */
+      if (reduced) return;
+      mx = e.clientX; my = e.clientY;
+      if (!has) { has = true; ex = mx; ey = my; }
     }
+    d.addEventListener('pointermove', point, { passive: true });
+    d.addEventListener('pointerdown', point, { passive: true });
+    html.addEventListener('mouseleave', function () { has = false; });
+    ['pointerup', 'pointercancel'].forEach(function (n) { d.addEventListener(n, function (e) { if (e.pointerType !== 'mouse') has = false; }, { passive: true }); });
     function frame(now) {
       raf = 0;
       if (reduced ? w.scrollY !== lastY : now - lastT > 15) {     /* always moving, with or without a pointer */ lastY = w.scrollY; lastT = now; draw(now); }
