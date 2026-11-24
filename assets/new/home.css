@@ -577,3 +577,7 @@
 @media (prefers-reduced-motion:reduce){
   .hero-ip,.hero-card{transition:none}
 }
+
+/* ---------- phone loops: one silent video per phone screen ---------- */
+.scr-loop{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.hero-ip .scr-home{opacity:1!important;visibility:visible!important;transform:none!important}

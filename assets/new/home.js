@@ -191,3 +191,24 @@
     sync();
   }
 })();
+
+/* phone loops: play only while on screen; with reduced motion the poster stays and nothing plays */
+(function () {
+  var vids = [].slice.call(document.querySelectorAll('video.scr-loop'));
+  if (!vids.length) return;
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)'), seen = new WeakSet();
+  function set(v) {
+    if (!still.matches && seen.has(v) && !document.hidden) { var p = v.play(); if (p) p.catch(function () {}); }
+    else if (!v.paused) v.pause();
+  }
+  function all() { vids.forEach(function (v) { if (still.matches) { v.removeAttribute('autoplay'); v.pause(); if (v.currentTime) v.load(); } set(v); }); }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) seen.add(e.target); else seen.delete(e.target); set(e.target); });
+    }, { rootMargin: '200px' });
+    vids.forEach(function (v) { io.observe(v); });
+  } else vids.forEach(function (v) { seen.add(v); });
+  all();
+  if (still.addEventListener) still.addEventListener('change', all);
+  document.addEventListener('visibilitychange', all);
+})();
