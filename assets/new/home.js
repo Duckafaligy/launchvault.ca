@@ -61,7 +61,7 @@
       else card.style.transform = '';
     };
     watch([hero], function (el, on) { heroOn = on; });
-    jobs.push(par);
+    if (!calm) jobs.push(par);     /* no scroll-linked drift on tablet and phone */
     if (fine) hero.addEventListener('pointermove', function (e) {
       px = e.clientX / w.innerWidth - 0.5; py = e.clientY / w.innerHeight - 0.5; onScroll();
     }, { passive: true });

@@ -456,7 +456,7 @@
     var narrow = w.matchMedia('(max-width:1099px)'), open = false, scrolled = false, openY = 0, timer;
     function sync() {
       if (open && !scrolled && !narrow.matches) open = false;
-      el.classList.toggle('is-pill', scrolled || open);
+      el.classList.toggle('is-pill', scrolled || open || narrow.matches);     /* tablet and phone: one shape, it never grows and shrinks with the scroll */
       el.classList.toggle('is-open', open);
       btn.setAttribute('aria-expanded', open);
       btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
