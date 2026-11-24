@@ -524,7 +524,7 @@
     bd.addEventListener("change", () => { const v = bd.value; if (!v) return;
       const r = G.rangeForDob ? G.rangeForDob(v) : null;
       if (!r) { note.textContent = "LaunchVault is for ages 13 and up, so that date can't be saved."; bd.value = ls.get("lv-dob") || ""; return; }
-      ls.set("lv-dob", v); ls.set("lv-age", r); note.textContent = NOTE; toast(savedTo()); });
+      note.textContent = NOTE; held(); });
     // the stated monthly prices lead; yearly is the secondary line (and the other way round on the Yearly toggle)
     const bill = y => { $$("[data-bill]").forEach(b => b.setAttribute("aria-pressed", (b.dataset.bill === "y") === y));
       $('[data-pr="pro"]').textContent = y ? "$6.49" : "$7.99"; $('[data-pr="developer"]').textContent = y ? "$23.99" : "$29.99";
@@ -533,8 +533,8 @@
     $$("[data-bill]").forEach(b => b.addEventListener("click", () => bill(b.dataset.bill === "y"))); bill(false);
     // Display size: read by the zoom script in every page's head (lv-display), so it applies on every page of this device
     const disp = v => $$("[data-display]").forEach(b => b.setAttribute("aria-pressed", b.dataset.display === v)); disp(ls.get("lv-display") || "auto");
-    $$("[data-display]").forEach(b => b.addEventListener("click", () => { const v = b.dataset.display; v === "auto" ? ls.del("lv-display") : ls.set("lv-display", v); disp(v); if (window.lvZoom) lvZoom();
-      toast(innerWidth < 1000 ? "Saved. It applies on wider screens." : "Display size saved on this device."); }));
+    let dispV = ls.get("lv-display") || "auto";
+    $$("[data-display]").forEach(b => b.addEventListener("click", () => { dispV = b.dataset.display; disp(dispV); held(); }));
     // Preferences: welcome answers (this device) are the base; notes Ask LaunchVault saved live on the account (profiles.assistant_notes)
     { const base = $("[data-pref-base]"), box = $("[data-pref-notes]");
       if (base) { const q = quiz(); base.textContent = q && q.summary ? q.summary : "Not answered yet"; }
@@ -556,7 +556,38 @@
         notes = (data && data.assistant_notes) || []; draw();
       })(); }
     const prefs = Object.assign({new_story: false, path: false, news: false}, ls.get("lv-prefs", {}));
-    $$("[data-pref]").forEach(b => { b.setAttribute("aria-checked", !!prefs[b.dataset.pref]); b.addEventListener("click", () => { prefs[b.dataset.pref] = !prefs[b.dataset.pref]; b.setAttribute("aria-checked", prefs[b.dataset.pref]); ls.set("lv-prefs", prefs); }); });
+    $$("[data-pref]").forEach(b => { b.setAttribute("aria-checked", !!prefs[b.dataset.pref]); b.addEventListener("click", () => { prefs[b.dataset.pref] = !prefs[b.dataset.pref]; b.setAttribute("aria-checked", prefs[b.dataset.pref]); held(); }); });
+    // ---------- nothing in Settings saves as you go: changes are held until Save. The bar at the bottom offers Save or Discard,
+    //            goes red and shakes if you try to leave, and Discard asks first. (The public profile form saves through the same bar.) ----------
+    const ppf = $("[data-pp-form]"), ppNow = () => JSON.stringify(["#ppName", "#ppUser", "#ppBio"].map(q => ($(q) || {}).value || ""));
+    const ppDirty = () => !!ppf && !ppf.hidden && ppf.dataset.clean != null && (ppf.dataset.av === "1" || ppf.dataset.clean !== ppNow());
+    const snap = () => JSON.stringify([ls.get("lv-dob") || "", Object.assign({new_story: false, path: false, news: false}, ls.get("lv-prefs", {})), ls.get("lv-display") || "auto"]);
+    const mine = () => JSON.stringify([bd.value || ls.get("lv-dob") || "", prefs, dispV]);
+    const dirty = () => mine() !== snap() || ppDirty();
+    const bar = document.createElement("div"); bar.className = "savebar"; bar.setAttribute("role", "region"); bar.setAttribute("aria-label", "Unsaved changes"); bar.hidden = true;
+    bar.innerHTML = '<p data-sbmsg role="status">You have unsaved changes</p><button class="btn btn-s" type="button" data-sbno>Discard</button><button class="btn btn-p" type="button" data-sbyes>Save changes</button>';
+    document.body.appendChild(bar);
+    const sbm = $("[data-sbmsg]", bar);
+    function held() { const d = dirty(); if (d) sbm.textContent = "You have unsaved changes"; bar.hidden = !d; if (!d) bar.classList.remove("warn"); }
+    const nudge = () => { bar.classList.remove("warn"); void bar.offsetWidth; bar.classList.add("warn"); sbm.textContent = "Save or discard your changes first"; };
+    if (ppf) { ppf.addEventListener("input", held); new MutationObserver(held).observe(ppf, {attributes: true, attributeFilter: ["data-clean", "data-av", "hidden"]}); }
+    const revert = () => { bd.value = ls.get("lv-dob") || ""; Object.assign(prefs, {new_story: false, path: false, news: false}, ls.get("lv-prefs", {}));
+      $$("[data-pref]").forEach(b => b.setAttribute("aria-checked", !!prefs[b.dataset.pref])); dispV = ls.get("lv-display") || "auto"; disp(dispV);
+      if (ppf) ppf.dispatchEvent(new Event("lv:pp-reset")); held(); };
+    $("[data-sbyes]", bar).addEventListener("click", () => {
+      if (mine() !== snap()) { const v = bd.value, r = v && window.LVGate && LVGate.rangeForDob ? LVGate.rangeForDob(v) : null;
+        if (v && r) { ls.set("lv-dob", v); ls.set("lv-age", r); }
+        ls.set("lv-prefs", prefs); dispV === "auto" ? ls.del("lv-display") : ls.set("lv-display", dispV); if (window.lvZoom) lvZoom(); }
+      if (ppDirty()) { ppf.requestSubmit(); sbm.textContent = "Saving…"; return; }   // the form reports its own result; the bar leaves when it is clean again
+      held(); });
+    $("[data-sbno]", bar).addEventListener("click", () => {
+      const d = document.createElement("dialog"); d.className = "rdlg sbdlg"; d.setAttribute("aria-labelledby", "sbh");
+      d.innerHTML = '<form method="dialog"><h2 id="sbh">Discard your changes?</h2><p>Everything you changed on this page goes back to how it was.</p><div class="sbdr"><button class="btn btn-s" value="no" autofocus>Cancel</button><button class="btn sbred" value="yes">Discard</button></div></form>';
+      document.body.appendChild(d); d.addEventListener("close", () => { if (d.returnValue === "yes") revert(); d.remove(); }); d.showModal(); });
+    // leaving with changes held: the link doesn't open, the bar asks instead (same-page section links are fine)
+    document.addEventListener("click", e => { const a = e.target.closest("a[href]"); if (!a || bar.hidden || a.target === "_blank" || a.closest(".savebar,dialog")) return;
+      const u = new URL(a.href, location.href); if (u.origin === location.origin && u.pathname === location.pathname) return;
+      e.preventDefault(); e.stopPropagation(); nudge(); }, true);
     $("#dl").addEventListener("click", () => { const o = {}; ls.keys().forEach(k => o[k] = ls.get(k)); const a = document.createElement("a");
       a.href = URL.createObjectURL(new Blob([JSON.stringify({exported: new Date().toISOString(), note: "Everything LaunchVault saved on this device.", data: o}, null, 2)], {type: "application/json"}));
       a.download = "launchvault-data.json"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); });

@@ -118,13 +118,15 @@
       rm.hidden = !(pending && pending !== "remove") && !(pending !== "remove" && P && P.avatar_path);
       $("[data-pp-pv]", f).innerHTML = `<span class="av" aria-hidden="true"></span><div><p class="pp-pvn"><b>${esc(nm || "Your name")}</b><span>· ${esc(P && P.name_tag && nm === P.display_name ? P.name_tag : "4-digit tag")}</span>${u ? `<span class="pp-pvu">@${esc(u)}</span>` : ""}</p>${bio.value.trim() ? `<p class="pp-pvb">${esc(bio.value.trim())}</p>` : ""}</div>`;
       fill($("[data-pp-pv] .av", f), {id: clerk.user.id, name: nm, ...curAv()});
-      $("[data-pp-ct]", f).textContent = bio.value.length + " / 160";
+      $("[data-pp-ct]", f).textContent = bio.value.length + " / 160"; f.dataset.av = pending ? "1" : "";
     };
     const setUh = s => { ustate = s; uh.textContent = UH[s] || UH[""]; uh.className = s === "available" || s === "yours" ? "ok" : s && s !== "checking" ? "bad" : ""; };
     const check = () => { clearTimeout(ut); const v = user.value.trim(), my = ++seq;
       if (!v) return setUh(""); if (!/^[a-z0-9_]{3,20}$/.test(v)) return setUh("username_shape"); if (P && v === P.username) return setUh("yours");
       setUh("checking"); ut = setTimeout(async () => { try { const r = await q(sb.rpc("profile_username_available", {name: v})); if (my === seq) setUh(r); } catch { if (my === seq) setUh(""); } }, 350); };
-    const fillForm = () => { name.value = (P && P.display_name) || ""; user.value = (P && P.username) || ""; bio.value = (P && P.bio) || ""; setUh(P && P.username ? "yours" : ""); pv(); };
+    const fillForm = () => { name.value = (P && P.display_name) || ""; user.value = (P && P.username) || ""; bio.value = (P && P.bio) || ""; setUh(P && P.username ? "yours" : ""); pv();
+      f.dataset.clean = JSON.stringify([name.value, user.value, bio.value]); };   // what the Settings save bar (app.js) compares against
+    f.addEventListener("lv:pp-reset", () => { pending = null; avn.textContent = AVN; say(""); fillForm(); });   // Discard in the save bar
     name.addEventListener("input", pv); bio.addEventListener("input", pv);
     user.addEventListener("input", () => { const v = user.value.toLowerCase().replace(/^@+/, "").replace(/[^a-z0-9_]/g, ""); if (v !== user.value) user.value = v; pv(); check(); });
     $("[data-pp-up]", f).addEventListener("click", () => file.click());
