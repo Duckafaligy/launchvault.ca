@@ -1,0 +1,110 @@
+/* LaunchVault /new/ — chrome: nav (full bar -> floating glass pill -> card) and footer.
+   Markup is stamped by build_new.py; states are driven by assets/new/motion.js:
+   .nav.is-pill = scrolled (or menu open on narrow screens), .nav.is-open = card open. Values from home_desk.py pill()/nav_board(). */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;justify-content:center;pointer-events:none;view-transition-name:lv-nav}
+.nav-shell{position:relative;pointer-events:auto;width:100%;max-width:calc(1200px + 2*var(--mg));margin-top:0;padding:0 var(--mg);border-radius:0;
+  transition:width .5s var(--out),max-width .5s var(--out),margin-top .5s var(--out),padding .5s var(--out),border-radius .35s var(--out)}
+.nav-shell::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;opacity:0;
+  background:var(--glass),rgba(12,12,17,.8);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 0 1px rgba(255,255,255,.08),0 24px 60px -24px rgba(0,0,0,.9);
+  transition:opacity .35s var(--out),background-color .3s}
+.nav-bar{display:flex;align-items:center;gap:10px;height:var(--nav-h);transition:height .5s var(--out)}
+.nav-logo{display:inline-flex;align-items:center;gap:10px;flex:none;font:700 17px/1 var(--fd);color:#fff;view-transition-name:lv-logo}
+.nav-logo svg{width:24px;height:24px;flex:none}
+.nav-links{position:absolute;left:50%;top:0;height:var(--nav-h);transform:translateX(-50%);display:flex;align-items:center;gap:32px;transition:opacity .25s,visibility .25s}
+.nav-links a{font:400 14px/1 var(--fd);color:var(--muted);padding:8px 0;transition:color .15s}
+.nav-links a:hover{color:#fff}
+.nav-links a[aria-current]{color:#fff;font-weight:600}
+.nav-sp{flex:1}
+.nav-login{font:400 14px/1 var(--fd);color:var(--muted);padding:8px 10px;margin-right:2px;transition:color .15s}
+.nav-login:hover{color:#fff}
+.nav .btn{align-self:center}
+.nav-start{height:38px;padding:0 24px;font-size:16px}
+.nav-menu{display:none;flex:none;width:36px;height:36px;border-radius:50%;align-items:center;justify-content:center;background:rgba(255,255,255,.07);color:#fff;transition:background-color .2s}
+.nav-menu:hover{background:rgba(255,255,255,.14)}
+.nav-menu:focus-visible{border-radius:50%}
+.nav-menu svg{width:18px;height:18px}
+.nav-menu path{transform-origin:12px 12px;transition:transform .35s var(--out),opacity .2s}
+.nav-cta,.nav-cta-s{display:none}
+
+/* pill */
+.nav.is-pill .nav-shell{width:520px;max-width:calc(100% - 40px);margin-top:14px;padding:0;border-radius:26px}
+.nav.is-pill .nav-shell::before{opacity:1}
+.nav.is-pill .nav-bar{height:52px;padding:0 10px 0 16px}
+.nav.is-pill .nav-logo{font-size:15px;gap:8px}
+.nav.is-pill .nav-links{opacity:0;visibility:hidden;pointer-events:none}
+.nav.is-pill :is(.nav-login,.nav-start){display:none}
+.nav.is-pill :is(.nav-cta,.nav-menu){display:inline-flex;animation:lv-navin .4s var(--out) both}
+@keyframes lv-navin{from{opacity:0;transform:scale(.92)}}
+
+/* card */
+.nav-card{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .4s var(--out),visibility 0s .4s}
+.nav-card-in{min-height:0;overflow:hidden}
+.nav-tabs{display:flex;flex-direction:column;gap:2px;padding:6px 8px 10px;box-shadow:inset 0 1px 0 var(--line)}
+.nav-tab{display:flex;flex-direction:column;gap:2px;padding:10px;border-radius:12px;opacity:0;transform:translateY(6px);transition:background-color .15s,opacity .3s var(--out),transform .4s var(--out)}
+.nav-tab b{font:600 15px/20px var(--fd);color:#fff}
+.nav-tab span{font:400 12px/16px var(--fd);color:var(--faint)}
+.nav-tab:hover,.nav-tab:focus-visible,.nav-tab[aria-current]{background:var(--line2)}
+.nav-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding:8px 2px 2px;box-shadow:inset 0 1px 0 var(--line);font:400 12px/1 var(--fd);color:var(--faint)}
+.nav-foot a{font-size:13px;color:var(--muted);padding:10px 8px}
+.nav-foot a:hover{color:#fff}
+.nav-foot span{padding-right:8px}
+.nav.is-open .nav-shell{border-radius:22px}
+.nav.is-open .nav-shell::before{background-color:rgba(14,14,19,.97)}
+.nav.is-open .nav-card{grid-template-rows:1fr;visibility:visible;transition-delay:0s}
+.nav.is-open .nav-tab{opacity:1;transform:none}
+.nav.is-open .nav-tab:nth-child(2){transition-delay:0s,.03s,.03s}.nav.is-open .nav-tab:nth-child(3){transition-delay:0s,.06s,.06s}
+.nav.is-open .nav-tab:nth-child(4){transition-delay:0s,.09s,.09s}.nav.is-open .nav-tab:nth-child(5){transition-delay:0s,.12s,.12s}
+.nav.is-open .nav-menu{background:rgba(255,255,255,.14)}
+.nav.is-open .nav-menu .b1{transform:translateY(5px) rotate(45deg)}
+.nav.is-open .nav-menu .b2{opacity:0}
+.nav.is-open .nav-menu .b3{transform:translateY(-5px) rotate(-45deg)}
+
+/* tablet + phone: the full bar already shows the menu button */
+@media (max-width:1099px){
+  .nav-links,.nav-login{display:none}
+  .nav-menu{display:inline-flex}
+  .nav-start{height:36px;padding:0 16px;font-size:13px}
+  .nav.is-pill .nav-shell{width:calc(100% - 40px);max-width:520px}
+}
+@media (max-width:599px){
+  .nav-logo{font-size:16px}
+  .nav-start{display:none}
+  .nav.is-pill .nav-shell{width:calc(100% - 24px);max-width:none;margin-top:10px;border-radius:22px}
+  .nav.is-pill .nav-bar{height:44px;padding:0 8px 0 14px}
+  .nav.is-pill .nav-logo{font-size:14px}
+  .nav.is-pill .nav-cta{display:none}
+  .nav.is-pill .nav-cta-s{display:inline-flex;height:32px;animation:lv-navin .4s var(--out) both}
+  .nav.is-pill .nav-menu{width:32px;height:32px}
+  .nav-tab b{font-size:14px}
+}
+.nav-cta{height:36px;padding:0 16px;font-size:14px}
+
+/* ---------- footer ---------- */
+.foot{position:relative;padding:56px 0 32px;box-shadow:inset 0 1px 0 var(--line)}
+.foot-top{display:flex;justify-content:space-between;gap:32px}
+.foot-brand{display:flex;flex-direction:column;gap:10px;width:340px;max-width:100%}
+.foot-brand .nav-logo{view-transition-name:none}
+.foot-brand p{font:400 13px/20px var(--fd);color:var(--faint);max-width:320px}
+.foot-cols{display:flex;gap:24px}
+.foot-col{display:flex;flex-direction:column;width:170px}
+.foot-col h2{font:600 13px/20px var(--fd);color:#fff;margin-bottom:4px}
+.foot-col a,.foot-end a{font:400 13px/20px var(--fd);color:var(--faint);padding:3px 0;width:fit-content;transition:color .15s}
+.foot-col a:hover,.foot-end a:hover{color:#fff}
+.foot-end{display:flex;justify-content:space-between;align-items:center;margin-top:40px;font:400 12px/20px var(--fd);color:var(--faint)}
+.foot-end a{display:inline-flex;align-items:center;gap:4px;font-size:12px}
+.foot-end svg{width:10px;height:10px}
+@media (max-width:1099px){.foot-brand{width:236px}.foot-brand p{font-size:12px;line-height:18px}.foot-cols{gap:20px}.foot-col{width:136px}}
+@media (max-width:599px){
+  .foot{padding:44px 0 32px}
+  .foot-top{flex-direction:column}
+  .foot-brand{width:auto}.foot-brand p{font-size:13px;line-height:20px;max-width:none}
+  .foot-cols{flex-wrap:wrap;gap:28px 24px}
+  .foot-col{width:calc(50% - 12px)}
+  .foot-col a{padding:5px 0}
+  .foot-end{margin-top:32px}
+}
+@media (prefers-reduced-motion:reduce){
+  .nav-shell,.nav-shell::before,.nav-bar,.nav-card,.nav-tab,.nav-menu path{transition:none!important}
+  .nav.is-pill :is(.nav-cta,.nav-cta-s,.nav-menu){animation:none}
+}

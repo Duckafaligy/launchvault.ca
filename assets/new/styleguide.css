@@ -1,0 +1,23 @@
+/* Style guide page only. Not part of the contract. */
+.sg-hero{padding-top:80px}
+.sg-row{display:grid;grid-template-columns:300px minmax(0,1fr);gap:24px 72px;align-items:start}
+.sg-side{display:flex;flex-direction:column;gap:12px}
+@media (max-width:1099px){.sg-row{grid-template-columns:minmax(0,1fr)}.sg-hero{padding-top:48px}}
+code{font:500 .88em/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;color:var(--hl);background:rgba(47,107,255,.12);padding:2px 6px;border-radius:6px;white-space:nowrap}
+.sg-code{margin:0;padding:14px 16px;border-radius:12px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px var(--line2);font:400 12px/19px ui-monospace,"SF Mono",Menlo,Consolas,monospace;color:var(--muted);
+  white-space:pre-wrap;overflow-wrap:anywhere;tab-size:2}
+.sg-jump{flex-wrap:wrap;border-radius:22px;align-self:flex-start}
+.sg-swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:20px 16px}
+.sg-sw{display:flex;flex-direction:column;gap:2px;font-size:12px;line-height:17px;color:var(--faint)}
+.sg-sw i{height:56px;border-radius:12px;margin-bottom:8px}
+.sg-sw b{font:600 13px/18px ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.sg-texts{display:flex;flex-direction:column;gap:6px;font-size:15px}
+.sg-type>div{display:flex;flex-direction:column;gap:6px}
+.sg-cards{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px}
+.sg-cards3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.sg-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.sg-chart{width:100%;max-width:600px;height:auto;overflow:visible}
+.sg-pins{display:flex;flex-wrap:wrap;gap:36px 16px;padding-bottom:28px}
+.sg-curs{display:flex;flex-direction:column;gap:4px;width:200px}
+.sg-list{font-size:15px;line-height:24px;color:var(--muted);max-width:68ch}
+@media (max-width:599px){.sg-cards{grid-template-columns:minmax(0,1fr)}.sg-pins .pin{font-size:13px}}

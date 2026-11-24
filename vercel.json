@@ -108,6 +108,21 @@
    "source": "/app/postiz/",
    "destination": "/app/story/postiz/",
    "permanent": true
+  },
+  {
+   "source": "/new/blogs",
+   "destination": "/new/blog/",
+   "permanent": true
+  },
+  {
+   "source": "/new/blogs/",
+   "destination": "/new/blog/",
+   "permanent": true
+  },
+  {
+   "source": "/new/blogs/(.*)",
+   "destination": "/new/blog/$1",
+   "permanent": true
   }
  ],
  "rewrites": [
