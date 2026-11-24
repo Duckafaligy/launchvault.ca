@@ -580,7 +580,7 @@
     nav(); init(); background();
     if (fine && !reduced) cursor();
   }
-  w.LV = { init: init, toast: toast, reduced: reduced };
+  w.LV = { init: init, toast: toast, reduced: reduced, chars: chars };
   /* starts at DOMContentLoaded, so a page's own deferred script (listed in meta "js") runs first and can prepare its markup */
   if (d.readyState === 'complete') start(); else { d.addEventListener('DOMContentLoaded', start); w.addEventListener('load', start); }
 })();

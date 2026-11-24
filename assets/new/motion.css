@@ -93,7 +93,7 @@ a.card:focus-visible{border-radius:var(--r)}
 /* ---------- comment pins (homepage design credits) ----------
    <a class="pin" data-c="bl" href="https://www.scale.com" target="_blank" rel="noopener"><img src="/assets/new/favs/scale.com.png" alt="" width="24" height="24"><span class="pin-t">Headline type from <b>scale.com</b></span></a>
    data-c = which corner is sharp (tl|tr|bl|br): it points at the credited part. Position it yourself (position:absolute). */
-.pin{position:absolute;z-index:5;display:inline-flex;align-items:center;gap:9px;height:40px;padding:0 15px 0 8px;border-radius:18px 18px 18px 2px;background:#EDEDED;white-space:nowrap;
+.pin{position:absolute;z-index:5;display:inline-flex;width:max-content;align-items:center;gap:9px;height:40px;padding:0 15px 0 8px;border-radius:18px 18px 18px 2px;background:#EDEDED;white-space:nowrap;
   box-shadow:0 0 0 1px rgba(11,11,15,.14),0 16px 36px -14px rgba(0,0,0,.8);font:500 14px/1 var(--fd);color:var(--night);transition:transform .35s var(--out),box-shadow .35s var(--out)}
 .pin[data-c=tl]{border-radius:2px 18px 18px 18px;transform-origin:0 0}
 .pin[data-c=tr]{border-radius:18px 2px 18px 18px;transform-origin:100% 0}

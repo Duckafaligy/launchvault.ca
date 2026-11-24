@@ -606,20 +606,17 @@
   .hjs :is(.card,.panel):hover::after{opacity:1}
 }
 
-/* ---------- the top bar assembles itself on load: logo, links one by one, then the button is drawn and filled ---------- */
+/* ---------- the top bar is designed on load (home.js drives it): until then its parts are hidden. If the script never runs they show after 9s ---------- */
 @media (prefers-reduced-motion:no-preference) and (min-width:1100px){
-  html:not(.nb-done) .nav-bar>.nav-logo{animation:nb-pop .5s var(--spring) .2s both}
-  html:not(.nb-done) .nav-links a{animation:nb-in .45s var(--out) both;animation-delay:calc(.5s + var(--n,0)*.14s)}
-  .nav-links a:nth-child(2){--n:1}.nav-links a:nth-child(3){--n:2}.nav-links a:nth-child(4){--n:3}.nav-links a:nth-child(5){--n:4}
-  html:not(.nb-done) .nav-login{animation:nb-in .45s var(--out) 1.3s both}
-  html:not(.nb-done) .nav-start{animation:nb-btn .8s var(--out) 1.5s both}
-  .nb-cur{position:fixed;z-index:60;left:0;top:46px;--c:#7B5CFF;animation:nb-cur 2.5s both}
-  @keyframes nb-pop{from{opacity:0;transform:scale(.5)}}
-  @keyframes nb-in{from{opacity:0;transform:translateY(-10px)}}
-  @keyframes nb-btn{0%{opacity:0;transform:scale(.7);background-color:rgba(255,255,255,0);color:rgba(11,11,15,0);box-shadow:0 0 0 1.5px #7B5CFF}
-    45%{opacity:1;transform:none;background-color:rgba(255,255,255,0);color:rgba(11,11,15,0);box-shadow:0 0 0 1.5px #7B5CFF}
-    100%{box-shadow:0 0 0 0 rgba(123,92,255,0)}}
-  @keyframes nb-cur{0%{opacity:0;transform:translate(calc(var(--mg) + 10px),60px)}8%{opacity:1;transform:translate(calc(var(--mg) + 40px),0);animation-timing-function:cubic-bezier(.45,0,.3,1)}
-    64%,84%{opacity:1;transform:translate(calc(min(100vw,1200px + 2*var(--mg)) - var(--mg) - 40px + max(0px,(100vw - 1200px - 2*var(--mg))/2)),0)}
-    100%{opacity:0;transform:translate(calc(100vw - var(--mg) - 20px),50px)}}
+  html:not(.nb-done) .nav-bar>:is(.nav-logo,.nav-login,.nav-start),html:not(.nb-done) .nav-links a{opacity:0;animation:nb-safe 0s 9s forwards}
+  @keyframes nb-safe{to{opacity:1}}
+  .nb-ov{position:fixed;inset:0;z-index:60;pointer-events:none}
+  .nb-ov>*{position:absolute;left:0;top:0}
+  .nb-ov .lv-sel{--c:#7B5CFF;transition:opacity .25s,width .65s cubic-bezier(.45,0,.2,1),height .65s cubic-bezier(.45,0,.2,1)}
+  .nb-ov .lv-sel b{bottom:auto;top:calc(100% + 6px)}
+  .nb-cur{--c:#7B5CFF;opacity:0;transition:opacity .25s}
+  .nb-cur.down svg{transform:scale(.84)}
+  .nb-pop svg{animation:nb-pop .5s var(--spring) both}
+  @keyframes nb-pop{from{opacity:0;transform:scale(.3) rotate(-30deg)}}
+  .nb-ghost{background-color:rgba(255,255,255,0)!important;color:#fff!important;box-shadow:0 0 0 1.5px #7B5CFF!important;border-radius:6px!important}
 }
