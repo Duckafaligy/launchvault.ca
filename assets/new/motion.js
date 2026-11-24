@@ -110,32 +110,41 @@
   function pinTarget(el) { var q = el.dataset.for; try { return q ? d.querySelector(q) : null; } catch (e) { return null; } }
   function ready(el) {                                     /* put the layer in its finished state, no show */
     var T = el._lvT;
-    if (T) { T.style.translate = ''; T.classList.remove('lv-untyped', 'lv-arial', 'lv-grey'); }
+    if (T) { T.style.translate = ''; T.classList.remove('lv-untyped', 'lv-arial', 'lv-grey', 'lv-undrawn'); }
   }
+  var pinLive = 0, PIN_MAX = 3;                            /* how many cursors may work at once */
   function queue(el) { el._lvQ = performance.now(); pinQ.push(el); pinNext(); }
   function runPin(el) {
     if (!el._lvPin || reduced) { ready(el); return el.classList.add('in'); }
     queue(el);
   }
   function pinNext() {
-    if (pinBusy || !pinQ.length) return;
-    pinBusy = true;
-    var el = pinQ.shift(), last = '', same = 0, tries = 0, v = el.getBoundingClientRect();
-    var stale = el._lvAct === 'type' && performance.now() - el._lvQ > 3500;     /* a heading never waits blank for long */
+    while (pinLive < PIN_MAX && pinQ.length) {
+      var i = 0;
+      while (i < pinQ.length && pinQ[i]._lvT && pinQ[i]._lvT._lvBusy) i++;      /* never two cursors on one layer: that job waits its turn */
+      if (i === pinQ.length) return;
+      pinStart(pinQ.splice(i, 1)[0]);
+    }
+  }
+  function pinStart(el) {
+    var last = '', same = 0, tries = 0, v = el.getBoundingClientRect(), hidden = /type|write|draw/.test(el._lvAct || '');
+    var stale = hidden && performance.now() - el._lvQ > 3200;                   /* nothing waits blank for long */
     if (v.bottom < -40 || v.top > w.innerHeight + 40 || !el.offsetParent || stale) {   /* scrolled past before its turn: it is just there */
       ready(el);
       if (el._lvPin) el.classList.add('in', 'lit');
-      pinBusy = false; return pinNext();
+      return;
     }
-    (function settle() {                                   /* wait until it holds still for about a third of a second */
+    pinLive++;
+    if (el._lvT) el._lvT._lvBusy = true;
+    setTimeout(function settle() {                         /* wait until it holds still for about a third of a second */
       var r = el.getBoundingClientRect(), t = el._lvT ? el._lvT.getBoundingClientRect() : r;
       var key = [r.left, r.top + w.scrollY, r.width, t.left, t.top + w.scrollY, t.width, t.height].map(Math.round).join();
       same = key === last ? same + 1 : 0; last = key;
       if (same >= 3 || ++tries > 40) return play(el);
       setTimeout(settle, 110);
-    })();
+    }, (pinLive - 1) * 220);                               /* cursors that start together set off a beat apart */
   }
-  function pinFree() { if (!pinBusy) return; pinBusy = false; setTimeout(pinNext, 250 + Math.random() * 500); }
+  function pinFree() { pinLive = Math.max(0, pinLive - 1); setTimeout(pinNext, 120 + Math.random() * 300); }
   function at(node, x, y, ms, ease) {
     node.style.transition = 'transform ' + ms + 'ms ' + (ease || EASE) + ',opacity .25s';
     node.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
@@ -154,6 +163,14 @@
     })(T);
     return { c: out, undo: function () { wraps.forEach(function (x) { if (x[0].parentNode) x[0].parentNode.replaceChild(x[1], x[0]); }); } };
   }
+  function typeText(T, per, done) {                        /* per = ms a letter, or 0 for uneven hand typing */
+    var ch = chars(T), n = 0, caret = d.createElement('i'); caret.className = 'lv-tcaret';
+    (function tick() {
+      var k = ch.c[n++];
+      if (k) { k.style.opacity = ''; k.after(caret); return setTimeout(tick, per || (/\s/.test(k.textContent) ? 70 : 30 + Math.random() * 40)); }
+      setTimeout(function () { caret.remove(); ch.undo(); if (done) done(); }, 160);
+    })();
+  }
   function play(el) {
     if (!layer) { layer = d.createElement('div'); layer.className = 'lv-layer'; layer.setAttribute('aria-hidden', 'true'); d.body.appendChild(layer); }
     var p = el._lvPin, T = el._lvT, act = el._lvAct, c = el.dataset.c || 'bl', col = CUR_COL[pinN++ % CUR_COL.length], sy = w.scrollY;
@@ -163,7 +180,7 @@
     function anchor() { var r = el.getBoundingClientRect(); return [c[1] === 'r' ? r.right : r.left, (c[0] === 'b' ? r.bottom : r.top) + w.scrollY]; }   /* the bubble's tail corner */
     var tr = T && T.getBoundingClientRect(), box = null, chip = null, alive = true;
     if (T && (!tr.width || !tr.height)) { ready(el); T = null; }
-    var first = !T ? anchor() : act === 'type' ? [tr.left - 4, tr.top + sy + Math.min(40, tr.height * 0.5)]
+    var first = !T ? anchor() : act === 'draw' ? [tr.left, tr.top + sy] : act === 'type' || act === 'write' ? [tr.left - 4, tr.top + sy + Math.min(40, tr.height * 0.5)]
       : [tr.left + Math.min(46, tr.width * 0.25), tr.top + sy + Math.min(30, tr.height * 0.4)];
     var fromX = first[0] > w.innerWidth / 2 ? -120 : 120;        /* comes in from the middle of the page, so it never widens it */
     at(cur, first[0] + fromX, first[1] + 90, 0);
@@ -181,7 +198,8 @@
       layer.appendChild(chip); chip.getBoundingClientRect(); chip.classList.add('on');
     }
     function hideChip() { var k = chip; chip = null; if (!k) return; k.classList.remove('on'); setTimeout(function () { k.remove(); }, 300); }
-    function comment() {                                    /* on to where the comment goes; a heading with no pin is simply done */
+    function comment() {                                    /* on to where the comment goes; a layer with no pin is simply done */
+      if (T) { T._lvBusy = false; }
       if (!p) { leave(first[0], first[1]); return pinFree(); }
       var P = anchor();
       at(cur, P[0], P[1], 520);
@@ -212,15 +230,50 @@
       type: function () {
         T.classList.remove('lv-arial'); var h = T.offsetHeight, font = getComputedStyle(T).fontFamily.split(',')[0].replace(/["']/g, '').trim();
         T.classList.add('lv-arial'); T.style.height = h + 'px';             /* keeps its final height, so nothing below moves */
-        var ch = chars(T), n = 0, caret = d.createElement('i'); caret.className = 'lv-tcaret';
         click(); T.classList.remove('lv-untyped');
-        setTimeout(function tick() {
-          var k = ch.c[n++];
-          if (k) { k.style.opacity = ''; k.after(caret); return setTimeout(tick, /\s/.test(k.textContent) ? 70 : 30 + Math.random() * 40); }
-          setTimeout(function () { showChip('<span>Aa</span><b>Arial</b>'); }, 200);
-          setTimeout(function () { click(); caret.remove(); T.classList.remove('lv-arial'); if (chip) { chip.lastChild.textContent = font; chip.classList.add('flip'); } }, 850);
-          setTimeout(function () { hideChip(); ch.undo(); T.style.height = ''; comment(); }, 1500);
-        }, 260);
+        typeText(T, 0, function () {
+          /* the text toolbar, the way a design tool shows it: font, weight, size, fill. The font menu drops open and the cursor picks the real one */
+          var hr = T.getBoundingClientRect(), cs = getComputedStyle(T), bx = hr.left, by = (hr.top > 130 ? hr.top - 46 : hr.bottom + 10) + w.scrollY;
+          var bar = d.createElement('div'); bar.className = 'lv-bar';
+          bar.innerHTML = '<span class="lv-bar-f"><b>Arial</b><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 3l2.5 2.5L6.5 3"/></svg></span>' +
+            '<span>' + (parseInt(cs.fontWeight, 10) >= 600 ? 'Bold' : 'Regular') + '</span><span>' + Math.round(parseFloat(cs.fontSize)) + '</span><span><u></u></span>' +
+            '<div class="lv-menu"><i class="on hv">Arial</i><i>Georgia</i><i>' + font + '</i></div>';
+          bar.style.transform = 'translate(' + bx.toFixed(0) + 'px,' + by.toFixed(0) + 'px)';
+          layer.appendChild(bar); bar.getBoundingClientRect(); bar.classList.add('on');
+          var items = bar.lastChild.children, hv = function (n) { for (var k = 0; k < 3; k++) items[k].classList.toggle('hv', k === n); };
+          at(cur, bx + 54, by + 18, 320);
+          setTimeout(function () { click(); bar.classList.add('menu'); bar.firstChild.classList.add('open'); }, 380);
+          setTimeout(function () { at(cur, bx + 64, by + 42 + 2 * 28 + 14, 380, 'cubic-bezier(.45,0,.2,1)'); }, 640);
+          setTimeout(function () { hv(1); }, 800);
+          setTimeout(function () { hv(2); }, 960);
+          setTimeout(function () {
+            click(); T.classList.remove('lv-arial');
+            items[0].classList.remove('on'); items[2].classList.add('on');
+            bar.classList.remove('menu'); bar.firstChild.classList.remove('open'); bar.firstChild.firstChild.textContent = font;
+          }, 1180);
+          setTimeout(function () { bar.classList.remove('on'); setTimeout(function () { bar.remove(); }, 300); T.style.height = ''; comment(); }, 1900);
+        });
+      },
+      write: function () {                                  /* a paragraph: typed quickly, in its own font */
+        click(); T.classList.remove('lv-untyped');
+        typeText(T, Math.max(7, Math.min(34, 1300 / T.textContent.length)), comment);
+      },
+      draw: function () {                                   /* drag the layer's box out corner to corner; then the layer is there */
+        var r = T.getBoundingClientRect(), x = r.left, y = r.top + w.scrollY;
+        cur.classList.add('down');
+        box = d.createElement('div'); box.className = 'lv-sel draw'; box.style.setProperty('--c', col);
+        box.innerHTML = '<i></i><i></i><i></i><i></i><b>' + Math.round(r.width) + ' × ' + Math.round(r.height) + '</b>';
+        box.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)'; box.style.width = box.style.height = '0px';
+        layer.appendChild(box); box.getBoundingClientRect(); box.classList.add('on');
+        box.style.width = r.width.toFixed(1) + 'px'; box.style.height = r.height.toFixed(1) + 'px';
+        at(cur, x + r.width, y + r.height, 520, 'cubic-bezier(.45,0,.2,1)');
+        first = [x + r.width, y + r.height];
+        setTimeout(function () {
+          cur.classList.remove('down');
+          T.style.transition = 'opacity .5s ' + EASE; T.classList.remove('lv-undrawn');
+          setTimeout(function () { T.style.transition = ''; }, 550);
+        }, 560);
+        setTimeout(comment, 980);
       },
       color: function () {
         click();
@@ -343,8 +396,16 @@
     $$('[data-tabs]', root).forEach(prepTabs);
     $$('details[data-acc]', root).forEach(prepAcc);
     $$('.pin', root).forEach(function (el) { if (!el._lvPin) prepPin(el); });
-    if (!reduced && io) $$('[data-build=type]', root).forEach(function (el) { if (!el._lvT) { el._lvT = el; el._lvAct = 'type'; el.classList.add('lv-untyped', 'lv-arial'); } });
-    var els = $$('[data-reveal],[data-stagger],[data-count],[data-draw],.pin', root).filter(function (el) { return !el._lvSeen; });
+    if (!reduced && io) $$('[data-build]', root).forEach(function (el) {
+      if (el._lvT) return;
+      var act = el.dataset.build;
+      el._lvT = el; el._lvAct = act;
+      if (act === 'type') el.classList.add('lv-untyped', 'lv-arial');
+      else if (act === 'write') el.classList.add('lv-untyped');
+      else if (act === 'draw') el.classList.add('lv-undrawn');
+      else if (act === 'color') el.classList.add('lv-grey');
+    });
+    var els = $$('[data-reveal],[data-stagger],[data-count],[data-draw],[data-build],.pin', root).filter(function (el) { return !el._lvSeen; });
     els.forEach(function (el) {
       el._lvSeen = 1;
       if (el.hasAttribute('data-stagger')) Array.prototype.forEach.call(el.children, function (c, i) { c.style.setProperty('--i', i); });
@@ -580,7 +641,7 @@
     nav(); init(); background();
     if (fine && !reduced) cursor();
   }
-  w.LV = { init: init, toast: toast, reduced: reduced, chars: chars };
+  w.LV = { init: init, toast: toast, reduced: reduced, type: typeText };
   /* starts at DOMContentLoaded, so a page's own deferred script (listed in meta "js") runs first and can prepare its markup */
   if (d.readyState === 'complete') start(); else { d.addEventListener('DOMContentLoaded', start); w.addEventListener('load', start); }
 })();

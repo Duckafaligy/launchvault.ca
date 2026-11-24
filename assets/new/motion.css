@@ -130,6 +130,9 @@ a.card:focus-visible{border-radius:var(--r)}
 .lv-sel i:nth-child(1){left:-4px;top:-4px}.lv-sel i:nth-child(2){right:-4px;top:-4px}.lv-sel i:nth-child(3){left:-4px;bottom:-4px}.lv-sel i:nth-child(4){right:-4px;bottom:-4px}
 .lv-sel b{position:absolute;left:-1.5px;bottom:calc(100% + 5px);padding:2px 6px;border-radius:4px;background:var(--c);font:600 11px/14px var(--fd);color:#fff;white-space:nowrap}
 .lv-untyped{opacity:0!important}
+.lv-undrawn{opacity:0!important}
+.lv-sel.draw{transition:opacity .25s,width .52s cubic-bezier(.45,0,.2,1),height .52s cubic-bezier(.45,0,.2,1)}
+.lv-sel.draw b{font-variant-numeric:tabular-nums}
 .lv-arial,.lv-arial *{font-family:Arial,Helvetica,sans-serif!important;font-style:normal!important}
 .lv-grey{filter:grayscale(1) brightness(.82)}
 .lv-tcaret{position:relative;display:inline-block;width:0;height:.9em;vertical-align:-.1em;font-style:normal}
@@ -141,6 +144,20 @@ a.card:focus-visible{border-radius:var(--r)}
 .lv-chip.flip b{animation:lv-chip-flip .35s var(--out)}
 .lv-chip u{width:14px;height:14px;border-radius:50%;background:var(--k);text-decoration:none;transition:box-shadow .2s,scale .3s var(--spring)}
 .lv-chip u.sel{box-shadow:0 0 0 2px #1A1A22,0 0 0 3.5px #fff;scale:1.1}
+.lv-bar{position:absolute;display:flex;align-items:center;height:34px;padding:0 4px;border-radius:10px;background:#1E1E26;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 14px 34px rgba(0,0,0,.6);
+  font:500 12px/1 var(--fd);color:#fff;white-space:nowrap;opacity:0;scale:.9;transform-origin:0 100%;transition:opacity .2s,scale .3s var(--spring)}
+.lv-bar.on{opacity:1;scale:1}
+.lv-bar>span{display:flex;align-items:center;gap:8px;height:26px;padding:0 10px;border-left:1px solid rgba(255,255,255,.1)}
+.lv-bar>.lv-bar-f{min-width:104px;justify-content:space-between;border-left:0;border-radius:6px;transition:background-color .15s}
+.lv-bar>.lv-bar-f.open{background:rgba(255,255,255,.1)}
+.lv-bar svg{width:8px;height:8px;opacity:.6}
+.lv-bar u{width:14px;height:14px;border-radius:4px;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2)}
+.lv-menu{position:absolute;left:0;top:calc(100% + 4px);display:flex;flex-direction:column;min-width:150px;padding:4px;border-radius:10px;background:#1E1E26;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),0 14px 34px rgba(0,0,0,.6);opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .15s,transform .2s var(--out),visibility 0s .2s}
+.lv-bar.menu .lv-menu{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.lv-menu i{display:flex;justify-content:space-between;gap:16px;height:28px;align-items:center;padding:0 8px;border-radius:6px;font-style:normal}
+.lv-menu i.hv{background:#2F6BFF}
+.lv-menu i.on::after{content:"\2713";opacity:.8}
 @keyframes lv-chip-flip{from{opacity:0;transform:translateY(6px)}}
 @keyframes lv-cur-ring{0%{opacity:0;transform:scale(.3)}30%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
 @keyframes lv-cur-press{40%{transform:scale(.82)}}

@@ -211,22 +211,33 @@
     c.style.setProperty('--sx', (e.clientX - r.left).toFixed(0) + 'px'); c.style.setProperty('--sy', (e.clientY - r.top).toFixed(0) + 'px');
   }, { passive: true });
 
-  /* ---------- the top bar is designed in front of you on load: a frame is drawn, the logo is placed and typed, the links are typed
-     bunched together and then spaced out, Log in is typed, the button is dragged out as a box, typed, rounded and filled ---------- */
+  /* ---------- the page is built in front of you (motion.js runs the jobs; this says which layer gets which) ----------
+     type = heading typed in Arial then switched to the real font, write = paragraph typed, draw = box dragged out then the layer appears */
+  if (!reduced) [
+    ['write', '.hero-lead,.learned-b,.prob-b,.num-cap,.st-b,.price-b,.blog .sec-h .body'],
+    ['draw', '.hero-cta .btn,.hero-ip,.hero-card,.panel.src,.panel.lbls,.panel.cp,.bd-c,.st-btn,.panel.wl,.plans>.pc,.posts>.post,.end-in .btn']
+  ].forEach(function (b) { $$(b[1]).forEach(function (el) { if (!el.dataset.build) el.dataset.build = b[0]; }); });
+
+  /* ---------- the top bar is designed on load: its frame is drawn, the logo is placed and typed, the links are typed bunched together
+     and then spaced out, Log in is typed, the button is dragged out as a box, typed, rounded and filled ---------- */
   (function () {
-    var bar = $('.nav-bar'), run = bar && !reduced && w.innerWidth >= 1100 && w.scrollY < 40 && w.LV && LV.chars;
+    var bar = $('.nav-bar'), run = bar && !reduced && w.innerWidth >= 1100 && w.scrollY < 40 && w.LV && LV.type;
     if (!run) return html.classList.add('nb-done');
     var logo = $('.nav-logo', bar), box = $('.nav-links', bar), links = $$('a', box), login = $('.nav-login', bar), btn = $('.nav-start', bar);
     var ov = d.createElement('div'); ov.className = 'nb-ov'; ov.setAttribute('aria-hidden', 'true');
-    ov.innerHTML = '<div class="lv-sel"><b>Navbar</b></div><div class="lv-sel"><i></i><i></i><i></i><i></i></div><div class="lv-chip"></div>' +
+    ov.innerHTML = '<div class="lv-sel"><i></i><i></i><i></i><i></i><b></b></div><div class="lv-sel"><i></i><i></i><i></i><i></i></div><div class="lv-chip"></div>' +
       '<span class="lv-cur nb-cur"><svg viewBox="0 0 20 22" width="20" height="22"><path d="M4 3.2 C4 2.2 5.1 1.6 6 2.2 L17.2 9.9 C18.1 10.5 17.8 11.9 16.7 12.1 L11.6 13 L9.2 17.6 C8.7 18.6 7.2 18.4 7 17.3 Z"/></svg></span>';
     d.body.appendChild(ov);
     var frame = ov.children[0], rect = ov.children[1], chip = ov.children[2], cur = ov.children[3], timers = [], t = 0, dead = false;
     var R = function (el) { return el.getBoundingClientRect(); };
     function go(x, y, ms) { cur.style.transition = 'opacity .25s,transform ' + ms + 'ms cubic-bezier(.45,0,.2,1)'; cur.style.transform = 'translate(' + x.toFixed(0) + 'px,' + y.toFixed(0) + 'px)'; }
     function put(el, x, y, wd, h) { el.style.transform = 'translate(' + x.toFixed(0) + 'px,' + y.toFixed(0) + 'px)'; el.style.width = wd + 'px'; el.style.height = h + 'px'; }
-    function type(el, per) { var c = LV.chars(el), n = 0; el.style.opacity = 1; (function k() { var x = c.c[n++]; if (dead || !x) return c.undo(); x.style.opacity = ''; timers.push(setTimeout(k, per)); })(); }
-    function say(text, x, y) { chip.textContent = ''; chip.insertAdjacentHTML('beforeend', text); chip.style.transform = 'translate(' + x.toFixed(0) + 'px,' + y.toFixed(0) + 'px)'; chip.classList.add('on'); }
+    function type(el, per) { el.style.opacity = 1; LV.type(el, per); }
+    function say(html_, el) {                                         /* the tool panel: always 10px under the layer it changes, cursor on its value */
+      var r = R(el), x = r.left + r.width / 2 - 34, y = r.bottom + 10;
+      chip.innerHTML = html_; chip.style.transform = 'translate(' + x.toFixed(0) + 'px,' + y.toFixed(0) + 'px)'; chip.classList.add('on');
+      go(x + 62, y + 12, 300);
+    }
     function step(wait, fn) { t += wait; timers.push(setTimeout(function () { if (!dead) fn(); }, t)); }
     function end() {
       if (dead) return; dead = true;
@@ -239,41 +250,42 @@
     function bail() { if (w.scrollY > 40) end(); }                    /* scrolled away mid-build: finish at once */
     w.addEventListener('scroll', bail, { passive: true });
 
-    var B = R(bar), L = R(logo);
-    btn.classList.add('nb-ghost'); box.style.gap = '6px';                                            /* typed bunched together; spaced out afterwards */
+    var B = R(bar), L = R(logo), FY = B.top + 10, FH = B.height - 20;
+    btn.classList.add('nb-ghost'); box.style.gap = '6px';             /* links are typed bunched together; spaced out afterwards */
+    frame.lastChild.textContent = 'Navbar · ' + Math.round(B.width) + ' × ' + Math.round(FH);
     go(B.left - 30, B.bottom + 40, 0);
-    step(150, function () { cur.style.opacity = 1; go(B.left, B.top + 12, 350); });
-    step(380, function () {                                           /* draw the bar's frame, corner to corner */
+    step(120, function () { cur.style.opacity = 1; go(B.left, FY, 320); });
+    step(340, function () {                                           /* draw the bar's frame, corner to corner */
       cur.classList.add('down');
-      put(frame, B.left, B.top + 12, 0, 0); frame.getBoundingClientRect(); frame.classList.add('on');
-      put(frame, B.left, B.top + 12, B.width, B.height - 24); go(B.right, B.bottom - 12, 650);
+      put(frame, B.left, FY, 0, 0); frame.getBoundingClientRect(); frame.classList.add('on');
+      put(frame, B.left, FY, B.width, FH); go(B.right, FY + FH, 600);
     });
-    step(700, function () { cur.classList.remove('down'); go(L.left + 6, L.top + L.height / 2, 420); });
-    step(450, function () { logo.classList.add('nb-pop'); type(logo, 34); });
-    step(520, function () { var r = R(links[0]); go(r.left - 4, r.bottom - 2, 380); });
+    step(640, function () { cur.classList.remove('down'); go(L.left - 6, L.bottom + 4, 380); });
+    step(400, function () { logo.classList.add('nb-pop'); type(logo, 30); });
+    step(430, function () { var r = R(links[0]); go(r.left - 8, r.bottom + 4, 340); });
     links.forEach(function (a, i) {
-      step(i ? a.previousElementSibling.textContent.length * 24 + 110 : 400, function () { var r = R(a); go(r.left - 4, r.bottom - 2, 140); type(a, 24); });
+      step(i ? a.previousElementSibling.textContent.length * 20 + 190 : 360, function () { var r = R(a); go(r.left - 8, r.bottom + 4, 130); type(a, 20); });
     });
-    step(links[links.length - 1].textContent.length * 24 + 250, function () { var r = R(box); say('<span>Gap</span><b>6</b>', r.left + r.width / 2 - 26, r.bottom + 2); go(r.left + r.width / 2 + 8, r.bottom - 2, 260); });
-    step(420, function () { chip.lastChild.textContent = '32'; chip.classList.add('flip'); box.style.transition = 'gap .6s cubic-bezier(.22,1,.36,1)'; box.style.gap = ''; });
-    step(650, function () { chip.classList.remove('on', 'flip'); var r = R(login); go(r.left + 4, r.bottom - 6, 380); });
-    step(400, function () { type(login, 30); });
-    step(330, function () { var r = R(btn); go(r.left, r.top, 320); });
-    step(340, function () {                                           /* drag the button out as a box */
+    step(links[links.length - 1].textContent.length * 20 + 280, function () { say('<span>Gap</span><b>6</b>', box); });
+    step(400, function () { chip.lastChild.textContent = '32'; chip.classList.add('flip'); box.style.transition = 'gap .6s cubic-bezier(.22,1,.36,1)'; box.style.gap = ''; });
+    step(620, function () { chip.classList.remove('on', 'flip'); var r = R(login); go(r.left + 2, r.bottom - 2, 340); });
+    step(360, function () { type(login, 28); });
+    step(380, function () { var r = R(btn); go(r.left, r.top, 300); });
+    step(320, function () {                                           /* drag the button out as a box */
       var r = R(btn);
       cur.classList.add('down');
       put(rect, r.left, r.top, 0, 0); rect.getBoundingClientRect(); rect.classList.add('on');
-      rect.style.transitionDuration = '.25s,.45s,.45s'; put(rect, r.left, r.top, r.width, r.height); go(r.right, r.bottom, 450);
+      rect.style.transitionDuration = '.25s,.42s,.42s'; put(rect, r.left, r.top, r.width, r.height); go(r.right, r.bottom, 420);
     });
-    step(500, function () {
+    step(460, function () {
       cur.classList.remove('down'); rect.classList.remove('on');
       btn.style.transition = 'background-color .45s,color .3s,box-shadow .45s,border-radius .5s cubic-bezier(.22,1,.36,1)';
-      type(btn, 28);
+      type(btn, 26);
     });
-    step(420, function () { var r = R(btn); say('<span>Radius</span><b>6</b>', r.left - 20, r.bottom + 8); });
+    step(460, function () { say('<span>Radius</span><b>6</b>', btn); });
     step(380, function () { chip.lastChild.textContent = '999'; chip.classList.add('flip'); btn.style.setProperty('border-radius', '999px', 'important'); });
-    step(520, function () { chip.classList.remove('flip'); say('<span>Fill</span><u style="--k:#fff" class="sel"></u>', R(btn).left - 20, R(btn).bottom + 8); btn.classList.remove('nb-ghost'); btn.style.removeProperty('border-radius'); });
-    step(600, function () { chip.classList.remove('on'); frame.classList.remove('on'); cur.style.opacity = 0; go(B.right + 10, B.bottom + 50, 500); });
+    step(520, function () { chip.classList.remove('flip'); chip.innerHTML = '<span>Fill</span><u style="--k:#fff" class="sel"></u>'; btn.classList.remove('nb-ghost'); btn.style.removeProperty('border-radius'); });
+    step(620, function () { chip.classList.remove('on'); frame.classList.remove('on'); cur.style.opacity = 0; go(B.right + 10, B.bottom + 50, 500); });
     step(520, end);
   })();
 

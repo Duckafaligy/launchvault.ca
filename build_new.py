@@ -72,6 +72,9 @@ def nav_html(active=None):
             f'<a class="btn btn-primary btn-sm nav-cta-s" href="{CTA_HREF}">Start free</a>'
             f'<button class="nav-menu" type="button" aria-expanded="false" aria-controls="nav-card" aria-label="Open menu">{BURGER}</button></div>'
             f'<div class="nav-card" id="nav-card"><div class="nav-card-in"><nav class="nav-tabs" aria-label="Menu">{tabs}'
+            f'<a class="nav-feat" href="{BASE}blog/rezi/"><img src="/assets/logos/rezi.png" alt="" width="40" height="40" loading="lazy" decoding="async">'
+            f'<span><b>Rezi made $216,471 in October</b><small>It began as a free resume template on Reddit. Read the breakdown.</small></span>{ARROW}</a>'
+            f'<div class="nav-more"><a href="{BASE}blog/">All ten stories</a><a href="{BASE}blog/what-verified-means/">How we check</a><a href="{BASE}#faq">Questions</a></div>'
             f'<div class="nav-foot"><a href="{BASE}sign-in/">Log in</a><span>Ages 13 and up</span></div></nav></div></div></div></header>')
 
 
