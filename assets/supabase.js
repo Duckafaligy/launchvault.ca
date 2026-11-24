@@ -14,6 +14,8 @@ window.LVSync = (() => {
     const age = ls.get("lv-age"); if (age === "Under 13") return;            // never write anything for under 13
     const email = clerk.user.primaryEmailAddress && clerk.user.primaryEmailAddress.emailAddress;
     await sb.from("profiles").upsert({email, age_range: AGE[age] || null, email_prefs: ls.get("lv-prefs") || {new_story: true}});
+    // the birthday goes up on its own, so a database that doesn't have the column yet (migration 20261124120000) can't break the save above
+    const dob = ls.get("lv-dob"); if (/^\d{4}-\d\d-\d\d$/.test(dob || "")) { try { await sb.from("profiles").update({birthday: dob}).eq("user_id", clerk.user.id); } catch {} }
     const D = JSON.parse(document.getElementById("lvapp").textContent);
     const rows = D.checklists.map(c => { const t = ls.get(c.key) || []; const r = ls.get("lv-read-" + c.slug) || {};
       const sv = ls.get("lv-saved") || [], si = ls.get("lv-saved-items") || [], ck = ls.get("lv-check-" + c.slug) || {};

@@ -232,3 +232,8 @@ select.au-input option{color:#fff;background:#15151B}
 @keyframes au-pop{from{opacity:0;transform:scale(.5)}}
 @keyframes au-digit{from{transform:translateY(6px) scale(.9);opacity:.3}}
 @keyframes au-shake{20%{transform:translateX(-5px)}45%{transform:translateX(4px)}70%{transform:translateX(-2px)}100%{transform:none}}
+
+/* birthday step */
+#au-dob{color-scheme:dark}
+.au-dobhint{min-height:20px;margin:-4px 0 0;font-size:13px;line-height:20px;color:rgba(255,255,255,.64)}
+

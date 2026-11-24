@@ -516,12 +516,15 @@
   }
 
   // ---------- account ----------
-  const ageR = $$('input[name="age"]');
-  if (ageR.length) {
-    const cur = () => (ageR.find(r => r.checked) || {}).value || "";
-    ageR.forEach(r => { r.checked = r.value === ls.get("lv-age"); });
-    const note = () => { const a = cur(); $("[data-agenote]").textContent = !a ? "Set your age range so the right rules apply." : a === "21 or older" ? "LaunchVault is built for 15 to 20, but anyone is welcome to read." : ""; };
-    note(); ageR.forEach(r => r.addEventListener("change", () => { ls.set("lv-age", cur()); note(); toast(savedTo()); }));
+  const bd = $("#bday");
+  if (bd) {   // Settings > Profile > Birthday: same rule as the gate (assets/gate.js). The age range the rules read is re-derived from it.
+    const G = window.LVGate || {}, note = $("[data-agenote]"), NOTE = note.textContent;
+    if (G.today) bd.max = G.today();
+    bd.value = ls.get("lv-dob") || ""; if (!bd.value) note.textContent = "Add your birthday so the right rules apply. " + NOTE;
+    bd.addEventListener("change", () => { const v = bd.value; if (!v) return;
+      const r = G.rangeForDob ? G.rangeForDob(v) : null;
+      if (!r) { note.textContent = "LaunchVault is for ages 13 and up, so that date can't be saved."; bd.value = ls.get("lv-dob") || ""; return; }
+      ls.set("lv-dob", v); ls.set("lv-age", r); note.textContent = NOTE; toast(savedTo()); });
     // the stated monthly prices lead; yearly is the secondary line (and the other way round on the Yearly toggle)
     const bill = y => { $$("[data-bill]").forEach(b => b.setAttribute("aria-pressed", (b.dataset.bill === "y") === y));
       $('[data-pr="pro"]').textContent = y ? "$6.49" : "$7.99"; $('[data-pr="developer"]').textContent = y ? "$23.99" : "$29.99";

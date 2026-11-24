@@ -2,7 +2,7 @@
    A custom form that drives ClerkJS directly (same production instance and loader as assets/auth.js):
      Google / GitHub / Apple / Discord   signIn.authenticateWithRedirect -> CALLBACK -> WELCOME
      email code (no passwords)           signIn / signUp create -> prepare -> attempt -> setActive
-   After sign-in: the age question if this device has no answer yet ("lv-age" / "lv-age-block", the SAME keys and values as
+   After sign-in: the birthday question if this device has no answer yet ("lv-dob" + "lv-age" / "lv-age-block", the SAME keys and values as
    assets/gate.js, so the app's gate agrees), "You're in." for new accounts, then `next` (default /app/).
    Anything the custom form cannot finish (2-step accounts, extra sign-up fields) falls back to Clerk's own form in the card.
    LV_PK is the Clerk PUBLISHABLE key: public by design. Never put a secret key (sk_...) in this repo.
@@ -110,7 +110,7 @@
     mutate(); step = root.dataset.step; setTitle();   // CSS shows the step that matches data-step and plays its slide-in
     if (move) { if (hAnim) hAnim.cancel(); hAnim = card.animate({height: [h0 + "px", card.offsetHeight + "px"]}, {duration: 460, easing: EASE}); }
     const h = focus && $(`.au-step[data-step="${step}"] h1`); if (h) h.focus({preventScroll: true});
-    if (step === "age") placeHl();
+    if (step === "age") syncAge();
   };
   const show = name => name === step ? Promise.resolve() : morph(() => { root.dataset.step = name; });
   const busy = (b, on) => { b.classList.toggle("is-loading", on); b.setAttribute("aria-busy", on); };
@@ -272,37 +272,26 @@
   });
   $("#au-change").addEventListener("click", async () => { clearInterval(timer); pending = null; await show("form"); email.focus({preventScroll: true}); email.select(); });
 
-  /* ---------- age: three choice cards (a highlight slides to the picked one), then a compact birth-year picker.
-     The stored value is worked out exactly as assets/gate.js does: from the birth year, by the YOUNGEST the person could be. ---------- */
-  const rangeFor = (year, now = new Date().getFullYear()) => { const a = now - year - 1; return a < 13 ? null : a <= 15 ? RANGES[0] : a <= 17 ? RANGES[1] : a <= 20 ? RANGES[2] : RANGES[3]; };
-  if (local) [[2026 - 13, null], [2026 - 14, RANGES[0]], [2026 - 17, RANGES[1]], [2026 - 18, RANGES[1]], [2026 - 19, RANGES[2]], [2026 - 22, RANGES[3]]]
-    .forEach(([y, r]) => console.assert(rangeFor(y, 2026) === r, "rangeFor failed for", y));
-  const ageForm = $("#au-age-form"), ageBtn = $(".au-btn", ageForm), hl = $(".au-age-hl"), yearF = $("#au-year-f"), year = $("#au-year");
-  const band = () => new FormData(ageForm).get("age") || "";
-  const fillYears = b => {   // only the years that fit the picked card: 13 to 17 = five years, 18 or older = the rest
-    const now = new Date().getFullYear(), from = b === "teen" ? now - 14 : now - 19, to = b === "teen" ? now - 18 : now - 101;
-    year.length = 1; for (let y = from; y >= to; y--) year.add(new Option(y, y));
-    year.value = "";
-  };
-  const syncAge = () => { const b = band(); ageBtn.disabled = !b || (b !== "u13" && !year.value); year.classList.toggle("is-empty", !year.value); };
-  function placeHl() {
-    const r = $(".au-age input:checked"); syncAge(); if (!r) return;
-    const l = r.closest(".au-age"), first = hl.style.opacity !== "1";
-    if (first) hl.style.transition = "none";
-    hl.style.height = l.offsetHeight + "px"; hl.style.transform = `translateY(${l.offsetTop}px)`; hl.style.opacity = "1";
-    if (first) requestAnimationFrame(() => { hl.style.transition = ""; });
-  }
-  ageForm.addEventListener("change", e => {
-    say("age", "");
-    if (e.target.name === "age") { const b = band(); yearF.hidden = b === "u13"; if (b !== "u13") fillYears(b); }
-    placeHl();
-  });
-  addEventListener("resize", () => { if (step === "age") placeHl(); });
+  /* ---------- age: one birthday field. The stored values are worked out exactly as assets/gate.js does:
+     the birthday ("lv-dob") and the age range it gives ("lv-age"). Under 13 closes the door and stores nothing. ---------- */
+  const ageOf = (dob, now = new Date()) => { const [y, m, d] = String(dob).split("-").map(Number); let a = now.getFullYear() - y;
+    if (now.getMonth() + 1 < m || (now.getMonth() + 1 === m && now.getDate() < d)) a--; return a; };
+  const okDob = (v, now = new Date()) => { const m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(v || ""); if (!m) return false; const t = new Date(+m[1], +m[2] - 1, +m[3]);
+    return t.getMonth() === +m[2] - 1 && t <= now && +m[1] >= now.getFullYear() - 110; };
+  const rangeForDob = (dob, now = new Date()) => { if (!okDob(dob, now)) return null; const a = ageOf(dob, now); return a < 13 ? null : a <= 15 ? RANGES[0] : a <= 17 ? RANGES[1] : a <= 20 ? RANGES[2] : RANGES[3]; };
+  const today = () => { const n = new Date(); return n.getFullYear() + "-" + String(n.getMonth() + 1).padStart(2, "0") + "-" + String(n.getDate()).padStart(2, "0"); };
+  if (local) [["2013-11-25", null], ["2013-11-24", RANGES[0]], ["2010-11-25", RANGES[0]], ["2008-11-24", RANGES[2]], ["2000-01-01", RANGES[3]], ["2026-02-30", null]]
+    .forEach(([d, r]) => console.assert(rangeForDob(d, new Date(2026, 10, 24)) === r, "rangeForDob failed for", d));
+  const ageForm = $("#au-age-form"), ageBtn = $(".au-btn", ageForm), dob = $("#au-dob"), dobHint = $("#au-dob-hint");
+  dob.max = today();
+  const syncAge = () => { const ok = okDob(dob.value), a = ok ? ageOf(dob.value) : 0; ageBtn.disabled = !ok;
+    dobHint.textContent = !ok || a < 13 ? "" : a < 18 ? "Free is yours. A parent pays for Pro or Developer." : "Everything is open, and you pay for your own plan."; };
+  ageForm.addEventListener("input", () => { say("age", ""); syncAge(); });
   ageForm.addEventListener("submit", e => {
-    e.preventDefault(); const b = band(); if (!b || isBusy(ageBtn) || ageBtn.disabled) return;
-    const r = b === "u13" ? null : rangeFor(+year.value);
+    e.preventDefault(); if (isBusy(ageBtn) || ageBtn.disabled || !okDob(dob.value)) return;
+    const r = rangeForDob(dob.value);
     if (!r) return closeDoor();
-    if (persist && !put(KEY, r)) return say("age", "LaunchVault needs to save your age range on this device, and this browser is blocking storage. Turn off private browsing or allow site data, then try again.");
+    if (persist && !(put("lv-dob", dob.value) && put(KEY, r))) return say("age", "LaunchVault needs to save your birthday on this device, and this browser is blocking storage. Turn off private browsing or allow site data, then try again.");
     return fresh ? show("welcome") : leave(ageBtn);
   });
 
@@ -346,7 +335,7 @@
     if (demo === "signin") tag("oauth_google");
     if (demo === "signup") email.focus({preventScroll: true});
     if (demo === "code") { $("#au-sent-to").textContent = "you@example.com"; codeIn.value = "482"; paint(); countdown(24); codeIn.focus({preventScroll: true}); }
-    if (demo === "age") { $$(".au-age input")[1].checked = true; yearF.hidden = false; fillYears("teen"); placeHl(); }
+    if (demo === "age") { dob.value = "2010-06-15"; syncAge(); }
   };
   (async () => {
     paint(); setTitle();

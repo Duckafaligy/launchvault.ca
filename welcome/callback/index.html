@@ -26,9 +26,9 @@
 <link rel="stylesheet" href="/assets/new/base.css?v=7347e157">
 <link rel="stylesheet" href="/assets/new/chrome.css?v=85031796">
 <link rel="stylesheet" href="/assets/new/motion.css?v=511b9477">
-<link rel="stylesheet" href="/assets/new/auth.css?v=90fa4d19">
+<link rel="stylesheet" href="/assets/new/auth.css?v=1037046a">
 <script defer src="/assets/new/motion.js?v=9b8702be"></script>
-<script defer src="/assets/new/auth.js?v=1b54f555"></script>
+<script defer src="/assets/new/auth.js?v=57081f29"></script>
 </head>
 <body class="auth-page" data-bg="off">
 <a class="skip" href="#main">Skip to content</a>
@@ -118,21 +118,15 @@
       <!-- Age -->
       <section class="au-step" data-step="age" aria-labelledby="au-h-age">
         <div class="au-head">
-          <h1 id="au-h-age" tabindex="-1">How old are you?</h1>
+          <h1 id="au-h-age" tabindex="-1">When's your birthday?</h1>
           <p>One quick question before you start.</p>
         </div>
         <form class="au-form" id="au-age-form" novalidate>
-          <div class="au-ages" role="radiogroup" aria-labelledby="au-h-age">
-            <span class="au-age-hl" aria-hidden="true"></span>
-            <label class="au-age"><input type="radio" name="age" value="u13"><span class="au-radio"></span><span class="au-age-t"><b>Under 13</b><span>The app stays closed for now. The blog is open to everyone.</span></span></label>
-            <label class="au-age"><input type="radio" name="age" value="teen"><span class="au-radio"></span><span class="au-age-t"><b>13 to 17</b><span>Free is yours. A parent pays for Pro or Developer.</span></span></label>
-            <label class="au-age"><input type="radio" name="age" value="adult"><span class="au-radio"></span><span class="au-age-t"><b>18 or older</b><span>Everything is open, and you pay for your own plan.</span></span></label>
+          <div class="au-field" id="au-dob-f">
+            <div class="au-label"><label for="au-dob">Birthday</label><span>Private, never shown to members</span></div>
+            <input class="au-input" id="au-dob" name="dob" type="date" autocomplete="bday" required>
           </div>
-          <!-- the gate (assets/gate.js) works from a birth year; this compact picker gives it one without the long list -->
-          <div class="au-field au-year" id="au-year-f" hidden>
-            <div class="au-label"><label for="au-year">What year were you born?</label><span>We keep an age range, never the year</span></div>
-            <select class="au-input" id="au-year" name="year" autocomplete="bday-year"><option value="">Pick a year</option></select>
-          </div>
+          <p class="au-dobhint" id="au-dob-hint" aria-live="polite"></p>
           <p class="au-msg" id="au-msg-age" role="alert"></p>
           <button class="btn btn-primary au-btn" type="submit" disabled>Continue<svg class="arrow" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="arrow-l" d="M1.5 7h6.8"/><path class="arrow-c" d="M4.5 3l4 4-4 4"/></svg></button>
           <p class="au-small">We only use this to keep the app right for you. It is never shown to anyone.</p>

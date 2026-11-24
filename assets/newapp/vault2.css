@@ -811,3 +811,10 @@
   .nv .pp-pv .pp-pvr{margin-top:14px;padding:14px;border-radius:12px;background:rgba(255,255,255,.04)}
 }
 
+/* birthday: the gate's one field, and the Settings field */
+.agate .agd{display:grid;gap:8px;margin-top:24px;font:600 14px/20px var(--fd);color:#fff}
+.agate .agd input{width:100%;max-width:280px;height:52px;padding:0 16px;border:0;border-radius:12px;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16);font:500 17px/1 var(--fd);color:#fff;color-scheme:dark}
+.agate .agd input:focus{outline:0;box-shadow:inset 0 0 0 1.5px var(--hl,#9DB8FF)}
+.nv .acard .bday{padding:16px 0 4px;border-top:1px solid var(--line)}
+.nv .acard .bday input{max-width:220px;color-scheme:dark}
+

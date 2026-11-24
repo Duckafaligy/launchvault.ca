@@ -13,7 +13,7 @@
     <div class="prose">
       <div class="lsum"><b>The short version</b><ul>
         <li>Right now nothing you do on LaunchVault is sent to us. Your ticks, progress and quiz answers stay on your device.</li>
-        <li>When accounts open, we keep your email, age range, progress and quiz answers, in Canada.</li>
+        <li>When accounts open, we keep your email, birthday, progress and quiz answers, in Canada.</li>
         <li>If you're under 13, the app stays closed. We keep nothing about you, only a marker on your device that keeps it closed.</li>
         <li>No ads, no trackers, no selling your data. You can download or delete your data at any time.</li></ul></div>
 
@@ -24,19 +24,19 @@
       <h2 id="now">Right now (preview)</h2>
       <p>LaunchVault is a preview. Accounts are optional and there are no payments. That means:</p>
       <ul>
-        <li>Without an account, your progress, checklist ticks, age range and quiz answers are saved only in your browser's storage on this device.</li>
+        <li>Without an account, your progress, checklist ticks, birthday and quiz answers are saved only in your browser's storage on this device.</li>
         <li>If you make an account, what's listed below is saved with it so it follows you to other devices.</li>
         <li>If you send a "Report a mistake" note or answer the questions at the end of a story, that text is sent to us.</li>
         <li>We run no analytics and no ad trackers.</li>
       </ul>
 
       <h2 id="collect">What we collect</h2>
-      <p><b>On your device (now):</b> what you do in the app, like checklist ticks, how far you've read each story, your age range, your quiz answers and path, your email-preference switches, and the date you shared the parent link. The full list of storage keys is in the <a href="/legal/cookies/">cookie policy</a>.</p>
+      <p><b>On your device (now):</b> what you do in the app, like checklist ticks, how far you've read each story, your birthday and the age range worked out from it, your quiz answers and path, your email-preference switches, and the date you shared the parent link. The full list of storage keys is in the <a href="/legal/cookies/">cookie policy</a>.</p>
       <p><b>When you make an account:</b></p>
       <ul>
         <li><b>Your email address.</b> Sign-in uses Clerk. You can continue with Google, GitHub, Apple or Discord, or get a one-time code by email. We keep your email address and the first and last name you give at sign-up. We never get your photo or contacts.</li>
         <li><b>Your display name</b>, if you use the community: by default your first name and last initial (for example "Maya K"). Other members can see it, including members under 18. You can change it in Settings.</li>
-        <li><b>Your age range</b> (13 to 15, 16 to 17, 18 to 20, or 21 or older). The app asks your birth year once to work this out. The year itself is never saved, and we never ask for your birthday.</li>
+        <li><b>Your birthday.</b> The app asks for it once. We use it to work out your age and your age range (13 to 15, 16 to 17, 18 to 20, or 21 or older). It stays private: other members never see your birthday or your age.</li>
         <li><b>Your progress:</b> which checklist items you ticked and how far you read each story. Progress you save to an account is stored with Supabase.</li>
         <li><b>Your quiz answers</b> and the path they built.</li>
         <li><b>Your email preferences</b>, like the "Weekly breakdown" email. Every email is off until you switch it on.</li>
@@ -49,7 +49,7 @@
       <ul>
         <li><b>To run your account:</b> to sign you in and keep your progress the same on every device.</li>
         <li><b>To show you the right path:</b> your quiz answers pick which stories and checklists come first.</li>
-        <li><b>To apply the age rules:</b> your age range decides whether a parent needs to pay for a plan.</li>
+        <li><b>To apply the age rules:</b> your birthday tells us your age, which decides whether a parent needs to pay for a plan.</li>
         <li><b>To email you</b> only what you switched on. Every email will have an unsubscribe link, as Canada's anti-spam law (CASL) requires.</li>
         <li><b>To keep the site safe and working:</b> basic server logs help us stop abuse and fix errors.</li>
       </ul>
@@ -57,7 +57,7 @@
 
       <h2 id="where">Where it's stored</h2>
       <ul>
-        <li><b>Supabase</b> holds our database (email, age range, progress, quiz answers, email preferences), in its Canada region (ca-central-1, Montreal).</li>
+        <li><b>Supabase</b> holds our database (email, birthday, age range, progress, quiz answers, email preferences), in its Canada region (ca-central-1, Montreal).</li>
         <li><b>Clerk</b> runs sign-in. It is based in the United States and stores sign-in details there.</li>
         <li><b>Vercel</b> hosts the website. It serves pages from data centres around the world, so request logs may be handled outside Canada.</li>
         <li><b>Google Fonts</b> serves our fonts.</li>
@@ -76,7 +76,7 @@
 
       <h2 id="minors">Under 18 and parents</h2>
       <ul>
-        <li><b>Under 13:</b> you can read the public site, but we don't store anything about you. The app asks your birth year the first time you open it. If the year means you could be under 13, the app stays closed, clears anything it saved on your device and never sends anything to our database. It keeps one marker on your device (<code>lv-age-block</code>, for 12 months) so the app stays closed; the marker doesn't hold your birth year. If we learn we have information from someone under 13, we delete it.</li>
+        <li><b>Under 13:</b> you can read the public site, but we don't store anything about you. The app asks your birthday the first time you open it. If it shows you are under 13, the app stays closed, clears anything it saved on your device and never sends anything to our database. It keeps one marker on your device (<code>lv-age-block</code>, for 12 months) so the app stays closed; the marker doesn't hold your birthday. If we learn we have information from someone under 13, we delete it.</li>
         <li><b>13 to 17:</b> you can use LaunchVault and make an account (when accounts open). A paid plan needs a parent or guardian to pay.</li>
         <li><b>Parents</b> can ask to see or delete their child's data at any time. Write to us at the address under <a href="#contact">Contact</a>.</li>
       </ul>
@@ -102,7 +102,7 @@
       <ul>
         <li><b>Download your data.</b> Right now: open <a href="/app/account/">Account</a> in the app and choose "Download your data". It saves everything on this device as a file. With an account, ask us and we'll send what we hold.</li>
         <li><b>Delete your data.</b> Right now: "Delete your data" on the same Account page clears everything LaunchVault saved on this device. With an account, delete it from Account or ask us.</li>
-        <li><b>Correct your data</b>, for example your email or age range.</li>
+        <li><b>Correct your data</b>, for example your email or birthday.</li>
         <li><b>Withdraw consent</b>, for example turn off emails or Preferences storage.</li>
       </ul>
       <p>We'll reply within 30 days, and we may need to check it's really you first. If you're not happy with our answer, you can complain to the <a href="https://www.priv.gc.ca/" rel="noopener">Office of the Privacy Commissioner of Canada</a>.</p>
