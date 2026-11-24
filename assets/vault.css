@@ -65,6 +65,7 @@ body{background:#07070A url(/assets/app-glow.jpg) center/cover fixed no-repeat;c
   .si{width:48px;height:44px;padding:0}
   .side .plan{display:none}
 }
+.youlinks{display:none}
 @media (max-width:720px){
   .top{padding:0 8px 0 16px}
   .pg{padding:12px 16px 120px}
@@ -74,6 +75,10 @@ body{background:#07070A url(/assets/app-glow.jpg) center/cover fixed no-repeat;c
   .tabs a{border-radius:16px;color:var(--faint);min-height:52px}
   .tabs a[aria-current=page]{background:rgba(47,107,255,.18);color:#fff}
   .tabs a[aria-current=page] svg{color:var(--hl)}
+  .tabs{grid-template-columns:repeat(5,1fr)}
+  .top .macct{display:none}   /* Ask is a tab on phones */
+  .youlinks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 4px}
+  .youlinks a{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:14px;background:var(--glass);box-shadow:var(--glass-edge);color:#fff;font:600 14px var(--fd)}
 }
 
 /* avatar: Paper gradient (a photo, when set, covers it) */

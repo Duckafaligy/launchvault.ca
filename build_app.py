@@ -252,8 +252,10 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
     soon = "".join(f'<a class="si co soon" href="{byslug[s]["href"]}"><img class="lgo" src="{byslug[s]["logo"]}" alt="" width="16" height="16" loading="lazy"><span class="t">{esc(byslug[s]["name"])}</span><span class="cnt">{"Stale" if byslug[s]["stale"] else "Soon"}</span></a>'
                    for s in [e["slug"] for e in E if e["status"] == "soon"][:4])
     wk = f'<a class="si week" href="{week["href"]}"{cur("story-" + week["slug"])}><img class="lgo" src="{week["logo"]}" alt="" width="16" height="16"><span class="t">{esc(week["name"])}</span><span class="cnt pc" data-pct="{week["slug"]}"></span></a>'
-    SHORT = {"ck": "Lists"}   # six tabs share a 360 px phone: "Checklists" can't fit at a readable size, so the tab says Lists (full name for screen readers)
-    tabs = "".join(f'<a href="{h}"{cur(k)}{f" aria-label=\"{t}\"" if k in SHORT else ""}>{ic(I[k], 22)}<span>{SHORT.get(k, t)}</span></a>' for k, h, t, _ in nav if k != "ask")   # six tabs (Ask LaunchVault is the sparkle icon in the phone header); Account is the person icon in the header on phones
+    # phone: five tabs like Paper (owner 2026-11-23). Saved, Community and Checklists live under You (account page links) and Path
+    ton = "lib" if active.startswith("story") else {"saved": "acct", "chat": "acct", "ck": "path"}.get(active, active)
+    tabs = "".join(f'<a href="{h}"{" aria-current=\"page\"" if k == ton else ""}>{ic(I[i], 22)}<span>{t}</span></a>'
+                   for k, i, h, t in [("home", "home", "/app/", "Home"), ("lib", "lib", "/app/library/", "Library"), ("path", "path", "/app/path/", "Path"), ("ask", "ask", "/app/assistant/", "Ask"), ("acct", "user", "/app/account/", "You")])
     ttl = (" ".join(f'<a href="{h}">{esc(t)}</a><span class="sep">/</span>' for h, t in crumbs[:-1]) + f'<span>{esc(crumbs[-1][1])}</span>') if crumbs else f"<span>{esc(title)}</span>"
     return (head(title + " · LaunchVault", desc, ('\n<link rel="stylesheet" href="/assets/chart-dark.css">' if "chart.js" in scripts else "") + ('\n<link rel="stylesheet" href="/assets/community-dark.css">' if "community.js" in scripts else "") + ('\n<link rel="stylesheet" href="/assets/assistant-dark.css">' if "assistant.js" in scripts else ""), og_slug) + f'''<body{' class="has-back"' if crumbs else ""}>
 <a class="skip" href="#main">Skip to content</a>
