@@ -110,8 +110,19 @@ a.card:focus-visible{border-radius:var(--r)}
 .pin:hover::after,.pin:focus-visible::after{opacity:1;transform:translate(-50%,0)}
 .js .pin:not(.in){opacity:0}
 .pin.pop{animation:lv-pin-pop .22s var(--spring) both}
-.pin.pop img{animation:lv-pin-pop .32s var(--spring) both}
-.pin.typing{padding-right:13px}
+.pin img{transition:width .32s var(--spring),margin .32s var(--out),transform .42s var(--spring),opacity .2s}
+.pin.typing{padding:0 13px 0 15px}
+.pin.typing img{width:0;margin-right:-9px;opacity:0;transform:scale(0)}   /* the logo pops in last, once the words are typed */
+.lv-cur{position:absolute;z-index:6;width:0;height:0;pointer-events:none}
+.lv-cur svg{position:absolute;left:-2px;top:-2px;max-width:none;fill:var(--c);stroke:var(--c);stroke-width:2.4;stroke-linejoin:round;filter:drop-shadow(0 4px 8px rgba(0,0,0,.45))}
+.lv-cur i{position:absolute;left:-13px;top:-13px;width:26px;height:26px;border-radius:50%;background:color-mix(in srgb,var(--c) 22%,transparent);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--c) 55%,transparent);opacity:0}
+.pin-cur{opacity:0;transform:translate(var(--fx,110px),84px);transition:transform .54s var(--out),opacity .22s}
+.pin-cur.go{opacity:1;transform:none}
+.pin-cur.out{opacity:0;transform:translate(calc(var(--fx,110px)*.45),38px);transition:transform .55s cubic-bezier(.5,0,.8,.5),opacity .35s .15s}
+.pin-cur.click i{animation:lv-cur-ring .5s var(--out) both}
+.pin-cur.click svg{animation:lv-cur-press .28s var(--out)}
+@keyframes lv-cur-ring{0%{opacity:0;transform:scale(.3)}30%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
+@keyframes lv-cur-press{40%{transform:scale(.82)}}
 .pin.typing b{color:var(--night)}
 .pin-caret{display:inline-block;width:2px;height:15px;margin-left:1px;vertical-align:-2px;background:var(--night);animation:lv-caret .7s steps(1) infinite}
 .pin.lit b{animation:lv-pin-lit 1s var(--out) both}

@@ -547,9 +547,9 @@
   .hjs .how-row:not(.in) .how-i{opacity:0;transform:translateX(70px)}
 
   /* cursor demos: glide in on a curve, click, the card reacts, rest, repeat. Paused until the card is on screen (.play) */
-  .hjs [data-demo] :is(.dc,.dc-y,.dc-ring,.rx),.hjs .src-bars i{animation-duration:6s;animation-timing-function:var(--out);animation-iteration-count:infinite;animation-delay:var(--dd,0s);animation-play-state:paused}
+  .hjs [data-demo] :is(.dc,.dc-y,.dc-ring,.rx),.hjs .src-bars i{animation-duration:4.2s;animation-timing-function:var(--out);animation-iteration-count:infinite;animation-delay:var(--dd,0s);animation-play-state:paused}
   .hjs [data-demo].play :is(.dc,.dc-y,.dc-ring,.rx),.hjs .src-bars.play i{animation-play-state:running}
-  .bd-2{--dd:-1.4s}.bd-3{--dd:-2.9s}.bd-4{--dd:-4.3s}
+  .bd-2{--dd:-1s}.bd-3{--dd:-2s}.bd-4{--dd:-3s}
   .hjs [data-demo] .dc{animation-name:dc-x}
   .hjs [data-demo] .dc-y{animation-name:dc-y;animation-timing-function:cubic-bezier(.5,0,.2,1)}
   .hjs [data-demo] .dc-ring{animation-name:dc-ring}
@@ -558,9 +558,9 @@
   .hjs .rx-row{animation-name:rx-row}
   .hjs .rx-dot{animation-name:rx-dot}
   .hjs .rx-tick{animation-name:rx-tick}
-  .hjs .rx-tick>svg{animation:rx-check 6s var(--out) infinite var(--dd,0s)}
-  .hjs .rx-strike>span{animation:rx-strike 6s var(--out) infinite var(--dd,0s)}
-  .hjs .src-bars i{animation-name:bar-rise;animation-duration:4.4s}
+  .hjs .rx-tick>svg{animation:rx-check 4.2s var(--out) infinite var(--dd,0s)}
+  .hjs .rx-strike>span{animation:rx-strike 4.2s var(--out) infinite var(--dd,0s)}
+  .hjs .src-bars i{animation-name:bar-rise;animation-duration:3.2s}
   .hjs .src-bars i+i{--dd:.14s}.hjs .src-bars i+i+i{--dd:.28s}
   @keyframes dc-x{0%{opacity:0;transform:translateX(96px)}7%{opacity:1}30%,90%{opacity:1;transform:none}100%{opacity:0;transform:translateX(96px)}}
   @keyframes dc-y{0%{transform:translateY(54px)}30%{transform:none}33%{transform:scale(.84)}37%,90%{transform:none}100%{transform:translateY(54px)}}
@@ -583,3 +583,25 @@
 .hero-ip .scr-home{opacity:1!important;visibility:visible!important;transform:none!important}
 /* the pre-reveal slide (70px to the right) must not widen the page */
 @media (min-width:720px){.how-row{overflow-x:clip}}
+
+/* ---------- a cursor drags the highlight across "learned from someone." ---------- */
+@media (prefers-reduced-motion:no-preference){
+  .hjs .hl-box{position:relative;isolation:isolate;background:none}
+  .hjs .hl-box::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:rgba(255,77,31,.22);clip-path:inset(0 100% 0 0 round 10px);transition:clip-path .9s cubic-bezier(.6,0,.2,1) .75s}
+  .hjs .in .hl-box::before{clip-path:inset(0 0 0 0 round 10px)}
+  .sel-cur{left:0;top:64%;opacity:0;--c:#FF4D1F}
+  .hjs .in .sel-cur{animation:sel-cur 2.4s both}
+  @keyframes sel-cur{
+    0%{left:-70px;top:150%;opacity:0;animation-timing-function:var(--out)}
+    8%{opacity:1}
+    27%,31.25%{left:0;top:64%;opacity:1;animation-timing-function:cubic-bezier(.6,0,.2,1)}
+    68.75%,80%{left:100%;top:64%;opacity:1;animation-timing-function:cubic-bezier(.5,0,.8,.5)}
+    100%{left:calc(100% + 30px);top:140%;opacity:0}
+  }
+}
+/* glass cards and panels: a soft light follows the pointer */
+@media (hover:hover) and (pointer:fine){
+  .hjs :is(.card,.panel)::after{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .4s var(--out);
+    background:radial-gradient(260px circle at var(--sx,50%) var(--sy,50%),rgba(255,255,255,.1),rgba(255,255,255,0) 70%)}
+  .hjs :is(.card,.panel):hover::after{opacity:1}
+}

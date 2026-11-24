@@ -174,6 +174,43 @@
     });
   });
 
+  /* ---------- scroll-linked: phones drift at their own speeds, panels and the big number grow into place ----------
+     Uses the separate translate / scale properties, so the reveal transforms keep working underneath. */
+  if (!reduced && 'translate' in d.body.style) {
+    var fx = [];
+    [['.how-row .how-i:nth-child(odd)', 'par', 0.035], ['.how-row .how-i:nth-child(even)', 'par', -0.025], ['.post-f', 'par', 0.035], ['.closer-t', 'par', 0.06],
+     ['.h-num', 'zoom', 0.74], ['.panel.cp,.panel.wl,.panel.src,.panel.lbls,.endcta-in,.bd', 'zoom', 0.93]].forEach(function (c) {
+      $$(c[0]).forEach(function (el) { fx.push({ el: el, kind: c[1], k: c[2], on: false, dy: 0 }); });
+    });
+    var byEl = new Map(fx.map(function (f) { return [f.el, f]; }));
+    watch(fx.map(function (f) { return f.el; }), function (el, on) { byEl.get(el).on = on; if (on) onScroll(); }, false, '120px');
+    jobs.push(function () {
+      var vh = w.innerHeight, wide = w.innerWidth >= 720;
+      fx.forEach(function (f) {
+        if (!f.on) return;
+        var r = f.el.getBoundingClientRect(), c = r.top + r.height / 2 - f.dy;
+        if (f.kind === 'par') {
+          f.dy = wide ? clamp((c - vh / 2) * f.k, -60, 60) : 0;      /* phones swipe sideways on small screens: no drift there */
+          f.el.style.translate = f.dy ? '0 ' + f.dy.toFixed(1) + 'px' : '';
+        } else {
+          var p = clamp((vh + f.el.offsetHeight * 0.3 - c) / (vh * 0.7), 0, 1), e = 1 - Math.pow(1 - p, 3);
+          f.el.style.scale = e >= 1 ? '' : (f.k + (1 - f.k) * e).toFixed(4);
+        }
+      });
+    });
+    onScroll();
+  }
+
+  /* ---------- the highlight is dragged on by a cursor; glass cards catch the pointer's light ---------- */
+  var hl = $('#credits .hl-box');
+  if (hl && !reduced) hl.insertAdjacentHTML('beforeend', '<span class="lv-cur sel-cur" aria-hidden="true"><svg viewBox="0 0 20 22" width="20" height="22"><path d="M4 3.2 C4 2.2 5.1 1.6 6 2.2 L17.2 9.9 C18.1 10.5 17.8 11.9 16.7 12.1 L11.6 13 L9.2 17.6 C8.7 18.6 7.2 18.4 7 17.3 Z"/></svg></span>');
+  if (fine) d.addEventListener('pointermove', function (e) {
+    var c = e.target.closest && e.target.closest('.card,.panel');
+    if (!c) return;
+    var r = c.getBoundingClientRect();
+    c.style.setProperty('--sx', (e.clientX - r.left).toFixed(0) + 'px'); c.style.setProperty('--sy', (e.clientY - r.top).toFixed(0) + 'px');
+  }, { passive: true });
+
   /* ---------- how it works on phones: the row swipes; dots follow, arrow keys work once it is focusable ---------- */
   var row = $('.how-row'), dots = $$('.how-dots i');
   if (row) {
@@ -198,7 +235,7 @@
   if (!vids.length) return;
   var still = window.matchMedia('(prefers-reduced-motion: reduce)'), seen = new WeakSet();
   function set(v) {
-    if (!still.matches && seen.has(v) && !document.hidden) { var p = v.play(); if (p) p.catch(function () {}); }
+    if (!still.matches && seen.has(v) && !document.hidden) { v.playbackRate = 1.35; var p = v.play(); if (p) p.catch(function () {}); }
     else if (!v.paused) v.pause();
   }
   function all() { vids.forEach(function (v) { if (still.matches) { v.removeAttribute('autoplay'); v.pause(); if (v.currentTime) v.load(); } set(v); }); }

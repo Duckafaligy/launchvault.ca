@@ -86,29 +86,51 @@
       post: b.nextSibling && b.nextSibling.nodeType === 3 ? b.nextSibling.data : '' };   /* optional words after the domain ("… rules") */
     b.insertAdjacentHTML('beforeend', ARROW_NE);
   }
+  /* a coloured cursor glides to the pin's corner and clicks; the bubble pops out of the click, the words type, the logo pops in last */
+  var CUR = '<svg viewBox="0 0 20 22" width="20" height="22"><path d="M4 3.2 C4 2.2 5.1 1.6 6 2.2 L17.2 9.9 C18.1 10.5 17.8 11.9 16.7 12.1 L11.6 13 L9.2 17.6 C8.7 18.6 7.2 18.4 7 17.3 Z"/></svg>';
+  var CUR_COL = ['#FF4D1F', '#00C27A', '#7B5CFF', '#FF5FA2'], pinN = 0, pinAt = 0;
   function runPin(el) {
     var p = el._lvPin;
     if (!p || reduced) return el.classList.add('in');
-    var txt = d.createTextNode(''), dom = d.createTextNode(''), arrow = p.b.querySelector('svg');
-    var caret = d.createElement('span'); caret.className = 'pin-caret';
-    p.t.textContent = ''; p.b.textContent = '';
-    var post = d.createTextNode('');
-    p.t.appendChild(txt); p.t.appendChild(p.b); p.b.appendChild(dom); p.t.appendChild(post); p.t.appendChild(caret);
-    el.classList.add('in', 'pop', 'typing');
-    var i = 0, all = p.pre.length + p.dom.length + p.post.length;
+    var now = performance.now(), wait = Math.max(0, pinAt - now);   /* pins that show up together take turns */
+    pinAt = now + wait + 420;
+    setTimeout(function () { placePin(el, p); }, wait);
+  }
+  function placePin(el, p) {
+    var host = el.offsetParent || d.body, c = el.dataset.c || 'bl';
+    var cur = d.createElement('span');
+    cur.className = 'lv-cur pin-cur'; cur.setAttribute('aria-hidden', 'true'); cur.innerHTML = '<i></i>' + CUR;
+    cur.style.setProperty('--c', CUR_COL[pinN++ % CUR_COL.length]);
+    cur.style.left = el.offsetLeft + (c[1] === 'r' ? el.offsetWidth : 0) + 'px';
+    cur.style.top = el.offsetTop + (c[0] === 'b' ? el.offsetHeight : 0) + 'px';
+    var r = el.getBoundingClientRect();                              /* comes in from the middle of the page, so it never widens it */
+    cur.style.setProperty('--fx', ((c[1] === 'r' ? r.right : r.left) > w.innerWidth / 2 ? -110 : 110) + 'px');
+    host.appendChild(cur);
+    cur.getBoundingClientRect(); cur.classList.add('go');
     setTimeout(function () {
-      var iv = setInterval(function () {
-        i++;
-        txt.data = p.pre.slice(0, i);
-        dom.data = p.dom.slice(0, Math.max(0, i - p.pre.length));
-        post.data = p.post.slice(0, Math.max(0, i - p.pre.length - p.dom.length));
-        if (i >= all) {
-          clearInterval(iv); caret.remove();
-          if (arrow) p.b.appendChild(arrow);
-          el.classList.remove('typing', 'pop'); el.classList.add('lit');
-        }
-      }, 28);
-    }, 240);
+      var txt = d.createTextNode(''), dom = d.createTextNode(''), post = d.createTextNode(''), arrow = p.b.querySelector('svg');
+      var caret = d.createElement('span'); caret.className = 'pin-caret';
+      p.t.textContent = ''; p.b.textContent = '';
+      p.t.appendChild(txt); p.t.appendChild(p.b); p.b.appendChild(dom); p.t.appendChild(post); p.t.appendChild(caret);
+      cur.classList.add('click');
+      el.classList.add('in', 'pop', 'typing');
+      var i = 0, all = p.pre.length + p.dom.length + p.post.length;
+      setTimeout(function () {
+        var iv = setInterval(function () {
+          i++;
+          txt.data = p.pre.slice(0, i);
+          dom.data = p.dom.slice(0, Math.max(0, i - p.pre.length));
+          post.data = p.post.slice(0, Math.max(0, i - p.pre.length - p.dom.length));
+          if (i >= all) {
+            clearInterval(iv); caret.remove();
+            if (arrow) p.b.appendChild(arrow);
+            el.classList.remove('typing', 'pop'); el.classList.add('lit');
+            cur.classList.add('out');
+            setTimeout(function () { cur.remove(); }, 600);
+          }
+        }, 24);
+      }, 260);
+    }, 540);
   }
 
   /* ---------- tabs / segmented with a sliding indicator: [data-tabs] > .seg-i ---------- */
@@ -358,16 +380,48 @@
       if (tiles.size > 5) tiles.delete(tiles.keys().next().value);
       return c;
     }
+    /* the pointer: the band leans away from it, and a soft lens under it magnifies and brightens the dots */
+    var mx = 0, my = 0, ex = 0, ey = 0, has = false, LENS = 170, lens, lg;
+    function tilesTo(g, sx, sy) {
+      for (var n = Math.max(0, Math.floor(sy / TILE)); n * TILE < sy + VH; n++) g.drawImage(tile(n), Math.round(sx * dpr), Math.round((n * TILE - sy) * dpr));
+    }
     function draw(now) {
       var sy = w.scrollY * (reduced ? 1 : PAR), sx = 0;
       if (!reduced) { sx = Math.cos(now / 9000) * 10; sy += Math.sin(now / 7000) * 12 + 12; }
+      if (has) { ex += (mx - ex) * 0.14; ey += (my - ey) * 0.14; sx += (ex / W - 0.5) * -28; sy += (ey / VH - 0.5) * -20 + 10; }
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, cv.width, cv.height);
-      for (var n = Math.max(0, Math.floor(sy / TILE)); n * TILE < sy + VH; n++) ctx.drawImage(tile(n), Math.round(sx * dpr), Math.round((n * TILE - sy) * dpr));
+      tilesTo(ctx, sx, sy);
+      if (!has) return;
+      var S = Math.round(LENS * 2 * dpr), Z = 1.22;
+      if (!lens || lens.width !== S) { lens = d.createElement('canvas'); lens.width = lens.height = S; lg = lens.getContext('2d'); }
+      lg.setTransform(1, 0, 0, 1, 0, 0); lg.globalCompositeOperation = 'source-over'; lg.clearRect(0, 0, S, S);
+      lg.setTransform(Z, 0, 0, Z, S / 2 - ex * dpr * Z, S / 2 - ey * dpr * Z);     /* the same picture, 22% bigger around the pointer */
+      tilesTo(lg, sx, sy);
+      lg.setTransform(1, 0, 0, 1, 0, 0); lg.globalCompositeOperation = 'destination-in';
+      var m = lg.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+      m.addColorStop(0, 'rgba(0,0,0,1)'); m.addColorStop(.45, 'rgba(0,0,0,.8)'); m.addColorStop(1, 'rgba(0,0,0,0)');
+      lg.fillStyle = m; lg.fillRect(0, 0, S, S);
+      ctx.globalCompositeOperation = 'lighter';
+      var x0 = Math.round(ex * dpr - S / 2), y0 = Math.round(ey * dpr - S / 2);
+      ctx.drawImage(lens, x0, y0); ctx.drawImage(lens, x0, y0);
+      var gl = ctx.createRadialGradient(ex * dpr, ey * dpr, 0, ex * dpr, ey * dpr, S / 2);
+      gl.addColorStop(0, 'rgba(255,77,31,' + (0.07 * dim) + ')'); gl.addColorStop(1, 'rgba(255,77,31,0)');
+      ctx.fillStyle = gl; ctx.fillRect(x0, y0, S, S);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    if (fine) {
+      d.addEventListener('pointermove', function (e) {
+        if (e.pointerType !== 'mouse' || reduced) return;
+        mx = e.clientX; my = e.clientY;
+        if (!has) { has = true; ex = mx; ey = my; }
+        kick();
+      }, { passive: true });
+      html.addEventListener('mouseleave', function () { has = false; lastY = -1; });
     }
     function frame(now) {
       raf = 0;
-      if (w.scrollY !== lastY || now - lastT > 40) { lastY = w.scrollY; lastT = now; draw(now); }
+      if (w.scrollY !== lastY || now - lastT > 40 || (has && Math.abs(mx - ex) + Math.abs(my - ey) > 0.5)) { lastY = w.scrollY; lastT = now; draw(now); }
       if (!reduced && !d.hidden) raf = requestAnimationFrame(frame);     /* pauses in background tabs */
     }
     function kick() { if (!raf && !d.hidden) raf = requestAnimationFrame(frame); }
