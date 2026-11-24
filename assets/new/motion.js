@@ -6,6 +6,7 @@
   var d = document, html = d.documentElement, w = window;
   var mqReduce = w.matchMedia('(prefers-reduced-motion: reduce)');
   var reduced = mqReduce.matches;
+  var calm = w.innerWidth < 1100;     /* tablet and phone: no build animation, no drifting background; desktop is where the motion lives */
   var fine = w.matchMedia('(hover: hover) and (pointer: fine)').matches;
   var $$ = function (s, r) { return Array.prototype.slice.call((r || d).querySelectorAll(s)); };
   var EASE = 'cubic-bezier(.22,1,.36,1)';
@@ -88,7 +89,7 @@
       post: b.nextSibling && b.nextSibling.nodeType === 3 ? b.nextSibling.data : '' };   /* optional words after the domain ("… rules") */
     b.insertAdjacentHTML('beforeend', ARROW_NE);
     var T = pinTarget(el), act = el.dataset.act || 'move';
-    if (!T || act === 'none' || reduced || !io || !el.offsetParent) return;          /* a pin hidden at this width never plays, so its layer is left alone */
+    if (!T || act === 'none' || reduced || calm || !io || !el.offsetParent) return;          /* a pin hidden at this width never plays, so its layer is left alone */
     el._lvT = T; el._lvAct = act;
     if (act === 'type') T.classList.add('lv-untyped', 'lv-arial');
     else if (act === 'color') T.classList.add('lv-grey');
@@ -116,7 +117,7 @@
   var pinLive = 0, PIN_MAX = 3;                            /* how many cursors may work at once */
   function queue(el) { el._lvQ = performance.now(); pinQ.push(el); pinNext(); }
   function runPin(el) {
-    if (!el._lvPin || reduced) { ready(el); return el.classList.add('in'); }
+    if (!el._lvPin || reduced || calm) { ready(el); return el.classList.add('in'); }
     queue(el);
   }
   function pinNext() {
@@ -427,7 +428,7 @@
     $$('[data-tabs]', root).forEach(prepTabs);
     $$('details[data-acc]', root).forEach(prepAcc);
     $$('.pin', root).forEach(function (el) { if (!el._lvPin) prepPin(el); });
-    if (!reduced && io) $$('[data-build]', root).forEach(function (el) {
+    if (!reduced && !calm && io) $$('[data-build]', root).forEach(function (el) {
       if (el._lvT) return;
       var act = el.dataset.build;
       el._lvT = el; el._lvAct = act;
@@ -608,14 +609,14 @@
       return (sg.d = B.map(function (v) { return new Float32Array(v); }));
     }
     function draw(now) {
-      var sy = w.scrollY * (reduced ? 1 : PAR), sx = 0, t = reduced ? 0 : now / 1000;
-      if (!reduced) { sx = Math.cos(now / 9000) * 10; sy += Math.sin(now / 7000) * 12 + 12; }
+      var still = reduced || calm, sy = w.scrollY * (still ? 1 : PAR), sx = 0, t = still ? 0 : now / 1000;
+      if (!still) { sx = Math.cos(now / 9000) * 10; sy += Math.sin(now / 7000) * 12 + 12; }
       if (has) { ex += (mx - ex) * 0.12; ey += (my - ey) * 0.12; sx += (ex / W - 0.5) * -24; sy += (ey / VH - 0.5) * -16 + 8; }
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, cv.width, cv.height);
       for (var n = Math.max(0, Math.floor(sy / TILE)); n * TILE < sy + VH; n++) ctx.drawImage(tile(n), Math.round(sx * dpr), Math.round((n * TILE - sy) * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var R = 150, R2 = R * R, top = sy - band * 1.4, bot = sy + VH + band * 1.4, amp = reduced ? 0 : 1;
+      var R = 150, R2 = R * R, top = sy - band * 1.4, bot = sy + VH + band * 1.4, amp = still ? 0 : 1;
       for (var i = 0; i < segs.length; i++) {
         var sg = segs[i];
         if (sg.y1 < top || sg.y0 > bot) continue;
@@ -639,7 +640,7 @@
       }
     }
     function point(e) {                                    /* mouse, pen or finger */
-      if (reduced) return;
+      if (reduced || calm) return;
       mx = e.clientX; my = e.clientY;
       if (!has) { has = true; ex = mx; ey = my; }
     }
@@ -649,8 +650,8 @@
     ['pointerup', 'pointercancel'].forEach(function (n) { d.addEventListener(n, function (e) { if (e.pointerType !== 'mouse') has = false; }, { passive: true }); });
     function frame(now) {
       raf = 0;
-      if (reduced ? w.scrollY !== lastY : now - lastT > 15) {     /* always moving, with or without a pointer */ lastY = w.scrollY; lastT = now; draw(now); }
-      if (!reduced && !d.hidden) raf = requestAnimationFrame(frame);     /* pauses in background tabs */
+      if (reduced || calm ? w.scrollY !== lastY : now - lastT > 15) {     /* always moving, with or without a pointer */ lastY = w.scrollY; lastT = now; draw(now); }
+      if (!reduced && !calm && !d.hidden) raf = requestAnimationFrame(frame);     /* pauses in background tabs */
     }
     function kick() { if (!raf && !d.hidden) raf = requestAnimationFrame(frame); }
     build(); kick();

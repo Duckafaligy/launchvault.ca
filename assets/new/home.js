@@ -4,6 +4,7 @@
   'use strict';
   var d = document, w = window, html = d.documentElement;
   var reduced = w.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var calm = w.innerWidth < 1100;     /* tablet and phone stay simple (see motion.js) */
   var fine = w.matchMedia('(hover: hover) and (pointer: fine)').matches;
   var $ = function (s, r) { return (r || d).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || d).querySelectorAll(s)); };
@@ -176,7 +177,7 @@
 
   /* ---------- scroll-linked: phones drift at their own speeds, panels and the big number grow into place ----------
      Uses the separate translate / scale properties, so the reveal transforms keep working underneath. */
-  if (!reduced && 'translate' in d.body.style) {
+  if (!reduced && !calm && 'translate' in d.body.style) {
     var fx = [];
     [['.how-row .how-i:nth-child(odd)', 'par', 0.035], ['.how-row .how-i:nth-child(even)', 'par', -0.025], ['.post-f', 'par', 0.035], ['.closer-t', 'par', 0.06],
      ['.h-num', 'zoom', 0.74], ['.panel.cp,.panel.wl,.panel.src,.panel.lbls,.endcta-in,.bd', 'zoom', 0.93]].forEach(function (c) {
@@ -203,7 +204,7 @@
 
   /* ---------- the highlight is dragged on by a cursor; glass cards catch the pointer's light ---------- */
   var hl = $('#credits .hl-box');
-  if (hl && !reduced) hl.insertAdjacentHTML('beforeend', '<span class="lv-cur sel-cur" aria-hidden="true"><svg viewBox="0 0 20 22" width="20" height="22"><path d="M4 3.2 C4 2.2 5.1 1.6 6 2.2 L17.2 9.9 C18.1 10.5 17.8 11.9 16.7 12.1 L11.6 13 L9.2 17.6 C8.7 18.6 7.2 18.4 7 17.3 Z"/></svg></span>');
+  if (hl && !reduced && !calm) hl.insertAdjacentHTML('beforeend', '<span class="lv-cur sel-cur" aria-hidden="true"><svg viewBox="0 0 20 22" width="20" height="22"><path d="M4 3.2 C4 2.2 5.1 1.6 6 2.2 L17.2 9.9 C18.1 10.5 17.8 11.9 16.7 12.1 L11.6 13 L9.2 17.6 C8.7 18.6 7.2 18.4 7 17.3 Z"/></svg></span>');
   if (fine) d.addEventListener('pointermove', function (e) {
     var c = e.target.closest && e.target.closest('.card,.panel');
     if (!c) return;
@@ -213,7 +214,7 @@
 
   /* ---------- the page is built in front of you (motion.js runs the jobs; this says which layer gets which) ----------
      type = heading typed in Arial then switched to the real font, write = paragraph typed, draw = box dragged out then the layer appears */
-  if (!reduced) [
+  if (!reduced && !calm) [
     ['write', '.hero-lead,.learned-b,.prob-b,.num-cap,.st-b,.price-b,.blog .sec-h .body'],
     ['draw', '.hero-cta .btn,.hero-ip,.hero-card,.panel.src,.panel.lbls,.panel.cp,.bd-c,.st-btn,.panel.wl,.plans>.pc,.posts>.post,.end-in .btn']
   ].forEach(function (b) { $$(b[1]).forEach(function (el) { if (!el.dataset.build) el.dataset.build = b[0]; }); });
@@ -221,7 +222,7 @@
   /* ---------- the top bar is designed on load: its frame is drawn, the logo is placed and typed, the links are typed bunched together
      and then spaced out, Log in is typed, the button is dragged out as a box, typed, rounded and filled ---------- */
   (function () {
-    var bar = $('.nav-bar'), run = bar && !reduced && w.LV && LV.type, started = false;
+    var bar = $('.nav-bar'), run = bar && !reduced && !calm && w.LV && LV.type, started = false;
     if (!run) return html.classList.add('nb-done');
     /* built the first time you are at the top: straight away on a normal load, or when you scroll up to it after loading further down */
     function arm() {
