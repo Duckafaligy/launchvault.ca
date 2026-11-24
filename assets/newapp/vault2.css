@@ -991,10 +991,13 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 .lvdot-tips{display:flex;flex-direction:column;gap:6px}.lvdot-tips:empty{display:none}
 .lvdot-tips button{align-self:flex-start;min-height:34px;padding:0 12px;border:0;border-radius:999px;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);font:500 13px/1 var(--fd);color:#fff;text-align:left;cursor:pointer;transition:background-color .15s,transform .2s cubic-bezier(.16,1,.3,1)}
 .lvdot-tips button:hover{background:rgba(255,255,255,.13);transform:translateX(2px)}
-.lvdot-p form{display:flex;gap:6px;align-items:center;padding:4px 4px 4px 12px;border-radius:999px;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.lvdot-p form{display:flex;gap:8px;align-items:center;height:44px;padding:0 4px 0 16px;border-radius:999px;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);transition:box-shadow .15s,background-color .15s}
 .lvdot-p form:focus-within{box-shadow:inset 0 0 0 1.5px var(--hl,#9DB8FF)}
-.lvdot-p input{flex:1;min-width:0;height:34px;border:0;outline:0;background:none;font:400 14px/1 var(--fd);color:#fff}
-.lvdot-p form button{flex:none;display:grid;place-items:center;width:34px;height:34px;border:0;border-radius:50%;background:var(--btn,#1F45B5);color:#fff;cursor:pointer}
+.lvdot .lvdot-p input,.nv .lvdot .lvdot-p input{flex:1;min-width:0;height:36px;min-height:0;padding:0;margin:0;border:0;border-radius:0;outline:0;background:none;box-shadow:none;font:400 14px/36px var(--fd);color:#fff;caret-color:var(--hl,#9DB8FF)}
+.lvdot .lvdot-p input::placeholder{color:rgba(255,255,255,.45)}
+.lvdot .lvdot-p input:focus,.lvdot .lvdot-p input:focus-visible{outline:0;box-shadow:none}
+.lvdot-p form button{flex:none;display:grid;place-items:center;width:36px;height:36px;min-height:0;padding:0;border:0;border-radius:50%;background:var(--btn,#1F45B5);color:#fff;cursor:pointer;transition:transform .15s,background-color .15s}
+.lvdot-p form button:hover{background:var(--btn2,#2A55D0);transform:scale(1.06)}
 .lvdot-set{align-self:flex-start;font:400 12px/16px var(--fd);color:rgba(255,255,255,.6)}.lvdot-set:hover{color:#fff}
 .lvdot-cur{position:fixed;z-index:56;left:0;top:0;pointer-events:none;opacity:0;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
 .lvdot-ring{outline:2px solid #FF4D1F!important;outline-offset:4px;border-radius:14px;box-shadow:0 0 0 8px rgba(255,77,31,.2)!important;animation:dotRing 1.3s ease-in-out 3;scroll-margin:120px}
