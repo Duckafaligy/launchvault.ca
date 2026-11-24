@@ -43,6 +43,10 @@ body.nv{background:#07070A url(/assets/app-glow.jpg) center top/cover fixed no-r
 .nv .bar i{display:block;height:100%;width:var(--w,0%);border-radius:4px;background:var(--brand);transition:width .7s var(--out)}
 .nv .lb{height:20px;padding:0 8px;border-radius:999px;font:600 var(--f12)/1 var(--fd);background:rgba(255,255,255,.08);color:var(--muted);border:0}
 .nv .lb::before{display:none}
+.nv .srcl .lb{justify-self:start;height:24px;padding:0 10px}                 /* the tag hugs its word instead of filling the column */
+@media (min-width:721px){.nv .srcl .sr2{grid-template-columns:24px minmax(0,1fr) 96px 112px 20px}}
+@media (max-width:720px){.nv .srcl .lb{justify-self:end}}
+.nv .srcl .dt{white-space:nowrap}
 .nv .lb.v{background:rgba(0,194,122,.14);color:#00C27A}.nv .lb.w,.nv .lb.l{background:rgba(47,107,255,.16);color:#9DB8FF}
 .nv .lb.x{background:rgba(123,92,255,.18);color:#C2B4FF}.nv .lb.c,.nv .lb.e{background:rgba(255,77,31,.14);color:#FFB49C}
 .nv .gp{display:inline-flex;justify-content:center;flex:none;min-width:60px;padding:4px 6px;border-radius:6px;background:var(--mint);font:600 var(--f12)/16px var(--fd);color:var(--dark);font-variant-numeric:tabular-nums}

@@ -677,7 +677,7 @@
     $$('[data-locked="1"]').forEach(el => { el.hidden = !on; });
     $$(".gatewrap, #gate").forEach(el => { el.hidden = on; });
     $$("[data-plan]").forEach(el => { el.textContent = j ? "Judge view" : on ? name + " plan" : "Free plan"; });
-    $$("[data-plansub]").forEach(el => { el.textContent = on ? `All ${READY.length} stories open` : `1 of ${READY.length} stories open`; });
+    $$("[data-plansub]").forEach(el => { el.textContent = on ? `All ${READY.length} stories` : `1 of ${READY.length} stories`; });
     $$("[data-upg]").forEach(el => { el.textContent = on ? "Manage" : "Get Pro"; });
     $$(".side .plan").forEach(el => { el.dataset.state = j ? "judge" : p ? "paid" : "free"; });   // sidebar card look: upgrade card, calm paid state, judge badge
     $$("[data-plan-chip]").forEach(el => { el.textContent = on ? name : "Free"; });

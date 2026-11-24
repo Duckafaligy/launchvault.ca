@@ -762,3 +762,30 @@
 
 /* sidebar labels: the base tablet rules turn them into offset hover tooltips; in the Vault sidebar they are always in the row */
 .nv .si .t{left:auto;right:auto;top:auto;bottom:auto;margin:0}
+
+/* sidebar plan box: the upgrade link is a small button that hugs its words */
+.nv .side .plan{gap:10px;padding:10px 10px 10px 12px}
+.nv .side .plan a{display:inline-flex;align-items:center;height:30px;padding:0 12px;border-radius:999px;background:#fff;color:var(--dark);font:700 var(--f12)/1 var(--fd);white-space:nowrap;transition:transform .2s var(--spring,ease),background-color .2s}
+.nv .side .plan a:hover{background:#FFE3DA;transform:translateY(-1px)}
+.nv .side .plan a:active{transform:scale(.96)}
+.nv .side .plan a:focus-visible{outline:2px solid var(--hl);outline-offset:2px}
+.nv .side .plan:is([data-state=paid],[data-state=judge]) a{background:rgba(255,255,255,.1);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+
+/* Public profile: every box the same height, labels and hints on one rhythm, name and username side by side when there is room */
+.nv .pp-f{gap:18px;max-width:640px}
+.nv .pp-fld{gap:0;align-content:start}
+.nv .pp-fld label{margin-bottom:7px;font:600 var(--f13)/18px var(--fd);color:#fff}
+.nv .pp-fld .pp-opt{font-weight:400;color:var(--faint)}
+.nv .pp-fld small{margin-top:7px}
+.nv .pp-fld input,.nv .pp-at{height:46px;min-height:46px}
+.nv .pp-fld input{padding:0 14px}
+.nv .pp-at{padding:0 14px;gap:2px}
+.nv .pp-at span{padding:0;font-weight:500;color:var(--faint)}
+.nv .pp-at input{height:44px;min-height:0;padding:0}
+.nv .pp-fld textarea{min-height:88px;resize:none;line-height:21px}
+.nv .pp-fld :is(input,textarea)::placeholder{color:rgba(255,255,255,.34)}
+.nv #ppBioH{align-items:baseline}
+.nv #ppBioH [data-pp-ct]{flex:none;font-variant-numeric:tabular-nums}
+.nv .pp-two{display:grid;gap:18px}
+@media (min-width:900px){.nv .pp-two{grid-template-columns:1fr 1fr;gap:16px}}
+
