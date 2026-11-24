@@ -985,7 +985,7 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 /* listening: every value below comes from the Paper tile "Mood · Listening" (eyes 1.31x and 1 further apart, glint at +2.6/-3.6, second sparkle, cheeks 2 out and 2 down, round mouth, glaze edge 2 higher) */
 .lvdot[data-mood=listening] .lvdot-eye{animation:dotWide .38s cubic-bezier(.3,1.6,.5,1) both,dotBlinkBig 4.6s .4s infinite}
 .lvdot[data-mood=listening] .lvdot-eye.l{translate:-1px 0}.lvdot[data-mood=listening] .lvdot-eye.r{translate:1px 0}
-.lvdot[data-mood=listening] .lvdot-glint{transform:translate(1.98px,-2.75px);animation:dotGlint 1.8s ease-in-out infinite}
+.lvdot[data-mood=listening] .lvdot-glint{transform:translate(var(--ex,1.98px),var(--ey,-2.75px));animation:dotGlint 1.8s ease-in-out infinite}     /* still follows the pointer, so it looks focused on you */
 .lvdot[data-mood=listening] .lvdot-spark{opacity:1;animation:dotTwinkle 1.8s .45s ease-in-out infinite}
 .lvdot[data-mood=listening] .lvdot-cheek.l{translate:-2px 2px}.lvdot[data-mood=listening] .lvdot-cheek.r{translate:2px 2px}
 .lvdot[data-mood=listening] .lvdot-smile{display:none}.lvdot[data-mood=listening] .lvdot-oh{display:block;animation:dotOh .3s cubic-bezier(.3,1.6,.5,1) both;transform-box:fill-box;transform-origin:50% 50%}

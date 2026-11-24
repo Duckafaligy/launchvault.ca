@@ -133,14 +133,14 @@ ${f.glaze ? `<path class="lvdot-glaze" d="M11 46 C13 27 29 13 50 13 C71 13 87 27
   if (!reduce) (function wander() {
     const using = !!panel && !panel.hidden;                         // it only watches your pointer while its panel is open
     if (el && el.dataset.mood === "idle" && (!using || Date.now() - lastMove > 1400)) { const g = LOOK[li++ % LOOK.length]; el.style.setProperty("--ex", g[0] + "px"); el.style.setProperty("--ey", g[1] + "px"); }
-    else if (el && el.dataset.mood === "listening" && panel) { el.style.setProperty("--ex", REST[0] + "px"); el.style.setProperty("--ey", REST[1] + "px"); }   // it looks at what you are typing
+    else if (el && el.dataset.mood === "listening" && panel && Date.now() - lastMove > 1400) { el.style.setProperty("--ex", REST[0] + "px"); el.style.setProperty("--ey", REST[1] + "px"); }   // it looks at what you are typing
     setTimeout(wander, 900 + Math.random() * 1500);
   })();
   /* eyes follow the pointer a little (mouse only); a blink is CSS */
   if (!reduce && matchMedia("(hover:hover) and (pointer:fine)").matches) {
     let q = 0; addEventListener("pointermove", e => { lastMove = Date.now(); if (!el || q) return; q = requestAnimationFrame(() => { q = 0; if (!el) return;
       const r = el.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), n = Math.hypot(dx, dy) || 1, k = Math.min(1, n / 200);
-      if (el.dataset.mood === "listening" || !panel || panel.hidden) return;   // closed: it minds its own business and just looks around                    // while it listens its eyes stay on you, sparkling
+      if (!panel || panel.hidden) return;                             // closed: it minds its own business and just looks around. Open or listening: it watches your pointer                    // while it listens its eyes stay on you, sparkling
       el.style.setProperty("--ex", (dx / n * 2.8 * k).toFixed(2) + "px"); el.style.setProperty("--ey", (dy / n * 4 * k).toFixed(2) + "px"); }); }, { passive: true });
   }
   addEventListener("resize", () => { if (!el) return; if (small()) { el.style.left = el.style.top = el.style.right = el.style.bottom = ""; } else { const p = ls.get("lv-dot-pos"); if (Array.isArray(p)) setPos(p[0], p[1]); } });
