@@ -42,7 +42,7 @@
 /* card */
 /* a panel of its own, floating a little under the pill */
 .nav-card{position:absolute;left:0;right:0;top:calc(100% + 8px);border-radius:22px;visibility:hidden;opacity:0;transform:translateY(-10px) scale(.97);transform-origin:50% 0;
-  background:var(--glass),rgba(14,14,19,.94);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);
+  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03)),#101016;   /* solid: the page behind must not read through the menu */
   box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 0 1px rgba(255,255,255,.08),0 24px 60px -24px rgba(0,0,0,.9);
   transition:opacity .25s var(--out),transform .4s var(--out),visibility 0s .4s}
 .nav-card-in{overflow:hidden;border-radius:inherit}
