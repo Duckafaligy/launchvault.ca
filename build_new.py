@@ -94,8 +94,10 @@ HEAD_JS = ("(function(d){var h=d.documentElement;h.classList.add('js');try{if(!s
 FONTS = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,600&display=swap"
 
 
-def render(body, title, description, path="", active=None, css=(), js=(), end_cta=True, bg=None, bg_dim=None, og_image=None, body_class="", head="", **_):
-    """Wrap a page body in the shared head, nav, closing CTA and footer. Returns the full HTML document."""
+def render(body, title, description, path="", active=None, css=(), js=(), end_cta=True, bg=None, bg_dim=None, og_image=None, body_class="", head="", robots="noindex, nofollow", og_type="website", chrome=True, **_):
+    """Wrap a page body in the shared head, nav, closing CTA and footer. Returns the full HTML document.
+    chrome=False is the full-bleed layout (sign-in): no nav, no closing CTA, no footer; the body brings its own top bar."""
+    end_cta = end_cta and chrome
     for k, v in TOKENS.items():
         body = body.replace(k, v)
     url = SITE + BASE + path
@@ -112,11 +114,11 @@ def render(body, title, description, path="", active=None, css=(), js=(), end_ct
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{e(title)}</title>
 <meta name="description" content="{e(description)}">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="{robots}">
 <link rel="canonical" href="{url}">
 <meta name="theme-color" content="#07070A">
 <meta name="color-scheme" content="dark">
-<meta property="og:type" content="website">
+<meta property="og:type" content="{og_type}">
 <meta property="og:site_name" content="LaunchVault">
 <meta property="og:title" content="{e(title)}">
 <meta property="og:description" content="{e(description)}">
@@ -134,12 +136,12 @@ def render(body, title, description, path="", active=None, css=(), js=(), end_ct
 <body{battr}>
 <a class="skip" href="#main">Skip to content</a>
 <div class="intro" aria-hidden="true">{LOGO}</div>
-{nav_html(active)}
+{nav_html(active) if chrome else ""}
 <main id="main">
 {body}
 {end_cta_html() if end_cta else ""}
 </main>
-{footer_html()}
+{footer_html() if chrome else ""}
 </body>
 </html>
 """

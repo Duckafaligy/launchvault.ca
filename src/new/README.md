@@ -32,7 +32,7 @@ Need a shared class changed or added? Ask the foundation owner; do not fork `bas
 
 3. `python build_new.py` → `new/blog/index.html`.
 
-Meta keys: `title`, `description`, `path` (`""` = `/new/`, otherwise ends with `/`), and optional `active` (`Stories` | `The problem` | `How it works` | `Pricing` | `Blog`), `css`, `js`, `end_cta` (default `true`; `false` drops the closing panel), `bg` (`"off"` = no particle band), `bg_dim` (e.g. `0.75` on legal pages), `og_image` (site path or full URL), `body_class`, `head` (raw extra head HTML).
+Meta keys: `title`, `description`, `path` (`""` = `/new/`, otherwise ends with `/`), and optional `active` (`Stories` | `The problem` | `How it works` | `Pricing` | `Blog`), `css`, `js`, `end_cta` (default `true`; `false` drops the closing panel), `bg` (`"off"` = no particle band), `bg_dim` (e.g. `0.75` on legal pages), `og_image` (site path or full URL), `body_class`, `head` (raw extra head HTML), `chrome` (`false` = full-bleed page with no nav, closing panel or footer; used by sign-in).
 
 Tokens you can use in a body file: `{{cta}}` (the main button), `{{arrow}}` (button arrow svg), `{{logo}}` (logo mark), `{{ext}}` (small up-right arrow).
 
