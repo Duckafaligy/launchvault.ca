@@ -1,0 +1,234 @@
+/* LaunchVault /new/ sign-in flow (sign-in, sign-up, welcome, callback). Template: src/new/auth.part.html, behaviour: assets/new/auth.js.
+   Sizes, colours and spacing are ported from the Paper builder app.py auth_board() at 1440 / 834 / 390.
+   Built on the foundation tokens and .btn / .link / .chip; everything here is scoped to .auth / body.auth-page. */
+
+/* ---------- page: one glow background across the whole screen ---------- */
+body.auth-page main{display:flex;flex-direction:column;padding-top:0}
+body.auth-page::before{content:"";position:fixed;inset:-4%;z-index:-1;pointer-events:none;background:var(--bg) url(/assets/new/auth/bg-390.webp) center/cover no-repeat}
+@media (min-width:600px){body.auth-page::before{background-image:url(/assets/new/auth/bg-834.webp)}}
+@media (min-width:1100px){body.auth-page::before{background-image:url(/assets/new/auth/bg-1440.webp)}}
+.auth{position:relative;flex:1;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
+.auth [hidden]{display:none!important}
+
+/* ---------- top bar: logo, "Back to the site" glass pill ---------- */
+.au-top{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:calc(18px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
+.au-back{position:relative;display:inline-flex;align-items:center;gap:6px;flex:none;height:36px;padding:0 14px 0 10px;border-radius:999px;background:var(--glass-btn);
+  -webkit-backdrop-filter:blur(14px) saturate(180%);backdrop-filter:blur(14px) saturate(180%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16);font:600 13px/1 var(--fd);color:#fff;white-space:nowrap;
+  transition:background .2s,transform .35s var(--out)}
+.au-back::after{content:"";position:absolute;inset:-4px}
+.au-top .nav-logo{position:relative}
+.au-top .nav-logo::after{content:"";position:absolute;inset:-10px 0}   /* 44px touch target */
+.au-back svg{flex:none;transition:transform .3s var(--out)}
+.au-back:hover{background:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,.13))}
+.au-back:hover svg{transform:translateX(-2px)}
+.au-back:active{transform:scale(.97)}
+.au-back:focus-visible{border-radius:999px}
+
+/* ---------- middle: story (desktop) + card ---------- */
+.au-mid{flex:1;display:flex;align-items:center;justify-content:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.au-stack{position:relative;display:flex;flex-direction:column;align-items:center;gap:16px;flex:none;width:100%;max-width:480px}
+.au-story{display:none}
+
+.au-card{position:relative;width:100%;border-radius:20px;overflow:hidden;background:var(--glass),rgba(12,12,17,.66);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);box-shadow:var(--glass-edge)}
+.au-step{display:flex;flex-direction:column;gap:22px;padding:26px 22px 22px}
+.auth:not([data-step=form]) .au-step[data-step=form],.auth:not([data-step=code]) .au-step[data-step=code],.auth:not([data-step=age]) .au-step[data-step=age],
+.auth:not([data-step=under13]) .au-step[data-step=under13],.auth:not([data-step=welcome]) .au-step[data-step=welcome],.auth:not([data-step=wait]) .au-step[data-step=wait],
+.auth:not([data-step=clerk]) .au-step[data-step=clerk],.auth:not([data-step=form]) :is(.au-foot,.au-judge){display:none}
+.auth[data-mode=signin] [data-m=signup],.auth:not([data-mode=signin]) [data-m=signin],.auth[data-mode=signup] .au-tag{display:none}
+.au-form{display:flex;flex-direction:column;gap:22px}
+
+.au-head{display:flex;flex-direction:column;gap:8px}
+.au-head h1{font:700 28px/32px var(--fd);letter-spacing:-.04em;color:#fff;text-wrap:balance}
+.au-head h1:focus{outline:0}
+.au-head p{font:400 15px/23px var(--fd);color:var(--muted);overflow-wrap:anywhere;text-wrap:pretty}
+
+/* provider buttons */
+.au-provs{display:flex;flex-direction:column;gap:10px}
+.au-prov{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:48px;border-radius:12px;background:rgba(255,255,255,.07);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 0 0 1px rgba(255,255,255,.14);font:600 15px/1 var(--fd);color:#fff;-webkit-tap-highlight-color:transparent;
+  transition:transform .35s var(--out),background-color .2s,box-shadow .3s var(--out),opacity .2s}
+.au-prov img{flex:none;width:20px;height:20px;border-radius:5px}
+@media (hover:hover){.au-prov:not(:disabled):hover{transform:translateY(-2px);background:rgba(255,255,255,.11);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 0 0 1px rgba(255,255,255,.22),0 14px 26px -16px rgba(0,0,0,.85)}}
+.au-prov:not(:disabled):active{transform:scale(.98);transition-duration:.12s}
+.au-prov:focus-visible{outline:2px solid var(--hl);outline-offset:3px;border-radius:12px}
+.au-prov:disabled{opacity:.45;cursor:not-allowed}
+.au-prov.is-loading{pointer-events:none}
+.au-prov.is-loading>*{visibility:hidden}
+.au-prov.is-loading::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:lv-spin .7s linear infinite}
+/* "Last used": sits on the button's top edge on phones, inside it from tablet up */
+.au-tag{position:absolute;right:10px;top:-10px;padding:3px 8px;border-radius:999px;background:#16264F;box-shadow:inset 0 0 0 1px rgba(47,107,255,.4);font:600 12px/14px var(--fd);color:var(--hl);pointer-events:none}
+
+.au-or{display:flex;align-items:center;gap:12px;font:400 12px/15px var(--fd);color:var(--faint)}
+.au-or::before,.au-or::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* email field */
+.au-field{display:flex;flex-direction:column;gap:8px}
+.au-label{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 12px;font:600 13px/16px var(--fd);color:#fff}
+.au-label span{font-weight:400;color:var(--faint)}
+.au-input{width:100%;height:48px;padding:0 16px;border:0;border-radius:12px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),0 0 0 0 rgba(47,107,255,0);
+  color:#fff;font:400 16px/1 var(--fd);transition:box-shadow .35s var(--out),background-color .2s}   /* 16px on phones: iOS zooms the page under that */
+.au-input::placeholder{color:var(--faint)}
+.au-input:hover{box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),0 0 0 0 rgba(47,107,255,0)}
+.au-input:focus,.au-input:focus-visible{outline:0;border-radius:12px;box-shadow:inset 0 0 0 2px var(--brand),0 0 0 4px rgba(47,107,255,.22)}
+.au-input[aria-invalid=true]{box-shadow:inset 0 0 0 1.5px var(--pop),0 0 0 4px rgba(255,138,138,.14)}
+.au-input:-webkit-autofill{-webkit-text-fill-color:#fff;caret-color:#fff;transition:background-color 99999s,box-shadow .35s var(--out)}
+.au-msg{font:400 13px/19px var(--fd);color:var(--pop);text-wrap:pretty}
+.au-msg:empty{display:none}
+.au-msg.is-info{color:var(--muted)}
+.au-msg .link{font:inherit;font-weight:600;cursor:pointer}
+
+/* primary button: full width inside the card (the design), spinner then a tick */
+.au-go{display:flex;flex-direction:column}
+#clerk-captcha:not(:empty){margin-bottom:14px}
+.btn.au-btn,.btn.au-ghost{align-self:stretch;width:100%;height:48px;font-size:15px;transform:scale(var(--press))}   /* no magnetic lean on a full-width button */
+.btn.au-btn:disabled{color:rgba(255,255,255,.7)}
+.au-btn.is-done{background:var(--mint);color:transparent;pointer-events:none}
+.au-btn.is-done::after{content:"";position:absolute;width:18px;height:18px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230B0B0F' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/contain no-repeat}
+.btn.au-ghost{background:rgba(255,255,255,.08);color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.2);font-size:14px}
+.btn.au-ghost:hover{background:rgba(255,255,255,.14)}
+.au-small{font:400 13px/19px var(--fd);color:var(--faint);text-align:center;text-wrap:pretty}
+.au-small button.link{font:inherit;font-weight:600;cursor:pointer}
+.au-after{display:flex;flex-direction:column;align-items:center;gap:6px}
+:is(.au-small,.au-foot,.au-msg) .link{position:relative}
+:is(.au-small,.au-foot,.au-msg) .link::after{content:"";position:absolute;inset:-13px -6px}   /* 44px touch target around a text link */
+/* birth year: native select in the field style */
+select.au-input{appearance:none;-webkit-appearance:none;padding-right:44px;cursor:pointer;
+  background:rgba(255,255,255,.04) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-opacity='.64' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") right 16px center/14px no-repeat}
+select.au-input.is-empty{color:var(--faint)}
+select.au-input option{color:#fff;background:#15151B}
+
+/* footer strip in the card */
+.au-foot{padding:18px 22px;background:rgba(0,0,0,.22);box-shadow:inset 0 1px 0 var(--line);font:400 14px/20px var(--fd);color:var(--muted);text-align:center}
+.au-secured{display:flex;align-items:center;justify-content:center;gap:6px;font:400 12px/15px var(--fd);color:var(--faint)}
+
+/* judge code: a clearly visible glass control under the card that opens a small field (no URL shortcut unlocks anything) */
+.au-judge{width:100%;border-radius:16px;background:var(--glass),rgba(12,12,17,.5);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);box-shadow:var(--glass-edge);font:400 13px/18px var(--fd);color:var(--muted)}
+.au-judge summary{display:flex;align-items:center;gap:10px;min-height:48px;padding:8px 16px;border-radius:16px;cursor:pointer;list-style:none;transition:color .2s,background-color .2s}
+.au-judge summary::-webkit-details-marker{display:none}
+.au-judge summary:hover{background:rgba(255,255,255,.05);color:#fff}
+.au-judge summary:focus-visible{border-radius:16px}
+.au-judge summary>span{flex:1;text-wrap:balance}
+.au-judge summary svg{flex:none;color:var(--hl)}
+.au-judge .au-judge-ch{color:var(--faint);transition:transform .35s var(--out)}
+.au-judge[open] .au-judge-ch{transform:rotate(180deg)}
+.au-judge form{display:flex;flex-direction:column;gap:8px;padding:4px 16px 16px}
+.au-judge-row{display:flex;align-items:center;gap:8px}
+.au-judge-row .au-input{flex:1;min-width:0;letter-spacing:.06em;text-transform:uppercase}
+.au-judge-row .au-input::placeholder{letter-spacing:0;text-transform:none}
+.au-judge-row .btn{align-self:center;height:48px;padding:0 20px;font-size:14px}
+
+/* ---------- check your email: six boxes over one real input ---------- */
+.au-code{position:relative}
+.au-code-in{position:absolute;inset:0;z-index:1;width:100%;height:100%;margin:0;padding:0;border:0;background:none;color:transparent;caret-color:transparent;font-size:16px;opacity:0;cursor:text}
+.au-boxes{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.au-boxes span{--i:0;display:grid;place-items:center;height:53px;border-radius:12px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),0 0 0 0 rgba(47,107,255,0);
+  font:700 24px/1 var(--fd);font-variant-numeric:tabular-nums;color:#fff;transition:box-shadow .3s var(--out),background-color .3s var(--out),color .3s}
+.au-boxes span:nth-child(2){--i:1}.au-boxes span:nth-child(3){--i:2}.au-boxes span:nth-child(4){--i:3}.au-boxes span:nth-child(5){--i:4}.au-boxes span:nth-child(6){--i:5}
+.au-code-in:focus~.au-boxes .is-cur{box-shadow:inset 0 0 0 2px var(--brand),0 0 0 4px rgba(47,107,255,.22)}
+.au-code-in:focus~.au-boxes .is-cur:empty::after{content:"";width:2px;height:24px;background:#fff}
+.au-code-in[aria-invalid=true]~.au-boxes span,.au-boxes.is-bad span{box-shadow:inset 0 0 0 1.5px var(--pop),0 0 0 0 rgba(47,107,255,0)}
+.au-boxes.is-ok span{background:var(--mint);box-shadow:inset 0 0 0 1px var(--mint),0 0 0 0 rgba(47,107,255,0);color:var(--night);transition-delay:calc(var(--i)*50ms)}
+
+/* ---------- age: choice cards ---------- */
+.au-ages{position:relative;display:flex;flex-direction:column;gap:10px}
+.au-age{position:relative;display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:14px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);cursor:pointer;transition:background-color .2s}
+.au-age:hover{background:rgba(255,255,255,.07)}
+.au-age input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.au-age>span{position:relative;z-index:2;pointer-events:none}
+.au-age:has(input:focus-visible){outline:2px solid var(--hl);outline-offset:3px}
+.au-radio{flex:none;width:20px;height:20px;margin-top:1px;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);transition:border-width .3s var(--out),border-color .2s,background-color .2s}
+.au-age input:checked+.au-radio{border:6px solid var(--brand);background:#fff}
+.au-age-t{display:flex;flex-direction:column;gap:3px;min-width:0}
+.au-age-t b{font:600 15px/21px var(--fd);letter-spacing:-.01em;color:#fff}
+.au-age-t span{font:400 13px/19px var(--fd);color:var(--muted);text-wrap:pretty}
+.au-age-hl{position:absolute;left:0;right:0;top:0;z-index:1;height:0;border-radius:14px;background:rgba(47,107,255,.12);box-shadow:inset 0 0 0 2px var(--brand);opacity:0;pointer-events:none;
+  transition:transform .45s var(--out),height .45s var(--out),opacity .2s}
+
+/* ---------- under 13 + welcome: inner glass box ---------- */
+.au-box{border-radius:14px;background:var(--glass);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);box-shadow:var(--glass-edge)}
+.au-can{display:flex;flex-direction:column;gap:10px;padding:18px}
+.au-can h2{font:600 14px/20px var(--fd);letter-spacing:-.01em;color:#fff}
+.au-can ul{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.au-can li{display:flex;gap:10px;font:400 13px/20px var(--fd);color:var(--muted)}
+.au-can li::before{content:"";flex:none;width:6px;height:6px;margin-top:7px;border-radius:50%;background:var(--mint)}
+.au-box.au-steps{margin:0;padding:4px 18px;list-style:none}
+.au-steps li{--i:0;display:flex;align-items:flex-start;gap:14px;padding:14px 0}
+.au-steps li:nth-child(2){--i:1}.au-steps li:nth-child(3){--i:2}
+.au-steps li+li{box-shadow:inset 0 1px 0 var(--line)}
+.au-n{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:rgba(47,107,255,.16);font:700 13px/1 var(--fd);color:var(--hl)}
+
+/* waiting + Clerk's own form (fallback) */
+.au-spin{align-self:center;width:28px;height:28px;margin:6px 0 10px;border-radius:50%;border:2.5px solid rgba(255,255,255,.2);border-top-color:#fff;animation:lv-spin .7s linear infinite}
+.au-wait-act{display:flex;flex-direction:column;gap:14px}
+#au-clerk{min-height:320px}
+
+/* ---------- legal links ---------- */
+.au-legal{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px;padding:0 16px calc(24px + env(safe-area-inset-bottom,0px));font:400 12px/16px var(--fd);color:var(--faint)}
+.au-legal a{padding:14px 6px;margin:-14px -6px;transition:color .2s}
+.au-legal a:hover{color:#fff}
+
+/* ---------- tablet: centred card ---------- */
+@media (min-width:600px){
+  .au-top{padding:28px 40px 0}
+  .au-mid{padding:40px}
+  .au-card{border-radius:24px}
+  .au-step{padding:44px 40px 40px}
+  .au-head h1{font-size:32px;line-height:36px}
+  .au-input{font-size:15px}
+  .au-tag{top:13px;background:rgba(47,107,255,.18)}
+  .au-foot{padding:18px 40px}
+  .au-boxes{gap:10px}.au-boxes span{height:60px}
+  .au-legal{padding-bottom:28px}
+}
+
+/* ---------- desktop: story on the left, card on the right ---------- */
+@media (min-width:1100px){
+  .au-top{padding:28px 56px 0}
+  .au-mid{justify-content:space-between;gap:48px;width:100%;max-width:1440px;margin-inline:auto;padding:16px var(--mg)}
+  .au-stack{width:480px}
+  .au-story{display:flex;flex-direction:column;align-items:flex-start;gap:24px;flex:0 1 560px;min-width:0}
+  .au-story-h{font:700 clamp(42px,3.9vw,56px)/1.0714 var(--fd);letter-spacing:-.045em;color:#fff}
+  .au-story-p{max-width:440px;font:400 16px/25px var(--fd);color:var(--muted);text-wrap:pretty}
+  .au-mini{display:flex;flex-direction:column;width:280px;padding:16px;border-radius:16px;background:var(--glass),rgba(16,16,22,.6);-webkit-backdrop-filter:var(--frost);backdrop-filter:var(--frost);box-shadow:var(--glass-edge)}
+  .au-mini-top{display:flex;align-items:center;gap:8px;font:600 13px/1 var(--fd)}
+  .au-mini-date{margin-left:auto;font:400 12px/1 var(--fd);color:var(--faint)}
+  .au-mini .chip{height:20px;padding:0 8px}
+  .au-mini-num{padding:8px 0;font:700 22px/27px var(--fd);letter-spacing:-.03em;color:#fff}
+  .au-mini svg{overflow:visible}
+  .au-tile{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:6px;background:#fff;box-shadow:inset 0 0 0 1px #E7E6E2}
+  .au-tile img{width:16px;height:16px;object-fit:contain}
+  .au-mini .au-tile{width:24px;height:24px}.au-mini .au-tile img{width:14px;height:14px}
+  .au-logos{display:flex;align-items:center;gap:10px;font:400 12px/1 var(--fd);color:var(--faint)}
+  .au-logos-row{display:flex;gap:6px}
+}
+
+/* ---------- motion (all of it off under reduced motion; the foundation block also flattens it) ---------- */
+@media (prefers-reduced-motion:no-preference){
+  body.auth-page::before{animation:au-drift 46s ease-in-out infinite alternate}
+  .au-card{animation:au-rise .9s var(--out) both}
+  .au-secured,.au-judge,.au-legal{animation:au-fade .8s .35s var(--out) both}
+  .au-year,.au-judge[open] form{animation:au-in .45s var(--out) both}
+  .au-step{animation:au-step .5s var(--out) both}
+  .au-msg:not(:empty){animation:au-msg .4s var(--out)}
+  .au-tag{animation:au-pop .5s .55s var(--spring) both}
+  .au-btn.is-done{transition:background-color .3s var(--out)}
+  .au-btn.is-done::after{animation:au-pop .45s var(--spring) both}
+  .au-boxes span.is-new{animation:au-digit .28s var(--out)}
+  .au-code-in:focus~.au-boxes .is-cur:empty::after{animation:lv-caret 1s steps(1) infinite}
+  .au-boxes.is-bad{animation:au-shake .42s var(--out)}
+  .auth[data-step=welcome] .au-steps li{animation:au-in .6s var(--out) both;animation-delay:calc(.2s + var(--i)*.16s)}
+  .auth[data-step=welcome] .au-n{animation:au-pop .5s var(--spring) both;animation-delay:calc(.32s + var(--i)*.16s)}
+  .auth[data-step=under13] .au-can li{animation:au-in .5s var(--out) both}
+  .au-can li:nth-child(1){animation-delay:.15s}.au-can li:nth-child(2){animation-delay:.25s}.au-can li:nth-child(3){animation-delay:.35s}
+}
+@keyframes au-drift{from{transform:scale(1) translate3d(-1.2%,-.8%,0)}to{transform:scale(1.05) translate3d(1.4%,1.2%,0)}}
+@keyframes au-rise{from{opacity:0;transform:translateY(28px) scale(.985)}}
+@keyframes au-fade{from{opacity:0}}
+@keyframes au-step{from{opacity:0;transform:translateX(18px)}}
+@keyframes au-in{from{opacity:0;transform:translateY(10px)}}
+@keyframes au-msg{from{opacity:0;transform:translateY(-6px)}}
+@keyframes au-pop{from{opacity:0;transform:scale(.5)}}
+@keyframes au-digit{from{transform:translateY(6px) scale(.9);opacity:.3}}
+@keyframes au-shake{20%{transform:translateX(-5px)}45%{transform:translateX(4px)}70%{transform:translateX(-2px)}100%{transform:none}}
