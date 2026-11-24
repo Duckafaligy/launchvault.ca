@@ -74,6 +74,10 @@ window.LVAuth = (() => {
     if (r.status === "complete") { await c.setActive({session: r.createdSessionId}); location.href = pending.kind === "up" ? "/old/app/start/" : "/old/app/"; }
     return r.status;
   };
+  // accounts paused: the one email allowed in, as a SHA-256 hash ("" = open to everyone). ponytail: browser-side; the hard lock is Clerk's allowlist
+  const LV_ONLY = "1bed0365d329c0a66c71c85ac5fb79888c0ecb223196a7f795f08f43242e3221";
+  const lvAllowed = async e => { if (!LV_ONLY) return true; try { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(e || "").trim().toLowerCase()));
+    return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join("") === LV_ONLY; } catch { return false; } };
   const callback = async () => {
     if (!live) { location.replace("/old/app/"); return; }
     const c = await load();
@@ -111,6 +115,7 @@ window.LVAuth = (() => {
     const ageQ = () => { if (window.LVGate && !LVGate.ok && LVGate.start) LVGate.start(); };   // age question only after the wall
     if (!live) { ageQ(); return; }
     try { await load(); paint();
+      if (clerk.user && !(await lvAllowed(email()))) { try { localStorage.removeItem("lv-plan"); } catch {} await clerk.signOut({redirectUrl: "/sign-in/?closed=1"}); return; }
       if (clerk.user && window.LVGate && LVGate.ok) { const sc = document.createElement("script"); sc.src = "/assets/supabase.js"; sc.onload = () => window.LVSync && LVSync.start(clerk); document.head.appendChild(sc); }
       if (wall && !clerk.user) { location.replace("/sign-in/?next=" + encodeURIComponent(location.pathname + location.search)); return; }
       document.documentElement.style.visibility = ""; ageQ(); } catch (e) { document.documentElement.style.visibility = ""; ageQ(); /* Clerk didn't load: fail open, keep the preview face */ }

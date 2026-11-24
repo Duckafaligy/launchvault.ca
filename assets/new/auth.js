@@ -84,6 +84,10 @@
       oauth_access_denied: "You cancelled that sign-in. Pick an option to try again.",
     })[k] || (x && (x.longMessage || x.message)) || "Something went wrong. Try again.";
   };
+  // accounts paused: the one email allowed in, as a SHA-256 hash ("" = open to everyone). ponytail: browser-side; the hard lock is Clerk's allowlist
+  const LV_ONLY = "1bed0365d329c0a66c71c85ac5fb79888c0ecb223196a7f795f08f43242e3221";
+  const lvAllowed = async e => { if (!LV_ONLY) return true; try { const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(e || "").trim().toLowerCase()));
+    return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join("") === LV_ONLY; } catch { return false; } };
   const needsFullUI = e => (e && e.lv === "incomplete") || (e instanceof TypeError && /not a function|undefined|null/.test(e.message || ""));
   const say = (id, text, {info = false, field = null, retry = null} = {}) => {
     const m = $("#au-msg-" + id); m.textContent = ""; m.classList.toggle("is-info", info);
@@ -359,10 +363,14 @@
       return;
     }
     if (m === "welcome") {
-      try { const c = await load(); if (!c.user) return location.replace(SIGN_IN + nq); fresh = q.get("new") === "1"; afterAuth(); }
+      try { const c = await load(); if (!c.user) return location.replace(SIGN_IN + nq);
+        const em = c.user.primaryEmailAddress ? c.user.primaryEmailAddress.emailAddress : "";
+        if (!(await lvAllowed(em))) { await c.signOut({redirectUrl: SIGN_IN + "?closed=1"}); return; }
+        fresh = q.get("new") === "1"; afterAuth(); }
       catch { waitFail(); }
       return;
     }
-    connect();
+    await connect();
+    if (LV_ONLY && !$("#au-msg-form").textContent) say("form", "Accounts are paused while we finish building. New sign-ups and sign-ins are closed for now.", {info: true});
   })();
 })();
