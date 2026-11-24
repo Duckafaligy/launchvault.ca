@@ -154,6 +154,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
 <script src="{NA}/app.js" defer></script>
 <script src="{NA}/profile.js" defer></script>{scripts}
 <script src="{NA}/ui.js" defer></script>
+<script src="/assets/new/motion.js" defer data-only="bg" data-pointer="off"></script>
 </body>
 </html>
 ''')

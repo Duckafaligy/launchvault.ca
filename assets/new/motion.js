@@ -4,6 +4,7 @@
 (function () {
   'use strict';
   var d = document, html = d.documentElement, w = window;
+  var SELF = d.currentScript, ONLY = SELF && SELF.dataset.only, NOPTR = !!SELF && SELF.dataset.pointer === 'off';   /* the app loads this file for the background alone: data-only="bg" data-pointer="off" */
   var mqReduce = w.matchMedia('(prefers-reduced-motion: reduce)');
   var reduced = mqReduce.matches;
   var calm = w.innerWidth < 1100;     /* tablet and phone: no build animation, no drifting background; desktop is where the motion lives */
@@ -644,7 +645,7 @@
       }
     }
     function point(e) {                                    /* mouse, pen or finger */
-      if (reduced || calm) return;
+      if (reduced || calm || NOPTR) return;
       mx = e.clientX; my = e.clientY;
       if (!has) { has = true; ex = mx; ey = my; }
     }
@@ -675,6 +676,7 @@
   var started = false;
   function start() {
     if (started) return; started = true;
+    if (ONLY === 'bg') return background();
     nav(); init(); background();
     if (fine && !reduced) cursor();
   }

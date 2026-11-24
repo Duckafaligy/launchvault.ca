@@ -797,6 +797,7 @@
   .nv.p-acct .pg{flex:1;min-height:0;padding-bottom:0}
   .nv.p-acct .acc{flex:1;min-height:0;align-items:stretch}
   .nv.p-acct .acc .anav{position:static;align-self:start}
+  .nv.p-acct .asecs>*{flex:none}     /* a scrolling flex column must not squash its cards to fit: that clipped the last one */
   .nv.p-acct .asecs{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 6px 40px 0;margin-right:-6px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent;scroll-behavior:smooth;
     -webkit-mask-image:linear-gradient(#000 calc(100% - 32px),transparent);mask-image:linear-gradient(#000 calc(100% - 32px),transparent)}
 }
@@ -928,4 +929,8 @@
 .emdlg .tl{align-self:flex-start;min-height:32px;padding:0;background:none;border:0;color:var(--hl,#9DB8FF);font:500 13px/1 var(--fd);cursor:pointer}
 .emdlg .emerr{min-height:18px;margin:0;color:#FF9B8A}
 .emdlg b{color:#fff;font-weight:600;overflow-wrap:anywhere}
+
+/* app background: the same drifting dots as the public site, drawn on a fixed canvas behind everything. It ignores the pointer. */
+body.nv>canvas.bg{position:fixed;inset:0;z-index:-1;width:100%;height:100%;pointer-events:none}
+body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a painted body would sit on top of the canvas */
 
