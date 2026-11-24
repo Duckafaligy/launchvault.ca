@@ -20,6 +20,7 @@
     if (el._lvCount) runCount(el);
     if (el._lvDraw) el._lvDraw.forEach(function (p) { p.style.strokeDashoffset = 0; });
     if (el.classList.contains('pin')) return runPin(el);
+    if (el._lvT === el) queue(el);                         /* a heading that gets typed */
     el.classList.add('in');
     if (el.hasAttribute('data-stagger')) setTimeout(function () { el.classList.add('done'); }, 80 * el.children.length + 900);
   }
@@ -85,38 +86,52 @@
     el._lvPin = { t: t, b: b, pre: t.firstChild && t.firstChild.nodeType === 3 ? t.firstChild.data : '', dom: b.textContent,
       post: b.nextSibling && b.nextSibling.nodeType === 3 ? b.nextSibling.data : '' };   /* optional words after the domain ("… rules") */
     b.insertAdjacentHTML('beforeend', ARROW_NE);
-    var T = pinTarget(el);
-    if (!T || reduced || !io || !el.offsetParent) return;          /* a pin hidden at this width never plays, so its layer stays put */
-    el._lvT = T;
-    if (el.dataset.nudge === '0') return;
-    var r = T.getBoundingClientRect();
-    el._lvOff = [r.left + r.width / 2 > w.innerWidth / 2 ? -10 : 10, 9];
-    T.style.translate = el._lvOff[0] + 'px ' + el._lvOff[1] + 'px';
+    var T = pinTarget(el), act = el.dataset.act || 'move';
+    if (!T || act === 'none' || reduced || !io || !el.offsetParent) return;          /* a pin hidden at this width never plays, so its layer is left alone */
+    el._lvT = T; el._lvAct = act;
+    if (act === 'type') T.classList.add('lv-untyped', 'lv-arial');
+    else if (act === 'color') T.classList.add('lv-grey');
+    else if (el.dataset.nudge !== '0') {
+      var r = T.getBoundingClientRect();
+      el._lvOff = [r.left + r.width / 2 > w.innerWidth / 2 ? -10 : 10, 9];
+      T.style.translate = el._lvOff[0] + 'px ' + el._lvOff[1] + 'px';
+    }
   }
-  /* Comment pins play like a design file being worked on: a coloured cursor selects the layer the comment is about (outline, handles,
-     name tag), drags it the last few pixels into place, then clicks beside it; the bubble pops out of the click, the words type, the logo
-     pops in last. One pin starts at a time, and only once its spot on the page has stopped moving (counting numbers, reveals, scroll zooms). */
+
+  /* The page is built in front of you, like a design file being worked on. A coloured cursor does one job per item, then (for a comment
+     pin) clicks beside it: the bubble pops out of the click, the words type, the logo pops in last. The jobs:
+       type   the heading is typed in Arial, then switched to the real font       (data-act="type" on a pin, or data-build="type" on a heading)
+       color  the layer starts grey; the cursor picks its colour
+       move   the layer is selected (outline, handles, name tag) and dragged the last few pixels into place
+       none   just the comment
+     One job starts at a time, and only once its spot has stopped moving (counting numbers, reveals, scroll zooms). */
   var CUR = '<svg viewBox="0 0 20 22" width="20" height="22"><path d="M4 3.2 C4 2.2 5.1 1.6 6 2.2 L17.2 9.9 C18.1 10.5 17.8 11.9 16.7 12.1 L11.6 13 L9.2 17.6 C8.7 18.6 7.2 18.4 7 17.3 Z"/></svg>';
   var CUR_COL = ['#FF4D1F', '#00C27A', '#7B5CFF', '#FF5FA2'], pinN = 0, pinQ = [], pinBusy = false, layer;
   function pinTarget(el) { var q = el.dataset.for; try { return q ? d.querySelector(q) : null; } catch (e) { return null; } }
+  function ready(el) {                                     /* put the layer in its finished state, no show */
+    var T = el._lvT;
+    if (T) { T.style.translate = ''; T.classList.remove('lv-untyped', 'lv-arial', 'lv-grey'); }
+  }
+  function queue(el) { el._lvQ = performance.now(); pinQ.push(el); pinNext(); }
   function runPin(el) {
-    var p = el._lvPin;
-    if (!p || reduced) { if (el._lvT) el._lvT.style.translate = ''; return el.classList.add('in'); }
-    pinQ.push(el); pinNext();
+    if (!el._lvPin || reduced) { ready(el); return el.classList.add('in'); }
+    queue(el);
   }
   function pinNext() {
     if (pinBusy || !pinQ.length) return;
     pinBusy = true;
     var el = pinQ.shift(), last = '', same = 0, tries = 0, v = el.getBoundingClientRect();
-    if (v.bottom < -40 || v.top > w.innerHeight + 40 || !el.offsetParent) {      /* scrolled past before its turn: no show, it is just there */
-      if (el._lvT) el._lvT.style.translate = '';
-      el.classList.add('in', 'lit'); pinBusy = false; return pinNext();
+    var stale = el._lvAct === 'type' && performance.now() - el._lvQ > 3500;     /* a heading never waits blank for long */
+    if (v.bottom < -40 || v.top > w.innerHeight + 40 || !el.offsetParent || stale) {   /* scrolled past before its turn: it is just there */
+      ready(el);
+      if (el._lvPin) el.classList.add('in', 'lit');
+      pinBusy = false; return pinNext();
     }
-    (function settle() {                                   /* wait until the pin (and its layer) hold still for about a third of a second */
+    (function settle() {                                   /* wait until it holds still for about a third of a second */
       var r = el.getBoundingClientRect(), t = el._lvT ? el._lvT.getBoundingClientRect() : r;
       var key = [r.left, r.top + w.scrollY, r.width, t.left, t.top + w.scrollY, t.width, t.height].map(Math.round).join();
       same = key === last ? same + 1 : 0; last = key;
-      if (same >= 3 || ++tries > 40) return placePin(el, el._lvPin);
+      if (same >= 3 || ++tries > 40) return play(el);
       setTimeout(settle, 110);
     })();
   }
@@ -125,23 +140,54 @@
     node.style.transition = 'transform ' + ms + 'ms ' + (ease || EASE) + ',opacity .25s';
     node.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
   }
-  function placePin(el, p) {
+  function chars(T) {                                      /* every letter in its own hidden span, so typing never moves the layout */
+    var out = [], wraps = [];
+    (function walk(n) {
+      Array.prototype.slice.call(n.childNodes).forEach(function (k) {
+        if (k.nodeType === 3) {
+          if (!k.data.trim()) return;
+          var W = d.createElement('span');
+          k.data.split('').forEach(function (ch) { var c = d.createElement('span'); c.textContent = ch; c.style.opacity = 0; W.appendChild(c); out.push(c); });
+          n.replaceChild(W, k); wraps.push([W, k]);
+        } else if (k.nodeType === 1 && k.tagName.toLowerCase() !== 'svg' && !k.classList.contains('lv-cur')) walk(k);
+      });
+    })(T);
+    return { c: out, undo: function () { wraps.forEach(function (x) { if (x[0].parentNode) x[0].parentNode.replaceChild(x[1], x[0]); }); } };
+  }
+  function play(el) {
     if (!layer) { layer = d.createElement('div'); layer.className = 'lv-layer'; layer.setAttribute('aria-hidden', 'true'); d.body.appendChild(layer); }
-    var c = el.dataset.c || 'bl', col = CUR_COL[pinN++ % CUR_COL.length], T = el._lvT, sy = w.scrollY;
+    var p = el._lvPin, T = el._lvT, act = el._lvAct, c = el.dataset.c || 'bl', col = CUR_COL[pinN++ % CUR_COL.length], sy = w.scrollY;
     var cur = d.createElement('span');
     cur.className = 'lv-cur pin-cur'; cur.innerHTML = '<i></i>' + CUR; cur.style.setProperty('--c', col);
     layer.appendChild(cur);
-    var pr = el.getBoundingClientRect();
-    var P = [c[1] === 'r' ? pr.right : pr.left, (c[0] === 'b' ? pr.bottom : pr.top) + sy];   /* the bubble's tail corner */
-    var tr = T && T.getBoundingClientRect(), box = null, alive = true, steps = [];
-    if (tr && (!tr.width || !tr.height)) { T.style.translate = ''; T = null; }
-    var first = T ? [tr.left + Math.min(46, tr.width * 0.25), tr.top + sy + Math.min(30, tr.height * 0.4)] : P;
+    function anchor() { var r = el.getBoundingClientRect(); return [c[1] === 'r' ? r.right : r.left, (c[0] === 'b' ? r.bottom : r.top) + w.scrollY]; }   /* the bubble's tail corner */
+    var tr = T && T.getBoundingClientRect(), box = null, chip = null, alive = true;
+    if (T && (!tr.width || !tr.height)) { ready(el); T = null; }
+    var first = !T ? anchor() : act === 'type' ? [tr.left - 4, tr.top + sy + Math.min(40, tr.height * 0.5)]
+      : [tr.left + Math.min(46, tr.width * 0.25), tr.top + sy + Math.min(30, tr.height * 0.4)];
     var fromX = first[0] > w.innerWidth / 2 ? -120 : 120;        /* comes in from the middle of the page, so it never widens it */
     at(cur, first[0] + fromX, first[1] + 90, 0);
     cur.getBoundingClientRect(); cur.style.opacity = 1;
     at(cur, first[0], first[1], 560);
     function click() { cur.classList.remove('click'); cur.getBoundingClientRect(); cur.classList.add('click'); }
-    function type() {
+    function leave(x, y) {
+      cur.style.opacity = 0; at(cur, x + fromX * 0.4, y + 40, 600, 'cubic-bezier(.5,0,.8,.5)');
+      if (box) box.classList.remove('on');
+      setTimeout(function () { alive = false; cur.remove(); if (box) box.remove(); }, 650);
+    }
+    function showChip(html) {                              /* the little tool panel that pops up under the cursor */
+      chip = d.createElement('div'); chip.className = 'lv-chip'; chip.innerHTML = html;
+      chip.style.transform = 'translate(' + (first[0] + 14).toFixed(0) + 'px,' + (first[1] + 26).toFixed(0) + 'px)';
+      layer.appendChild(chip); chip.getBoundingClientRect(); chip.classList.add('on');
+    }
+    function hideChip() { var k = chip; chip = null; if (!k) return; k.classList.remove('on'); setTimeout(function () { k.remove(); }, 300); }
+    function comment() {                                    /* on to where the comment goes; a heading with no pin is simply done */
+      if (!p) { leave(first[0], first[1]); return pinFree(); }
+      var P = anchor();
+      at(cur, P[0], P[1], 520);
+      setTimeout(function () { write(P); }, 560);
+    }
+    function write(P) {
       var txt = d.createTextNode(''), dom = d.createTextNode(''), post = d.createTextNode(''), arrow = p.b.querySelector('svg');
       var caret = d.createElement('span'); caret.className = 'pin-caret';
       p.t.textContent = ''; p.b.textContent = '';
@@ -159,39 +205,59 @@
         caret.remove();
         if (arrow) p.b.appendChild(arrow);
         el.classList.remove('typing', 'pop'); el.classList.add('lit');
-        cur.style.opacity = 0; at(cur, P[0] + fromX * 0.4, P[1] + 40, 600, 'cubic-bezier(.5,0,.8,.5)');
-        if (box) box.classList.remove('on');
-        setTimeout(function () { alive = false; cur.remove(); if (box) box.remove(); }, 650);
+        leave(P[0], P[1]);
       }, 320);
     }
-    if (!T) return setTimeout(type, 600);
-    setTimeout(function () {                                /* select the layer */
-      click();
-      box = d.createElement('div'); box.className = 'lv-sel'; box.style.setProperty('--c', col);
-      box.innerHTML = '<i></i><i></i><i></i><i></i>' + (el.dataset.layer ? '<b>' + el.dataset.layer + '</b>' : '');
-      layer.appendChild(box);
-      (function follow() {
-        if (!alive) return;
-        var r = T.getBoundingClientRect();
-        box.style.transform = 'translate(' + r.left.toFixed(1) + 'px,' + (r.top + w.scrollY).toFixed(1) + 'px)';
-        box.style.width = r.width.toFixed(1) + 'px'; box.style.height = r.height.toFixed(1) + 'px';
-        requestAnimationFrame(follow);
-      })();
-      box.getBoundingClientRect(); box.classList.add('on');
-    }, 600);
-    setTimeout(function () {                                /* drag it into place */
-      var off = el._lvOff || [0, 0];
-      cur.classList.add('down');
-      T.style.transition = 'translate 620ms ' + EASE; T.style.translate = '0 0';
-      at(cur, first[0] - off[0], first[1] - off[1], 620);
-      setTimeout(function () { T.style.transition = ''; T.style.translate = ''; cur.classList.remove('down'); }, 660);
-    }, 980);
-    setTimeout(function () {                                /* on to where the comment goes */
-      var r = el.getBoundingClientRect();
-      P = [c[1] === 'r' ? r.right : r.left, (c[0] === 'b' ? r.bottom : r.top) + w.scrollY];
-      at(cur, P[0], P[1], 520);
-      setTimeout(type, 560);
-    }, 1800);
+    var ACTS = {
+      type: function () {
+        T.classList.remove('lv-arial'); var h = T.offsetHeight, font = getComputedStyle(T).fontFamily.split(',')[0].replace(/["']/g, '').trim();
+        T.classList.add('lv-arial'); T.style.height = h + 'px';             /* keeps its final height, so nothing below moves */
+        var ch = chars(T), n = 0, caret = d.createElement('i'); caret.className = 'lv-tcaret';
+        click(); T.classList.remove('lv-untyped');
+        setTimeout(function tick() {
+          var k = ch.c[n++];
+          if (k) { k.style.opacity = ''; k.after(caret); return setTimeout(tick, /\s/.test(k.textContent) ? 70 : 30 + Math.random() * 40); }
+          setTimeout(function () { showChip('<span>Aa</span><b>Arial</b>'); }, 200);
+          setTimeout(function () { click(); caret.remove(); T.classList.remove('lv-arial'); if (chip) { chip.lastChild.textContent = font; chip.classList.add('flip'); } }, 850);
+          setTimeout(function () { hideChip(); ch.undo(); T.style.height = ''; comment(); }, 1500);
+        }, 260);
+      },
+      color: function () {
+        click();
+        showChip('<u style="--k:#8A8A93" class="sel"></u><u style="--k:#FF4D1F"></u><u style="--k:#00C27A"></u><u style="--k:#2F6BFF"></u>');
+        setTimeout(function () {
+          click();
+          if (chip) { chip.firstChild.classList.remove('sel'); chip.lastChild.classList.add('sel'); }
+          T.style.transition = 'filter .7s ' + EASE; T.classList.remove('lv-grey');
+          setTimeout(function () { T.style.transition = ''; }, 750);
+        }, 650);
+        setTimeout(function () { hideChip(); comment(); }, 1350);
+      },
+      move: function () {
+        click();
+        box = d.createElement('div'); box.className = 'lv-sel'; box.style.setProperty('--c', col);
+        box.innerHTML = '<i></i><i></i><i></i><i></i>' + (el.dataset.layer ? '<b>' + el.dataset.layer + '</b>' : '');
+        layer.appendChild(box);
+        (function follow() {
+          if (!alive) return;
+          var r = T.getBoundingClientRect();
+          box.style.transform = 'translate(' + r.left.toFixed(1) + 'px,' + (r.top + w.scrollY).toFixed(1) + 'px)';
+          box.style.width = r.width.toFixed(1) + 'px'; box.style.height = r.height.toFixed(1) + 'px';
+          requestAnimationFrame(follow);
+        })();
+        box.getBoundingClientRect(); box.classList.add('on');
+        var off = el._lvOff;
+        if (!off) return setTimeout(comment, 700);
+        setTimeout(function () {                            /* drag it into place */
+          cur.classList.add('down');
+          T.style.transition = 'translate 620ms ' + EASE; T.style.translate = '0 0';
+          at(cur, first[0] - off[0], first[1] - off[1], 620);
+          setTimeout(function () { T.style.transition = ''; T.style.translate = ''; cur.classList.remove('down'); }, 660);
+        }, 380);
+        setTimeout(comment, 1200);
+      }
+    };
+    setTimeout(T ? ACTS[act] || ACTS.move : function () { write(first); }, 600);
   }
 
   /* ---------- tabs / segmented with a sliding indicator: [data-tabs] > .seg-i ---------- */
@@ -277,6 +343,7 @@
     $$('[data-tabs]', root).forEach(prepTabs);
     $$('details[data-acc]', root).forEach(prepAcc);
     $$('.pin', root).forEach(function (el) { if (!el._lvPin) prepPin(el); });
+    if (!reduced && io) $$('[data-build=type]', root).forEach(function (el) { if (!el._lvT) { el._lvT = el; el._lvAct = 'type'; el.classList.add('lv-untyped', 'lv-arial'); } });
     var els = $$('[data-reveal],[data-stagger],[data-count],[data-draw],.pin', root).filter(function (el) { return !el._lvSeen; });
     els.forEach(function (el) {
       el._lvSeen = 1;

@@ -211,6 +211,10 @@
     c.style.setProperty('--sx', (e.clientX - r.left).toFixed(0) + 'px'); c.style.setProperty('--sy', (e.clientY - r.top).toFixed(0) + 'px');
   }, { passive: true });
 
+  /* ---------- the top bar is assembled by a cursor on load (the items animate in CSS; this adds the cursor and switches it all off after) ---------- */
+  if (!reduced && w.innerWidth >= 1100 && w.scrollY < 40) d.body.insertAdjacentHTML('beforeend', '<span class="lv-cur nb-cur" aria-hidden="true"><svg viewBox="0 0 20 22" width="20" height="22"><path d="M4 3.2 C4 2.2 5.1 1.6 6 2.2 L17.2 9.9 C18.1 10.5 17.8 11.9 16.7 12.1 L11.6 13 L9.2 17.6 C8.7 18.6 7.2 18.4 7 17.3 Z"/></svg></span>');
+  setTimeout(function () { html.classList.add('nb-done'); var c = $('.nb-cur'); if (c) c.remove(); }, 2700);   /* so nothing replays when the bar comes back from the pill */
+
   /* ---------- questions: the list keeps the height of its tallest answer, so opening one never moves the page below ---------- */
   var faq = $('#faq .pin-host');
   if (faq) {
