@@ -575,11 +575,13 @@
     let lock = 0;
     const spy = () => { if (Date.now() < lock) return; const line = Math.max(200, innerHeight * 0.35); let cur = H[0];
       H.forEach(h => { const t = document.querySelector(h); if (t && !t.hidden && t.getBoundingClientRect().top < line) cur = h; });
-      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = H.at(-1);
+      const box = $(".asecs"), inner = box && box.scrollHeight > box.clientHeight + 4;   // desktop: the cards scroll inside their own box
+      if (inner ? box.scrollTop + box.clientHeight >= box.scrollHeight - 4 : innerHeight + scrollY >= document.documentElement.scrollHeight - 4) cur = H.at(-1);
       mark(cur); };
     // a click highlights its own tab straight away and holds it while the page scrolls there
     nav.forEach(a => a.addEventListener("click", () => { mark(a.getAttribute("href")); lock = Date.now() + 1200; }));
-    let spyQ = 0; addEventListener("scroll", () => { if (!spyQ) spyQ = requestAnimationFrame(() => { spyQ = 0; spy(); }); }, {passive: true}); spy();   // once per frame, not per scroll event
+    let spyQ = 0; const onS = () => { if (!spyQ) spyQ = requestAnimationFrame(() => { spyQ = 0; spy(); }); };
+    addEventListener("scroll", onS, {passive: true}); if ($(".asecs")) $(".asecs").addEventListener("scroll", onS, {passive: true}); spy();   // once per frame, not per scroll event
   }
 
   // ---------- onboarding: 10 questions (Skip any) -> result -> Home. The age question is the gate (assets/gate.js), asked once, before this. ----------

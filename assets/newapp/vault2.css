@@ -790,3 +790,24 @@
 .nv .pp-two{display:grid;gap:18px}
 @media (min-width:900px){.nv .pp-two{grid-template-columns:1fr 1fr;gap:16px}}
 
+/* Settings, desktop: the page is one fixed screen. Title, top bar and the section menu stay; only the cards scroll. */
+@media (min-width:1101px){
+  .nv.p-acct .main{display:flex;flex-direction:column;height:calc(100vh/var(--z,1));overflow:hidden}
+  .nv.p-acct .main>main{flex:1;min-height:0;display:flex;flex-direction:column}
+  .nv.p-acct .pg{flex:1;min-height:0;padding-bottom:0}
+  .nv.p-acct .acc{flex:1;min-height:0;align-items:stretch}
+  .nv.p-acct .acc .anav{position:static;align-self:start}
+  .nv.p-acct .asecs{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 6px 40px 0;margin-right:-6px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent;scroll-behavior:smooth;
+    -webkit-mask-image:linear-gradient(#000 calc(100% - 32px),transparent);mask-image:linear-gradient(#000 calc(100% - 32px),transparent)}
+}
+@media (min-width:1101px) and (prefers-reduced-motion:reduce){.nv.p-acct .asecs{scroll-behavior:auto}}
+
+/* Public profile, wide: form on the left, the live preview fills the right */
+@media (min-width:1280px){
+  .nv .pp-f{max-width:none;grid-template-columns:minmax(0,640px) minmax(240px,1fr);column-gap:32px}
+  .nv .pp-f>*{grid-column:1}
+  .nv .pp-f>.pp-pv{grid-column:2;grid-row:1/span 2;align-self:start;padding:18px}
+  .nv .pp-f>.pp-teen{grid-column:2;grid-row:3;align-self:start}
+  .nv .pp-pv .pp-pvr{margin-top:14px;padding:14px;border-radius:12px;background:rgba(255,255,255,.04)}
+}
+
