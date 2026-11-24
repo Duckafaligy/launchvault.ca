@@ -211,6 +211,23 @@
     c.style.setProperty('--sx', (e.clientX - r.left).toFixed(0) + 'px'); c.style.setProperty('--sy', (e.clientY - r.top).toFixed(0) + 'px');
   }, { passive: true });
 
+  /* ---------- questions: the list keeps the height of its tallest answer, so opening one never moves the page below ---------- */
+  var faq = $('#faq .pin-host');
+  if (faq) {
+    var faqFit = function () {
+      var ds = $$('details.acc', faq), was = ds.map(function (x) { return x.open; });
+      if (!ds.length) return;
+      faq.style.minHeight = '';
+      ds.forEach(function (x) { x.open = true; });
+      var all = faq.offsetHeight, hs = ds.map(function (x) { return $('.acc-body', x).offsetHeight; });
+      ds.forEach(function (x, i) { x.open = was[i]; });
+      faq.style.minHeight = (all - hs.reduce(function (a, b) { return a + b; }, 0) + Math.max.apply(0, hs)) + 'px';
+    };
+    faqFit();
+    w.addEventListener('resize', faqFit);
+    if (d.fonts && d.fonts.ready) d.fonts.ready.then(faqFit);
+  }
+
   /* ---------- how it works on phones: the row swipes; dots follow, arrow keys work once it is focusable ---------- */
   var row = $('.how-row'), dots = $$('.how-dots i');
   if (row) {

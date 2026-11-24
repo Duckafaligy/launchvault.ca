@@ -85,52 +85,113 @@
     el._lvPin = { t: t, b: b, pre: t.firstChild && t.firstChild.nodeType === 3 ? t.firstChild.data : '', dom: b.textContent,
       post: b.nextSibling && b.nextSibling.nodeType === 3 ? b.nextSibling.data : '' };   /* optional words after the domain ("… rules") */
     b.insertAdjacentHTML('beforeend', ARROW_NE);
+    var T = pinTarget(el);
+    if (!T || reduced || !io || !el.offsetParent) return;          /* a pin hidden at this width never plays, so its layer stays put */
+    el._lvT = T;
+    if (el.dataset.nudge === '0') return;
+    var r = T.getBoundingClientRect();
+    el._lvOff = [r.left + r.width / 2 > w.innerWidth / 2 ? -10 : 10, 9];
+    T.style.translate = el._lvOff[0] + 'px ' + el._lvOff[1] + 'px';
   }
-  /* a coloured cursor glides to the pin's corner and clicks; the bubble pops out of the click, the words type, the logo pops in last */
+  /* Comment pins play like a design file being worked on: a coloured cursor selects the layer the comment is about (outline, handles,
+     name tag), drags it the last few pixels into place, then clicks beside it; the bubble pops out of the click, the words type, the logo
+     pops in last. One pin starts at a time, and only once its spot on the page has stopped moving (counting numbers, reveals, scroll zooms). */
   var CUR = '<svg viewBox="0 0 20 22" width="20" height="22"><path d="M4 3.2 C4 2.2 5.1 1.6 6 2.2 L17.2 9.9 C18.1 10.5 17.8 11.9 16.7 12.1 L11.6 13 L9.2 17.6 C8.7 18.6 7.2 18.4 7 17.3 Z"/></svg>';
-  var CUR_COL = ['#FF4D1F', '#00C27A', '#7B5CFF', '#FF5FA2'], pinN = 0, pinAt = 0;
+  var CUR_COL = ['#FF4D1F', '#00C27A', '#7B5CFF', '#FF5FA2'], pinN = 0, pinQ = [], pinBusy = false, layer;
+  function pinTarget(el) { var q = el.dataset.for; try { return q ? d.querySelector(q) : null; } catch (e) { return null; } }
   function runPin(el) {
     var p = el._lvPin;
-    if (!p || reduced) return el.classList.add('in');
-    var now = performance.now(), wait = Math.max(0, pinAt - now);   /* pins that show up together take turns */
-    pinAt = now + wait + 420;
-    setTimeout(function () { placePin(el, p); }, wait);
+    if (!p || reduced) { if (el._lvT) el._lvT.style.translate = ''; return el.classList.add('in'); }
+    pinQ.push(el); pinNext();
+  }
+  function pinNext() {
+    if (pinBusy || !pinQ.length) return;
+    pinBusy = true;
+    var el = pinQ.shift(), last = '', same = 0, tries = 0, v = el.getBoundingClientRect();
+    if (v.bottom < -40 || v.top > w.innerHeight + 40 || !el.offsetParent) {      /* scrolled past before its turn: no show, it is just there */
+      if (el._lvT) el._lvT.style.translate = '';
+      el.classList.add('in', 'lit'); pinBusy = false; return pinNext();
+    }
+    (function settle() {                                   /* wait until the pin (and its layer) hold still for about a third of a second */
+      var r = el.getBoundingClientRect(), t = el._lvT ? el._lvT.getBoundingClientRect() : r;
+      var key = [r.left, r.top + w.scrollY, r.width, t.left, t.top + w.scrollY, t.width, t.height].map(Math.round).join();
+      same = key === last ? same + 1 : 0; last = key;
+      if (same >= 3 || ++tries > 40) return placePin(el, el._lvPin);
+      setTimeout(settle, 110);
+    })();
+  }
+  function pinFree() { if (!pinBusy) return; pinBusy = false; setTimeout(pinNext, 250 + Math.random() * 500); }
+  function at(node, x, y, ms, ease) {
+    node.style.transition = 'transform ' + ms + 'ms ' + (ease || EASE) + ',opacity .25s';
+    node.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
   }
   function placePin(el, p) {
-    var host = el.offsetParent || d.body, c = el.dataset.c || 'bl';
+    if (!layer) { layer = d.createElement('div'); layer.className = 'lv-layer'; layer.setAttribute('aria-hidden', 'true'); d.body.appendChild(layer); }
+    var c = el.dataset.c || 'bl', col = CUR_COL[pinN++ % CUR_COL.length], T = el._lvT, sy = w.scrollY;
     var cur = d.createElement('span');
-    cur.className = 'lv-cur pin-cur'; cur.setAttribute('aria-hidden', 'true'); cur.innerHTML = '<i></i>' + CUR;
-    cur.style.setProperty('--c', CUR_COL[pinN++ % CUR_COL.length]);
-    cur.style.left = el.offsetLeft + (c[1] === 'r' ? el.offsetWidth : 0) + 'px';
-    cur.style.top = el.offsetTop + (c[0] === 'b' ? el.offsetHeight : 0) + 'px';
-    var r = el.getBoundingClientRect();                              /* comes in from the middle of the page, so it never widens it */
-    cur.style.setProperty('--fx', ((c[1] === 'r' ? r.right : r.left) > w.innerWidth / 2 ? -110 : 110) + 'px');
-    host.appendChild(cur);
-    cur.getBoundingClientRect(); cur.classList.add('go');
-    setTimeout(function () {
+    cur.className = 'lv-cur pin-cur'; cur.innerHTML = '<i></i>' + CUR; cur.style.setProperty('--c', col);
+    layer.appendChild(cur);
+    var pr = el.getBoundingClientRect();
+    var P = [c[1] === 'r' ? pr.right : pr.left, (c[0] === 'b' ? pr.bottom : pr.top) + sy];   /* the bubble's tail corner */
+    var tr = T && T.getBoundingClientRect(), box = null, alive = true, steps = [];
+    if (tr && (!tr.width || !tr.height)) { T.style.translate = ''; T = null; }
+    var first = T ? [tr.left + Math.min(46, tr.width * 0.25), tr.top + sy + Math.min(30, tr.height * 0.4)] : P;
+    var fromX = first[0] > w.innerWidth / 2 ? -120 : 120;        /* comes in from the middle of the page, so it never widens it */
+    at(cur, first[0] + fromX, first[1] + 90, 0);
+    cur.getBoundingClientRect(); cur.style.opacity = 1;
+    at(cur, first[0], first[1], 560);
+    function click() { cur.classList.remove('click'); cur.getBoundingClientRect(); cur.classList.add('click'); }
+    function type() {
       var txt = d.createTextNode(''), dom = d.createTextNode(''), post = d.createTextNode(''), arrow = p.b.querySelector('svg');
       var caret = d.createElement('span'); caret.className = 'pin-caret';
       p.t.textContent = ''; p.b.textContent = '';
       p.t.appendChild(txt); p.t.appendChild(p.b); p.b.appendChild(dom); p.t.appendChild(post); p.t.appendChild(caret);
-      cur.classList.add('click');
+      click();
       el.classList.add('in', 'pop', 'typing');
+      pinFree();                                            /* the next cursor may set off while this one types */
       var i = 0, all = p.pre.length + p.dom.length + p.post.length;
-      setTimeout(function () {
-        var iv = setInterval(function () {
-          i++;
-          txt.data = p.pre.slice(0, i);
-          dom.data = p.dom.slice(0, Math.max(0, i - p.pre.length));
-          post.data = p.post.slice(0, Math.max(0, i - p.pre.length - p.dom.length));
-          if (i >= all) {
-            clearInterval(iv); caret.remove();
-            if (arrow) p.b.appendChild(arrow);
-            el.classList.remove('typing', 'pop'); el.classList.add('lit');
-            cur.classList.add('out');
-            setTimeout(function () { cur.remove(); }, 600);
-          }
-        }, 24);
-      }, 260);
-    }, 540);
+      setTimeout(function tick() {
+        i++;
+        txt.data = p.pre.slice(0, i);
+        dom.data = p.dom.slice(0, Math.max(0, i - p.pre.length));
+        post.data = p.post.slice(0, Math.max(0, i - p.pre.length - p.dom.length));
+        if (i < all) return setTimeout(tick, 38 + Math.random() * 34);          /* typed by hand: uneven, about 55ms a letter */
+        caret.remove();
+        if (arrow) p.b.appendChild(arrow);
+        el.classList.remove('typing', 'pop'); el.classList.add('lit');
+        cur.style.opacity = 0; at(cur, P[0] + fromX * 0.4, P[1] + 40, 600, 'cubic-bezier(.5,0,.8,.5)');
+        if (box) box.classList.remove('on');
+        setTimeout(function () { alive = false; cur.remove(); if (box) box.remove(); }, 650);
+      }, 320);
+    }
+    if (!T) return setTimeout(type, 600);
+    setTimeout(function () {                                /* select the layer */
+      click();
+      box = d.createElement('div'); box.className = 'lv-sel'; box.style.setProperty('--c', col);
+      box.innerHTML = '<i></i><i></i><i></i><i></i>' + (el.dataset.layer ? '<b>' + el.dataset.layer + '</b>' : '');
+      layer.appendChild(box);
+      (function follow() {
+        if (!alive) return;
+        var r = T.getBoundingClientRect();
+        box.style.transform = 'translate(' + r.left.toFixed(1) + 'px,' + (r.top + w.scrollY).toFixed(1) + 'px)';
+        box.style.width = r.width.toFixed(1) + 'px'; box.style.height = r.height.toFixed(1) + 'px';
+        requestAnimationFrame(follow);
+      })();
+      box.getBoundingClientRect(); box.classList.add('on');
+    }, 600);
+    setTimeout(function () {                                /* drag it into place */
+      var off = el._lvOff || [0, 0];
+      cur.classList.add('down');
+      T.style.transition = 'translate 620ms ' + EASE; T.style.translate = '0 0';
+      at(cur, first[0] - off[0], first[1] - off[1], 620);
+      setTimeout(function () { T.style.transition = ''; T.style.translate = ''; cur.classList.remove('down'); }, 660);
+    }, 980);
+    setTimeout(function () {                                /* on to where the comment goes */
+      var r = el.getBoundingClientRect();
+      P = [c[1] === 'r' ? r.right : r.left, (c[0] === 'b' ? r.bottom : r.top) + w.scrollY];
+      at(cur, P[0], P[1], 520);
+      setTimeout(type, 560);
+    }, 1800);
   }
 
   /* ---------- tabs / segmented with a sliding indicator: [data-tabs] > .seg-i ---------- */
@@ -248,7 +309,8 @@
     }
     btn.addEventListener('click', function () { set(!open); });
     if (fine) {
-      shell.addEventListener('mouseenter', function () { clearTimeout(timer); if (el.classList.contains('is-pill')) set(true); });
+      btn.addEventListener('mouseenter', function () { clearTimeout(timer); if (el.classList.contains('is-pill')) set(true); });   /* only the menu button opens it */
+      shell.addEventListener('mouseenter', function () { clearTimeout(timer); });
       shell.addEventListener('mouseleave', function () { timer = setTimeout(function () { set(false); }, 220); });
     }
     d.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) { var had = shell.contains(d.activeElement); set(false); if (had) btn.focus(); } });
@@ -352,7 +414,7 @@
       var c = tiles.get(n);
       if (c) { tiles.delete(n); tiles.set(n, c); return c; }
       c = d.createElement('canvas'); c.width = cv.width; c.height = Math.round(TILE * dpr);
-      var g = c.getContext('2d'), top = n * TILE, bot = top + TILE, dens = (W < 600 ? .09 : .11) * band;
+      var g = c.getContext('2d'), top = n * TILE, bot = top + TILE, _ = 0;
       g.setTransform(dpr, 0, 0, dpr, 0, -top * dpr);
       g.globalCompositeOperation = 'lighter';
       segs.forEach(function (sg, idx) {             /* soft glow along the band */
@@ -362,66 +424,72 @@
         gr.addColorStop(0, 'rgba(' + col + ',' + a + ')'); gr.addColorStop(1, 'rgba(' + col + ',0)');
         g.fillStyle = gr; g.fillRect(sg.x - R, sg.y - R, 2 * R, 2 * R);
       });
-      g.globalCompositeOperation = 'source-over';
-      segs.forEach(function (sg, idx) {             /* the dots: seeded per segment, so tiles meet without a seam */
-        if (sg.y1 < top || sg.y0 > bot) return;
-        var r = rng(idx * 7919 + 7), n_ = Math.round(sg.len * dens), nx = -sg.dy / sg.len, ny = sg.dx / sg.len, col = colour(sg.s);
-        for (var j = 0; j < n_; j++) {
-          var f = r(), off = Math.sqrt(-2 * Math.log(r() + 1e-9)) * Math.cos(6.2832 * r()) * band / 3, u = r();
-          var px = sg.x + sg.dx * f + nx * off, py = sg.y + sg.dy * f + ny * off;
-          if (py < top - 2 || py > bot) continue;
-          var a = Math.pow(Math.max(0, 1 - Math.abs(off) / band), 1.5) * (.25 + .75 * u);
-          a *= (.58 + .42 * Math.pow(Math.min(1, Math.max(0, (hero + 260 - py) / 620)), 1.6)) * dim;
-          g.fillStyle = 'rgba(' + col + ',' + a.toFixed(2) + ')';
-          g.fillRect(px | 0, py | 0, 2, 2);
-        }
-      });
       tiles.set(n, c);
       if (tiles.size > 5) tiles.delete(tiles.keys().next().value);
       return c;
     }
-    /* the pointer: the band leans away from it, and a soft lens under it magnifies and brightens the dots */
-    var mx = 0, my = 0, ex = 0, ey = 0, has = false, LENS = 170, lens, lg;
-    function tilesTo(g, sx, sy) {
-      for (var n = Math.max(0, Math.floor(sy / TILE)); n * TILE < sy + VH; n++) g.drawImage(tile(n), Math.round(sx * dpr), Math.round((n * TILE - sy) * dpr));
+    /* The dots are live: each one rides a slow wave that travels down the band and wobbles on its own, all the time.
+       The pointer pushes them apart (they close back in behind it) and the whole band leans a little away from it.
+       ponytail: canvas 2D, about 20k dots a frame on a desktop viewport; move to WebGL points if a profile ever shows this. */
+    var mx = 0, my = 0, ex = 0, ey = 0, has = false, LV = 5;
+    function dotsOf(sg, idx) {
+      var r = rng(idx * 7919 + 7), n_ = Math.round(sg.len * (W < 600 ? .09 : .11) * band), nx = -sg.dy / sg.len, ny = sg.dx / sg.len, B = [];
+      for (var k = 0; k < LV; k++) B.push([]);
+      for (var j = 0; j < n_; j++) {
+        var f = r(), off = Math.sqrt(-2 * Math.log(r() + 1e-9)) * Math.cos(6.2832 * r()) * band / 3, u = r();
+        var px = sg.x + sg.dx * f + nx * off, py = sg.y + sg.dy * f + ny * off;
+        var a = Math.pow(Math.max(0, 1 - Math.abs(off) / band), 1.5) * (.25 + .75 * u);
+        a *= (.58 + .42 * Math.pow(Math.min(1, Math.max(0, (hero + 260 - py) / 620)), 1.6)) * dim;
+        if (a < .03) continue;
+        B[Math.min(LV - 1, a * LV | 0)].push(px, py, u * 6.2832);
+      }
+      var col = colour(sg.s);
+      sg.nx = nx; sg.ny = ny;
+      sg.f = B.map(function (_, k) { return 'rgba(' + col + ',' + ((k + .6) / LV).toFixed(2) + ')'; });
+      return (sg.d = B.map(function (v) { return new Float32Array(v); }));
     }
     function draw(now) {
-      var sy = w.scrollY * (reduced ? 1 : PAR), sx = 0;
+      var sy = w.scrollY * (reduced ? 1 : PAR), sx = 0, t = reduced ? 0 : now / 1000;
       if (!reduced) { sx = Math.cos(now / 9000) * 10; sy += Math.sin(now / 7000) * 12 + 12; }
-      if (has) { ex += (mx - ex) * 0.14; ey += (my - ey) * 0.14; sx += (ex / W - 0.5) * -28; sy += (ey / VH - 0.5) * -20 + 10; }
+      if (has) { ex += (mx - ex) * 0.12; ey += (my - ey) * 0.12; sx += (ex / W - 0.5) * -24; sy += (ey / VH - 0.5) * -16 + 8; }
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, cv.width, cv.height);
-      tilesTo(ctx, sx, sy);
-      if (!has) return;
-      var S = Math.round(LENS * 2 * dpr), Z = 1.22;
-      if (!lens || lens.width !== S) { lens = d.createElement('canvas'); lens.width = lens.height = S; lg = lens.getContext('2d'); }
-      lg.setTransform(1, 0, 0, 1, 0, 0); lg.globalCompositeOperation = 'source-over'; lg.clearRect(0, 0, S, S);
-      lg.setTransform(Z, 0, 0, Z, S / 2 - ex * dpr * Z, S / 2 - ey * dpr * Z);     /* the same picture, 22% bigger around the pointer */
-      tilesTo(lg, sx, sy);
-      lg.setTransform(1, 0, 0, 1, 0, 0); lg.globalCompositeOperation = 'destination-in';
-      var m = lg.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
-      m.addColorStop(0, 'rgba(0,0,0,1)'); m.addColorStop(.45, 'rgba(0,0,0,.8)'); m.addColorStop(1, 'rgba(0,0,0,0)');
-      lg.fillStyle = m; lg.fillRect(0, 0, S, S);
-      ctx.globalCompositeOperation = 'lighter';
-      var x0 = Math.round(ex * dpr - S / 2), y0 = Math.round(ey * dpr - S / 2);
-      ctx.drawImage(lens, x0, y0); ctx.drawImage(lens, x0, y0);
-      var gl = ctx.createRadialGradient(ex * dpr, ey * dpr, 0, ex * dpr, ey * dpr, S / 2);
-      gl.addColorStop(0, 'rgba(255,77,31,' + (0.07 * dim) + ')'); gl.addColorStop(1, 'rgba(255,77,31,0)');
-      ctx.fillStyle = gl; ctx.fillRect(x0, y0, S, S);
-      ctx.globalCompositeOperation = 'source-over';
+      for (var n = Math.max(0, Math.floor(sy / TILE)); n * TILE < sy + VH; n++) ctx.drawImage(tile(n), Math.round(sx * dpr), Math.round((n * TILE - sy) * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var R = 150, R2 = R * R, top = sy - band * 1.4, bot = sy + VH + band * 1.4, amp = reduced ? 0 : 1;
+      for (var i = 0; i < segs.length; i++) {
+        var sg = segs[i];
+        if (sg.y1 < top || sg.y0 > bot) continue;
+        var D = sg.d || dotsOf(sg, i), nx = sg.nx, ny = sg.ny;
+        var wave = amp * Math.sin(sg.s / 150 - t * 0.9) * 13, slide = amp * Math.sin(sg.s / 420 + t * 0.35) * 9;   /* across the band, and along it */
+        for (var k = 0; k < LV; k++) {
+          var v = D[k], m = v.length;
+          if (!m) continue;
+          ctx.fillStyle = sg.f[k]; ctx.beginPath();
+          for (var j = 0; j < m; j += 3) {
+            var ph = v[j + 2], o = wave + amp * Math.sin(t * 1.3 + ph) * 3.5;
+            var x = v[j] + sx + nx * o - ny * slide + amp * Math.cos(t * 0.8 + ph * 1.7) * 2.5, y = v[j + 1] - sy + ny * o + nx * slide;
+            if (has) {
+              var dx = x - ex, dy = y - ey, d2 = dx * dx + dy * dy;
+              if (d2 < R2) { var dd = Math.sqrt(d2) || 1, q = 1 - dd / R; q = q * q * 54 / dd; x += dx * q; y += dy * q; }
+            }
+            ctx.rect(x, y, 2, 2);
+          }
+          ctx.fill();
+        }
+      }
     }
     if (fine) {
       d.addEventListener('pointermove', function (e) {
         if (e.pointerType !== 'mouse' || reduced) return;
         mx = e.clientX; my = e.clientY;
         if (!has) { has = true; ex = mx; ey = my; }
-        kick();
       }, { passive: true });
-      html.addEventListener('mouseleave', function () { has = false; lastY = -1; });
+      html.addEventListener('mouseleave', function () { has = false; });
     }
     function frame(now) {
       raf = 0;
-      if (w.scrollY !== lastY || now - lastT > 40 || (has && Math.abs(mx - ex) + Math.abs(my - ey) > 0.5)) { lastY = w.scrollY; lastT = now; draw(now); }
+      if (reduced ? w.scrollY !== lastY : now - lastT > 15) {     /* always moving, with or without a pointer */ lastY = w.scrollY; lastT = now; draw(now); }
       if (!reduced && !d.hidden) raf = requestAnimationFrame(frame);     /* pauses in background tabs */
     }
     function kick() { if (!raf && !d.hidden) raf = requestAnimationFrame(frame); }

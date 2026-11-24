@@ -144,7 +144,7 @@
 .bigch.live :is(.ch-x,.ch-xd,.ch-tip){opacity:1;transition:opacity .3s,transform .22s var(--out)}
 .ch-ax{display:flex;justify-content:space-between;padding-top:12px;font-size:12px;line-height:16px;color:var(--faint)}
 .cp-f{padding-top:14px}
-.pin-scrub{right:-1px;top:calc(93% - 5px)}
+.pin-scrub{right:-1px;top:calc(100% + 72px)}   /* on the panel's bottom corner, clear of the month labels and the source line */
 .pin-scrub-m{display:none}
 
 /* ---------- how it works: four phones ---------- */
@@ -364,7 +364,7 @@
   .pin-posts{left:27px;top:171px}
   .pin-faq{left:auto;right:5px}
   .pin-end{left:19px;top:15px}
-  .pin-scrub{top:calc(93% - 5px)}
+  .pin-scrub{top:calc(100% + 72px)}
 }
 @media (min-width:720px) and (max-width:833px){.how-row{--z:.36}}
 @media (min-width:960px) and (max-width:1099px){.how-row{--z:.48}}
@@ -547,9 +547,9 @@
   .hjs .how-row:not(.in) .how-i{opacity:0;transform:translateX(70px)}
 
   /* cursor demos: glide in on a curve, click, the card reacts, rest, repeat. Paused until the card is on screen (.play) */
-  .hjs [data-demo] :is(.dc,.dc-y,.dc-ring,.rx),.hjs .src-bars i{animation-duration:4.2s;animation-timing-function:var(--out);animation-iteration-count:infinite;animation-delay:var(--dd,0s);animation-play-state:paused}
+  .hjs [data-demo] :is(.dc,.dc-y,.dc-ring,.rx),.hjs .src-bars i{animation-duration:var(--dur,4.2s);animation-timing-function:var(--out);animation-iteration-count:infinite;animation-delay:var(--dd,0s);animation-play-state:paused}
   .hjs [data-demo].play :is(.dc,.dc-y,.dc-ring,.rx),.hjs .src-bars.play i{animation-play-state:running}
-  .bd-2{--dd:-1s}.bd-3{--dd:-2s}.bd-4{--dd:-3s}
+  .bd-1{--dur:4.3s}.bd-2{--dur:5.1s;--dd:-1.7s}.bd-3{--dur:5.8s;--dd:-3.9s}.bd-4{--dur:4.7s;--dd:-2.6s}   /* different lengths, so the four cursors never fall into step */
   .hjs [data-demo] .dc{animation-name:dc-x}
   .hjs [data-demo] .dc-y{animation-name:dc-y;animation-timing-function:cubic-bezier(.5,0,.2,1)}
   .hjs [data-demo] .dc-ring{animation-name:dc-ring}
@@ -558,8 +558,8 @@
   .hjs .rx-row{animation-name:rx-row}
   .hjs .rx-dot{animation-name:rx-dot}
   .hjs .rx-tick{animation-name:rx-tick}
-  .hjs .rx-tick>svg{animation:rx-check 4.2s var(--out) infinite var(--dd,0s)}
-  .hjs .rx-strike>span{animation:rx-strike 4.2s var(--out) infinite var(--dd,0s)}
+  .hjs .rx-tick>svg{animation:rx-check var(--dur,4.2s) var(--out) infinite var(--dd,0s)}
+  .hjs .rx-strike>span{animation:rx-strike var(--dur,4.2s) var(--out) infinite var(--dd,0s)}
   .hjs .src-bars i{animation-name:bar-rise;animation-duration:3.2s}
   .hjs .src-bars i+i{--dd:.14s}.hjs .src-bars i+i+i{--dd:.28s}
   @keyframes dc-x{0%{opacity:0;transform:translateX(96px)}7%{opacity:1}30%,90%{opacity:1;transform:none}100%{opacity:0;transform:translateX(96px)}}
