@@ -51,11 +51,23 @@
       const last = cur >= n, isSeen = sn.includes(cur), fin = !!get("lv-done-" + slug);
       doneB.firstChild.textContent = locked ? "On Pro" : last ? (fin ? "Story finished" : "Finish story") : isSeen ? "Phase done" : "Mark phase done";
       doneB.disabled = locked || (last && fin); doneB.classList.toggle("dn", isSeen);
+      stepPaint();
       nextL.textContent = last ? "Checklist" : "Next: " + names[cur]; nextB.setAttribute("aria-label", last ? "Go to the checklist" : "Next phase: " + names[cur]); };
     const show = (k, scroll) => { k = Math.max(1, Math.min(n, k || 1)); cur = k;
       phases.forEach(p => { const on = +p.dataset.ph === k; p.classList.toggle("on", on); if (on) p.open = true; });
-      title.textContent = `Phase ${k}: ${names[k - 1]}`; paint();
+      title.textContent = `Phase ${k}: ${names[k - 1]}`; place(k); paint();
       if (scroll) (innerWidth <= 720 ? $(".rht") : $("[data-rhero]")).scrollIntoView({behavior: reduce ? "auto" : "smooth", block: "start"}); };
+    const chart = $("#chart", rd), chartHome = chart && document.createComment("chart");
+    if (chart) chart.before(chartHome);
+    function place(k) { if (!chart) return; const el = phases[k - 1], phb = el && !el.closest("[hidden]") && $(".phb", el);
+      if (!phb) { chartHome.after(chart); return; }                      // locked phase: the chart goes back under the action bar
+      const before = $(".lesson", phb) || null; if (before) before.before(chart); else phb.appendChild(chart); }
+    // "Your step this phase": the story's own checklist step for this phase (only when the story has one step per phase)
+    const CKL = (D.checklists || []).find(c => c.slug === slug), stepC = $("[data-rstepc]"), stepB = $("[data-rstepadd]");
+    const stepPaint = () => { if (!stepC) return; const it = CKL && CKL.items.length === n ? CKL.items[cur - 1] : null; stepC.hidden = !it; if (!it) return;
+      $("[data-rsteptxt]", stepC).textContent = it.text; const key = slug + ":" + (cur - 1), on = arr("lv-saved-items").includes(key);
+      stepB.dataset.staritem = key; stepB.setAttribute("aria-pressed", on); stepB.textContent = on ? "On my saved steps" : "Add to my checklist"; };
+    addEventListener("lv:changed", stepPaint); document.addEventListener("click", e => { if (e.target.closest("[data-rstepadd]")) setTimeout(stepPaint, 0); });
     const fromHash = () => { const m = /^#ph(\d+)$/.exec(location.hash); return m ? +m[1] : 0; };
     const l = get("lv-last"), sn0 = seen();
     show(fromHash() || (l && l.slug === slug && l.ph) || (sn0.length && sn0.length < n ? Math.max(...sn0) + 1 : 1));
@@ -67,7 +79,7 @@
       if (cur >= n) { const m = $("[data-markread]"); if (m && m.getAttribute("aria-pressed") !== "true") m.click(); const d = $("#done"); if (d) d.scrollIntoView({behavior: reduce ? "auto" : "smooth", block: "center"}); paint(); return; }
       put("lv-last", {slug, ph: cur + 1, t: Date.now()}); show(cur + 1, true); });
     addEventListener("lv:changed", paint);
-    const lock = $("#locked", rd); if (lock) new MutationObserver(paint).observe(lock, {attributes: true, attributeFilter: ["hidden"]});
+    const lock = $("#locked", rd); if (lock) new MutationObserver(() => { place(cur); paint(); }).observe(lock, {attributes: true, attributeFilter: ["hidden"]});
   }
 
   // ---------- upgrade sheet (Paper Upgrade): explains the plans; paying happens on Account > Plans (Stripe checkout lives there) ----------
@@ -92,6 +104,13 @@
   document.addEventListener("click", e => { const a = e.target.closest("[data-upg], .avp a"); if (!a || !window.HTMLDialogElement) return;
     const st = ($(".side .plan") || {dataset: {}}).dataset.state; if (st !== "free" || $("#plan")) return;   // paid / judge, or already on Account: the link goes to Plans as usual
     e.preventDefault(); openUpg(); });
+
+  // Saved on phones: Stories / Steps switch
+  document.addEventListener("click", e => { const b = e.target.closest("[data-svf]"); if (!b) return; const pg = b.closest(".svd"); pg.dataset.sv = b.dataset.svf;
+    $$("[data-svf]", pg).forEach(x => x.setAttribute("aria-pressed", x === b)); });
+
+  // phone "You": the Sign out row at the bottom is the same button as Privacy and data > Sign out
+  document.addEventListener("click", e => { if (e.target.closest("[data-soproxy]")) { const so = $("#so"); if (so) so.click(); } });
 
   // ---------- Ask: a question typed on Home arrives filled in (not sent) ----------
   { const inp = $("#asIn"), q = new URLSearchParams(location.search).get("q");

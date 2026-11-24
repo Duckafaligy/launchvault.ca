@@ -44,7 +44,7 @@ window.LVAuth = (() => {
     } catch (e) { out.add("oauth_google"); }
     return out;
   };
-  const CALLBACK = "/welcome/callback/";
+  const CALLBACK = "/new/welcome/callback/";
   // every option goes through here; new users land on /new/app/start/, returning users on /new/app/
   const signInWith = async (strategy, opts = {}) => {
     if (!live) { location.href = opts.isNew ? "/new/app/start/" : "/new/app/"; return; }
@@ -112,7 +112,7 @@ window.LVAuth = (() => {
     if (!live) { ageQ(); return; }
     try { await load(); paint();
       if (clerk.user && window.LVGate && LVGate.ok) { const sc = document.createElement("script"); sc.src = "/assets/supabase.js"; sc.onload = () => window.LVSync && LVSync.start(clerk); document.head.appendChild(sc); }
-      if (wall && !clerk.user) { location.replace("/new/sign-in/?next=" + encodeURIComponent(location.pathname + location.search)); return; }
+      if (wall && !clerk.user) { location.replace("/new/sign-in/?next=" + encodeURIComponent(location.pathname + location.search + location.hash)); return; }
       document.documentElement.style.visibility = ""; ageQ(); } catch (e) { document.documentElement.style.visibility = ""; ageQ(); /* Clerk didn't load: fail open, keep the preview face */ }
   };
   return {on: LV_AUTH, live, gate: LV_GATE, load, enabled, signInWith, callback, signOut, app, email};

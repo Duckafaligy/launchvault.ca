@@ -17,8 +17,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="/assets/newapp/app-dark.css">
-<link rel="stylesheet" href="/assets/newapp/assistant-dark.css">
 <link rel="stylesheet" href="/assets/newapp/vault.css">
+<link rel="stylesheet" href="/assets/newapp/vault2.css">
 <script src="/assets/gate.js"></script>
 </head>
 <body class="nv p-ask">
@@ -42,16 +42,17 @@
     <div class="avw"><button class="avb" type="button" data-avb aria-expanded="false" aria-controls="avm" aria-label="Account menu"><span class="av" data-av aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c1.5-4 5-5 8-5s6.5 1 8 5"/></svg></span></button><div class="avm" id="avm" aria-label="Account" hidden></div></div>
   </header>
   <main id="main">
-<div class="pg as" id="as" data-state="loading">
+<div class="pg as ask" id="as" data-state="loading">
   <div class="as-head">
-    <div><h1 class="pg-h">Ask LaunchVault</h1><p class="pg-s">Tell it about your idea or paste your website. It finds the verified stories that fit and turns their checklists into steps you can do this week.</p></div>
-    <button class="btn btn-s sm as-open" type="button" data-asdrawer aria-controls="asSide" aria-expanded="false" hidden>Your chats</button>
+    <div><h1 class="pg-h">Ask</h1><p class="pg-s"><span class="d">Every answer shows which story it came from.</span><span class="mo" data-asuse2></span></p></div>
+    <span class="as-site" data-assite hidden><i aria-hidden="true"></i>Reading <b data-assited></b></span>
+    <button class="btn btn-s sm as-open" type="button" data-asdrawer aria-controls="asSide" aria-expanded="false" hidden>Your questions</button>
   </div>
   <div class="as-grid">
-    <aside class="as-side card" id="asSide" aria-label="Your chats" hidden>
-      <div class="as-sh"><h2>Your chats</h2><button class="tl" type="button" data-asnew>New chat</button></div>
+    <aside class="as-side card" id="asSide" aria-label="Your questions" hidden>
+      <button class="as-new" type="button" data-asnew>+ New question</button>
       <ul class="as-convs" data-asconvs></ul>
-      <p class="as-note">Chats are saved to your account. Delete one any time; Account, Delete your data erases them all.</p>
+      <p class="as-note">Saved to your account. Delete one any time; Account, Privacy and data erases them all.</p>
     </aside>
     <section class="as-main" aria-label="Chat">
       <div class="as-gate card" data-asgate hidden>
@@ -59,43 +60,43 @@
         <p data-asgatep>Sign in or create a free account to ask about your idea. You get 10 questions a day; Pro and Builder get 100.</p>
         <a class="btn btn-p" href="/new/sign-in/?next=/new/app/assistant/" data-asgatebtn>Sign in to ask</a>
       </div>
-      <section class="as-demo card" data-asdemo hidden aria-labelledby="asDemoH">
-        <h2 id="asDemoH">Example conversation</h2>
-        <p class="as-demo-s">What a member sees. We wrote this one to show the format; real answers use the whole library and your welcome answers.</p>
-        <div class="as-demo-u"><p>I'm 16 and I want to make a study-notes app for people in my grade. I can code a little and have about 10 hours a week.</p></div>
-        <div class="as-demo-a">
-          <p class="as-who"><span class="as-dot" aria-hidden="true"></span>Ask LaunchVault</p>
-          <h3>Stories that fit</h3>
-          <ul>
-            <li><a href="/new/app/story/rezi/">Rezi</a>: <b>give it away free, charge for the easy version.</b> Rezi began as a free resume template posted on Reddit. Your notes can be that free template.</li>
-            <li><a href="/new/app/story/mindset/">Mindset</a>: <b>build the audience first, then the app.</b> Share one useful note a week before you build anything big.</li>
-          </ul>
-          <h3>This week</h3>
-          <ol>
-            <li>Make one study guide for a test you just took and share it free where your classmates ask questions (from Rezi).</li>
-            <li>Pick one subject you could post about every week, and post the first note (from Mindset).</li>
-          </ol>
-          <p>Which subject are you strongest in?</p>
+      <section class="as-demo" data-asdemo hidden aria-labelledby="asDemoH">
+        <div class="as-demoh"><h2 id="asDemoH">Example conversation</h2>
+        <p>What a member sees. We wrote this one to show the format; real answers use the whole library and your welcome answers.</p></div>
+        <div class="as-msg user"><div class="as-b">I'm 16 and I want to make a study-notes app for people in my grade. I can code a little and have about 10 hours a week.</div></div>
+        <div class="as-msg assistant"><span class="as-av" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.99 14.91A8.5 8.5 0 1 1 10.52 3.63"/><path d="M6.8 15.6l3.7-3.7 2.6 2.6 6.7-6.7"/><path d="M16 7.8h3.8v3.8"/></svg></span>
+          <div class="as-b as-md">
+            <p>Two stories started the way you are starting:</p>
+            <p><b>Give it away free, charge for the easy version.</b> Rezi began as a free resume template posted on Reddit. Your notes can be that free template.</p>
+            <p><b>Build the audience first, then the app.</b> Mindset shared something useful every week before building anything big.</p>
+            <div class="as-srcs" data-asdemosrc="rezi,mindset"></div>
+            <div class="as-try"><b>Try this week</b><ol>
+              <li>Make one study guide for a test you just took and share it free where your classmates ask questions (from Rezi).</li>
+              <li>Pick one subject you could post about every week, and post the first note (from Mindset).</li></ol></div>
+            <p>Which subject are you strongest in?</p>
+            <p class="as-fine">Answers use only LaunchVault stories and your own website. Not financial advice.</p>
+          </div>
         </div>
       </section>
       <div class="as-log" data-aslog>
         <div class="as-empty" data-asempty>
           <h2>Where do you want to start?</h2>
           <p>Answers use only the numbers in LaunchVault's breakdowns, with their labels and dates. It won't guess revenue it can't see.</p>
-          <div class="as-starts" role="group" aria-label="Starter questions">
-            <button type="button" data-asstart="Here's my website: https://">Here's my website: …</button>
-            <button type="button" data-asstart="I want to sell [what] to [who]. Which stories fit?">I want to sell X to Y. Which stories fit?</button>
-            <button type="button" data-asstart="Make me a 2-week plan from the Rezi story for my idea: ">Make me a 2-week plan from the Rezi story</button>
-            <button type="button" data-asstart="I have no customers yet. How did these founders get their first 10?">How did founders get their first 10 customers?</button>
-          </div>
         </div>
       </div>
       <p class="sr" role="status" aria-live="polite" data-assr></p>
       <form class="as-comp" data-ascomp novalidate>
+        <div class="as-starts chips" role="group" aria-label="Starter questions">
+          <button type="button" data-asstart="Here's my website: https://">Here's my website: …</button>
+          <button type="button" data-asstart="I want to sell [what] to [who]. Which stories fit?">I want to sell X to Y. Which stories fit?</button>
+          <button type="button" data-asstart="Make me a 2-week plan from the Rezi story for my idea: ">Make me a 2-week plan from the Rezi story</button>
+          <button type="button" data-asstart="I have no customers yet. How did these founders get their first 10?">How did founders get their first 10 customers?</button>
+        </div>
         <label class="sr" for="asIn">Your message</label>
-        <div class="as-box"><textarea id="asIn" rows="2" maxlength="4000" placeholder="Paste your website or describe your idea" disabled></textarea>
-        <button class="btn btn-p as-send" type="submit" disabled>Send</button></div>
-        <p class="as-foot"><span data-asuse></span><span>Don't share personal details like your school, address or phone number.</span></p>
+        <div class="as-box"><span class="as-ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></span><textarea id="asIn" rows="1" maxlength="4000" placeholder="Ask about your idea..." disabled></textarea>
+        <span class="as-left" data-asuse></span>
+        <button class="as-send" type="submit" disabled aria-label="Send"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></div>
+        <p class="as-foot">Don't share personal details like your school, address or phone number.</p>
       </form>
     </section>
   </div>

@@ -65,7 +65,8 @@ def head(title, desc, extra="", og_slug="", gate=True):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="{NA}/app-dark.css">{extra}
-<link rel="stylesheet" href="{NA}/vault.css">{B.GATE if gate else ""}
+<link rel="stylesheet" href="{NA}/vault.css">
+<link rel="stylesheet" href="{NA}/vault2.css">{B.GATE if gate else ""}
 </head>
 '''
 
@@ -87,7 +88,9 @@ def reader_extras(e, body):
     rows = "".join(f'<li>{B.lb(f["label"])}<b>{esc(f["claim"])}</b><span>{esc(f.get("who") or B.src_name(f))} · {esc(f["date"])}</span></li>' for f in S["fact_checks"][:4])
     fc = (f'<section class="card rfc"{" data-locked=" + chr(34) + "1" + chr(34) + " hidden" if locked else ""}><div class="ch"><h2>Fact check</h2>'
           f'<button type="button" class="tl" data-report="{esc(e["slug"])}">Report a mistake</button></div><ul>{rows}</ul>'
-          f'<a class="tl" href="#facts">All {len(S["fact_checks"])} fact checks</a></section>')
+          f'<a class="tl" href="#facts">All {len(S["fact_checks"])} fact checks</a></section>'
+          '<section class="card rstepc" data-rstepc hidden><div class="ch"><h2>Your step this phase</h2></div><p data-rsteptxt></p>'
+          '<button class="btn btn-p" type="button" data-rstepadd aria-pressed="false">Add to my checklist</button></section>')
     bar = ('<div class="rbar" data-rbar><div class="rbar-in"><button class="btn btn-p" type="button" data-rdonebtn>Mark phase done'
            + '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 3l4 4-4 4"/></svg></button>'
            '<button class="btn btn-s" type="button" data-rnextbtn><span data-rnextl>Next</span></button></div></div>')
@@ -109,7 +112,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
     wcv = cover(week["slug"])
     cont = (f'<a class="sbc" href="{week["href"]}" data-sbcont>{f"""<span class="cv"><img src="{wcv}" alt="" width="376" height="212" loading="lazy"></span>""" if wcv else ""}'
             f'<span class="r"><b data-sbcn>This week: {esc(week["name"])}</b><small data-sbcp></small></span><span class="bar"><i data-sbcb></i></span></a>')
-    css = "".join(f'\n<link rel="stylesheet" href="{NA}/{n}-dark.css">' for n in ("chart", "community", "assistant") if n + ".js" in scripts)
+    css = "".join(f'\n<link rel="stylesheet" href="{NA}/{n}-dark.css">' for n in ("chart", "community") if n + ".js" in scripts)
     hero = fc = rbar = ""
     if story and story["status"] == "ready":
         hero = reader_hero(story); fc, rbar = reader_extras(story, body)
@@ -154,6 +157,73 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
 </body>
 </html>
 ''')
+
+# ---- Settings (Paper Settings: nav + one glass card per section; phone "You": profile header, grouped lists, sections open as sub-pages) ----
+ASEC = [("profile", "Profile", "user"), ("plan", "Plan and billing", "lib"), ("email", "Notifications", "bell"), ("prefs", "Preferences", "ck"), ("site", "Your website", "ask"), ("data", "Privacy and data", "ck")]
+def account_body(t):
+    """Same controls and hooks as the live account page; the sections are put in Paper's order, renamed, and the two navs rebuilt."""
+    head, rest = t.split('<div class="acc">', 1); assert rest.count('<section class="asec" id="') == 6, "account body changed"
+    pre, *secs = rest.split('<section class="asec" id="'); secs[-1], tail = secs[-1].rsplit("</section>", 1)[0] + "</section>", secs[-1].rsplit("</section>", 1)[1]
+    by = {s.split('"', 1)[0]: '<section class="asec" id="' + s for s in secs}
+    for k, lab, _ in ASEC:   # Paper's section names; a "back to You" link for the phone sub-page
+        h = re.search(r"<h2>.*?</h2>", by[k]).group(0)
+        by[k] = by[k].replace(h, f'<a class="youback" href="#top">{pi("back", 16, 2)}<span>You</span></a><h2>{lab}</h2>', 1)
+    by["data"] = by["data"].replace('<div class="arow" data-auth-out hidden>', '<div class="arow asoutrow" data-auth-out hidden>', 1)
+    by["email"] = by["email"].replace("<p>Email is the only way we will contact you. Extras are off until you turn them on.</p>", '<p class="asint">Email is the only way we will contact you. Extras are off until you turn them on.</p>', 1)
+    row = lambda k, cls, h, t_, c="": f'<a href="{h}"><span class="ico {cls}">{pi(k, 17)}</span><b>{t_}</b>{c}{pi("chev", 14, 2.2)}</a>'
+    you = ('<div class="you" id="top"><span class="av" data-av aria-hidden="true">' + pi("user", 30) + '</span><b data-me>Your account</b><span data-auth-email></span>'
+           '<span class="youp"><span data-plan>Free plan</span><a href="/app/account/#plan" data-upg>Get Pro</a></span></div>'
+           '<h2 class="sech2 youh">Your things</h2><nav class="grp yout" aria-label="Your things">'
+           + row("saved", "e", "/app/saved/", "Saved", '<span class="cnt" data-cnt="saved"></span>') + row("chat", "v", "/app/community/", "Community")
+           + row("ck", "m", "/app/checklists/", "Checklists", '<span class="cnt" data-cnt="ck"></span>') + '</nav>'
+           '<h2 class="sech2 youh">Account</h2><nav class="grp yout youa" aria-label="Account">'
+           + "".join(row(i, "b", "#" + k, lab, '<span class="cnt" data-plan-chip></span>' if k == "plan" else "") for k, lab, i in ASEC if k != "email") + '</nav>'
+           '<h2 class="sech2 youh youn">Notifications</h2>')
+    head = re.sub(r'<h1 class="pg-h">Account</h1><p class="pg-s">[^<]*</p>', '<h1 class="pg-h"><span class="d">Settings</span><span class="mo">You</span></h1><p class="pg-s">Your account, plan, emails and data.</p>', head, 1)
+    head = re.sub(r'<nav class="snav anavm".*?</nav>', "", head, 1, flags=re.S); assert "anavm" not in head and "Settings" in head
+    nav = '<nav class="anav" aria-label="Settings sections">' + "".join(f'<a href="#{k}"{" class=" + chr(34) + "on" + chr(34) if i == 0 else ""}><span>{lab}</span></a>' for i, (k, lab, _) in enumerate(ASEC)) + "</nav>"
+    out = ('<div class="grp youso" data-auth-out hidden><button type="button" data-soproxy>Sign out</button></div>')
+    return head + you + '<div class="acc">' + nav + "\n<div class=\"asecs\">\n" + "\n".join(by[k] for k, _, _ in ASEC) + "\n" + out + tail
+
+# ---- Coming soon story (Paper Coming soon; same facts and labels as build_app.soon_page) ----
+def soon_page(E, e):
+    s = e["raw"]; h = s["headline"]; tiles = []; money, dlab, mlab, lb = B.money, B.dlab, B.mlab, B.lb
+    if h["measure"] == "revenue in month": tiles.append(("Revenue in " + mlab(h["month"]), money(h["value"]), h["label"], e["hd"]))
+    if s.get("mrr"): tiles.append(("MRR", money(s["mrr"]["value"]), s["mrr"]["label"], dlab(s["mrr"]["date"])))
+    if s.get("alltime"): tiles.append(("Revenue, all-time", money(s["alltime"]["value"]), s["alltime"]["label"], dlab(s["alltime"]["date"])))
+    nums = "".join(f'<div class="card sn"><span class="k">{esc(k)}</span><b>{v}</b><span class="m">{lb(l)}{esc(d)}</span></div>' for k, v, l, d in tiles)
+    know = []
+    if s.get("stale"): know.append((f'TrustMRR last synced {dlab(s["mrr"]["date"])}. No newer verified revenue.', "Couldn't verify", "read " + dlab(s["mrr"]["read_on"]), s.get("trustmrr_url")))
+    if s.get("claim"): know.append((f'The founder said {s["claim"]["text"]} ({s["claim"]["source"]})', s["claim"]["label"], mlab(s["claim"]["date"]), None))
+    for k, tx in (("first_customers", "First customers: "), ("team", "Team: ")):
+        f = s.get(k)
+        if isinstance(f, dict): know.append((tx + f["text"], f.get("label"), (dlab(f["date"]) if len(f.get("date", "")) == 10 else mlab(f["date"]) if f.get("date") else ""), f.get("source")))
+    know.append(("Revenue read by TrustMRR from " + s["payment_source"].replace(" (API key)", ""), "Verified", e["hd"], s.get("trustmrr_url")))
+    ext = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>'
+    kl = "".join(f'<div class="sfact"><span class="t">{esc(tx)}</span>{lb(l)}<span class="d">{esc(d)}</span>'
+                 + (f'<a class="tl" href="{esc(u)}" target="_blank" rel="noopener" aria-label="Source for: {esc(tx)}">{ext}</a>' if u and u.startswith("http") else "") + "</div>" for tx, l, d, u in know)
+    ch = ""
+    if e["series"] and len(e["series"]) > 1:
+        S = {"name": e["name"], "series": {"what": "Revenue each month", "label": "Verified", "source": s.get("trustmrr_url"), "points": [[k, v, "Verified", "TrustMRR, read from Stripe"] for k, v in e["series"]]}, "moves": [], "phases": []}
+        ch = (f'<section class="card schart" id="chart"><div class="ch"><h2>Revenue each month</h2><span class="meta">TrustMRR, read from Stripe · read {esc(e["hd"])}</span></div>{B.chart_block(S, moves_list=False, band=False)}</section>')
+    body = (f'<div class="pg soon"><header class="shero"><div class="scv" aria-hidden="true"><span class="tile" style="--s:82px"><img src="{e["logo"]}" alt="" width="48" height="48"></span><b>{esc(e["name"])}</b></div>'
+            f'<div class="sht"><h1 class="rhh">{esc(e["name"])}</h1><p class="dek">{esc(e["what"])}</p><div class="smeta"><span class="cm-kind">{esc(e["type"])}</span><span class="soonp">Breakdown coming soon</span>'
+            + (f'<a class="btn btn-s" href="{esc(s["trustmrr_url"])}" target="_blank" rel="noopener">TrustMRR page {ext}</a>' if s.get("trustmrr_url") else "") + '</div></div></header>'
+            f'<div class="snums">{nums}</div>{ch}'
+            f'<section class="card sknow"><div class="ch"><h2>What we know so far</h2><span class="meta">Each fact with its label and date</span></div><div class="sfacts">{kl}</div></section>'
+            f'<div class="sech"><h2>Read a finished breakdown while you wait</h2><a class="tl" href="/app/library/">All stories</a></div>'
+            f'<p class="swait">The full {esc(e["name"])} breakdown (phases, fact checks and a checklist) lands here when it is out. These are ready now.</p><div class="scards rn" data-sooncards="{e["tab"]}"></div></div>')
+    return shell(E, e["name"], e["what"], "", body, crumbs=[("/app/library/", "Library"), ("", e["name"])], scripts='\n<script src="/assets/chart.js" defer></script>')
+
+# ---- Saved (Paper Saved: stories as cards, steps on one card; phone: Stories / Steps switch over grouped lists) ----
+def saved(E):
+    body = f"""<div class="pg svd" data-sv="stories"><h1 class="pg-h">Saved</h1><p class="pg-s">Stories and steps you starred.</p>
+<div data-savedempty></div>{B.noscript_list([e for e in E if e["status"] == "ready"])}
+<div class="seg hug svseg" role="group" aria-label="Show" data-svseg hidden><button type="button" data-svf="stories" aria-pressed="true">Stories <span data-svn1></span></button><button type="button" data-svf="steps" aria-pressed="false">Steps <span data-svn2></span></button></div>
+<section class="hsec svs" data-savedsec hidden><div class="sech"><h2>Saved stories</h2><span class="meta" data-savedcount></span></div><div class="scards rn" data-savedcards></div></section>
+<section class="card svi" data-savedsec2 hidden><div class="sech"><h2>Saved steps</h2><span class="meta" data-savedcount2></span></div><div class="svl" data-saveditems></div></section>
+<p class="fine" data-savednote hidden>Tap a star again to take it off this list. Saved items follow your account to other devices.</p></div>"""
+    return shell(E, "Saved", "Stories and checklist items you starred.", "saved", body)
 
 # ---- new page bodies (same hooks as build_app.py, Paper layout) ----
 def home(E):
@@ -213,24 +283,21 @@ def main():
     def wr(p, t):
         if not os.path.abspath(p).startswith(app_dir): return
         t = t.replace("<body>" + NL, '<body class="nv ob-page">' + NL, 1)   # the quiz page writes its own body tag
-        for j in ("auth", "app"): t = t.replace(f'src="/assets/{j}.js"', f'src="{NA}/{j}.js"')   # the quiz page writes its own script tags
+        for j in ("auth", "app"): t = t.replace(f'src="/assets/{j}.js"', f'src="{NA}/{j}.js"')
+        if 'id="lvcov"' not in t:
+            covs = {f[:-4]: f"/assets/real/{f}" for f in sorted(os.listdir(os.path.join(ROOT, "assets", "real"))) if f.endswith(".jpg")}
+            t = t.replace(f'<script src="{NA}/auth.js"', f'<script type="application/json" id="lvcov">{json.dumps(covs, separators=(",", ":"))}</script>\n<script src="{NA}/auth.js"', 1)   # the quiz page writes its own script tags
         n[0] += 1; real_wr(os.path.join(out_dir, os.path.relpath(p, app_dir)), rewrite(t))
     def rd(p):   # a page body in src/newapp/ wins over the live one in src/app/
         alt = os.path.join(ROOT, "src", "newapp", os.path.basename(p))
         t = real_rd(alt if os.path.dirname(p).endswith(os.path.join("src", "app")) and os.path.exists(alt) else p)
-        if os.path.basename(p) == "account.body.html":   # phone "You" screen (Paper Settings · Phone): profile header + "Your things", above the live account sections
-            a = '<p class="pg-s">Your profile, preferences, plan and data.</p>'; assert a in t, "account body changed"
-            row = lambda k, cls, h, t_, c="": f'<a href="{h}"><span class="ico {cls}">{pi(k, 17)}</span><b>{t_}</b>{c}{pi("chev", 14, 2.2)}</a>'
-            t = t.replace(a, a + '<div class="you"><span class="av" data-av aria-hidden="true">' + pi("user", 30) + '</span><b data-me>Your account</b><span data-auth-email></span>'
-                          '<span class="youp"><span data-plan>Free plan</span><a href="/app/account/#plan" data-upg>Get Pro</a></span></div>'
-                          '<h2 class="sech2 youh">Your things</h2><nav class="grp yout" aria-label="Your things">'
-                          + row("saved", "e", "/app/saved/", "Saved", '<span class="cnt" data-cnt="saved"></span>') + row("chat", "v", "/app/community/", "Community")
-                          + row("ck", "m", "/app/checklists/", "Checklists", '<span class="cnt" data-cnt="ck"></span>') + '</nav><h2 class="sech2 youh">Account</h2>', 1)
+        t = t.replace("%LV%", LV.replace('width="24" height="24"', 'width="19" height="19"')).replace("%ASK%", pi("ask", 18))
+        if os.path.basename(p) == "account.body.html": t = account_body(t)
         return t
     norm_ready = B.norm_ready
     def nr(S, legacy): e = norm_ready(S, legacy); e["cover"] = cover(S["slug"]); return e
     noop = lambda *a, **k: None
-    B.wr, B.rd, B.head, B.shell, B.home, B.library, B.norm_ready = wr, rd, head, shell, home, library, nr
+    B.wr, B.rd, B.head, B.shell, B.home, B.library, B.norm_ready, B.soon_page, B.saved = wr, rd, head, shell, home, library, nr, soon_page, saved
     B.make_cover = B.update_cards = B.update_story_cards = B.write_sitemap = B.add_meta = build.main = noop
     B.shutil = types.SimpleNamespace(rmtree=noop)
     ready, E = B.main()

@@ -36,7 +36,14 @@
       if (li && /^\s{2,}/.test(raw)) { li.items[li.items.length - 1] += " " + l; continue; }
       flushL(); para.push(l);
     }
-    flushP(); flushL(); return out.join("");
+    flushP(); flushL();
+    // the "This week" part of a reply becomes the mint "Try this week" box (Paper Ask): the heading plus the blocks up to the next heading
+    const i = out.findIndex(x => /^<h3>(try )?this week/i.test(x));
+    if (i >= 0) { let j = out.findIndex((x, k) => k > i && x.startsWith("<h3>")); if (j < 0) j = out.length;
+      let k = i + 1; while (k < j && !/^<(ol|ul)>/.test(out[k])) k++;   // any intro lines
+      if (k < j) k++; else k = Math.min(j, i + 2);                      // then the list (or, with no list, just the first line)
+      out.splice(i, k - i, `<div class="as-try"><b>Try this week</b>${out.slice(i + 1, k).join("")}</div>`); }
+    return out.join("");
   }
 
   // ---------- states ----------
@@ -52,14 +59,16 @@
     side.hidden = drawerBtn.hidden = s !== "ready";
   }
   const usage = () => { const u = $("[data-asuse]"); if (!info) return; const left = Math.max(0, info.limit - info.used);
-    u.textContent = `${left} of ${info.limit} messages left today. `; };
+    u.textContent = `${left} left today`; u.title = `${left} of ${info.limit} messages left today`;
+    const u2 = $("[data-asuse2]"); if (u2) u2.textContent = `${left} question${left === 1 ? "" : "s"} left today`;
+    const c = document.querySelector('[data-cnt="ask"]'); if (c) c.textContent = `${left} left`; };
 
   // ---------- conversation list ----------
   const day = t => new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"});
   function renderList() {
     list.innerHTML = info.conversations.length ? info.conversations.map(c => `<li${c.id === cid ? ' class="on"' : ""}><button class="as-c" type="button" data-asopen="${esc(c.id)}"${c.id === cid ? ' aria-current="true"' : ""}><span>${esc(c.title)}</span><small>${esc(day(c.updated_at))}</small></button>`
       + `<button class="as-del" type="button" data-asdel="${esc(c.id)}" aria-label="Delete chat: ${esc(c.title)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg></button></li>`).join("")
-      : '<li class="as-none">No chats yet. Your first question starts one.</li>';
+      : '<li class="as-none">No questions yet. Your first one starts the list.</li>';
   }
   const drawer = open => { if (!matchMedia("(max-width:900px)").matches) return; root.classList.toggle("drawer", open); drawerBtn.setAttribute("aria-expanded", open); if (open) { const f = $("button", side); f && f.focus(); } };
   function newChat() { cid = null; log.innerHTML = ""; log.appendChild(empty); empty.hidden = false; renderList(); drawer(false); input.focus(); }
@@ -69,24 +78,34 @@
     try { const r = await api("?id=" + encodeURIComponent(id)); const d = await r.json();
       if (!r.ok) throw 0;
       log.innerHTML = ""; d.messages.forEach(m => bubble(m.role, m.text, true));
-      const last = d.messages.filter(m => m.role === "assistant").pop(); if (last) cards(log.lastElementChild, slugs(last.text));
+      const last = d.messages.filter(m => m.role === "assistant").pop(); if (last) cards([...log.querySelectorAll(".as-msg.assistant")].pop(), slugs(last.text));
       log.lastElementChild && log.lastElementChild.scrollIntoView({block: "start"});
     } catch { log.innerHTML = '<p class="as-err">That chat didn\'t load. Try again in a moment.</p>'; }
   }
 
   // ---------- messages ----------
-  const slugs = t => [...new Set([...t.matchAll(/\/app\/story\/([a-z0-9-]+)\//g)].map(m => m[1]))].filter(s => BY[s]);
+  // stories a reply links to, with the phase when the link names one (/app/story/rezi/#ph2)
+  const slugs = t => { const o = {}; for (const m of t.matchAll(/\/app\/story\/([a-z0-9-]+)\/(?:#ph(\d+))?/g)) if (BY[m[1]] && !o[m[1]]) o[m[1]] = m[2] ? m[1] + "#" + m[2] : m[1]; return Object.values(o); };
+  let COV = {}; try { COV = JSON.parse($("#lvcov").textContent); } catch {}
+  const PHN = {}; (D.search_extra || []).forEach(x => { const m = /^(.+?) · phase (\d+): (.+)$/.exec(x.t || ""); if (m) PHN[m[1] + "#" + m[2]] = m[3]; });
+  const AV = ($(".as-demo .as-av") || {}).innerHTML || "";
+  const FINE = '<p class="as-fine">Answers use only LaunchVault stories and your own website. Not financial advice.</p>';
+  const src = ref => { const [slug, ph] = String(ref).split("#"), s = BY[slug]; if (!s) return "";
+    const sub = ph ? `Phase ${ph}${PHN[s.name + "#" + ph] ? " · " + PHN[s.name + "#" + ph] : ""}` : s.pattern || s.type;
+    return `<a class="as-src" href="${esc(s.href)}${ph ? "#ph" + ph : ""}">${COV[slug] ? `<span class="cv th"><img src="${esc(COV[slug])}" alt="" width="144" height="80" loading="lazy"></span>` : `<span class="cv th nocv"><img src="${esc(s.logo)}" alt="" width="24" height="24"></span>`}`
+      + `<span class="m"><b>${esc(s.name)}</b><small>${esc(sub)}</small></span><span class="o">Open</span></a>`; };
   function bubble(role, text, done) {
     empty.hidden = true; if (empty.parentNode === log && log.children.length > 1) empty.remove();
     const el = document.createElement("div"); el.className = "as-msg " + role;
     el.innerHTML = role === "user" ? `<p class="as-who sr">You said</p><div class="as-b">${esc(text).replace(/\n/g, "<br>")}</div>`
-      : `<p class="as-who"><span class="as-dot" aria-hidden="true"></span>Ask LaunchVault</p><div class="as-b as-md">${done ? md(text) : ""}</div>`;
+      : `<p class="as-who sr">Ask LaunchVault said</p><span class="as-av" aria-hidden="true">${AV}</span><div class="as-b as-md">${done ? md(text) : ""}</div>`;
     log.appendChild(el); return el;
   }
   function cards(el, ss) {
-    if (!el || !ss.length || !window.LVStoryCard) return;
-    const box = document.createElement("div"); box.className = "scards as-cards";
-    box.innerHTML = ss.slice(0, 3).map(s => window.LVStoryCard(BY[s])).join(""); el.appendChild(box);
+    const b = el && $(".as-b", el); if (!b) return;
+    const h = ss.slice(0, 3).map(src).join("");
+    const box = document.createElement("div"); box.innerHTML = (h ? `<div class="as-srcs">${h}</div>` : "") + FINE;
+    const tr = $(".as-try", b); [...box.children].forEach(c => c.classList.contains("as-srcs") && tr ? tr.before(c) : b.appendChild(c));
   }
   const note = (el, t, cls = "as-err") => { const p = document.createElement("p"); p.className = cls; p.innerHTML = t; el.appendChild(p); };
   const ERR = {daily_limit: () => `You've used today's ${info ? info.limit : ""} messages. More tomorrow.${info && !info.paid ? ' Pro and Builder members get 100 a day: <a href="/new/app/account/#plan">see plans</a>.' : ""}`,
@@ -98,7 +117,7 @@
 
   async function ask(text) {
     if (busy || !text.trim()) return;
-    busy = true; send.disabled = true; send.textContent = "Sending…";
+    busy = true; send.disabled = true; form.setAttribute("aria-busy", "true");
     bubble("user", text); input.value = ""; input.style.height = "";
     const el = bubble("assistant", ""), body = $(".as-b", el); el.classList.add("streaming");
     body.innerHTML = '<span class="as-typing">Thinking<i>.</i><i>.</i><i>.</i></span>';
@@ -132,7 +151,7 @@
       else if (ended.ev === "error") { body.innerHTML = acc ? body.innerHTML : ""; note(el, (ERR[ended.error] || ERR.upstream)()); }
       else {
         if (ended.cut) note(el, "This reply was cut short. Ask me to continue.", "as-soft");
-        cards(el, ended.stories || []);
+        { const mine = slugs(acc); cards(el, [...mine, ...(ended.stories || []).filter(s => BY[s] && !mine.some(x => x.split("#")[0] === s))]); }
         if (ended.remembered) note(el, 'Saved to your <a href="/new/app/account/#prefs">preferences</a>. You can remove it any time.', "as-soft");
         const isNew = !cid; cid = ended.conversation_id;
         if (info) { info.used = ended.used; info.limit = ended.limit; usage();
@@ -143,7 +162,7 @@
         sr.textContent = "Reply ready.";
       }
     } catch { if (!acc) body.innerHTML = ""; note(el, ERR.upstream()); }
-    finally { el.classList.remove("streaming"); busy = false; send.textContent = "Send"; send.disabled = root.dataset.state !== "ready"; }
+    finally { el.classList.remove("streaming"); busy = false; form.removeAttribute("aria-busy"); send.disabled = root.dataset.state !== "ready"; }
   }
 
   // ---------- events ----------
@@ -157,7 +176,7 @@
     const op = e.target.closest("[data-asopen]"); if (op) return openChat(op.dataset.asopen);
     if (e.target.closest("[data-asdrawer]")) return drawer(!root.classList.contains("drawer"));
     const del = e.target.closest("[data-asdel]");
-    if (del && confirm("Delete this chat? This can't be undone.")) {
+    if (del && confirm("Delete this question and its answers? This can't be undone.")) {
       const id = del.dataset.asdel, r = await api("?id=" + encodeURIComponent(id), {method: "DELETE"}).catch(() => null);
       if (!r || !r.ok) { sr.textContent = "That chat wasn't deleted. Try again."; return; }
       info.conversations = info.conversations.filter(c => c.id !== id); if (cid === id) newChat(); else renderList(); sr.textContent = "Chat deleted.";
@@ -165,6 +184,7 @@
   });
   addEventListener("keydown", e => { if (e.key === "Escape" && root.classList.contains("drawer")) { drawer(false); drawerBtn.focus(); } });
 
+  $$("[data-asdemosrc]").forEach(b => { b.innerHTML = b.dataset.asdemosrc.split(",").map(src).join(""); });
   // ---------- start ----------
   const soon = () => state("soon", "Ask LaunchVault opens soon", "The assistant is built and is being switched on. Your stories, checklists and path all work in the meantime.", false);
   (async () => {
@@ -180,6 +200,9 @@
       if (!r.ok) throw 0;
       if (!d.configured) return soon();
       info = d; state("ready"); usage(); renderList();
+      // "Reading yoursite.com": shown when the member has a verified website (the site Edge Function, same as Account > Your website)
+      fetch(FN.replace(/assistant$/, "site"), {headers: {Authorization: "Bearer " + await token()}}).then(x => x.json()).then(x => { const p = $("[data-assite]");
+        if (p && x.site && x.site.verified) { $("[data-assited]").textContent = x.site.domain; p.hidden = false; } }).catch(() => {});
     } catch { state("gate", "Ask LaunchVault didn't load", "We couldn't reach the assistant. Check your connection and reload the page.", false); }
   })();
 })();

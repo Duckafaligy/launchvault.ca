@@ -237,8 +237,9 @@
       + `<span class="sst"><span class="l${k || st === "done" ? " on" : ""}">${lab}</span><span>${Math.max(1, Math.round(s.read / n))} min a phase</span></span>${bar(st === "done" ? 1 : k / n)}`
       + `</span></a><button type="button" class="star" data-star="${s.slug}" aria-pressed="${sv}" aria-label="${sv ? "Remove" : "Save"} ${esc(s.name)}">${STAR}</button></article>`; };
   // compact card for "Read next" (a side-scrolling row on phones)
-  const nextCard = s => `<article class="scard rn"><a class="scl" href="${s.href}">${cov(s)}<span class="scb"><span class="sct">${tile(s, 22)}<span class="nm"><b>${esc(s.name)}</b></span><small class="rm">${s.read} min</small>${gpill(s, " mo")}</span>`
-    + `<span class="snum"><span><b>${esc(s.hv)}</b> <small>${esc((s.hu || "").trim().replace(/^in (\w+) \d{4}$/, "$1"))}</small></span>${gpill(s)}</span><span class="sub">${esc(s.type)} · ${esc(s.hv)}${esc((s.hu || "").replace(/ \d{4}$/, ""))}</span></span></a></article>`;
+  const nextCard = (s, star = false) => `<article class="scard rn"><a class="scl" href="${s.href}">${cov(s)}<span class="scb"><span class="sct">${tile(s, 22)}<span class="nm"><b>${esc(s.name)}</b></span><small class="rm">${s.read} min</small>${gpill(s, " mo")}</span>`
+    + `<span class="snum"><span><b>${esc(s.hv)}</b> <small>${esc((s.hu || "").trim().replace(/^in (\w+) \d{4}$/, "$1"))}</small></span>${gpill(s)}</span><span class="sub">${esc(s.type)} · ${esc(s.hv)}${esc((s.hu || "").replace(/ \d{4}$/, ""))}</span></span></a>`
+    + (star === true ? `<button type="button" class="star" data-star="${s.slug}" aria-pressed="${savedList().includes(s.slug)}" aria-label="${savedList().includes(s.slug) ? "Remove" : "Save"} ${esc(s.name)}">${STAR}</button>` : "") + `</article>`;
   window.LVStoryCard = storyCard;   // Ask LaunchVault (assistant.js) shows the stories a reply links with the same card
   const syncStars = () => { const L = savedList(), I = savedItems();
     $$("[data-star]").forEach(b => { const on = L.includes(b.dataset.star); b.setAttribute("aria-pressed", on); const t = b.querySelector("span"); if (t) t.textContent = on ? "Saved" : "Save"; });
@@ -340,12 +341,16 @@
     const I = savedItems().map(k => { const [slug, i] = k.split(":"), c = CL[slug]; return c && c.items[+i] ? {k, c, i: +i, it: c.items[+i]} : null; }).filter(Boolean);
     $("[data-savedsec]").hidden = !L.length; $("[data-savedsec2]").hidden = !I.length;
     $("[data-savedcount]").textContent = L.length ? `${L.length} saved` : "";
-    sc.innerHTML = L.map(storyCard).join("");
+    sc.innerHTML = L.map(s => nextCard(s, true)).join("");
     $("[data-saveditems]").innerHTML = I.map(({k, c, i, it}) => { const tk = ticks(c.slug)[i];
-      return `<div class="sitem lvsitem"><a href="${c.href}#todo">${logo(c, 20)}<span><b>${esc(it.text)}</b><small>${esc(c.name)} · step ${i + 1}</small>${pill(tk ? "done" : "ready", tk ? "Ticked" : "To do")}</span></a><button class="ckstar" type="button" data-staritem="${k}" aria-pressed="true" aria-label="Remove this step">${STAR}</button></div>`; }).join("");
+      return `<div class="svr"><a href="${c.href}#todo">${tile(c, 26)}<span class="m"><b>${esc(it.text)}</b><span class="s"><small>${esc(c.name)} · step ${i + 1}</small><span class="svp${tk ? " on" : ""}">${tk ? "Ticked" : "To do"}</span></span></span></a><button class="ckstar" type="button" data-staritem="${k}" aria-pressed="true" aria-label="Remove this step">${STAR}</button></div>`; }).join("");
+    { const set = (q, v) => { const n = $(q); if (n) n.textContent = v; }, any = L.length || I.length, seg = $("[data-svseg]"), note = $("[data-savednote]"), pg = $(".svd");
+      set("[data-savedcount2]", I.length ? `${I.length} saved` : ""); set("[data-svn1]", L.length); set("[data-svn2]", I.length);
+      if (seg) seg.hidden = !(L.length && I.length); if (note) note.hidden = !any;
+      if (pg) pg.dataset.sv = !L.length && I.length ? "steps" : !I.length ? "stories" : pg.dataset.sv; }
     const sug = [...new Set([WEEKS, ...matches()])].map(k => S[k]).filter(Boolean).slice(0, 3);
     $("[data-savedempty]").innerHTML = L.length || I.length ? "" : emptyCard("star", "Nothing saved yet", "Star a story or a checklist step to keep it here.", "/new/app/library/", "Browse the Library")
-      + (sug.length ? `<section class="card hsec lvsug"><div class="ch"><h2>Stories to start with</h2></div><div class="scards">${sug.map(storyCard).join("")}</div></section>` : ""); };
+      + (sug.length ? `<section class="hsec lvsug"><div class="sech"><h2>Stories to start with</h2></div><div class="scards rn">${sug.map(s => nextCard(s, true)).join("")}</div></section>` : ""); };
   // warm empty state: icon badge, one honest sentence, one primary action (and an optional secondary)
   function emptyCard(icon, h, p, href, label, extra = "") {
     return `<section class="card lvempty"><span class="lvebadge">${svgI(PI[icon], 24)}</span><h2>${esc(h)}</h2><p>${esc(p)}</p><div class="lveact">${href ? `<a class="btn btn-p" href="${href}">${esc(label)} <span class="arr" aria-hidden="true">→</span></a>` : ""}${extra}</div></section>`; }
@@ -445,8 +450,8 @@
     $$("[data-rdone]").forEach(n => n.hidden = !ok[n.dataset.rdone]); };
   // coming-soon page: two finished breakdowns of the same type (any ready story fills a gap)
   // app 404: this week's story and the two newest others
-  const renderNF = () => $$("[data-nfcards]").forEach(n => { n.innerHTML = [S[WEEKS], ...READY.filter(s => s.slug !== WEEKS)].filter(Boolean).slice(0, 3).map(storyCard).join(""); });
-  const renderSoon = () => $$("[data-sooncards]").forEach(n => { const L = READY.filter(s => s.tab === n.dataset.sooncards); n.innerHTML = L.concat(READY.filter(s => !L.includes(s))).slice(0, 2).map(storyCard).join(""); });
+  const renderNF = () => $$("[data-nfcards]").forEach(n => { n.innerHTML = [S[WEEKS], ...READY.filter(s => s.slug !== WEEKS)].filter(Boolean).slice(0, 3).map(s => nextCard(s)).join(""); });
+  const renderSoon = () => $$("[data-sooncards]").forEach(n => { const L = READY.filter(s => s.tab === n.dataset.sooncards); n.innerHTML = L.concat(READY.filter(s => !L.includes(s))).slice(0, 2).map(s => nextCard(s)).join(""); });
   document.addEventListener("click", e => {
     const a = e.target.closest('a[href^="#"]');   // an in-page link opens any folded panel its target sits in
     if (a && a.hash.length > 1) for (let d = document.getElementById(a.hash.slice(1)); d; d = d.parentElement) if (d.tagName === "DETAILS") d.open = true;
@@ -562,7 +567,7 @@
     const so = $("#so"); if (so && window.LVAuth) so.addEventListener("click", () => LVAuth.signOut());
     const nav = $$(".anav a, .anavm a"), strip = $(".anavm .snav-in");
     // the section in view is highlighted in both navs; at the very bottom the last section wins (it may never reach the top)
-    const H = ["#profile", "#prefs", "#site", "#plan", "#email", "#data"];
+    const H = ["#profile", "#plan", "#email", "#prefs", "#site", "#data"];   // the order the sections are in on the page (build_newapp.py ASEC)
     const mark = cur => { nav.forEach(a => { const on = a.getAttribute("href") === cur; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); });
       const on = strip && $("a.on", strip); if (on && strip.scrollWidth > strip.clientWidth) strip.scrollTo({left: on.offsetLeft - 16, behavior: reduce ? "auto" : "smooth"});
       glide($(".acc .anav"), "a.on"); glide(strip, "a.on"); };
@@ -601,17 +606,16 @@
       if (step < n) { const Q = D.quiz[step];
         H.innerHTML = "Ten questions. <em>Under two minutes.</em>"; P.textContent = "Your answers pick 3 stories that started a lot like you. Skip any question you don't want to answer.";
         obc.innerHTML = `<div class="obq"><div class="qp"><span>${step + 1} of ${n}</span><span class="bar" role="progressbar" aria-label="Question ${step + 1} of ${n}" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${step + 1}"><i style="--w:${(step + 1) / n * 100}%"></i></span></div><h2 id="qh">${esc(Q.q)}</h2>${Q.h ? `<p class="qhint" id="qhint">${esc(Q.h)}</p>` : ""}<div class="opts" role="radiogroup" aria-labelledby="qh"${Q.h ? ' aria-describedby="qhint"' : ""}>${Q.o.map((o, i) => opt(o, ans[step] === i, i)).join("")}</div>
-          <div class="obnav">${step ? '<button class="bk" type="button" data-back>Back</button>' : ""}<span class="sp"></span><button class="sk" type="button" data-skip>Skip</button><button class="btn btn-p" type="button" data-next>${step === n - 1 ? "See my path" : "Next"}</button></div></div>`; }
+          <div class="obnav">${step ? '<button class="bk" type="button" data-back>Back</button>' : ""}<span class="sp"></span><button class="sk" type="button" data-skip>Skip</button><button class="btn btn-p" type="button" data-next>${step === n - 1 ? "See my path" : "Next"}${ARW}</button></div></div>`; }
       else { save(); ls.set("lv-pathnote", "new"); const m = score(), qq = quiz(), x = S[m[0]];
         H.innerHTML = "Your path <em>is ready.</em>";
         P.innerHTML = `${D.path.steps.length + 1} steps${ADULT() ? "" : " that fit around school"}, from the ${esc(D.path.name || "Postiz")} breakdown.`
           + (qq.top ? "" : `<small>Your answers didn't point to one story more than the others, so this is the general path. The 3 stories below are the closest.</small>`);
         const on = k => { const w = why(k).slice(0, 4); return w.length ? `<p class="obw">Matched on ${w.map(a => `<em>${esc(a)}</em>`).join(", ")}</p>` : ""; };
-        obc.innerHTML = `<div class="obq obe"><h2>${qq.top ? "Your top match" : "The closest stories"}</h2>
-          <div class="obm"><div class="obmh">${logo(x, 44)}<span><b>${esc(x.name)}</b><small>${esc(x.pattern)}</small></span></div><p class="obmt">${esc(x.title || x.what)}</p>${x.first ? `<p class="obmf">First customers: ${esc(x.first)} ${chip(x.firstl)}</p>` : ""}${on(m[0])}<a class="btn btn-s" href="${x.href}">Read the ${esc(x.name)} breakdown</a></div>
-          <h3>Also close to your answers</h3>
-          ${m.slice(1).map(k => { const y = S[k]; return `<a class="obr" href="${y.href}">${logo(y, 32)}<span><b>${esc(y.name)}</b><small>${esc(y.pattern)}</small>${on(k)}</span></a>`; }).join("")}
-          <div class="obend"><a class="btn btn-p" href="/new/app/path/">See my path</a><a class="tl" href="/new/app/">Go to Home</a><a class="tl" href="/new/app/start/?quiz=1">Edit answers</a></div><p class="fine">${savedTo()}</p></div>`; }
+        obc.innerHTML = `<div class="obq obe"><section class="card obm"><div class="ch"><h2>${qq.top ? "Your top match" : "The closest stories"}</h2></div>${COV[x.slug] ? cov(x, "cv obcv") : ""}
+          <div class="obmh">${tile(x, 44)}<span><b>${esc(x.name)}</b><small>${esc(x.pattern)}</small></span></div><p class="obmt">${esc(x.title || x.what)}</p>${x.first ? `<p class="obmf">First customers: ${esc(x.first)} ${chip(x.firstl)}</p>` : ""}${on(m[0])}<a class="btn btn-s" href="${x.href}">Read the ${esc(x.name)} breakdown</a></section>
+          ${m.length > 1 ? `<section class="card oba"><div class="ch"><h2>Also close to your answers</h2></div><div class="obrs">${m.slice(1).map(k => { const y = S[k]; return `<a class="obr" href="${y.href}">${tile(y, 32)}<span class="m"><span class="t"><b>${esc(y.name)}</b><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span><small>${esc(y.pattern)}</small>${on(k)}</span></a>`; }).join("")}</div></section>` : ""}
+          <div class="obend"><a class="btn btn-p" href="/new/app/path/">See my path${ARW}</a><span class="obl"><a class="tl" href="/new/app/">Go to Home</a><a class="tl" href="/new/app/start/?quiz=1">Edit answers</a></span></div><p class="fine">${savedTo()}</p></div>`; }
       if (render.n++) obc.focus({preventScroll: true});
       if (render.n > 1) scrollTo({top: 0});
     };
