@@ -62,7 +62,11 @@
       const open = on => { if (on === !m.hidden) return; row.setAttribute("aria-expanded", on);
         if (on) { draw(); m.hidden = false; place(); const f = m.querySelector("a,button"); f && f.focus({preventScroll: true}); }
         else { m.classList.add("out"); setTimeout(() => { m.hidden = true; m.classList.remove("out"); }, 140); } };
-      row.addEventListener("click", e => { if (innerWidth <= 720) return; e.preventDefault(); e.stopPropagation(); open(m.hidden); });
+      row.addEventListener("click", e => { if (innerWidth <= 720) return; e.preventDefault(); e.stopPropagation(); open(matchMedia("(hover:hover) and (pointer:fine)").matches ? true : m.hidden); });   // with a mouse it is already open from the hover: a click must not shut it
+      // hover opens it too (mouse only); it stays while the pointer is on the row or the card, with a short grace to cross the gap
+      if (matchMedia("(hover:hover) and (pointer:fine)").matches) { let ht = 0;
+        const hin = () => { clearTimeout(ht); if (innerWidth > 720 && m.hidden) { open(true); row.focus({preventScroll: true}); } }, hout = () => { clearTimeout(ht); ht = setTimeout(() => open(false), 220); };
+        row.addEventListener("mouseenter", hin); m.addEventListener("mouseenter", () => clearTimeout(ht)); row.addEventListener("mouseleave", hout); m.addEventListener("mouseleave", hout); }
       document.addEventListener("click", e => { if (!m.hidden && !e.target.closest(".sbm")) open(false); });
       addEventListener("resize", () => open(false));
       m.addEventListener("click", e => {
