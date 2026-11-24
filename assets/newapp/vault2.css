@@ -969,3 +969,57 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
   .nv .cm-chh{padding:8px 0;border:0}.nv .cm-chh span{white-space:normal}
 }
 
+/* ---------- assistant character ---------- */
+.lvdot{position:fixed;z-index:55;right:24px;bottom:24px;width:68px;height:68px;touch-action:none;animation:dotIn .5s cubic-bezier(.2,1.3,.3,1) both}
+.lvdot-b{display:block;width:68px;height:68px;padding:0;border:0;background:none;cursor:grab;border-radius:50%;filter:drop-shadow(0 8px 14px rgba(0,0,0,.5));transition:transform .25s cubic-bezier(.2,1.3,.3,1)}
+.lvdot-b svg{display:block;width:100%;height:100%;animation:dotBob 4.2s ease-in-out infinite}
+.lvdot-b:hover{transform:scale(1.07) rotate(-4deg)}
+.lvdot-b:focus-visible{outline:2px solid var(--hl,#9DB8FF);outline-offset:4px}
+.lvdot.drag .lvdot-b{cursor:grabbing;transform:scale(1.12) rotate(6deg)}.lvdot.drag .lvdot-b svg{animation:none}
+.lvdot-eyes{transform:translate(var(--ex,0px),var(--ey,0px));transform-box:fill-box;transform-origin:50% 50%;transition:transform .12s linear;animation:dotBlink 5.5s infinite}
+.lvdot-glad{display:none}
+.lvdot[data-mood=listening] .lvdot-eyes{scale:1.16}
+.lvdot[data-mood=thinking] .lvdot-eyes{transform:translate(1.5px,-3px);animation:none}
+.lvdot[data-mood=thinking] .lvdot-b svg{animation:dotThink .9s ease-in-out infinite}
+.lvdot[data-mood=pointing] .lvdot-b{transform:rotate(-10deg)}
+.lvdot[data-mood=done] .lvdot-eyes{display:none}.lvdot[data-mood=done] .lvdot-glad{display:block}
+.lvdot-p{position:absolute;width:290px;padding:14px;border-radius:18px;background:#16161D;box-shadow:0 24px 60px -18px rgba(0,0,0,.9),inset 0 0 0 1px rgba(255,255,255,.12);display:flex;flex-direction:column;gap:10px;animation:dotPop .28s cubic-bezier(.2,1.2,.3,1) both}
+.lvdot-p[hidden]{display:none}
+.lvdot-p[data-x=l]{right:calc(100% + 10px)}.lvdot-p[data-x=r]{left:calc(100% + 10px)}
+.lvdot-p[data-y=u]{bottom:0;transform-origin:100% 100%}.lvdot-p[data-y=d]{top:0;transform-origin:0 0}
+.lvdot-say{margin:0;font:500 14px/20px var(--fd);color:#fff}
+.lvdot-tips{display:flex;flex-direction:column;gap:6px}.lvdot-tips:empty{display:none}
+.lvdot-tips button{align-self:flex-start;min-height:34px;padding:0 12px;border:0;border-radius:999px;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);font:500 13px/1 var(--fd);color:#fff;text-align:left;cursor:pointer;transition:background-color .15s,transform .2s cubic-bezier(.16,1,.3,1)}
+.lvdot-tips button:hover{background:rgba(255,255,255,.13);transform:translateX(2px)}
+.lvdot-p form{display:flex;gap:6px;align-items:center;padding:4px 4px 4px 12px;border-radius:999px;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.lvdot-p form:focus-within{box-shadow:inset 0 0 0 1.5px var(--hl,#9DB8FF)}
+.lvdot-p input{flex:1;min-width:0;height:34px;border:0;outline:0;background:none;font:400 14px/1 var(--fd);color:#fff}
+.lvdot-p form button{flex:none;display:grid;place-items:center;width:34px;height:34px;border:0;border-radius:50%;background:var(--btn,#1F45B5);color:#fff;cursor:pointer}
+.lvdot-set{align-self:flex-start;font:400 12px/16px var(--fd);color:rgba(255,255,255,.6)}.lvdot-set:hover{color:#fff}
+.lvdot-cur{position:fixed;z-index:56;left:0;top:0;pointer-events:none;opacity:0;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
+.lvdot-ring{outline:2px solid #FF4D1F!important;outline-offset:4px;border-radius:14px;box-shadow:0 0 0 8px rgba(255,77,31,.2)!important;animation:dotRing 1.3s ease-in-out 3;scroll-margin:120px}
+@keyframes dotIn{from{opacity:0;transform:translateY(20px) scale(.6)}}
+@keyframes dotPop{from{opacity:0;transform:scale(.9)}}
+@keyframes dotBob{50%{transform:translateY(-3px)}}
+@keyframes dotThink{50%{transform:translateY(-4px) rotate(4deg)}}
+@keyframes dotBlink{0%,94%,100%{scale:1 1}96.5%{scale:1 .1}}
+@keyframes dotRing{50%{outline-offset:8px;box-shadow:0 0 0 14px rgba(255,77,31,.08)}}
+@media (max-width:720px){
+  .lvdot{right:14px;bottom:calc(96px + env(safe-area-inset-bottom));left:auto!important;top:auto!important;width:54px;height:54px}
+  .lvdot-b{width:54px;height:54px;cursor:pointer}
+  .lvdot-p{position:fixed;left:12px!important;right:12px!important;top:auto!important;bottom:calc(160px + env(safe-area-inset-bottom))!important;width:auto}
+}
+@media (prefers-reduced-motion:reduce){.lvdot,.lvdot-b svg,.lvdot-eyes,.lvdot-p,.lvdot-ring{animation:none}}
+/* hidden while reading a quiz or behind a dialog */
+.nv.ob-page .lvdot,html.gated .lvdot{display:none}
+
+/* Settings: flavour picker */
+.nv .acard .arow.dotfl{align-items:flex-start;flex-wrap:wrap}
+.nv .dotfs{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;max-width:560px;transition:opacity .2s}
+.nv .dotfs.off{opacity:.4}
+.nv .dotfs button{display:flex;flex-direction:column;align-items:center;gap:6px;width:96px;padding:10px 6px 8px;border:0;border-radius:14px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);font:500 var(--f12)/15px var(--fd);color:var(--muted);cursor:pointer;transition:background-color .15s,box-shadow .15s,transform .2s var(--out)}
+.nv .dotfs button:hover{background:rgba(255,255,255,.08);transform:translateY(-2px)}
+.nv .dotfs button[aria-checked=true]{background:rgba(47,107,255,.14);box-shadow:inset 0 0 0 1.5px var(--brand);color:#fff}
+.nv .dotfs button:focus-visible{outline:2px solid var(--hl);outline-offset:2px}
+@media (max-width:720px){.nv .dotfs{justify-content:flex-start}.nv .dotfs button{width:calc(33.3% - 6px)}}
+

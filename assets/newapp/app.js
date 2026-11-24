@@ -633,7 +633,9 @@
     const ppDirty = () => !!ppf && !ppf.hidden && ppf.dataset.clean != null && (ppf.dataset.ppav === "1" || ppf.dataset.clean !== ppNow());
     const snap = () => JSON.stringify([ls.get("lv-dob") || "", Object.assign({new_story: false, path: false, news: false}, ls.get("lv-prefs", {})), ls.get("lv-display") || "auto"]);
     const mine = () => JSON.stringify([bd.value || ls.get("lv-dob") || "", prefs, dispV]);
-    const dirty = () => mine() !== snap() || ppDirty();
+    const dotDirty = () => !!(window.LVDot && LVDot.dirty());       // the assistant character's switch and flavour (dot.js) are held too
+    const dirty = () => mine() !== snap() || ppDirty() || dotDirty();
+    addEventListener("lv:dot-held", () => held());
     const bar = document.createElement("div"); bar.className = "savebar"; bar.setAttribute("role", "region"); bar.setAttribute("aria-label", "Unsaved changes"); bar.hidden = true;
     bar.innerHTML = '<p data-sbmsg role="status">You have unsaved changes</p><button class="btn btn-s" type="button" data-sbno>Discard</button><button class="btn btn-p" type="button" data-sbyes>Save changes</button>';
     document.body.appendChild(bar);
@@ -643,8 +645,9 @@
     if (ppf) { ppf.addEventListener("input", held); new MutationObserver(held).observe(ppf, {attributes: true, attributeFilter: ["data-clean", "data-ppav", "hidden"]}); }
     const revert = () => { bd.value = ls.get("lv-dob") || ""; Object.assign(prefs, {new_story: false, path: false, news: false}, ls.get("lv-prefs", {}));
       $$("[data-pref]").forEach(b => b.setAttribute("aria-checked", !!prefs[b.dataset.pref])); dispV = ls.get("lv-display") || "auto"; disp(dispV);
-      if (ppf) ppf.dispatchEvent(new Event("lv:pp-reset")); held(); };
+      if (ppf) ppf.dispatchEvent(new Event("lv:pp-reset")); if (window.LVDot) LVDot.revert(); held(); };
     $("[data-sbyes]", bar).addEventListener("click", () => {
+      if (dotDirty()) LVDot.commit();
       if (mine() !== snap()) { const v = bd.value, r = v && window.LVGate && LVGate.rangeForDob ? LVGate.rangeForDob(v) : null;
         if (v && r) { ls.set("lv-dob", v); ls.set("lv-age", r); }
         ls.set("lv-prefs", prefs); dispV === "auto" ? ls.del("lv-display") : ls.set("lv-display", dispV); if (window.lvZoom) lvZoom(); }
