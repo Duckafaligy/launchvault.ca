@@ -70,14 +70,14 @@ ${L("M46 72 Q50 76 54 72", "#0B0B10", 2.4)}</svg>`; };
       cur.style.transition = "none"; cur.style.transform = `translate(${(b.left + b.width / 2) / k}px,${(b.top + b.height / 2) / k}px)`; cur.style.opacity = 1; void cur.offsetWidth;
       cur.style.transition = reduce ? "none" : "transform .7s cubic-bezier(.16,1,.3,1),opacity .3s";
       cur.style.transform = `translate(${(r.left + Math.min(r.width - 8, 24)) / k}px,${(r.top + Math.min(r.height - 8, 20)) / k}px)`;
-      setTimeout(() => { t.classList.remove("lvdot-ring"); cur.style.opacity = 0; if (panel) mood(panel.hidden ? "idle" : "listening"); }, 5200);
+      setTimeout(() => { t.classList.remove("lvdot-ring"); cur.style.opacity = 0; if (panel) mood("idle"); }, 5200);
     }, reduce ? 0 : 450);
   }
   const say = t => { $(".lvdot-say", panel).textContent = t; };
   const mood = m => { if (el) el.dataset.mood = m; };
 
   function open(on) {
-    panel.hidden = !on; btn.setAttribute("aria-expanded", on); mood(on ? "listening" : "idle");
+    panel.hidden = !on; btn.setAttribute("aria-expanded", on); mood("idle");
     if (!on) return;
     const pg = page(), tips = TIPS[pg] || [];
     say(HELLO[pg] || "Hi. Ask me anything.");
@@ -112,6 +112,10 @@ ${L("M46 72 Q50 76 54 72", "#0B0B10", 2.4)}</svg>`; };
     btn.addEventListener("pointerup", up); btn.addEventListener("pointercancel", up);
     btn.addEventListener("click", e => { if (drag) { e.preventDefault(); drag = false; return; } open(panel.hidden); });
 
+    /* it listens (wide eyes) only while you are typing to it, and settles a moment after you stop */
+    let lt = 0; const inp = $("input", panel);
+    inp.addEventListener("input", () => { clearTimeout(lt); mood(inp.value ? "listening" : "idle"); lt = setTimeout(() => { if (el && el.dataset.mood === "listening") mood("idle"); }, 1600); });
+    inp.addEventListener("blur", () => { clearTimeout(lt); if (el && el.dataset.mood === "listening") mood("idle"); });
     panel.addEventListener("click", e => { const t = e.target.closest("[data-tip]"); if (t) { const tip = (TIPS[page()] || [])[+t.dataset.tip]; if (tip) point(tip[1], tip[2]); } });
     $("form", panel).addEventListener("submit", e => { e.preventDefault(); const v = $("input", panel).value.trim(); if (!v) return;
       const a = $("#asIn");                                           // on the Ask page it goes straight into the box
@@ -129,7 +133,27 @@ ${L("M46 72 Q50 76 54 72", "#0B0B10", 2.4)}</svg>`; };
   }
   addEventListener("resize", () => { if (!el) return; if (small()) { el.style.left = el.style.top = el.style.right = el.style.bottom = ""; } else { const p = ls.get("lv-dot-pos"); if (Array.isArray(p)) setPos(p[0], p[1]); } });
 
-  const show = () => { if (draft.on) build(); else if (el) { el.remove(); el = panel = btn = null; } };
+  /* switched off: a happy little face, then it blows away as dust, left to right */
+  function vanish() {
+    const node = el, f = FL[draft.flavour] || FL.honey; el = panel = btn = null;
+    if (!node) return;
+    const pn = $(".lvdot-p", node); if (pn) pn.hidden = true;
+    if (reduce) { node.remove(); return; }
+    node.dataset.mood = "done"; node.classList.add("bye");
+    setTimeout(() => {
+      if (!node.isConnected) return;
+      const br = node.getBoundingClientRect(), dir = br.left + br.width / 2 > innerWidth / 2 ? -1 : 1;   // the dust drifts toward the middle of the window
+      const s = node.offsetWidth, cols = [f.body, f.body, f.glaze || f.body, f.feet, "#FFFFFF"], frag = d.createDocumentFragment();
+      for (let i = 0; i < 110; i++) {
+        const a = Math.random() * Math.PI * 2, r = Math.sqrt(Math.random()) * s * 0.41, x = s / 2 + Math.cos(a) * r, y = s / 2 + Math.sin(a) * r + 2, z = 2 + Math.random() * 3.6, g = d.createElement("i");
+        g.style.cssText = `left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;width:${z.toFixed(1)}px;height:${z.toFixed(1)}px;background:${cols[i % cols.length]};--dx:${(dir * (30 + Math.random() * 120)).toFixed(0)}px;--dy:${(-20 - Math.random() * 90).toFixed(0)}px;--r:${(Math.random() * 540 - 270).toFixed(0)}deg;animation-delay:${((dir < 0 ? x / s : 1 - x / s) * 1050 + Math.random() * 220).toFixed(0)}ms`;
+        frag.appendChild(g);
+      }
+      node.appendChild(frag); node.classList.add("dust", dir < 0 ? "dust-r" : "dust-l");   // it wears away from the side the dust leaves by
+      setTimeout(() => node.remove(), 3400);
+    }, 700);
+  }
+  const show = () => { d.querySelectorAll(".lvdot.bye").forEach(n => n.remove()); if (draft.on) build(); else if (el) vanish(); };
 
   /* ---------- Settings > Preferences: the switch and the flavour picker ---------- */
   function controls() {
