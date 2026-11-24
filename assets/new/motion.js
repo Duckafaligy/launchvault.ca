@@ -82,7 +82,8 @@
     var label = t.textContent.replace(/\s+/g, ' ').trim();
     el.setAttribute('aria-label', label + ' (opens in a new tab)');
     if (!el.title) el.title = 'Open ' + b.textContent.trim() + ' in a new tab';
-    el._lvPin = { t: t, b: b, pre: t.firstChild && t.firstChild.nodeType === 3 ? t.firstChild.data : '', dom: b.textContent };
+    el._lvPin = { t: t, b: b, pre: t.firstChild && t.firstChild.nodeType === 3 ? t.firstChild.data : '', dom: b.textContent,
+      post: b.nextSibling && b.nextSibling.nodeType === 3 ? b.nextSibling.data : '' };   /* optional words after the domain ("… rules") */
     b.insertAdjacentHTML('beforeend', ARROW_NE);
   }
   function runPin(el) {
@@ -91,14 +92,16 @@
     var txt = d.createTextNode(''), dom = d.createTextNode(''), arrow = p.b.querySelector('svg');
     var caret = d.createElement('span'); caret.className = 'pin-caret';
     p.t.textContent = ''; p.b.textContent = '';
-    p.t.appendChild(txt); p.t.appendChild(p.b); p.b.appendChild(dom); p.t.appendChild(caret);
+    var post = d.createTextNode('');
+    p.t.appendChild(txt); p.t.appendChild(p.b); p.b.appendChild(dom); p.t.appendChild(post); p.t.appendChild(caret);
     el.classList.add('in', 'pop', 'typing');
-    var i = 0, all = p.pre.length + p.dom.length;
+    var i = 0, all = p.pre.length + p.dom.length + p.post.length;
     setTimeout(function () {
       var iv = setInterval(function () {
         i++;
         txt.data = p.pre.slice(0, i);
         dom.data = p.dom.slice(0, Math.max(0, i - p.pre.length));
+        post.data = p.post.slice(0, Math.max(0, i - p.pre.length - p.dom.length));
         if (i >= all) {
           clearInterval(iv); caret.remove();
           if (arrow) p.b.appendChild(arrow);
