@@ -118,7 +118,7 @@
       rm.hidden = !(pending && pending !== "remove") && !(pending !== "remove" && P && P.avatar_path);
       $("[data-pp-pv]", f).innerHTML = `<span class="av" aria-hidden="true"></span><div><p class="pp-pvn"><b>${esc(nm || "Your name")}</b><span>· ${esc(P && P.name_tag && nm === P.display_name ? P.name_tag : "4-digit tag")}</span>${u ? `<span class="pp-pvu">@${esc(u)}</span>` : ""}</p>${bio.value.trim() ? `<p class="pp-pvb">${esc(bio.value.trim())}</p>` : ""}</div>`;
       fill($("[data-pp-pv] .av", f), {id: clerk.user.id, name: nm, ...curAv()});
-      $("[data-pp-ct]", f).textContent = bio.value.length + " / 160"; f.dataset.av = pending ? "1" : "";
+      $("[data-pp-ct]", f).textContent = bio.value.length + " / 160"; f.dataset.ppav = pending ? "1" : "";
     };
     const setUh = s => { ustate = s; uh.textContent = UH[s] || UH[""]; uh.className = s === "available" || s === "yours" ? "ok" : s && s !== "checking" ? "bad" : ""; };
     const check = () => { clearTimeout(ut); const v = user.value.trim(), my = ++seq;

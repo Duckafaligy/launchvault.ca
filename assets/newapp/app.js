@@ -47,6 +47,32 @@
 
   // ---------- toast ----------
   const toastEl = $("#toast"); let tt;
+  // ---------- sidebar account row: a small menu card opens above it (wide screens; phones keep the You tab) ----------
+  { const row = document.querySelector("[data-sbme]");
+    if (row) {
+      const A = "/app/account/", m = document.createElement("div"); m.className = "sbm"; m.id = "sbm"; m.setAttribute("role", "menu"); m.hidden = true;
+      const judge = () => { try { return JSON.parse(localStorage.getItem("lv-judge")) === "SPARK2026"; } catch { return false; } };
+      const draw = () => { const e = window.LVAuth && LVAuth.email && LVAuth.email();
+        m.innerHTML = [["#profile", "Profile"], ["#plan", "Plan and billing"], ["#email", "Notifications"], ["#prefs", "Preferences"], ["#site", "Your website"], ["#data", "Privacy and data"]]
+          .map(([h, t], i) => `<a role="menuitem" href="${A}${h}" style="--i:${i}">${t}</a>`).join("") + "<hr>"
+          + (e ? '<button role="menuitem" type="button" data-sbout style="--i:6">Sign out</button>' : judge() ? '<button role="menuitem" type="button" data-sbexit style="--i:6">Exit judge view</button>' : '<a role="menuitem" href="/sign-in/" style="--i:6">Sign in</a>'); };
+      document.body.appendChild(m);
+      const z = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--z")) || 1;
+      const place = () => { const r = row.getBoundingClientRect(), k = z(); m.style.left = Math.max(8, r.left / k) + "px"; m.style.bottom = (innerHeight - r.top) / k + 8 + "px"; m.style.minWidth = Math.max(208, r.width / k) + "px"; };
+      const open = on => { if (on === !m.hidden) return; row.setAttribute("aria-expanded", on);
+        if (on) { draw(); m.hidden = false; place(); const f = m.querySelector("a,button"); f && f.focus({preventScroll: true}); }
+        else { m.classList.add("out"); setTimeout(() => { m.hidden = true; m.classList.remove("out"); }, 140); } };
+      row.addEventListener("click", e => { if (innerWidth <= 720) return; e.preventDefault(); e.stopPropagation(); open(m.hidden); });
+      document.addEventListener("click", e => { if (!m.hidden && !e.target.closest(".sbm")) open(false); });
+      addEventListener("resize", () => open(false));
+      m.addEventListener("click", e => {
+        if (e.target.closest("[data-sbout]")) { open(false); if (window.LVAuth) LVAuth.signOut(); return; }
+        if (e.target.closest("[data-sbexit]")) { try { localStorage.removeItem("lv-judge"); } catch {} location.href = "/sign-in/"; return; }
+        if (e.target.closest("a")) open(false); });
+      m.addEventListener("keydown", e => { const it = [...m.querySelectorAll("a,button")], i = it.indexOf(document.activeElement);
+        if (e.key === "Escape") { open(false); row.focus(); }
+        else if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); it[(i + (e.key === "ArrowDown" ? 1 : -1) + it.length) % it.length].focus(); } });
+    } }
   const toast = (msg, undo) => { if (!toastEl) return; clearTimeout(tt);
     toastEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6EE7B7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>${esc(msg)}</span>` + (undo ? '<button type="button">Undo</button>' : "");
     toastEl.classList.add("on"); if (undo) toastEl.querySelector("button").onclick = () => { undo(); toastEl.classList.remove("on"); };
@@ -560,7 +586,7 @@
     // ---------- nothing in Settings saves as you go: changes are held until Save. The bar at the bottom offers Save or Discard,
     //            goes red and shakes if you try to leave, and Discard asks first. (The public profile form saves through the same bar.) ----------
     const ppf = $("[data-pp-form]"), ppNow = () => JSON.stringify(["#ppName", "#ppUser", "#ppBio"].map(q => ($(q) || {}).value || ""));
-    const ppDirty = () => !!ppf && !ppf.hidden && ppf.dataset.clean != null && (ppf.dataset.av === "1" || ppf.dataset.clean !== ppNow());
+    const ppDirty = () => !!ppf && !ppf.hidden && ppf.dataset.clean != null && (ppf.dataset.ppav === "1" || ppf.dataset.clean !== ppNow());
     const snap = () => JSON.stringify([ls.get("lv-dob") || "", Object.assign({new_story: false, path: false, news: false}, ls.get("lv-prefs", {})), ls.get("lv-display") || "auto"]);
     const mine = () => JSON.stringify([bd.value || ls.get("lv-dob") || "", prefs, dispV]);
     const dirty = () => mine() !== snap() || ppDirty();
@@ -570,7 +596,7 @@
     const sbm = $("[data-sbmsg]", bar);
     function held() { const d = dirty(); if (d) sbm.textContent = "You have unsaved changes"; bar.hidden = !d; if (!d) bar.classList.remove("warn"); }
     const nudge = () => { bar.classList.remove("warn"); void bar.offsetWidth; bar.classList.add("warn"); sbm.textContent = "Save or discard your changes first"; };
-    if (ppf) { ppf.addEventListener("input", held); new MutationObserver(held).observe(ppf, {attributes: true, attributeFilter: ["data-clean", "data-av", "hidden"]}); }
+    if (ppf) { ppf.addEventListener("input", held); new MutationObserver(held).observe(ppf, {attributes: true, attributeFilter: ["data-clean", "data-ppav", "hidden"]}); }
     const revert = () => { bd.value = ls.get("lv-dob") || ""; Object.assign(prefs, {new_story: false, path: false, news: false}, ls.get("lv-prefs", {}));
       $$("[data-pref]").forEach(b => b.setAttribute("aria-checked", !!prefs[b.dataset.pref])); dispV = ls.get("lv-display") || "auto"; disp(dispV);
       if (ppf) ppf.dispatchEvent(new Event("lv:pp-reset")); held(); };

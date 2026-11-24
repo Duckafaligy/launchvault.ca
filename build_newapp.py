@@ -130,7 +130,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
   <nav aria-label="Main">{side}</nav>
   <div class="foot">{cont}
     <div class="plan" data-state="free"><div><b data-plan>Free plan</b><small data-plansub>1 of {len(ready)} stories</small></div><a href="{A}account/#plan" data-upg>Get Pro</a></div>
-    <a class="sbme" href="{A}account/"{' aria-current="page"' if active == "acct" else ""} title="Account and settings"><span class="av" data-av aria-hidden="true">{pi("user", 18)}</span><span class="t"><b data-me>Your account</b><small>Account and settings</small></span>{pi("chev", 14, 2)}</a>
+    <a class="sbme" href="{A}account/"{' aria-current="page"' if active == "acct" else ""} title="Account and settings" data-sbme aria-haspopup="menu" aria-expanded="false" aria-controls="sbm"><span class="av" data-av aria-hidden="true">{pi("user", 18)}</span><span class="t"><b data-me>Your account</b><small>Account and settings</small></span>{pi("chev", 14, 2)}</a>
   </div>
 </aside>
 <div class="main">
