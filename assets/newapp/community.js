@@ -23,7 +23,7 @@
     filter_link_scheme: "That link isn't allowed.", filter_link_ip: "That link isn't allowed.", filter_link_lookalike: "That link isn't allowed.",
     filter_term: "That message can't be sent. Please reword it.", link_slow_down: "You've shared a few links already. Try again later.",
     read_only: "Only moderators can post in this channel.", banned: "You can't post right now. You can still read everything.",
-    name: "Choose a chat name first.", rules: "Agree to the Community Guidelines first.", vote_first: "Vote first, then reply.", thread_closed: "This thread is closed. You can still read it.",
+    name: "Choose a chat name first.", rules: "Agree to the Community Guidelines first.", vote_first: "Vote first, then reply.", too_long: "That's too long. Keep it under 800 characters.", thread_closed: "This thread is closed. You can still read it.",
     locked: "This channel is paused for now. You can still read it.", duplicate: "You already sent that. Try saying something new.", empty: "Write a message first.",
     no_thread: "That thread isn't there any more.", no_threads_here: "Threads aren't turned on in this channel.", thread_slow_down: "You've started a few threads already. Try again in an hour.",
     title_length: "The title needs 3 to 80 characters.", option_length: "Each option can be up to 30 characters.", option_duplicate: "Each option needs to be different.",
@@ -220,7 +220,7 @@
     return "";
   };
   const composerHTML = (label, help) => { const b = composerBlock(); if (b) return `<div class="cm-comp"><p class="cm-block">${ic("lock", 18)}<span>${b}</span></p></div>`;
-    return `<form class="cm-comp" novalidate><p class="cm-reply" hidden></p><div class="cm-box"><textarea rows="1" maxlength="800" placeholder="${esc(label)}" aria-label="${esc(label)}" enterkeyhint="send"></textarea><button class="btn btn-p" type="submit">Send</button></div>
+    return `<form class="cm-comp" novalidate><p class="cm-reply" hidden></p><div class="cm-box"><textarea rows="1" maxlength="${S.isMod ? 4000 : 800}" placeholder="${esc(label)}" aria-label="${esc(label)}" enterkeyhint="send"></textarea><button class="btn btn-p" type="submit">Send</button></div>
       <p class="cm-hint"><span>${esc(help || "Type @ to mention someone. No contact details or chat-app links.")}</span><span class="cm-ct" aria-live="polite"></span></p><p class="cm-err" role="alert" hidden></p></form>`; };
   const setReply = m => { cur.replyTo = m; const r = $(".cm-reply"); if (!r) return; r.hidden = !m; r.innerHTML = m ? `${ic("reply", 16)}<span>Replying to ${esc(m.author_name)}</span><button type="button" class="cm-x" aria-label="Cancel reply">${ic("x", 16)}</button>` : "";
     const x = $(".cm-x", r); if (x) x.addEventListener("click", () => setReply(null)); const ta = $(".cm-comp textarea"); if (ta) ta.focus(); };
@@ -253,7 +253,7 @@
     const eb = $("[data-entry]"); if (eb) eb.addEventListener("click", () => entry());
     const f = $("form.cm-comp"); if (!f) return; const ta = $("textarea", f), ct = $(".cm-ct", f), err = $(".cm-err", f), btn = $('[type="submit"]', f);
     if (extra.about && !ta.value) { ta.value = "About " + extra.about + ": "; }
-    const grow = () => { ta.style.height = "auto"; ta.style.height = Math.min(ta.scrollHeight, 150) + "px"; const n = ta.value.length; ct.textContent = n >= 700 ? n + " / 800" : ""; ct.classList.toggle("max", n >= 780); };
+    const grow = () => { ta.style.height = "auto"; ta.style.height = Math.min(ta.scrollHeight, 150) + "px"; const n = ta.value.length; const mx = S.isMod ? 4000 : 800; ct.textContent = n >= mx - 100 ? n + " / " + mx : ""; ct.classList.toggle("max", n >= mx - 20); };
     ta.addEventListener("input", grow); grow();
     mentions(ta, f);   // registers its keydown first, so Enter/Tab pick a name instead of sending while the list is open
     ta.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); f.requestSubmit(); } });
@@ -298,7 +298,15 @@
   // ponytail: a 20 s poll while the channel is open and the tab is visible; switch to realtime on chat_room_reads if the chat gets busy
   setInterval(() => { if (!document.hidden && cur.view === "chat" && cur.room) paintSeen(); }, 20000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) { markRead(); loadUnread(); } });
-  const RULES = `<div class="cm-rulecard"><h2>Community Guidelines</h2><ul><li><b>Be kind.</b> Disagree with ideas, not people.</li><li><b>No personal info.</b> No school, address, phone number or socials, yours or anyone else's.</li><li><b>Stay on topic.</b> Building, stories and what you're trying.</li><li><b>No selling or spam.</b> Share what you made; don't pitch it.</li><li><b>Report, don't fight.</b> Use the menu on any message.</li></ul><p><a href="/legal/community/">Read the full guidelines</a></p></div>`;
+  const RULES = `<div class="cm-rulecard"><h2>Community Guidelines</h2><p class="cm-rlead">This is a place to build things and help each other do it. Members are 13 and up, so we keep it safe and kind.</p>
+<h3>How to be here</h3><ul><li><b>Be kind.</b> Disagree with ideas, not people. No insults, pile-ons or mocking someone's work.</li><li><b>Stay on topic.</b> Building, the stories, and what you're trying. Each channel says what it is for.</li><li><b>Help the way you'd want to be helped.</b> Say what you tried, be specific, and thank people who answer.</li><li><b>Share what you made.</b> Show your project and ask for feedback. Don't pitch it or ask people to buy.</li></ul>
+<h3>Not allowed</h3><ul><li><b>Personal info.</b> No school, address, phone number, email or socials, yours or anyone else's. Don't ask for them either.</li><li><b>Moving the chat elsewhere.</b> No invites to other chat apps or private messages off LaunchVault.</li><li><b>Selling and spam.</b> No ads, referral codes, giveaways or repeated posts.</li><li><b>Harmful content.</b> Nothing sexual, hateful, violent or illegal, and no bullying.</li><li><b>Pretending.</b> Don't pose as someone else, as staff, or make up results.</li></ul>
+<h3>How it's looked after</h3><ul><li><b>Report, don't fight.</b> Use the three dots on any message. Reports are private.</li><li><b>Messages are checked.</b> An automatic filter blocks contact details and unsafe links before they post.</li><li><b>What happens if rules are broken.</b> The message is removed. Repeated or serious cases mean a mute or a ban.</li><li><b>You can delete your own messages</b> at any time from the three dots.</li></ul>
+<p><a href="/legal/community/">Read the full guidelines</a></p></div>`;
+  const ANN = `<div class="cm-rulecard"><h2>Announcements</h2><p class="cm-rlead">News from LaunchVault, posted here first. Only LaunchVault posts in this channel.</p>
+<ul><li><b>New stories.</b> When a new breakdown lands, and what it covers.</li><li><b>New features.</b> What changed in the app and where to find it.</li><li><b>Community news.</b> New channels, events and changes to the guidelines.</li><li><b>Fixes.</b> When something was broken and is working again.</li></ul>
+<p>Questions about a post? Ask in <a href="#chat/general">another channel</a>.</p></div>`;
+  const INTRO = {welcome: RULES, announcements: ANN};
   const showChat = async (about, slug) => {
     const room = (slug && roomBy(slug)) || chatRoom(), tok = ++cur.tok; cur = {tok, room, view: "chat", thread: null, msgs: new Map(), replyTo: null}; setView("chan");
     if (!S.signed) { pane.innerHTML = header("chat") + `<div class="cm-body">${skeleton("rows", room)}</div>`; return; }
@@ -309,7 +317,7 @@
     if (tok !== cur.tok) return;
     rows = rows.filter(m => !(m.hidden && cleared().includes(m.id)));   // deleted messages a moderator chose to clear from their own view
     rows.forEach(m => cur.msgs.set(m.id, m)); await fillParents(rows); if (tok !== cur.tok) return;
-    const logEl = $("#cmLog"); logEl.innerHTML = rows.length ? withDays(rows) : room.slug === "welcome" ? RULES : `<div class="cm-none cm-empty">${ic("msg", 28)}<p>${room.read_only ? "Nothing posted here yet." : "No messages yet. Say hi."}</p></div>`; logEl.scrollTop = logEl.scrollHeight;
+    const logEl = $("#cmLog"); logEl.innerHTML = (INTRO[room.slug] || "") + (rows.length ? withDays(rows) : INTRO[room.slug] ? "" : `<div class="cm-none cm-empty">${ic("msg", 28)}<p>${room.read_only ? "Nothing posted here yet." : "No messages yet. Say hi."}</p></div>`); logEl.scrollTop = rows.length ? logEl.scrollHeight : 0;
     $("#cmComp").innerHTML = composerHTML(room.slug === CHAT ? "Message everyone" : "Message #" + topicName(room).toLowerCase()); bindComposer(logEl, {about}); paintPin();
     logEl.addEventListener("click", e => { const mb = e.target.closest("[data-menu]"); if (mb) return menu(+mb.dataset.menu); const j = e.target.closest("[data-jump]"); if (j) { const r = $(`#m${j.dataset.jump}`); if (r) { r.scrollIntoView({block: "center", behavior: "smooth"}); r.classList.add("flash"); setTimeout(() => r.classList.remove("flash"), 1600); } } });
     subscribe(room, m => { if (!m.thread_id) { const o = $(".cm-seen", logEl); if (o) o.remove(); addMsg(m, logEl); markRead(); setTimeout(paintSeen, 1500); } }, id => { goneRow(id, "This message was removed"); setTimeout(paintSeen, 800); });

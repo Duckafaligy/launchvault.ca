@@ -1214,3 +1214,11 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 .nv .cm-dis{min-height:0;height:20px;padding:0 8px;border:0;border-radius:999px;background:rgba(255,255,255,.1);font:500 11px/20px var(--fd);color:#fff;cursor:pointer;transition:background-color .15s}
 .nv .cm-dis:hover{background:rgba(255,255,255,.22)}
 .nv .cm-m.cm-hid:has(.cm-dis:hover){opacity:1}
+
+/* community: fuller rules and the announcements intro; long posts keep their line breaks */
+.nv .cm-rulecard{max-width:680px}
+.nv .cm-rulecard .cm-rlead{margin:8px 0 0;font:400 var(--f14)/21px var(--fd);color:var(--muted)}
+.nv .cm-rulecard h3{margin:18px 0 0;font:600 var(--f13)/18px var(--fd);color:#fff}
+.nv .cm-rulecard h3+ul{margin-top:8px}
+.nv .cm-rulecard>p:last-child{margin:14px 0 0;font:400 var(--f13)/19px var(--fd);color:var(--muted)}
+.nv .cm-tx{white-space:pre-wrap}
