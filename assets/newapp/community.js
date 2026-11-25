@@ -276,8 +276,11 @@
     S.chAll = S.sb.channel("lv-unread").on("postgres_changes", {event: "INSERT", schema: "public", table: "chat_messages"}, p => { const m = p.new;
       if (!m || (S.me && m.user_id === S.me.id) || (cur.view === "chat" && cur.room && cur.room.id === m.room_id && !document.hidden)) return;
       (S.unread || (S.unread = new Set())).add(Number(m.room_id)); dotNav(); }).subscribe(); };
-  const loadUnread = async () => { watchAll(); if (!S.sb || !S.signed) return; try { S.unread = new Set((await q(S.sb.rpc("chat_unread_rooms"))).map(Number)); } catch { return; }
-    const nav = $(".cm-chans"); if (nav && cur.room && cur.view === "chat") { S.unread.delete(cur.room.id); nav.outerHTML = chanList(cur.room); } };
+  const loadUnread = async () => { watchAll(); if (!S.sb || !S.signed) return; let ids; try { ids = (await q(S.sb.rpc("chat_unread_rooms"))).map(Number); } catch { return; }
+    if (cur.room && cur.view === "chat" && !document.hidden) ids = ids.filter(x => x !== cur.room.id);
+    const was = [...(S.unread || [])].sort().join(), now = ids.slice().sort().join(); S.unread = new Set(ids); if (was !== now) dotNav(); };
+  // ponytail: asked again every 10 s while the tab is visible, so a dot shows even if the live connection drops; cheap (one small query)
+  setInterval(() => { if (!document.hidden && S.signed && cur.view === "chat") loadUnread(); }, 10000);
   // "Seen by": who has opened this channel since its latest message. Always the last line of the log.
   const paintSeen = async () => { const room = cur.room, tok = cur.tok, logEl = $("#cmLog"); if (!room || cur.view !== "chat" || !logEl || !S.sb) return;
     let rows; try { rows = await q(S.sb.rpc("chat_seen_by", {p_room: room.id})); } catch { return; }
