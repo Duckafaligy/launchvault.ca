@@ -106,7 +106,11 @@
     inp.addEventListener("blur", () => finish(true));
   }
   async function removeChat(id) {
-    if (!confirm("Delete this chat? This can't be undone.")) return;
+    const c = info.conversations.find(x => x.id === id);
+    const ok = await new Promise(res => { const d = document.createElement("dialog"); d.className = "rdlg sbdlg"; d.setAttribute("aria-labelledby", "asdh");
+      d.innerHTML = `<form method="dialog"><h2 id="asdh">Delete this chat?</h2><p>${c ? "\u201c" + esc(c.title) + "\u201d and its replies are" : "This chat is"} removed for good. This can't be undone.</p><div class="sbdr"><button class="btn btn-s" value="no" autofocus>Cancel</button><button class="btn sbred" value="yes">Delete</button></div></form>`;
+      document.body.appendChild(d); d.addEventListener("close", () => { res(d.returnValue === "yes"); d.remove(); }); d.addEventListener("click", e => { if (e.target === d) d.close("no"); }); d.showModal(); });
+    if (!ok) return;
     const r = await api("?id=" + encodeURIComponent(id), {method: "DELETE"}).catch(() => null);
     if (!r || !r.ok) { sr.textContent = "That chat wasn't deleted. Try again."; return; }
     info.conversations = info.conversations.filter(c => c.id !== id); if (cid === id) newChat(); else renderList(); sr.textContent = "Chat deleted.";

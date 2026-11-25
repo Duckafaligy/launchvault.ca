@@ -746,8 +746,14 @@
 .nv .plot .mk text{fill:#fff}
 .nv .plot .mk.on rect,.nv .plot .mk.turn rect{fill:#9DB8FF;stroke:#9DB8FF}
 .nv .plot .mk.on text,.nv .plot .mk.turn text{fill:#0B0B0F}
-.nv .plot .bf rect,.nv .plot .bfz rect{fill:#23232E;stroke:rgba(255,255,255,.34)}
-.nv .plot .bf text,.nv .plot .bfz .bfl{fill:#fff}
+.nv .plot .bf rect{fill:#23232E;stroke:rgba(255,255,255,.34)}
+.nv .plot .bf text{fill:#fff}
+/* the stretch before the first revenue number: a light dashed lane, not a solid box */
+.nv .plot .bfz rect{fill:rgba(255,255,255,.035);stroke:rgba(255,255,255,.24);stroke-width:1;stroke-dasharray:4 4}
+.nv .plot .bfz .bfl{fill:#fff;font:600 12px var(--fd);letter-spacing:0}
+.nv .plot .bfz .bfs{fill:rgba(255,255,255,.62);font:400 11px var(--fd)}
+.nv .plot .bfz .bfn{fill:rgba(255,255,255,.42);font:400 11px var(--fd)}
+.nv .plot .bfz .bfd{stroke:rgba(255,255,255,.3);stroke-width:1.5;stroke-dasharray:2 5}
 .nv .readout b,.nv .readout .rd-t{color:#fff}
 .nv .readout .rd-s,.nv .readout .rd-d{color:var(--muted)}
 /* 2. checklist counter stays on one line; the bar gives way */

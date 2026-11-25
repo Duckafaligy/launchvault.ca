@@ -35,7 +35,15 @@
     const x0 = Math.min(S.start ? mi(S.start) : Infinity, pts[0].x), x1 = pts.at(-1).x;
     // every move gets a marker: moves inside the chart's months sit on their month; earlier moves (before the revenue data)
     // sit in order in a shaded "before the numbers" stretch at the left, so stepping through the moves walks the whole story
-    const moves = (D.moves || []).map((m, i) => ({...m, i, x: m.at ? Math.min(mi(m.at), x1) : NaN}));   // a move after the last data point sits at the right edge
+    // a step's month: its machine date when the story has one, otherwise read from its written date.
+    // "Sep 2026", "Jun 23 2026", "By Sep 2025", "Apr to May 2025" -> that (first) month; a season or "Early/Late 2026" -> a month in it;
+    // a bare year -> June; "Before 2019", "Not public" and the like -> no month (the step sits in the before lane, or with the step before it)
+    const MON = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], SEAS = {winter: 1, early: 2, spring: 4, summer: 7, mid: 6, fall: 10, autumn: 10, late: 11};
+    const whenAt = w => { const t = String(w || "").toLowerCase(), y = (t.match(/\b(19|20)\d{2}\b/) || [])[0]; if (!y || /\bbefore\b|\bnot public\b/.test(t)) return null;
+      const mo = (t.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/) || [])[1], se = (t.match(/\b(winter|early|spring|summer|mid|fall|autumn|late)\b/) || [])[1];
+      return y + "-" + String(mo ? MON.indexOf(mo) + 1 : se ? SEAS[se] : 6).padStart(2, "0"); };
+    const moves = (D.moves || []).map((m, i) => { const at = m.at || whenAt(m.when); return {...m, i, x: at ? Math.min(mi(at), x1) : NaN}; });   // a step after the last data point sits at the right edge
+    moves.forEach((m, i) => { if (isNaN(m.x) && i && moves[i - 1].x >= x0) m.x = moves[i - 1].x; });   // an undated step that follows a charted one stays beside it, in order
     const preM = moves.filter(m => !(m.x >= x0)); preM.forEach((m, k) => { m.pre = true; m.k = k; });
     const before = preM.length;
     const top = nice(Math.max(...pts.map(p => p.v), ...alt.map(p => p.v)) * 1.05);
@@ -43,7 +51,7 @@
     const turnI = (moves.find(m => m.turn) || {i: -1}).i;   // the move shown when nothing is pinned (-1: show the latest point)
     const draw = () => { cancelAnimationFrame(tw);
       const W = Math.max(280, plot.clientWidth), narrow = W < 560, H = narrow ? 230 : 300, L = 48, R = 12, T = 30, B = moves.length ? 54 : 30;
-      const BW = before ? Math.min(narrow ? 22 * before + 8 : 150, Math.max(56, before * (narrow ? 22 : 30) + 8), W * .34) : 0, L2 = L + BW;   // the before stretch
+      const BW = before ? Math.min(Math.max(narrow ? 64 : 150, before * (narrow ? 22 : 26) + 20), W * .38) : 0, L2 = L + BW;   // the before stretch: always wide enough for its markers
       const X = x => L2 + (x - x0) / Math.max(1, x1 - x0) * (W - L2 - R), Y = v => T + (1 - v / top) * (H - T - B);
       const PX = m => L + (m.k + .5) * (BW - 8) / before;
       svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("height", H); svg.innerHTML = "";
@@ -60,9 +68,15 @@
       if (x1 > x0) el("text", {x: X(x1), y: H - 4, "text-anchor": "end", class: "ax"}, svg).textContent = mlab(x1);
       for (let y = Math.ceil(x0 / 12) * 12; y <= x1; y += 12) if (X(y) - X(x0) > 110 && X(x1) - X(y) > 110) el("text", {x: X(y), y: H - 4, "text-anchor": "middle", class: "ax"}, svg).textContent = narrow ? String(y / 12) : "Jan " + y / 12;
       if (before) { const g = el("g", {class: "bfz", "aria-hidden": "true"}, svg); el("rect", {x: L, y: T, width: BW - 8, height: H - B - T, rx: 6}, g);
-        el("text", {x: L + (BW - 8) / 2, y: T + 15, "text-anchor": "middle", class: "bfl"}, g).textContent = narrow || BW < 110 ? "Before" : "Before the numbers";
+        const mid = L + (BW - 8) / 2, wide = !narrow && BW >= 130;
+        el("text", {x: mid, y: T + 18, "text-anchor": "middle", class: "bfl"}, g).textContent = wide ? "Before the numbers" : "Before";
+        if (wide) { el("text", {x: mid, y: T + 35, "text-anchor": "middle", class: "bfs"}, g).textContent = before + (before === 1 ? " early step" : " early steps");
+          el("text", {x: mid, y: (T + 35 + Y(0)) / 2 + 8, "text-anchor": "middle", class: "bfn"}, g).textContent = "No revenue data yet"; }
         el("line", {x1: L + 6, x2: L + BW - 14, y1: Y(0), y2: Y(0), class: "bfd"}, g);
-        if (BW >= 70) el("text", {x: L, y: H - 4, "text-anchor": "start", class: "ax"}, svg).textContent = preM[0].when; }
+        // its date label must end before the first month's label begins: cut "(date not public)" style tails, or leave it out
+        const fit = t => t.length * 6.6 <= BW - 14; let wl = String(preM[0].when || "");
+        if (!fit(wl)) wl = wl.split(/\s*[(,]/)[0].trim();
+        if (wl && fit(wl)) el("text", {x: L, y: H - 4, "text-anchor": "start", class: "ax"}, svg).textContent = wl; }
       if (S.empty_note && pts[0].x - x0 > 4 && !narrow) el("text", {x: X(x0) + 4, y: Y(0) - 8, class: "note"}, svg).textContent = S.empty_note;
       const P = pts.map(p => [X(p.x), Y(p.v)]), line = monotone(P);
       const fg = el("g", {mask: "url(#lvmask)"}, svg);
