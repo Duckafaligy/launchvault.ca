@@ -1,0 +1,27 @@
+{
+  "brand": "LaunchVault Assistant (Dot)",
+  "networks": [
+    {
+      "name": "launchvault",
+      "front_man": "launchvault_dot",
+      "hocon": "./launchvault.network.json",
+      "description": "Explore verified founder stories, search metrics with sources and dates, navigate checklists, and guide users interactively with Dot.",
+      "tags": [
+        "agentified-website",
+        "founder-stories",
+        "education"
+      ],
+      "sample_queries": [
+        "Where is the story for Rezi?",
+        "Search the library for Postiz and show its verified MRR.",
+        "Open my checklists and highlight where to start.",
+        "Show me the Stencil AI breakdown phase 2."
+      ]
+    }
+  ],
+  "llm_router": {
+    "base_url": "https://api.otari.ai/api/v1",
+    "mock": false,
+    "byok_router": "https://api.otari.ai/api/v1"
+  }
+}

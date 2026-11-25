@@ -1,0 +1,40 @@
+{
+  "name": "launchvault",
+  "front_man": "launchvault_dot",
+  "instructions": "Help teens and student builders (13-24) explore verified founder stories on LaunchVault, cite real numbers with dates, and guide them interactively using Dot.",
+  "tools": [
+    {
+      "name": "search_stories",
+      "description": "Search LaunchVault's verified founder stories by name, category, or pattern.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string", "description": "Story name or topic (e.g., Rezi, Postiz, Stencil AI)" }
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "dot_guide",
+      "description": "Use Dot's interactive cursor to navigate, type, click, or highlight a section on LaunchVault.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "instruction": { "type": "string", "description": "Natural language navigation or UI instruction" }
+        },
+        "required": ["instruction"]
+      }
+    },
+    {
+      "name": "get_story_facts",
+      "description": "Return verified headline revenue, pattern, and source URL for a story slug.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "slug": { "type": "string", "description": "Story slug (e.g., rezi, postiz, stencil-ai)" }
+        },
+        "required": ["slug"]
+      }
+    }
+  ]
+}

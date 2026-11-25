@@ -1,0 +1,7 @@
+{
+  "protocol": "nsdeploy-agent-mcp/v1",
+  "network": "launchvault",
+  "front_man": "launchvault_dot",
+  "available": false,
+  "reason": "This is a static site; browser-local WebMCP tools run via /assets/newapp/agentic-web.js and /launchvault.network.json."
+}

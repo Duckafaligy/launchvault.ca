@@ -1,0 +1,19 @@
+{
+  "protocol": "nsdeploy-link/v1",
+  "exports": [
+    {
+      "network": "launchvault",
+      "front_man": "launchvault_dot",
+      "aliases": [
+        "launchvault",
+        "launchvault_dot",
+        "ask_launchvault"
+      ],
+      "url": "launchvault"
+    }
+  ],
+  "imports": [],
+  "link_updates": {
+    "mode": "browser-local"
+  }
+}

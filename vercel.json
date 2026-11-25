@@ -3,6 +3,24 @@
  "trailingSlash": true,
  "headers": [
   {
+   "source": "/.well-known/(.*)",
+   "headers": [
+    {
+     "key": "Access-Control-Allow-Origin",
+     "value": "*"
+    }
+   ]
+  },
+  {
+   "source": "/(agent-manifest|agent-mcp|launchvault.network).json",
+   "headers": [
+    {
+     "key": "Access-Control-Allow-Origin",
+     "value": "*"
+    }
+   ]
+  },
+  {
    "source": "/(.*)",
    "headers": [
     {
