@@ -936,7 +936,7 @@
 .emdlg .emerr{min-height:18px;margin:0;color:#FF9B8A}
 .emdlg b{color:#fff;font-weight:600;overflow-wrap:anywhere}
 
-/* app background: the same drifting dots as the public site, drawn on a fixed canvas behind everything. It ignores the pointer. */
+/* app background: the same drifting dots as the public site, drawn on a fixed canvas behind everything. The dots part around the pointer, as on the homepage. */
 body.nv>canvas.bg{position:fixed;inset:0;z-index:-1;width:100%;height:100%;pointer-events:none}
 body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a painted body would sit on top of the canvas */
 
