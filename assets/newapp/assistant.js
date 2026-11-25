@@ -97,7 +97,7 @@
   function bubble(role, text, done, names) {
     empty.hidden = true; if (empty.parentNode === log && log.children.length > 1) empty.remove();
     const el = document.createElement("div"); el.className = "as-msg " + role;
-    const fl = names && names.length ? `<div class="as-att">${names.map(n => `<span>${esc(n)}</span>`).join("")}</div>` : "";
+    const fl = names && names.length ? `<div class="as-att">${names.map(n => typeof n === "string" ? `<span>${esc(n)}</span>` : `<a href="${n.src}" target="_blank" rel="noopener" title="${esc(n.name)}"><img src="${n.src}" alt="${esc(n.name)}"></a>`).join("")}</div>` : "";
     el.innerHTML = role === "user" ? `<p class="as-who sr">You said</p><div class="as-b">${fl}${esc(text).replace(/\n/g, "<br>")}</div>`
       : `<p class="as-who sr">Ask LaunchVault said</p><span class="as-av" aria-hidden="true">${AV}</span><div class="as-b as-md">${done ? md(text) : ""}</div>`;
     log.appendChild(el); return el;
@@ -128,39 +128,55 @@
       const img = await new Promise((res, rej) => { const i = new Image(), u = URL.createObjectURL(f); i.onload = () => { URL.revokeObjectURL(u); res(i); }; i.onerror = () => { URL.revokeObjectURL(u); rej(); }; i.src = u; });
       const k = Math.min(1, 1568 / Math.max(img.naturalWidth, img.naturalHeight)), cv = document.createElement("canvas"); cv.width = Math.round(img.naturalWidth * k); cv.height = Math.round(img.naturalHeight * k);
       const g = cv.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, cv.width, cv.height); g.drawImage(img, 0, 0, cv.width, cv.height);
-      return {name: f.name, kind: "image", media_type: "image/jpeg", data: await b64(await new Promise(r => cv.toBlob(r, "image/jpeg", 0.85)))};
+      const blob = await new Promise(r => cv.toBlob(r, "image/jpeg", 0.85));
+      return {name: f.name, kind: "image", media_type: "image/jpeg", data: await b64(blob), src: URL.createObjectURL(blob), dim: cv.width + " × " + cv.height};
     }
-    if (f.type === "application/pdf") return f.size > 2.5e6 ? `${f.name} is over 2.5 MB. Send a smaller PDF or the pages you need.` : {name: f.name, kind: "pdf", data: await b64(f)};
+    if (f.type === "application/pdf") return f.size > 2.5e6 ? `${f.name} is over 2.5 MB. Send a smaller PDF or the pages you need.` : {name: f.name, kind: "pdf", data: await b64(f), src: URL.createObjectURL(f), dim: Math.max(1, Math.round(f.size / 1024)) + " KB"};
     if (/^text\//.test(f.type) || f.type === "application/json" || TEXTY.test(f.name)) {
       const t = await f.text(); if (!t.trim() || t.includes("\u0000")) return `${f.name} isn't a text file we can read.`;
-      return {name: f.name, kind: "text", text: t.slice(0, 20000), cut: t.length > 20000};
+      return {name: f.name, kind: "text", text: t.slice(0, 20000), cut: t.length > 20000, dim: t.split("\n").length + " lines"};
     }
     return `${f.name} is a kind of file Ask LaunchVault can't read. Images, PDFs, text and code files work.`;
   }
   function drawFiles(msg = "") {
     chips.hidden = !files.length && !msg;
-    chips.innerHTML = files.map((f, i) => `<span class="as-chip"><b>${esc(f.name)}</b>${f.cut ? "<small>first part only</small>" : ""}<button type="button" data-asrm="${i}" aria-label="Remove ${esc(f.name)}">×</button></span>`).join("") + (msg ? `<p role="alert">${esc(msg)}</p>` : "");
+    chips.innerHTML = files.map((f, i) => `<span class="as-chip"><button type="button" class="as-see" data-assee="${i}" aria-label="Preview ${esc(f.name)}">${f.kind === "image" ? `<img src="${f.src}" alt="">` : `<i>${f.kind === "pdf" ? "PDF" : (f.name.split(".").pop() || "txt").slice(0, 4)}</i>`}<span><b>${esc(f.name)}</b><small>${esc(f.dim || "")}${f.cut ? " · first part only" : ""}</small></span></button><button type="button" class="as-rm" data-asrm="${i}" aria-label="Remove ${esc(f.name)}">×</button></span>`).join("") + (msg ? `<p role="alert">${esc(msg)}</p>` : "");
   }
   addBtn.addEventListener("click", () => fileIn.click());
-  chips.addEventListener("click", e => { const b = e.target.closest("[data-asrm]"); if (b) { files.splice(+b.dataset.asrm, 1); drawFiles(); input.focus(); } });
-  fileIn.addEventListener("change", async () => {
-    let msg = "";
-    for (const f of [...fileIn.files]) {
+  chips.addEventListener("click", e => { const b = e.target.closest("[data-asrm]"); if (b) { const f = files.splice(+b.dataset.asrm, 1)[0]; if (f && f.src) URL.revokeObjectURL(f.src); drawFiles(); input.focus(); return; }
+    const v = e.target.closest("[data-assee]"); if (v) see(files[+v.dataset.assee]); });
+  // look at what you attached before sending: the image as the assistant will get it, the text of a file, or the PDF in a new tab
+  function see(f) {
+    if (!f) return; if (f.kind === "pdf") { window.open(f.src, "_blank", "noopener"); return; }
+    const d = document.createElement("dialog"); d.className = "rdlg as-pv"; d.setAttribute("aria-label", "Preview of " + f.name);
+    d.innerHTML = `<form method="dialog"><div class="as-pvh"><b>${esc(f.name)}</b><small>${esc(f.dim || "")}${f.kind === "image" ? " · what the assistant will see" : f.cut ? " · first 20,000 characters" : ""}</small><button class="btn btn-s" value="x">Close</button></div>${f.kind === "image" ? `<img src="${f.src}" alt="${esc(f.name)}">` : `<pre>${esc(f.text)}</pre>`}</form>`;
+    document.body.appendChild(d); d.addEventListener("close", () => d.remove()); d.addEventListener("click", e => { if (e.target === d) d.close(); }); d.showModal();
+  }
+  async function addFiles(list) {
+    let msg = "", pasted = 0;
+    for (let f of list) {
       if (files.length >= 4) { msg = "Up to 4 files a message."; break; }
+      if (/^image\.(png|jpe?g)$/i.test(f.name)) f = new File([f], "Pasted image " + (files.filter(x => /^Pasted image/.test(x.name)).length + ++pasted) + "." + f.name.split(".").pop(), {type: f.type});   // a pasted screenshot arrives as "image.png"
       let a; try { a = await take(f); } catch { a = `${f.name} couldn't be opened.`; }
       if (typeof a === "string") { msg = a; continue; }
       if (files.concat(a).reduce((n, x) => n + (x.data || "").length, 0) > 3.9e6) { msg = `${f.name} makes this message too big. Send it on its own.`; continue; }
       files.push(a);
     }
-    fileIn.value = ""; drawFiles(msg); input.focus();
-  });
+    drawFiles(msg); input.focus();
+  }
+  // paste (Ctrl+V of a screenshot or a copied file) and drag-and-drop go the same way as the + button
+  input.addEventListener("paste", e => { const fl = e.clipboardData && [...e.clipboardData.files]; if (!fl || !fl.length || addBtn.hidden) return; e.preventDefault(); addFiles(fl); });
+  form.addEventListener("dragover", e => { if (addBtn.hidden || !e.dataTransfer || ![...e.dataTransfer.types].includes("Files")) return; e.preventDefault(); form.classList.add("drop"); });
+  form.addEventListener("dragleave", e => { if (!form.contains(e.relatedTarget)) form.classList.remove("drop"); });
+  form.addEventListener("drop", e => { form.classList.remove("drop"); if (addBtn.hidden || !e.dataTransfer || !e.dataTransfer.files.length) return; e.preventDefault(); addFiles([...e.dataTransfer.files]); });
+  fileIn.addEventListener("change", async () => { const l = [...fileIn.files]; fileIn.value = ""; await addFiles(l); });
 
   async function ask(text) {
     if (busy || (!text.trim() && !files.length)) return;
-    const att = files.map(({cut, ...f}) => f); files = []; drawFiles();
+    const mine = files, att = files.map(f => f.kind === "text" ? {name: f.name, kind: f.kind, text: f.text} : f.kind === "image" ? {name: f.name, kind: f.kind, media_type: f.media_type, data: f.data} : {name: f.name, kind: f.kind, data: f.data}); files = []; drawFiles();
     if (!text.trim()) text = "Take a look at what I attached.";
     busy = true; send.disabled = true; form.setAttribute("aria-busy", "true");
-    bubble("user", text, false, att.map(f => f.name)); input.value = ""; input.style.height = "";
+    bubble("user", text, false, mine.map(f => f.kind === "image" ? {name: f.name, src: f.src} : f.name)); input.value = ""; input.style.height = "";
     const el = bubble("assistant", ""), body = $(".as-b", el); el.classList.add("streaming");
     body.innerHTML = '<span class="as-typing">Thinking<i>.</i><i>.</i><i>.</i></span>';
     el.scrollIntoView({block: "nearest"});

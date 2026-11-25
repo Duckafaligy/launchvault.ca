@@ -1056,3 +1056,41 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 .nv .dotfs button:focus-visible{outline:2px solid var(--hl);outline-offset:2px}
 @media (max-width:720px){.nv .dotfs{justify-content:flex-start}.nv .dotfs button{width:calc(33.3% - 6px)}}
 
+/* Ask, wide screens: one fixed screen. The chat scrolls; the message bar stays at the bottom. */
+@media (min-width:901px){
+  .nv.p-ask .main{display:flex;flex-direction:column;height:calc(100vh/var(--z,1));overflow:hidden}
+  .nv.p-ask .main>main{flex:1;min-height:0;display:flex;flex-direction:column}
+  .nv.p-ask .pg.as{flex:1;min-height:0;padding-bottom:18px}
+  .nv.p-ask .as-grid{flex:1;min-height:0;align-items:stretch;grid-template-rows:minmax(0,1fr)}
+  .nv.p-ask .as-side{position:static;align-self:start;max-height:100%}
+  .nv.p-ask .as-main{min-height:0}
+  .nv.p-ask .as-main>*{flex:none}
+  .nv.p-ask .as-main>.as-log{flex:1 1 0;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent;padding:4px 8px 12px 0;margin-right:-8px}
+  .nv.p-ask .as-comp{position:static;margin-top:auto}     /* auto: it still drops to the bottom when the chat area above it is not shown */
+}
+/* phone and tablet: the chat column is at least a screen tall, so the bar rests at the bottom there too */
+@media (max-width:900px){.nv.p-ask .as-main{min-height:calc(100dvh/var(--z,1) - 190px)}.nv.p-ask .as-comp{margin-top:auto}}
+@media (max-width:720px){.nv.p-ask .as-main{min-height:calc(100dvh - 284px - env(safe-area-inset-bottom))}}
+.nv .as-comp::before{display:none}                                       /* the dark block behind the bar is not needed over the moving background */
+.nv .as-comp.drop .as-box{box-shadow:var(--edge),inset 0 0 0 2px var(--hl);background:rgba(47,107,255,.12)}
+
+/* attached files: a thumbnail you can open before sending */
+.nv .as-files{gap:8px}
+.nv .as-chip{height:auto;max-width:280px;padding:4px;gap:4px;border-radius:14px}
+.nv .as-chip .as-see{display:flex;align-items:center;gap:10px;min-width:0;width:auto;height:auto;padding:0 6px 0 0;border:0;border-radius:10px;background:none;color:#fff;text-align:left;cursor:zoom-in}
+.nv .as-chip .as-see:hover{background:rgba(255,255,255,.06)}
+.nv .as-chip .as-see img,.nv .as-chip .as-see i{flex:none;width:44px;height:44px;border-radius:10px;object-fit:cover;background:rgba(255,255,255,.08)}
+.nv .as-chip .as-see i{display:grid;place-items:center;font:700 11px/1 var(--fd);font-style:normal;text-transform:uppercase;color:var(--hl)}
+.nv .as-chip .as-see span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.nv .as-chip .as-see b{font:600 var(--f13)/17px var(--fd);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nv .as-chip .as-see small{font:400 var(--f12)/15px var(--fd);color:var(--faint);white-space:nowrap}
+.nv .as-chip .as-rm{flex:none;align-self:flex-start;width:22px;height:22px}
+.nv .as-att a{display:block;line-height:0}.nv .as-att img{max-width:220px;max-height:160px;border-radius:10px;object-fit:cover}
+.nv dialog.as-pv{width:min(960px,calc(100vw - 32px));max-width:none;padding:16px}
+.nv dialog.as-pv form{gap:12px}
+.as-pv .as-pvh{display:flex;align-items:center;gap:12px}
+.as-pv .as-pvh b{font:600 15px/20px var(--fd);color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.as-pv .as-pvh small{flex:1;font:400 13px/18px var(--fd);color:rgba(255,255,255,.6);white-space:nowrap}
+.as-pv img{display:block;max-width:100%;max-height:calc(100vh - 170px);margin:0 auto;border-radius:10px;object-fit:contain}
+.as-pv pre{max-height:calc(100vh - 170px);margin:0;padding:14px;overflow:auto;border-radius:10px;background:rgba(255,255,255,.05);font:400 12.5px/19px ui-monospace,Menlo,Consolas,monospace;color:rgba(255,255,255,.9);white-space:pre-wrap;overflow-wrap:anywhere}
+
