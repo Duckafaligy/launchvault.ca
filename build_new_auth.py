@@ -20,5 +20,5 @@ def register(B):
     tiles = "".join(f'<span class="au-tile"><img src="/assets/logos/{f}" alt="" width="16" height="16"></span>' for f in STORIES)
     for path, mode, step, title, desc in PAGES:
         body = src.replace("{{mode}}", mode).replace("{{step}}", step).replace("{{tiles}}", tiles)
-        B.add_page(path=path, body=body, title=title, description=desc, chrome=False, bg="off", body_class="auth-page",
+        B.add_page(path=path, body=body, title=title, description=desc, chrome=False, body_class="auth-page",
                    css=["/assets/new/auth.css"], js=["/assets/new/auth.js"])

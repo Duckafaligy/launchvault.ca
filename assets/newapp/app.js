@@ -818,7 +818,7 @@
   if (urlJ !== null) { const u = new URL(location.href); u.searchParams.delete("judge"); try { history.replaceState(null, "", u.pathname + u.search + u.hash); } catch {} }   // strip old ?judge= links; they no longer unlock anything
   // paid plan = the account's public.plans row (cached as lv-plan by supabase.js; written only by the stripe-webhook function)
   const paidRow = () => { const p = ls.get("lv-plan"); return p && (p.plan === "pro" || p.plan === "builder") && (p.status === "active" || p.status === "trialing") ? p : null; };
-  const paidName = p => p.plan === "pro" ? "Pro" : p.billing === "lifetime" ? "Lifetime" : "Developer";
+  const paidName = p => p.billing === "lifetime" ? "Pro Lifetime" : p.plan === "pro" ? "Pro" : "Developer";
   // a paid plan unlocks Pro content exactly like the judge pass; the judge view keeps its own label
   const syncJudge = () => {
     const j = ls.get("lv-judge") === JCODE, p = paidRow(), on = j || !!p, name = j ? "Judge pass" : p ? paidName(p) : "";

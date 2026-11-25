@@ -236,4 +236,4 @@ select.au-input option{color:#fff;background:#15151B}
 /* birthday step */
 #au-dob{color-scheme:dark}
 .au-dobhint{min-height:20px;margin:-4px 0 0;font-size:13px;line-height:20px;color:rgba(255,255,255,.64)}
-
+body.auth-page:has(>canvas.bg)::before{display:none}

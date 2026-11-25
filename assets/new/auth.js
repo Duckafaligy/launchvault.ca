@@ -182,8 +182,8 @@
   const LOOK = {
     variables: {colorPrimary: "#2F6BFF", colorBackground: "#101016", colorForeground: "#FFFFFF", colorText: "#FFFFFF", colorMutedForeground: "rgba(255,255,255,.64)", colorTextSecondary: "rgba(255,255,255,.64)",
       colorInput: "#17171D", colorInputBackground: "#17171D", colorInputForeground: "#FFFFFF", colorInputText: "#FFFFFF", colorNeutral: "#FFFFFF", colorDanger: "#FF8A8A", borderRadius: "12px", fontFamily: "inherit", fontSize: "15px"},
-    elements: {rootBox: {width: "100%"}, cardBox: {width: "100%", maxWidth: "100%", boxShadow: "none", border: "0", background: "transparent"}, card: {boxShadow: "none", background: "transparent", border: "0", padding: "0"},
-      footer: {background: "transparent"}, formButtonPrimary: {minHeight: "48px", fontSize: "15px", fontWeight: "600"}, socialButtonsBlockButton: {minHeight: "48px"}, formFieldInput: {minHeight: "48px"}},
+    elements: {rootBox: {width: "100%"}, cardBox: {width: "100%", maxWidth: "100%", boxShadow: "none", border: "0", background: "transparent", overflow: "visible"}, card: {boxShadow: "none", background: "transparent", border: "0", padding: "0 3px", overflow: "visible"},
+      footer: {background: "transparent"}, formButtonPrimary: {minHeight: "48px", fontSize: "15px", fontWeight: "600"}, socialButtonsBlockButton: {minHeight: "48px"}, formFieldInput: {minHeight: "48px", boxSizing: "border-box", width: "100%", maxWidth: "100%"}, main: {overflow: "visible"}, form: {overflow: "visible"}},
   };
   const clerkUI = async () => {
     try {
