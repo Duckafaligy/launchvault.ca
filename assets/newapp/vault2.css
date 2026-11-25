@@ -1062,7 +1062,21 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
   .nv.p-ask .main>main{flex:1;min-height:0;display:flex;flex-direction:column}
   .nv.p-ask .pg.as{flex:1;min-height:0;padding-bottom:18px}
   .nv.p-ask .as-grid{flex:1;min-height:0;align-items:stretch;grid-template-rows:minmax(0,1fr)}
-  .nv.p-ask .as-side{position:static;align-self:start;max-height:100%}
+  /* the chat list is a full-height panel like the main sidebar: New chat on top, the list scrolling in the middle, the note at the bottom */
+  .nv.p-ask .as-side{position:static;align-self:stretch;display:flex;flex-direction:column;gap:4px;max-height:none;height:auto;padding:16px;border-radius:22px;overflow:hidden}
+  .nv.p-ask .as-side[hidden]{display:none}
+  .nv.p-ask .as-new{height:40px;border-radius:11px;margin-bottom:10px}
+  .nv.p-ask .as-convs{flex:1 1 0;min-height:0;overflow-y:auto;gap:2px;margin:0 -6px;padding:0 6px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent}
+  .nv.p-ask .as-convs li{flex:none;border-radius:11px}
+  .nv.p-ask .as-c{flex-direction:row;align-items:center;gap:10px;height:40px;padding:0 10px;font:500 var(--f14)/1 var(--fd)}
+  .nv.p-ask .as-c span{display:block;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-line-clamp:unset}
+  .nv.p-ask .as-c small{flex:none}
+  .nv.p-ask .as-convs li:hover .as-c small,.nv.p-ask .as-convs .on .as-c small{display:none}     /* the date makes way for the delete button */
+  .nv.p-ask .as-del{position:absolute;right:4px;top:4px;margin:0}                                  /* floats over the row end, so titles keep the full width */
+  .nv.p-ask .as-convs li:hover .as-c,.nv.p-ask .as-convs .on .as-c{padding-right:40px}
+  .nv.p-ask .as-convs li:not(.on):hover{background:rgba(255,255,255,.06)}
+  .nv.p-ask .as-none{padding:10px}
+  .nv.p-ask .as-note{flex:none;margin:10px 0 0;padding:12px 4px 0}
   .nv.p-ask .as-main{min-height:0}
   .nv.p-ask .as-main>*{flex:none}
   .nv.p-ask .as-main>.as-log{flex:1 1 0;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent;padding:4px 8px 12px 0;margin-right:-8px}
