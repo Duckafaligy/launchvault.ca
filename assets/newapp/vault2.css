@@ -1002,7 +1002,7 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 .lvdot[data-mood=thinking] .lvdot-b svg{animation:dotThink .9s ease-in-out infinite}
 .lvdot[data-mood=pointing] .lvdot-b{transform:rotate(-10deg)}
 .lvdot[data-mood=done] .lvdot-eyes{display:none}.lvdot[data-mood=done] .lvdot-glad{display:block}
-.lvdot-p{position:absolute;width:290px;padding:14px;border-radius:18px;background:#16161D;box-shadow:0 24px 60px -18px rgba(0,0,0,.9),inset 0 0 0 1px rgba(255,255,255,.12);display:flex;flex-direction:column;gap:10px;animation:dotPop .28s cubic-bezier(.2,1.2,.3,1) both}
+.lvdot-p{position:absolute;width:340px;padding:14px;border-radius:18px;background:#16161D;box-shadow:0 24px 60px -18px rgba(0,0,0,.9),inset 0 0 0 1px rgba(255,255,255,.12);display:flex;flex-direction:column;gap:10px;animation:dotPop .28s cubic-bezier(.2,1.2,.3,1) both}
 .lvdot-p[hidden]{display:none}
 .lvdot-p[data-x=l]{right:calc(100% + 10px)}.lvdot-p[data-x=r]{left:calc(100% + 10px)}
 .lvdot-p[data-y=u]{bottom:0;transform-origin:100% 100%}.lvdot-p[data-y=d]{top:0;transform-origin:0 0}
@@ -1184,3 +1184,26 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 .nv .cm-m.cm-hid .cm-tx{text-decoration:line-through;text-decoration-color:rgba(255,255,255,.35);background:rgba(255,255,255,.04)}
 .nv .cm-m.cm-hid:hover{opacity:.85}
 .nv .cm-bd.del{background:rgba(255,255,255,.08);color:var(--muted);font-weight:500}
+
+/* the widget is a chat: a header (your chats, title, new chat), the list, the conversation */
+.lvdot-hd{display:flex;align-items:center;gap:8px;margin:-4px -4px 0}
+.lvdot-hd b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:600 13px/18px var(--fd);color:#fff}
+.lvdot-hd button{flex:none;display:grid;place-items:center;width:32px;height:32px;min-height:0;padding:0;border:0;border-radius:10px;background:rgba(255,255,255,.06);color:#fff;cursor:pointer;transition:background-color .15s,transform .2s cubic-bezier(.16,1,.3,1)}
+.lvdot-hd button:hover{background:rgba(255,255,255,.14)}.lvdot-hd button:active{transform:scale(.94)}
+.lvdot-hd button[aria-expanded=true]{background:var(--btn,#1F45B5)}
+.lvdot-list{display:flex;flex-direction:column;gap:2px;max-height:220px;overflow-y:auto;padding:4px;border-radius:12px;background:rgba(255,255,255,.04);animation:dotPop .22s cubic-bezier(.2,1.2,.3,1) both;transform-origin:0 0}
+.lvdot-list[hidden],.lvdot-log[hidden],.lvdot-say[hidden],.lvdot-tips[hidden]{display:none}
+.lvdot-list button{min-height:34px;padding:0 10px;border:0;border-radius:9px;background:none;font:500 13px/34px var(--fd);color:rgba(255,255,255,.8);text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;transition:background-color .15s,color .15s}
+.lvdot-list button:hover{background:rgba(255,255,255,.08);color:#fff}.lvdot-list button[aria-current]{background:rgba(47,107,255,.2);color:#fff}
+.lvdot-note{margin:0;padding:8px 10px;font:400 13px/18px var(--fd);color:rgba(255,255,255,.6)}.lvdot-note a{color:#fff;text-decoration:underline}
+.lvdot-log{display:flex;flex-direction:column;gap:8px;max-height:min(320px,46vh);overflow-y:auto;padding:2px 2px 2px 0;overscroll-behavior:contain}
+.lvdot-m{max-width:88%;padding:8px 12px;border-radius:14px;font:400 13.5px/19px var(--fd);color:#fff;overflow-wrap:anywhere;animation:dotMsg .25s cubic-bezier(.16,1,.3,1) both}
+.lvdot-m.u{align-self:flex-end;background:var(--btn,#1F45B5);border-bottom-right-radius:4px}
+.lvdot-m.a{align-self:flex-start;background:rgba(255,255,255,.07);border-bottom-left-radius:4px}
+.lvdot-m a{color:#9DB8FF;text-decoration:underline;text-underline-offset:2px}
+.lvdot-m.err{background:rgba(217,45,32,.16);box-shadow:inset 0 0 0 1px rgba(240,68,56,.4)}
+.lvdot-m.wait::after{content:"";display:inline-block;width:22px;height:6px;border-radius:3px;background:radial-gradient(circle 3px,#fff 98%,transparent) 0 50%/8px 6px repeat-x;opacity:.7;animation:dotWait 1s steps(3) infinite}
+.lvdot-ft{display:flex;justify-content:space-between;gap:10px;margin:0}
+@keyframes dotMsg{from{opacity:0;transform:translateY(6px)}}
+@keyframes dotWait{0%{clip-path:inset(0 66% 0 0)}50%{clip-path:inset(0 33% 0 0)}100%{clip-path:inset(0 0 0 0)}}
+@media (prefers-reduced-motion:reduce){.lvdot-m,.lvdot-list,.lvdot-m.wait::after{animation:none!important}}

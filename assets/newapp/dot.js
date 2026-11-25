@@ -76,13 +76,57 @@ ${f.glaze ? `<path class="lvdot-glaze" d="M11 46 C13 27 29 13 50 13 C71 13 87 27
   const say = t => { $(".lvdot-say", panel).textContent = t; };
   const mood = m => { if (el) el.dataset.mood = m; };
 
+  /* ---------- the chat inside the widget: the same conversations as the Ask page ---------- */
+  const FN = "https://azriqynpnbltvxucwmpo.supabase.co/functions/v1/assistant";
+  const chat = { id: null, title: "", busy: false, loaded: null };
+  const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const rich = t => esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\[([^\]]+)\]\((\/app\/[^)\s]+)\)/g, '<a href="$2">$1</a>').replace(/(^|[\s(])(\/app\/story\/[a-z0-9-]+\/)/g, '$1<a href="$2">$2</a>').replace(/\n/g, "<br>");
+  const token = async () => { try { const c = w.LVAuth && LVAuth.live ? await LVAuth.load() : null; return c && c.user && c.session ? await c.session.getToken() : null; } catch { return null; } };
+  const call = async (path, opt) => { const t = await token(); if (!t) return null; return fetch(FN + path, { ...(opt || {}), headers: { Authorization: "Bearer " + t, "Content-Type": "application/json" } }).catch(() => null); };
+  const logEl = () => $(".lvdot-log", panel);
+  const bubble = (role, text) => { const l = logEl(), b = d.createElement("div"); b.className = "lvdot-m " + (role === "user" ? "u" : "a"); b.innerHTML = rich(text); l.hidden = false; l.appendChild(b); l.scrollTop = l.scrollHeight; return b; };
+  const head = () => { $(".lvdot-ti", panel).textContent = chat.title || "New chat"; const on = !logEl().hidden; $(".lvdot-say", panel).hidden = on; $(".lvdot-tips", panel).hidden = on; };
+  function list(on) { const L = $(".lvdot-list", panel), b = $("[data-dotlist]", panel); L.hidden = !on; b.setAttribute("aria-expanded", on); if (!on) return;
+    L.innerHTML = '<p class="lvdot-note">Loading your chats…</p>';
+    call("").then(r => r && r.ok ? r.json() : null).then(j => { if (L.hidden) return;
+      const cs = j && j.conversations || [];
+      L.innerHTML = !j ? '<p class="lvdot-note">Sign in to keep chats. <a href="/sign-in/">Sign in</a></p>' : cs.length ? cs.slice(0, 30).map(c => `<button type="button" data-dotconv="${esc(c.id)}"${c.id === chat.id ? ' aria-current="true"' : ""}>${esc(c.title)}</button>`).join("") : '<p class="lvdot-note">No chats yet. Ask me something.</p>'; }); }
+  function newChat() { chat.id = null; chat.title = ""; chat.loaded = null; ls.set("lv-dot-chat", null); const l = logEl(); l.innerHTML = ""; l.hidden = true; list(false); head(); }
+  async function load(id, title) { list(false); chat.id = id; chat.title = title || chat.title; chat.loaded = id; ls.set("lv-dot-chat", [id, chat.title]); const l = logEl(); l.innerHTML = '<p class="lvdot-note">Opening…</p>'; l.hidden = false; head();
+    const r = await call("?id=" + encodeURIComponent(id)), j = r && r.ok ? await r.json().catch(() => null) : null; if (chat.id !== id) return;
+    l.innerHTML = ""; if (!j) { if (r && r.status === 404) return newChat(); l.innerHTML = '<p class="lvdot-note">Couldn\'t open that chat. Try again.</p>'; return; }
+    (j.messages || []).forEach(m => bubble(m.role, m.text)); }
+  function chatOpen() { head(); const sv = ls.get("lv-dot-chat"); if (Array.isArray(sv) && sv[0] && chat.loaded !== sv[0] && !chat.busy) load(sv[0], sv[1]); }   // the chat you had open follows you from page to page
+  const WHY = { daily_limit: 'You\'ve used your messages for now. <a href="/app/account/#plan">See plans</a> or <a href="/app/account/#prefs">add your own AI key</a>.', busy: "I'm busy right now. Try again in a minute.", conversation_full: "This chat is full. Start a new one with the + above.",
+    own_key_timeout: 'Your AI key didn\'t answer in time. <a href="/app/account/#prefs">Check it in Settings</a>.', own_key_rejected: 'Your AI key was rejected. <a href="/app/account/#prefs">Check it in Settings</a>.', own_key_limit: "Your AI key has hit its limit with its provider." };
+  async function send(v) {
+    if (chat.busy) return;
+    if (!(await token())) { mood("thinking"); location.href = "/app/assistant/?q=" + encodeURIComponent(v); return; }   // not signed in: the Ask page explains how to
+    chat.busy = true; list(false); bubble("user", v); const out = bubble("assistant", ""); out.classList.add("wait"); head(); mood("thinking");
+    const fail = code => { out.classList.remove("wait"); out.classList.add("err"); out.innerHTML = WHY[code] || "That didn't work. Try again."; };
+    try {
+      const r = await call("", { method: "POST", body: JSON.stringify({ conversation_id: chat.id, message: v }) });
+      if (!r || !r.ok || !r.body) { const j = r ? await r.json().catch(() => ({})) : {}; fail(j.error); return; }
+      const rd = r.body.getReader(), dec = new TextDecoder(); let buf = "", text = "", ended = null;
+      for (;;) { const { value, done } = await rd.read(); if (done) break; buf += dec.decode(value, { stream: true });
+        let i; while ((i = buf.indexOf("\n\n")) >= 0) { const chunk = buf.slice(0, i); buf = buf.slice(i + 2);
+          const ev = (chunk.match(/^event: (.*)$/m) || [])[1]; let data = {}; try { data = JSON.parse((chunk.match(/^data: (.*)$/m) || [, "{}"])[1]); } catch {}
+          if (ev === "text") { text += data.t || ""; out.classList.remove("wait"); out.innerHTML = rich(text); const l = logEl(); l.scrollTop = l.scrollHeight; }
+          else if (ev === "done" || ev === "refusal" || ev === "error") ended = { ev, ...data }; } }
+      if (!ended || ended.ev === "error") return fail(ended && ended.error);
+      if (ended.ev === "refusal") { out.classList.remove("wait"); out.textContent = "I can't help with that one. Ask me about your project or a story in the library."; return; }
+      out.classList.remove("wait"); if (!chat.id) chat.title = v.length > 48 ? v.slice(0, 47) + "…" : v;
+      chat.id = ended.conversation_id || chat.id; chat.loaded = chat.id; ls.set("lv-dot-chat", [chat.id, chat.title]); head();
+    } catch { fail(); } finally { chat.busy = false; if (el && el.dataset.mood === "thinking") mood("idle"); }
+  }
+
   function open(on) {
     panel.hidden = !on; btn.setAttribute("aria-expanded", on); mood("idle");
     if (!on) return;
     const pg = page(), tips = TIPS[pg] || [];
     say(HELLO[pg] || "Hi. Ask me anything.");
     $(".lvdot-tips", panel).innerHTML = tips.map((t, i) => `<button type="button" data-tip="${i}">${t[0]}</button>`).join("");
-    place(); const inp = $("input", panel); if (inp && !small()) inp.focus({ preventScroll: true });
+    place(); chatOpen(); const inp = $("input", panel); if (inp && !small()) inp.focus({ preventScroll: true });
   }
   function place() {                                                  // the panel opens toward the middle of the window
     if (!el) return; const r = el.getBoundingClientRect();
@@ -94,9 +138,9 @@ ${f.glaze ? `<path class="lvdot-glaze" d="M11 46 C13 27 29 13 50 13 C71 13 87 27
     if (el) el.remove();
     el = d.createElement("div"); el.className = "lvdot"; el.dataset.mood = "idle";
     el.innerHTML = `<button class="lvdot-b" type="button" aria-label="Open the assistant" aria-expanded="false" aria-controls="lvdotP">${draw(draft.flavour)}</button>
-<div class="lvdot-p" id="lvdotP" role="dialog" aria-label="Assistant" hidden><p class="lvdot-say" role="status"></p><div class="lvdot-tips"></div>
+<div class="lvdot-p" id="lvdotP" role="dialog" aria-label="Assistant" hidden><div class="lvdot-hd"><button type="button" data-dotlist aria-label="Your chats" aria-expanded="false" title="Your chats"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button><b class="lvdot-ti">New chat</b><button type="button" data-dotnew aria-label="New chat" title="New chat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div><div class="lvdot-list" hidden></div><div class="lvdot-log" aria-live="polite" hidden></div><p class="lvdot-say" role="status"></p><div class="lvdot-tips"></div>
 <form><input type="text" maxlength="400" placeholder="Ask me anything" aria-label="Ask a question" enterkeyhint="send"><button type="submit" aria-label="Send to Ask"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button></form>
-<a class="lvdot-set" href="/app/account/#prefs">Change flavour or hide me</a></div>`;
+<p class="lvdot-ft"><a class="lvdot-set" href="/app/account/#prefs">Change flavour or hide me</a><a class="lvdot-set" href="/app/assistant/" data-dotfull>Open full Ask</a></p></div>`;
     d.body.appendChild(el); btn = $(".lvdot-b", el); panel = $(".lvdot-p", el);
     const pos = ls.get("lv-dot-pos"); if (Array.isArray(pos) && !small()) setPos(pos[0], pos[1]);
 
@@ -121,7 +165,11 @@ ${f.glaze ? `<path class="lvdot-glaze" d="M11 46 C13 27 29 13 50 13 C71 13 87 27
     $("form", panel).addEventListener("submit", e => { e.preventDefault(); const v = $("input", panel).value.trim(); if (!v) return;
       const a = $("#asIn");                                           // on the Ask page it goes straight into the box
       if (a && !a.disabled) { a.value = v; a.dispatchEvent(new Event("input")); a.focus(); open(false); return; }
-      mood("thinking"); location.href = "/app/assistant/?q=" + encodeURIComponent(v); });
+      $("input", panel).value = ""; send(v); });
+    panel.addEventListener("click", e => {
+      if (e.target.closest("[data-dotnew]")) { newChat(); $("input", panel).focus(); return; }
+      if (e.target.closest("[data-dotlist]")) return void list($(".lvdot-list", panel).hidden);
+      const c = e.target.closest("[data-dotconv]"); if (c) load(c.dataset.dotconv, c.textContent); });
     d.addEventListener("keydown", e => { if (e.key === "Escape" && panel && !panel.hidden) { open(false); btn.focus(); } });
   }
   d.addEventListener("click", e => { if (panel && !panel.hidden && !e.target.closest(".lvdot")) open(false); });
