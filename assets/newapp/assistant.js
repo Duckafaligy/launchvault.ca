@@ -159,6 +159,7 @@
   const ERR = {daily_limit: () => info && info.period === "month" ? `You've used this month's ${info.limit.toLocaleString()} messages. They refill on the 1st. <a href="/app/account/#prefs">Add your own AI key</a> for unlimited.`
       : `You've used this week's ${info ? info.limit : ""} messages. They refill on Monday. Pro gets 1,000 a month: <a href="/app/account/#plan">see plans</a>, or <a href="/app/account/#prefs">add your own AI key</a> for unlimited.`,
     own_key_model: () => 'The model saved with your AI key is no longer offered. <a href="/app/account/#prefs">Remove the key and add it again</a> to pick up a current one.',
+    own_key_timeout: () => 'No reply came back within a minute, so the AI key you stored may not be valid. <a href="/app/account/#prefs">Replace it in Settings</a> with one from Anthropic, OpenAI, Google Gemini, DeepSeek, xAI, Groq, Mistral or OpenRouter.',
     own_key_rejected: () => 'The provider rejected your AI key, so nothing was sent. <a href="/app/account/#prefs">Check or remove it in Settings</a>.',
     own_key_limit: () => "Your own AI key has hit its limit or run out of credit with its provider. Wait a moment, or remove the key in Settings to use your plan's allowance.",
     own_key_unreadable: () => 'We couldn\'t read your saved AI key. <a href="/app/account/#prefs">Remove it and add it again</a>.',

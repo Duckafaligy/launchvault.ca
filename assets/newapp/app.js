@@ -598,10 +598,11 @@
         if (!d || !d.keys) return;                                // the server isn't set up to hold keys: say nothing
         row.hidden = false; let own = d.own;
         const WHY = {bad_key_shape: "That doesn't look like an API key. Paste the whole key, with no spaces.", key_rejected: "That key wasn't accepted. Check it was copied whole, hasn't been deleted, and that the right provider is picked.",
-          key_check_failed: "We couldn't reach the provider to check the key. Try again in a minute.", keys_not_configured: "Keys can't be saved right now."};
+          key_check_failed: "We couldn't reach the provider to check the key. Try again in a minute.",
+          unknown_provider: "That key isn't from a provider we take. Use one from Anthropic, OpenAI, Google Gemini, DeepSeek, xAI, Groq, Mistral or OpenRouter. If yours is a Mistral key, pick Mistral in the list.", keys_not_configured: "Keys can't be saved right now."};
         const PROV = [["", "Detect for me"], ["anthropic", "Anthropic (Claude)"], ["openai", "OpenAI"], ["google", "Google Gemini"], ["deepseek", "DeepSeek"], ["xai", "xAI (Grok)"], ["groq", "Groq"], ["mistral", "Mistral"], ["openrouter", "OpenRouter"]];
         const looks = v => /^sk-ant-/.test(v) ? "Looks like an Anthropic key" : /^sk-or-/.test(v) ? "Looks like an OpenRouter key" : /^xai-/.test(v) ? "Looks like an xAI key" : /^gsk_/.test(v) ? "Looks like a Groq key" : /^AIza/.test(v) ? "Looks like a Google Gemini key"
-          : /^sk-(proj|svcacct)-/.test(v) ? "Looks like an OpenAI key" : /^sk-[0-9a-f]{32}$/.test(v) ? "Looks like a DeepSeek key" : /^sk-/.test(v) ? "OpenAI or DeepSeek: we'll check both" : v.length >= 20 ? "Not sure whose this is: pick the provider" : "";
+          : /^sk-(proj|svcacct)-/.test(v) ? "Looks like an OpenAI key" : /^sk-[0-9a-f]{32}$/.test(v) ? "Looks like a DeepSeek key" : /^sk-/.test(v) ? "OpenAI or DeepSeek: we'll check both" : "";
         const when = t => new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric", year: "numeric"});
         const draw = (fresh, err) => {
           if (fresh) { ui.innerHTML = `<div class="aik-once"><p><b>Saved. This is the only time it is shown in full.</b> Check it matches, then it is hidden for good.</p><code>${esc(fresh)}</code><div><button class="btn btn-s" type="button" data-aikcopy>Copy</button><button class="btn btn-p" type="button" data-aikdone>Done</button></div></div>`; return; }
@@ -610,6 +611,7 @@
         ui.addEventListener("input", e => { const s = $(".aik-see", ui); if (s && e.target.matches("input")) s.textContent = $("select", ui).value ? "" : looks(e.target.value.trim()); });
         ui.addEventListener("change", e => { const s = $(".aik-see", ui); if (s && e.target.matches("select")) s.textContent = e.target.value ? "" : looks($("input", ui).value.trim()); });
         ui.addEventListener("submit", async e => { e.preventDefault(); const inp = $("input", ui), b = $('[type="submit"]', ui), v = inp.value.trim(); if (!v || b.disabled) return;
+          if (!$("select", ui).value && !looks(v)) return draw(null, WHY.unknown_provider);   // not a provider we take: refused before anything is sent
           b.disabled = true; b.textContent = "Checking…";
           const r = await call("?key=1", "PUT", {key: v, provider: $("select", ui).value || undefined}).catch(() => null), j = r ? await r.json().catch(() => ({})) : {};
           if (!r || !r.ok || !j.key) return draw(null, WHY[j.error] || "That didn't save. Try again.");
