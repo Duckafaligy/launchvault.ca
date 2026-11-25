@@ -169,7 +169,12 @@
     if (!S.pp.has(m.user_id)) people([m]).then(() => { const r = $(`#m${m.id}`), x = cur.msgs.get(m.id); if (r && x) r.outerHTML = msgHTML(x); });   // a new face: repaint with their avatar
     if (stick || (S.me && m.user_id === S.me.id)) logEl.scrollTop = logEl.scrollHeight; return true;
   };
-  const goneRow = (id, text) => { const old = cur.msgs.get(id); if (!old) return; const m = S.isMod && old.body ? {...old, hidden: true, hidden_reason: old.hidden_reason || (S.me && old.user_id === S.me.id ? "author" : "moderator")} : {...old, gone: text}; /* moderators keep the text, greyed out */ cur.msgs.set(id, m); const row = $(`[data-id="${id}"]`); if (row) row.outerHTML = msgHTML(m); };
+  const goneRow = (id, text) => { const old = cur.msgs.get(id); if (!old) return;
+    if (cur.view === "chat" && !(S.isMod && old.body)) {   // in a channel a removed message just goes (no placeholder); "Seen by" moves to the message before it
+      cur.msgs.delete(id); const row = $(`[data-id="${id}"]`), log = $("#cmLog"); if (row) row.remove();
+      if (log) { log.querySelectorAll(".cm-day").forEach(dv => { const nx = dv.nextElementSibling; if (!nx || !nx.classList.contains("cm-m")) dv.remove(); }); const sn = $(".cm-seen", log); if (sn) sn.remove(); }
+      return void paintSeen(); }
+    const m = S.isMod && old.body ? {...old, hidden: true, hidden_reason: old.hidden_reason || (S.me && old.user_id === S.me.id ? "author" : "moderator")} : {...old, gone: text}; /* moderators keep the text, greyed out */ cur.msgs.set(id, m); const row = $(`[data-id="${id}"]`); if (row) row.outerHTML = msgHTML(m); };
   const fillParents = async arr => { await people(arr); const need = [...new Set(arr.map(m => m.reply_to).filter(id => id && !cur.msgs.has(id) && !arr.some(x => x.id === id)))]; if (!need.length) return;
     try { (await q(S.sb.from("chat_messages").select("*").in("id", need))).forEach(p => cur.msgs.set(p.id, p)); } catch {} };
 
@@ -291,7 +296,7 @@
     const logEl = $("#cmLog"); logEl.innerHTML = rows.length ? withDays(rows) : room.slug === "welcome" ? RULES : `<div class="cm-none cm-empty">${ic("msg", 28)}<p>${room.read_only ? "Nothing posted here yet." : "No messages yet. Say hi."}</p></div>`; logEl.scrollTop = logEl.scrollHeight;
     $("#cmComp").innerHTML = composerHTML(room.slug === CHAT ? "Message everyone" : "Message #" + topicName(room).toLowerCase()); bindComposer(logEl, {about}); paintPin();
     logEl.addEventListener("click", e => { const mb = e.target.closest("[data-menu]"); if (mb) return menu(+mb.dataset.menu); const j = e.target.closest("[data-jump]"); if (j) { const r = $(`#m${j.dataset.jump}`); if (r) { r.scrollIntoView({block: "center", behavior: "smooth"}); r.classList.add("flash"); setTimeout(() => r.classList.remove("flash"), 1600); } } });
-    subscribe(room, m => { if (!m.thread_id) { const o = $(".cm-seen", logEl); if (o) o.remove(); addMsg(m, logEl); markRead(); setTimeout(paintSeen, 1500); } }, id => goneRow(id, "This message was removed"));
+    subscribe(room, m => { if (!m.thread_id) { const o = $(".cm-seen", logEl); if (o) o.remove(); addMsg(m, logEl); markRead(); setTimeout(paintSeen, 1500); } }, id => { goneRow(id, "This message was removed"); setTimeout(paintSeen, 800); });
     S.sb.rpc("chat_mark_read", {p_room: room.id}).then(() => {}, () => {});
     paintSeen(); loadUnread();
   };
