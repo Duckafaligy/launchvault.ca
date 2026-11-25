@@ -171,10 +171,10 @@
   };
   // moderators: "Clear" on a greyed-out deleted message takes it out of their own view for good (kept on this device)
   const cleared = () => { try { const v = JSON.parse(localStorage.getItem("lv-cm-cleared") || "[]"); return Array.isArray(v) ? v : []; } catch { return []; } };
-  root.addEventListener("click", e => { const b = e.target.closest("[data-dismiss]"); if (!b) return; e.stopPropagation(); const id = +b.dataset.dismiss;
-    try { localStorage.setItem("lv-cm-cleared", JSON.stringify([...cleared(), id].slice(-800))); } catch {}
-    cur.msgs.delete(id); const row = b.closest(".cm-m"), log = row && row.parentElement; if (row) row.remove();
-    if (log) log.querySelectorAll(".cm-day").forEach(dv => { const nx = dv.nextElementSibling; if (!nx || !nx.classList.contains("cm-m")) dv.remove(); }); });
+  const clearMsg = id => { try { localStorage.setItem("lv-cm-cleared", JSON.stringify([...cleared(), id].slice(-800))); } catch {}
+    cur.msgs.delete(id); const row = $(`[data-id="${id}"]`), log = row && row.parentElement; if (row) row.remove();
+    if (log) log.querySelectorAll(".cm-day").forEach(dv => { const nx = dv.nextElementSibling; if (!nx || !nx.classList.contains("cm-m")) dv.remove(); }); };
+  root.addEventListener("click", e => { const b = e.target.closest("[data-dismiss]"); if (!b) return; e.stopPropagation(); clearMsg(+b.dataset.dismiss); });
   const goneRow = (id, text) => { const old = cur.msgs.get(id); if (!old) return;
     if (cur.view === "chat" && !(S.isMod && old.body)) {   // in a channel a removed message just goes (no placeholder); "Seen by" moves to the message before it
       cur.msgs.delete(id); const row = $(`[data-id="${id}"]`), log = $("#cmLog"); if (row) row.remove();
@@ -189,8 +189,10 @@
     const m = cur.msgs.get(id); if (!m) return; const mine = S.me && m.user_id === S.me.id, canReply = canPost();
     const items = [canReply && ["reply", "reply", "Reply"], !mine && ["flag", "report", "Report", "pop"], mine && ["trash", "delete", "Delete", "pop"],
       S.isMod && cur.room && !cur.thread && ["pin", "pin", cur.room.pinned_message_id === id ? "Unpin" : "Pin"], S.isMod && !mine && ["ban", "remove", "Remove", "pop"]].filter(Boolean);
+    if (m.hidden) { items.length = 0; items.push(["trash", "clear", "Remove from my view", "pop"]); }   // already deleted: the only thing left to do is stop showing it to me
     const d = dlg(`<div class="cm-sheet-in"><span class="cm-grab" aria-hidden="true"></span><p class="cm-st">Message from ${esc(m.author_name)}</p>${items.map(([i, a, l, c]) => `<button type="button" class="cm-mi ${c || ""}" data-a="${a}">${ic(i, 20)}<span>${l}</span></button>`).join("")}<button type="button" class="cm-mi" data-x>${ic("x", 20)}<span>Cancel</span></button></div>`, "cm-sheet");
     $$("[data-a]", d).forEach(b => b.addEventListener("click", async () => { const a = b.dataset.a; d.close();
+      if (a === "clear") return clearMsg(id);
       if (a === "reply") setReply(m);
       else if (a === "report") reportDlg(id);
       else if (a === "delete") confirmDlg("Delete this message?", "It disappears for everyone. You cannot undo this.", "Delete", async () => { try { await q(S.sb.rpc("chat_delete_message", {p_id: id})); goneRow(id, "This message was removed"); } catch (e) { toast(errCopy(e)); } });

@@ -1222,3 +1222,6 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 .nv .cm-rulecard h3+ul{margin-top:8px}
 .nv .cm-rulecard>p:last-child{margin:14px 0 0;font:400 var(--f13)/19px var(--fd);color:var(--muted)}
 .nv .cm-tx{white-space:pre-wrap}
+
+/* chat: the message list can take focus for keyboard scrolling, but it never draws a ring round the whole panel */
+.nv .cm-log:focus,.nv .cm-log:focus-visible{outline:0!important;box-shadow:none!important}
