@@ -237,3 +237,7 @@ select.au-input option{color:#fff;background:#15151B}
 #au-dob{color-scheme:dark}
 .au-dobhint{min-height:20px;margin:-4px 0 0;font-size:13px;line-height:20px;color:rgba(255,255,255,.64)}
 body.auth-page:has(>canvas.bg)::before{display:none}
+/* Clerk's own form inside our card: nothing clips the fields, and a field can never be wider than its row */
+.auth .cl-rootBox,.auth .cl-cardBox,.auth .cl-card,.auth .cl-main,.auth .cl-form,.auth .cl-formFieldRow,.auth .cl-formField{overflow:visible!important;min-width:0;max-width:100%;box-sizing:border-box}
+.auth .cl-formFieldInput,.auth .cl-input,.auth .cl-formButtonPrimary{box-sizing:border-box!important;width:100%!important;max-width:100%!important}
+.auth .cl-card{padding-inline:3px!important}

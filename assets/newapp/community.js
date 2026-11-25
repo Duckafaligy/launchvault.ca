@@ -55,6 +55,7 @@
   const I = {
     hash: "", back: '<path d="M15 6l-6 6 6 6"/>', chev: '<path d="M6 9l6 6 6-6"/>', chevr: '<path d="M9 6l6 6-6 6"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
     bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 21h4"/>', belloff: '<path d="M6 16V11a6 6 0 0 1 1-3.3M18 11v5l1.5 2H8"/><path d="M10 21h4M4 4l16 16"/>',
+    eye: '<path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
     more: '<circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/>',
     reply: '<path d="M9 7L4 12l5 5"/><path d="M4 12h9a6 6 0 0 1 6 6v1"/>', flag: '<path d="M6 21V4M6 5h11l-2 4 2 4H6"/>', trash: '<path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/>',
     ban: '<circle cx="12" cy="12" r="8"/><path d="M6.5 6.5l11 11"/>', pin: '<path d="M9 4h6l-1 6 3 3H7l3-3zM12 13v7"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>', plus: '<path d="M12 5v14M5 12h14"/>',
@@ -156,7 +157,7 @@
     if (m.gone) return `<article class="cm-m cm-gone" data-id="${m.id}"><span class="cm-av gone" aria-hidden="true">${ic("ban", 18)}</span><p class="gt"><em>${esc(m.gone)}</em></p><time datetime="${esc(m.created_at)}">${time(m.created_at)}</time></article>`;
     const p = m.reply_to && cur.msgs.get(m.reply_to), sys = m.user_id === "launchvault";
     const rp = m.reply_to ? (p ? `<button type="button" class="cm-rp" data-jump="${p.id}">${ic("reply", 14)}<b>Replying to ${esc(p.author_name)}</b><span>${esc(snip(p.body))}</span></button>` : `<p class="cm-rp off">${ic("reply", 14)}<b>Replying to a message</b></p>`) : "";
-    return `<article class="cm-m${S.me && m.user_id === S.me.id ? " mine" : ""}" data-id="${m.id}" id="m${m.id}">${avatar(m.user_id, m.author_name)}<div class="cm-mb">${rp}<p class="cm-mh"><b>${esc(m.author_name)}</b>${m.author_tag ? `<span class="tg">· ${esc(m.author_tag)}</span>` : ""}${unTag(m.user_id)}${msgBadges(m)}${optBadge(m)}<time datetime="${esc(m.created_at)}">${time(m.created_at)}</time></p><p class="cm-tx">${body(m.body)}</p></div>${S.signed && !sys ? `<button type="button" class="cm-more" data-menu="${m.id}" aria-label="Options for the message from ${esc(m.author_name)}" aria-haspopup="dialog">${ic("more", 20)}</button>` : ""}</article>`;
+    return `<article class="cm-m${S.me && m.user_id === S.me.id ? " mine" : ""}${m.hidden ? " cm-hid" : ""}" data-id="${m.id}" id="m${m.id}">${avatar(m.user_id, m.author_name)}<div class="cm-mb">${rp}<p class="cm-mh"><b>${esc(m.author_name)}</b>${m.author_tag ? `<span class="tg">· ${esc(m.author_tag)}</span>` : ""}${unTag(m.user_id)}${msgBadges(m)}${optBadge(m)}${m.hidden ? `<span class="cm-bd del" title="Only moderators can see this">${({author: "Deleted by the author", moderator: "Removed by a moderator", reports: "Hidden after reports", ban: "Hidden, member banned", ai: "Hidden by the filter", link: "Hidden, bad link", media: "Hidden, media"})[m.hidden_reason] || "Deleted"}</span>` : ""}<time datetime="${esc(m.created_at)}">${time(m.created_at)}</time></p><p class="cm-tx">${body(m.body)}</p></div>${S.signed && !sys ? `<button type="button" class="cm-more" data-menu="${m.id}" aria-label="Options for the message from ${esc(m.author_name)}" aria-haspopup="dialog">${ic("more", 20)}</button>` : ""}</article>`;
   };
   const withDays = arr => { let last = -1; return arr.map(m => { const k = dayKey(m.created_at), sep = k !== last ? `<div class="cm-day"><span>${dayLabel(m.created_at)}</span></div>` : ""; last = k; return sep + msgHTML(m); }).join(""); };
   const nearBottom = el => el.scrollHeight - el.scrollTop - el.clientHeight < 120;
@@ -168,7 +169,7 @@
     if (!S.pp.has(m.user_id)) people([m]).then(() => { const r = $(`#m${m.id}`), x = cur.msgs.get(m.id); if (r && x) r.outerHTML = msgHTML(x); });   // a new face: repaint with their avatar
     if (stick || (S.me && m.user_id === S.me.id)) logEl.scrollTop = logEl.scrollHeight; return true;
   };
-  const goneRow = (id, text) => { const old = cur.msgs.get(id); if (!old) return; const m = {...old, gone: text}; cur.msgs.set(id, m); const row = $(`[data-id="${id}"]`); if (row) row.outerHTML = msgHTML(m); };
+  const goneRow = (id, text) => { const old = cur.msgs.get(id); if (!old) return; const m = S.isMod && old.body ? {...old, hidden: true, hidden_reason: old.hidden_reason || (S.me && old.user_id === S.me.id ? "author" : "moderator")} : {...old, gone: text}; /* moderators keep the text, greyed out */ cur.msgs.set(id, m); const row = $(`[data-id="${id}"]`); if (row) row.outerHTML = msgHTML(m); };
   const fillParents = async arr => { await people(arr); const need = [...new Set(arr.map(m => m.reply_to).filter(id => id && !cur.msgs.has(id) && !arr.some(x => x.id === id)))]; if (!need.length) return;
     try { (await q(S.sb.from("chat_messages").select("*").in("id", need))).forEach(p => cur.msgs.set(p.id, p)); } catch {} };
 
@@ -258,11 +259,25 @@
     el.hidden = false; el.innerHTML = `${ic("pin", 16)}<b>Pinned</b><span>${esc(m.author_name)}: ${esc(snip(m.body, 90))}</span>${ic("chevr", 16)}`; el.onclick = () => { const row = $(`#m${id}`); if (row) { row.scrollIntoView({block: "center", behavior: "smooth"}); row.classList.add("flash"); setTimeout(() => row.classList.remove("flash"), 1600); } }; };
   // the channel list: categories in order, channels inside them. Read-only ones (rules, announcements) carry a lock.
   const chanList = on => { const cats = S.cats.slice().sort((a, b) => a.position - b.position), seen = new Set();
-    const li = r => { seen.add(r.id); return `<a href="#chat/${r.slug}"${r.id === on.id ? ' aria-current="page"' : ""}><i aria-hidden="true">${r.read_only ? ic("lock", 14) : "#"}</i><span>${esc(topicName(r))}</span></a>`; };
+    const li = r => { seen.add(r.id); return `<a href="#chat/${r.slug}"${r.id === on.id ? ' aria-current="page"' : ""}><i aria-hidden="true">${r.read_only ? ic("lock", 14) : "#"}</i><span>${esc(topicName(r))}</span>${r.id !== on.id && S.unread && S.unread.has(r.id) ? '<em class="cm-new" title="New messages"><span class="sr">New messages</span></em>' : ""}</a>`; };
     const by = id => S.rooms.filter(r => r.category_id === id).sort((a, b) => a.position - b.position);
     const out = cats.map(c => { const rs = by(c.id); return rs.length ? `<div class="cm-cg"><p>${esc(c.title || c.name || "")}</p>${rs.map(li).join("")}</div>` : ""; }).join("");
     const rest = S.rooms.filter(r => !seen.has(r.id));
     return `<nav class="cm-chans" aria-label="Channels">${out}${rest.length ? `<div class="cm-cg">${rest.map(li).join("")}</div>` : ""}</nav>`; };
+  // unread dots: which channels have something newer than my last visit (asked on open, on switching channel, and when the tab comes back)
+  const loadUnread = async () => { if (!S.sb || !S.signed) return; try { S.unread = new Set((await q(S.sb.rpc("chat_unread_rooms"))).map(Number)); } catch { return; }
+    const nav = $(".cm-chans"); if (nav && cur.room && cur.view === "chat") { S.unread.delete(cur.room.id); nav.outerHTML = chanList(cur.room); } };
+  // "Seen by": who has opened this channel since its latest message. Always the last line of the log.
+  const paintSeen = async () => { const room = cur.room, tok = cur.tok, logEl = $("#cmLog"); if (!room || cur.view !== "chat" || !logEl || !S.sb) return;
+    let rows; try { rows = await q(S.sb.rpc("chat_seen_by", {p_room: room.id})); } catch { return; }
+    if (tok !== cur.tok) return; const old = $(".cm-seen", logEl), stick = nearBottom(logEl); if (old) old.remove(); if (!rows.length || !logEl.querySelector(".cm-m")) return;
+    const names = rows.slice(0, 3).map(r => esc(r.display_name)), more = Number(rows[0].total) - names.length;
+    logEl.insertAdjacentHTML("beforeend", `<p class="cm-seen" title="${esc(rows.map(r => r.display_name).join(", "))}${more > rows.length - 3 && Number(rows[0].total) > rows.length ? " and others" : ""}">${ic("eye", 14)}<span>Seen by ${names.join(", ")}${more > 0 ? ` and ${more} more` : ""}</span></p>`);
+    if (stick) logEl.scrollTop = logEl.scrollHeight; };
+  const markRead = () => { clearTimeout(markRead.t); markRead.t = setTimeout(() => { if (cur.room && cur.view === "chat" && !document.hidden) S.sb.rpc("chat_mark_read", {p_room: cur.room.id}).then(() => {}, () => {}); }, 600); };
+  // ponytail: a 20 s poll while the channel is open and the tab is visible; switch to realtime on chat_room_reads if the chat gets busy
+  setInterval(() => { if (!document.hidden && cur.view === "chat" && cur.room) paintSeen(); }, 20000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) { markRead(); loadUnread(); } });
   const RULES = `<div class="cm-rulecard"><h2>Community Guidelines</h2><ul><li><b>Be kind.</b> Disagree with ideas, not people.</li><li><b>No personal info.</b> No school, address, phone number or socials, yours or anyone else's.</li><li><b>Stay on topic.</b> Building, stories and what you're trying.</li><li><b>No selling or spam.</b> Share what you made; don't pitch it.</li><li><b>Report, don't fight.</b> Use the menu on any message.</li></ul><p><a href="/legal/community/">Read the full guidelines</a></p></div>`;
   const showChat = async (about, slug) => {
     const room = (slug && roomBy(slug)) || chatRoom(), tok = ++cur.tok; cur = {tok, room, view: "chat", thread: null, msgs: new Map(), replyTo: null}; setView("chan");
@@ -276,8 +291,9 @@
     const logEl = $("#cmLog"); logEl.innerHTML = rows.length ? withDays(rows) : room.slug === "welcome" ? RULES : `<div class="cm-none cm-empty">${ic("msg", 28)}<p>${room.read_only ? "Nothing posted here yet." : "No messages yet. Say hi."}</p></div>`; logEl.scrollTop = logEl.scrollHeight;
     $("#cmComp").innerHTML = composerHTML(room.slug === CHAT ? "Message everyone" : "Message #" + topicName(room).toLowerCase()); bindComposer(logEl, {about}); paintPin();
     logEl.addEventListener("click", e => { const mb = e.target.closest("[data-menu]"); if (mb) return menu(+mb.dataset.menu); const j = e.target.closest("[data-jump]"); if (j) { const r = $(`#m${j.dataset.jump}`); if (r) { r.scrollIntoView({block: "center", behavior: "smooth"}); r.classList.add("flash"); setTimeout(() => r.classList.remove("flash"), 1600); } } });
-    subscribe(room, m => { if (!m.thread_id) addMsg(m, logEl); }, id => goneRow(id, "This message was removed"));
+    subscribe(room, m => { if (!m.thread_id) { const o = $(".cm-seen", logEl); if (o) o.remove(); addMsg(m, logEl); markRead(); setTimeout(paintSeen, 1500); } }, id => goneRow(id, "This message was removed"));
     S.sb.rpc("chat_mark_read", {p_room: room.id}).then(() => {}, () => {});
+    paintSeen(); loadUnread();
   };
   // room = null: every channel (the threads list)
   const subscribe = (room, onMsg, onGone) => { unsub(); const sb = S.sb; if (!sb || !sb.channel) return; const f = room ? {filter: "room_id=eq." + room.id} : {}, mine = () => room ? cur.room && cur.room.id === room.id : cur.view === "threads";

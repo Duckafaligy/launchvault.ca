@@ -1169,3 +1169,18 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 .nv .cm-m.mine .cm-mh{align-self:stretch}
 .nv .cm-m.mine .cm-tx{max-width:min(100%,640px);padding:9px 13px;border-radius:14px 14px 4px 14px;background:rgba(47,107,255,.16);text-align:left}
 @media (max-width:720px){.nv .cm-m.mine{grid-template-columns:44px minmax(0,1fr) 34px}}
+
+/* chat: a dot on channels with messages you haven't seen; "Seen by" under the latest message */
+.nv .cm-chans a .cm-new{flex:none;width:8px;height:8px;margin-left:auto;border-radius:50%;background:var(--hl);box-shadow:0 0 0 3px rgba(47,107,255,.2)}
+.nv .cm-chans a:has(.cm-new){color:#fff;font-weight:600}
+.nv .cm-chans a .cm-new .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.nv .cm-seen{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin:2px 0 6px;font:400 var(--f12)/16px var(--fd);color:var(--faint)}
+.nv .cm-seen svg{flex:none;width:14px;height:14px}
+@media (prefers-reduced-motion:no-preference){.nv .cm-seen{animation:cmSeenIn .3s var(--out) both}.nv .cm-chans a .cm-new{animation:cmSeenIn .3s var(--out) both}}
+@keyframes cmSeenIn{from{opacity:0;transform:translateY(3px)}}
+
+/* chat, moderators only: a deleted or removed message stays readable but greyed out */
+.nv .cm-m.cm-hid{opacity:.5}
+.nv .cm-m.cm-hid .cm-tx{text-decoration:line-through;text-decoration-color:rgba(255,255,255,.35);background:rgba(255,255,255,.04)}
+.nv .cm-m.cm-hid:hover{opacity:.85}
+.nv .cm-bd.del{background:rgba(255,255,255,.08);color:var(--muted);font-weight:500}
