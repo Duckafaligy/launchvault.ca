@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Rebuild Site on Story Save",
+  "description": "Automatically rebuilds static HTML pages when a story JSON in data/stories is updated.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "data/stories/*.json"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "python build.py"
+  }
+}
