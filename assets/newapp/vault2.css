@@ -1158,3 +1158,14 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
   .nv .shell:has(#prevbar)::before{content:"";position:absolute;top:0;left:0;width:var(--side);height:32px;background:rgba(47,107,255,.12);pointer-events:none}
   .nv .shell:has(#prevbar[style*="none"])::before,.nv.is-reader .shell::before{display:none}
 }
+
+/* chat: your own messages sit on the right, everyone else on the left */
+.nv .cm-m.mine{grid-template-columns:36px minmax(0,1fr) 34px}
+.nv .cm-m.mine>.cm-av{grid-column:3;grid-row:1}
+.nv .cm-m.mine>.cm-mb{grid-column:2;grid-row:1;align-items:flex-end;text-align:right}
+.nv .cm-m.mine>.cm-more{grid-column:1;grid-row:1}
+.nv .cm-m.mine .cm-mh{flex-direction:row-reverse}
+.nv .cm-m.mine .cm-mh time{margin-left:0;margin-right:auto}
+.nv .cm-m.mine .cm-mh{align-self:stretch}
+.nv .cm-m.mine .cm-tx{max-width:min(100%,640px);padding:9px 13px;border-radius:14px 14px 4px 14px;background:rgba(47,107,255,.16);text-align:left}
+@media (max-width:720px){.nv .cm-m.mine{grid-template-columns:44px minmax(0,1fr) 34px}}
