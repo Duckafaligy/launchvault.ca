@@ -158,8 +158,9 @@
   const note = (el, t, cls = "as-err") => { const p = document.createElement("p"); p.className = cls; p.innerHTML = t; el.appendChild(p); };
   const ERR = {daily_limit: () => info && info.period === "month" ? `You've used this month's ${info.limit.toLocaleString()} messages. They refill on the 1st. <a href="/app/account/#prefs">Add your own AI key</a> for unlimited.`
       : `You've used this week's ${info ? info.limit : ""} messages. They refill on Monday. Pro gets 1,000 a month: <a href="/app/account/#plan">see plans</a>, or <a href="/app/account/#prefs">add your own AI key</a> for unlimited.`,
-    own_key_rejected: () => 'Anthropic rejected your AI key, so nothing was sent. <a href="/app/account/#prefs">Check or remove it in Settings</a>.',
-    own_key_limit: () => "Your own AI key has hit its limit at Anthropic. Wait a moment, or remove the key in Settings to use your plan's allowance.",
+    own_key_model: () => 'The model saved with your AI key is no longer offered. <a href="/app/account/#prefs">Remove the key and add it again</a> to pick up a current one.',
+    own_key_rejected: () => 'The provider rejected your AI key, so nothing was sent. <a href="/app/account/#prefs">Check or remove it in Settings</a>.',
+    own_key_limit: () => "Your own AI key has hit its limit or run out of credit with its provider. Wait a moment, or remove the key in Settings to use your plan's allowance.",
     own_key_unreadable: () => 'We couldn\'t read your saved AI key. <a href="/app/account/#prefs">Remove it and add it again</a>.',
     busy: () => "Ask LaunchVault is busy right now. Your message wasn't counted. Try again in a minute.",
     conversation_full: () => 'This chat is full. <button class="tl" type="button" data-asnew>Start a new chat</button> to keep going; this one stays in your list.',

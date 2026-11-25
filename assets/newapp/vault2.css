@@ -1063,7 +1063,7 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 @media (max-width:720px){.nv .dotfs{justify-content:flex-start}.nv .dotfs button{width:calc(33.3% - 6px)}}
 
 /* Ask, wide screens: one fixed screen. The chat scrolls; the message bar stays at the bottom. */
-@media (min-width:901px){
+@media (min-width:721px){
   .nv.p-ask .main{display:flex;flex-direction:column;height:calc(100vh/var(--z,1));overflow:hidden}
   .nv.p-ask .main>main{flex:1;min-height:0;display:flex;flex-direction:column}
   .nv.p-ask .pg.as{flex:1;min-height:0;padding-bottom:18px}
@@ -1134,7 +1134,10 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 /* Settings: your own AI key */
 .nv .acard .arow.aikey{align-items:flex-start;flex-wrap:wrap}
 .nv .aik{display:flex;flex:none;max-width:100%}
-.nv .aik-add{display:grid;grid-template-columns:minmax(0,260px) auto;gap:8px;align-items:center}
+.nv .aik-add{display:grid;grid-template-columns:minmax(0,230px) auto auto;gap:8px;align-items:center}
+.nv .aik-add select{height:40px;min-height:0;padding:0 30px 0 12px;border:0;border-radius:11px;background-color:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);font:500 var(--f13)/1 var(--fd);color:#fff}
+.nv .aik-add select option{background:#1B1B24;color:#fff}
+.nv .aik-see{grid-column:1/-1;margin:0;font:400 var(--f12)/17px var(--fd);color:#5FE0AE}.nv .aik-see:empty{display:none}
 .nv .aik-add input{height:40px;min-height:0;padding:0 12px;border:0;border-radius:11px;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);font:500 var(--f13)/1 ui-monospace,Menlo,Consolas,monospace;color:#fff}
 .nv .aik-add input:focus{outline:0;box-shadow:inset 0 0 0 1.5px var(--hl)}
 .nv .aik-add .btn{min-height:40px;padding:0 16px;font-size:var(--f13)}
@@ -1147,5 +1150,11 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 .nv .aik-once p{margin:0;font:400 var(--f13)/19px var(--fd);color:#fff}.nv .aik-once p b{display:block;font-weight:600}
 .nv .aik-once code{display:block;overflow-wrap:anywhere;user-select:all}
 .nv .aik-once div{display:flex;gap:8px;justify-content:flex-end}.nv .aik-once .btn{min-height:36px;padding:0 14px;font-size:var(--f13)}
-@media (max-width:720px){.nv .aik,.nv .aik-add{width:100%}.nv .aik-add{grid-template-columns:minmax(0,1fr) auto}.nv .aik-has{justify-content:flex-start}}
+@media (max-width:720px){.nv .aik,.nv .aik-add{width:100%}.nv .aik-add{grid-template-columns:minmax(0,1fr) auto}.nv .aik-add input{grid-column:1/-1}.nv .aik-has{justify-content:flex-start}}
 
+/* the plan banner spans the whole window: its band carries on behind the sidebar card */
+@media (min-width:721px){
+  .nv .shell{position:relative}
+  .nv .shell:has(#prevbar)::before{content:"";position:absolute;top:0;left:0;width:var(--side);height:32px;background:rgba(47,107,255,.12);pointer-events:none}
+  .nv .shell:has(#prevbar[style*="none"])::before,.nv.is-reader .shell::before{display:none}
+}

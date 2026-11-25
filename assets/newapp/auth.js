@@ -102,7 +102,7 @@ window.LVAuth = (() => {
         paid = !!p && (p.plan === "pro" || p.plan === "builder") && (p.status === "active" || p.status === "trialing"); } catch {}
       bar.style.display = e && paid && !guest ? "none" : "";
       bar.innerHTML = !LV_AUTH ? "Preview: accounts open soon. Your progress stays on this device."
-        : e ? `You're on the <b>Free plan</b>. Upgrade to Pro for every phase of every breakdown. <a href="/app/account/#plan">See plans</a>`
+        : e ? `<span>You're on the <b>Free plan</b>. Upgrade to Pro for every phase of every breakdown.</span> <a href="/app/account/#plan">See plans</a>`
         : guest ? `<b>Judge view.</b> You're in with a judge code, so nothing is saved to an account. <button type="button" id="gxBtn">Exit judge view</button>`
             : `Your progress is saved on this device. <a href="/sign-in/">Sign in</a> to keep it everywhere.`;
       const so = document.getElementById("soBtn"); if (so) so.addEventListener("click", signOut);

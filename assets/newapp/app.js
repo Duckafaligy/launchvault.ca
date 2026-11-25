@@ -597,16 +597,21 @@
         const d = await call("", "GET").then(r => r.json()).catch(() => null);
         if (!d || !d.keys) return;                                // the server isn't set up to hold keys: say nothing
         row.hidden = false; let own = d.own;
-        const WHY = {bad_key_shape: "That doesn't look like an Anthropic key. They start with sk-ant-.", key_rejected: "Anthropic didn't accept that key. Check it was copied whole and hasn't been deleted.",
-          key_check_failed: "We couldn't reach Anthropic to check the key. Try again in a minute.", keys_not_configured: "Keys can't be saved right now."};
+        const WHY = {bad_key_shape: "That doesn't look like an API key. Paste the whole key, with no spaces.", key_rejected: "That key wasn't accepted. Check it was copied whole, hasn't been deleted, and that the right provider is picked.",
+          key_check_failed: "We couldn't reach the provider to check the key. Try again in a minute.", keys_not_configured: "Keys can't be saved right now."};
+        const PROV = [["", "Detect for me"], ["anthropic", "Anthropic (Claude)"], ["openai", "OpenAI"], ["google", "Google Gemini"], ["deepseek", "DeepSeek"], ["xai", "xAI (Grok)"], ["groq", "Groq"], ["mistral", "Mistral"], ["openrouter", "OpenRouter"]];
+        const looks = v => /^sk-ant-/.test(v) ? "Looks like an Anthropic key" : /^sk-or-/.test(v) ? "Looks like an OpenRouter key" : /^xai-/.test(v) ? "Looks like an xAI key" : /^gsk_/.test(v) ? "Looks like a Groq key" : /^AIza/.test(v) ? "Looks like a Google Gemini key"
+          : /^sk-(proj|svcacct)-/.test(v) ? "Looks like an OpenAI key" : /^sk-[0-9a-f]{32}$/.test(v) ? "Looks like a DeepSeek key" : /^sk-/.test(v) ? "OpenAI or DeepSeek: we'll check both" : v.length >= 20 ? "Not sure whose this is: pick the provider" : "";
         const when = t => new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric", year: "numeric"});
         const draw = (fresh, err) => {
           if (fresh) { ui.innerHTML = `<div class="aik-once"><p><b>Saved. This is the only time it is shown in full.</b> Check it matches, then it is hidden for good.</p><code>${esc(fresh)}</code><div><button class="btn btn-s" type="button" data-aikcopy>Copy</button><button class="btn btn-p" type="button" data-aikdone>Done</button></div></div>`; return; }
-          ui.innerHTML = own ? `<div class="aik-has"><code>${esc(own.hint)}</code><small>Added ${esc(when(own.added))} · messages are unlimited</small><button class="btn btn-s" type="button" data-aikrm>Remove</button></div>`
-            : `<form class="aik-add" novalidate><input type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-..." aria-label="Anthropic API key" maxlength="260"><button class="btn btn-p" type="submit">Add key</button><p class="aik-err" role="alert">${err ? esc(err) : ""}</p></form>`; };
+          ui.innerHTML = own ? `<div class="aik-has"><code>${esc(own.hint)}</code><small>${own.name ? esc(own.name) + (own.model ? " · " + esc(own.model) : "") + " · " : ""}added ${esc(when(own.added))} · unlimited</small><button class="btn btn-s" type="button" data-aikrm>Remove</button></div>`
+            : `<form class="aik-add" novalidate><input type="password" autocomplete="off" spellcheck="false" placeholder="Paste your API key" aria-label="Your AI API key" maxlength="260"><select aria-label="Provider">${PROV.map(([v, t]) => `<option value="${v}">${t}</option>`).join("")}</select><button class="btn btn-p" type="submit">Add key</button><p class="aik-see" aria-live="polite"></p><p class="aik-err" role="alert">${err ? esc(err) : ""}</p></form>`; };
+        ui.addEventListener("input", e => { const s = $(".aik-see", ui); if (s && e.target.matches("input")) s.textContent = $("select", ui).value ? "" : looks(e.target.value.trim()); });
+        ui.addEventListener("change", e => { const s = $(".aik-see", ui); if (s && e.target.matches("select")) s.textContent = e.target.value ? "" : looks($("input", ui).value.trim()); });
         ui.addEventListener("submit", async e => { e.preventDefault(); const inp = $("input", ui), b = $('[type="submit"]', ui), v = inp.value.trim(); if (!v || b.disabled) return;
           b.disabled = true; b.textContent = "Checking…";
-          const r = await call("?key=1", "PUT", {key: v}).catch(() => null), j = r ? await r.json().catch(() => ({})) : {};
+          const r = await call("?key=1", "PUT", {key: v, provider: $("select", ui).value || undefined}).catch(() => null), j = r ? await r.json().catch(() => ({})) : {};
           if (!r || !r.ok || !j.key) return draw(null, WHY[j.error] || "That didn't save. Try again.");
           own = j.key; draw(v); });
         ui.addEventListener("click", async e => {
@@ -614,7 +619,7 @@
           if (e.target.closest("[data-aikdone]")) return draw();
           if (!e.target.closest("[data-aikrm]")) return;
           const dl = document.createElement("dialog"); dl.className = "rdlg sbdlg"; dl.setAttribute("aria-labelledby", "aikh");
-          dl.innerHTML = `<form method="dialog"><h2 id="aikh">Remove your AI key?</h2><p>LaunchVault deletes its copy straight away and can't get it back. Your messages go back to your plan's allowance. The key itself keeps working at Anthropic until you delete it there.</p><div class="sbdr"><button class="btn btn-s" value="no" autofocus>Cancel</button><button class="btn sbred" value="yes">Remove</button></div></form>`;
+          dl.innerHTML = `<form method="dialog"><h2 id="aikh">Remove your AI key?</h2><p>LaunchVault deletes its copy straight away and can't get it back. Your messages go back to your plan's allowance. The key itself keeps working with its provider until you delete it there.</p><div class="sbdr"><button class="btn btn-s" value="no" autofocus>Cancel</button><button class="btn sbred" value="yes">Remove</button></div></form>`;
           document.body.appendChild(dl); dl.addEventListener("close", async () => { const yes = dl.returnValue === "yes"; dl.remove(); if (!yes) return;
             const r = await call("?key=1", "DELETE").catch(() => null); if (!r || !r.ok) return toast("That didn't work. Try again."); own = null; draw(); toast("Key removed."); });
           dl.showModal(); });
