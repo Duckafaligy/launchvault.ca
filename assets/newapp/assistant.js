@@ -59,8 +59,10 @@
     side.hidden = drawerBtn.hidden = s !== "ready";
   }
   const usage = () => { const u = $("[data-asuse]"); if (!info) return; const left = Math.max(0, info.limit - info.used);
-    u.textContent = `${left} left today`; u.title = `${left} of ${info.limit} messages left today`;
-    const u2 = $("[data-asuse2]"); if (u2) u2.textContent = `${left} message${left === 1 ? "" : "s"} left today`;
+    const per = info.period === "month" ? "this month" : info.period === "week" ? "this week" : "today";
+    if (info.own) { u.textContent = "Your key"; u.title = "Messages are unlimited while your own AI key is set"; }
+    else { u.textContent = `${left.toLocaleString()} left ${per}`; u.title = `${left.toLocaleString()} of ${info.limit.toLocaleString()} messages left ${per}`; }
+    const u2 = $("[data-asuse2]"); if (u2) u2.textContent = info.own ? "Unlimited on your own key" : `${left.toLocaleString()} message${left === 1 ? "" : "s"} left ${per}`;
     const c = document.querySelector('[data-cnt="ask"]'); if (c) c.textContent = `${left} left`; };
 
   // ---------- conversation list ----------
@@ -154,7 +156,11 @@
     const tr = $(".as-try", b); [...box.children].forEach(c => c.classList.contains("as-srcs") && tr ? tr.before(c) : b.appendChild(c));
   }
   const note = (el, t, cls = "as-err") => { const p = document.createElement("p"); p.className = cls; p.innerHTML = t; el.appendChild(p); };
-  const ERR = {daily_limit: () => `You've used today's ${info ? info.limit : ""} messages. More tomorrow.${info && !info.paid ? ' Pro and Builder members get 100 a day: <a href="/app/account/#plan">see plans</a>.' : ""}`,
+  const ERR = {daily_limit: () => info && info.period === "month" ? `You've used this month's ${info.limit.toLocaleString()} messages. They refill on the 1st. <a href="/app/account/#prefs">Add your own AI key</a> for unlimited.`
+      : `You've used this week's ${info ? info.limit : ""} messages. They refill on Monday. Pro gets 1,000 a month: <a href="/app/account/#plan">see plans</a>, or <a href="/app/account/#prefs">add your own AI key</a> for unlimited.`,
+    own_key_rejected: () => 'Anthropic rejected your AI key, so nothing was sent. <a href="/app/account/#prefs">Check or remove it in Settings</a>.',
+    own_key_limit: () => "Your own AI key has hit its limit at Anthropic. Wait a moment, or remove the key in Settings to use your plan's allowance.",
+    own_key_unreadable: () => 'We couldn\'t read your saved AI key. <a href="/app/account/#prefs">Remove it and add it again</a>.',
     busy: () => "Ask LaunchVault is busy right now. Your message wasn't counted. Try again in a minute.",
     conversation_full: () => 'This chat is full. <button class="tl" type="button" data-asnew>Start a new chat</button> to keep going; this one stays in your list.',
     bad_attachments: () => "One of those files couldn't be read. Remove it and send again. Your message wasn't counted.",
@@ -233,7 +239,7 @@
         const d = await r.json().catch(() => ({}));
         if (d.error === "assistant_not_configured") { el.remove(); return soon(); }
         body.innerHTML = ""; note(el, (ERR[d.error] || ERR.upstream)());
-        if (d.error === "daily_limit" && info) { info.used = info.limit; usage(); }
+        if (d.error === "daily_limit" && info) { info.used = info.limit; if (d.period) info.period = d.period; usage(); }
         return;
       }
       const rd = r.body.getReader(), dec = new TextDecoder(); let buf = "";
@@ -257,7 +263,7 @@
         { const mine = slugs(acc); cards(el, [...mine, ...(ended.stories || []).filter(s => BY[s] && !mine.some(x => x.split("#")[0] === s))]); }
         if (ended.remembered) note(el, 'Saved to your <a href="/app/account/#prefs">preferences</a>. You can remove it any time.', "as-soft");
         const isNew = !cid; cid = ended.conversation_id;
-        if (info) { info.used = ended.used; info.limit = ended.limit; usage();
+        if (info) { if (ended.used != null) info.used = ended.used; info.limit = ended.limit; if (ended.period) info.period = ended.period; usage();
           const c = info.conversations.find(x => x.id === cid);
           if (c) { c.updated_at = new Date().toISOString(); info.conversations = [c, ...info.conversations.filter(x => x !== c)]; }
           else if (isNew) info.conversations.unshift({id: cid, title: text.trim().replace(/\s+/g, " ").slice(0, 60), updated_at: new Date().toISOString()});
@@ -291,7 +297,7 @@
     if (!clerk || !clerk.user || !clerk.session) {
       return state("gate", "Ask LaunchVault is for members", judge()
         ? "The judge pass unlocks the breakdowns in this browser. The assistant runs on our servers, so it needs a free account: that is how we keep it safe for teens and cap its cost."
-        : "Sign in or create a free account to ask about your idea. Free accounts get 10 messages a day; Pro and Builder get 100.");
+        : "Sign in or create a free account to ask about your idea. Free accounts get 10 messages a week; Pro gets 1,000 a month.");
     }
     try {
       const r = await api(); const d = await r.json();

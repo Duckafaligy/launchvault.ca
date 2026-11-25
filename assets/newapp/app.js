@@ -588,6 +588,38 @@
       })(); }
     const prefs = Object.assign({new_story: false, path: false, news: false}, ls.get("lv-prefs", {}));
     $$("[data-pref]").forEach(b => { b.setAttribute("aria-checked", !!prefs[b.dataset.pref]); b.addEventListener("click", () => { prefs[b.dataset.pref] = !prefs[b.dataset.pref]; b.setAttribute("aria-checked", prefs[b.dataset.pref]); held(); }); });
+    // ---------- your own AI key: add it (shown in full once), then only its first 2 and last 4 characters; remove it any time, behind a warning ----------
+    { const row = $("[data-aikey]"), ui = $("[data-aikey-ui]");
+      if (row && window.LVAuth && LVAuth.live) (async () => {
+        const c = await LVAuth.load().catch(() => null); if (!c || !c.user || !c.session) return;
+        const AK = "https://azriqynpnbltvxucwmpo.supabase.co/functions/v1/assistant";
+        const call = async (q, method, body) => fetch(AK + q, {method, headers: {Authorization: "Bearer " + await c.session.getToken(), "Content-Type": "application/json"}, body: body ? JSON.stringify(body) : undefined});
+        const d = await call("", "GET").then(r => r.json()).catch(() => null);
+        if (!d || !d.keys) return;                                // the server isn't set up to hold keys: say nothing
+        row.hidden = false; let own = d.own;
+        const WHY = {bad_key_shape: "That doesn't look like an Anthropic key. They start with sk-ant-.", key_rejected: "Anthropic didn't accept that key. Check it was copied whole and hasn't been deleted.",
+          key_check_failed: "We couldn't reach Anthropic to check the key. Try again in a minute.", keys_not_configured: "Keys can't be saved right now."};
+        const when = t => new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric", year: "numeric"});
+        const draw = (fresh, err) => {
+          if (fresh) { ui.innerHTML = `<div class="aik-once"><p><b>Saved. This is the only time it is shown in full.</b> Check it matches, then it is hidden for good.</p><code>${esc(fresh)}</code><div><button class="btn btn-s" type="button" data-aikcopy>Copy</button><button class="btn btn-p" type="button" data-aikdone>Done</button></div></div>`; return; }
+          ui.innerHTML = own ? `<div class="aik-has"><code>${esc(own.hint)}</code><small>Added ${esc(when(own.added))} · messages are unlimited</small><button class="btn btn-s" type="button" data-aikrm>Remove</button></div>`
+            : `<form class="aik-add" novalidate><input type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-..." aria-label="Anthropic API key" maxlength="260"><button class="btn btn-p" type="submit">Add key</button><p class="aik-err" role="alert">${err ? esc(err) : ""}</p></form>`; };
+        ui.addEventListener("submit", async e => { e.preventDefault(); const inp = $("input", ui), b = $('[type="submit"]', ui), v = inp.value.trim(); if (!v || b.disabled) return;
+          b.disabled = true; b.textContent = "Checking…";
+          const r = await call("?key=1", "PUT", {key: v}).catch(() => null), j = r ? await r.json().catch(() => ({})) : {};
+          if (!r || !r.ok || !j.key) return draw(null, WHY[j.error] || "That didn't save. Try again.");
+          own = j.key; draw(v); });
+        ui.addEventListener("click", async e => {
+          if (e.target.closest("[data-aikcopy]")) { try { await navigator.clipboard.writeText($("code", ui).textContent); toast("Copied."); } catch { toast("Select it and copy by hand."); } return; }
+          if (e.target.closest("[data-aikdone]")) return draw();
+          if (!e.target.closest("[data-aikrm]")) return;
+          const dl = document.createElement("dialog"); dl.className = "rdlg sbdlg"; dl.setAttribute("aria-labelledby", "aikh");
+          dl.innerHTML = `<form method="dialog"><h2 id="aikh">Remove your AI key?</h2><p>LaunchVault deletes its copy straight away and can't get it back. Your messages go back to your plan's allowance. The key itself keeps working at Anthropic until you delete it there.</p><div class="sbdr"><button class="btn btn-s" value="no" autofocus>Cancel</button><button class="btn sbred" value="yes">Remove</button></div></form>`;
+          document.body.appendChild(dl); dl.addEventListener("close", async () => { const yes = dl.returnValue === "yes"; dl.remove(); if (!yes) return;
+            const r = await call("?key=1", "DELETE").catch(() => null); if (!r || !r.ok) return toast("That didn't work. Try again."); own = null; draw(); toast("Key removed."); });
+          dl.showModal(); });
+        draw();
+      })(); }
     // ---------- change email: a code to the current address, then a code to the new one; only then does it switch ----------
     { const eb = $("[data-emchange]");
       if (eb) eb.addEventListener("click", async () => {
@@ -882,7 +914,7 @@
       const home = homeRail ? Object.assign(document.createElement("section"), {className: "card hsite"}) : null;
       if (home) { home.setAttribute("aria-labelledby", "hsiteH"); homeRail.prepend(home); }
       const ERR = {bad_domain: "That doesn't look like a website address. Try something like yourproject.com.", not_found: "We couldn't find the code yet. A DNS record can take up to an hour to show up; the meta tag works as soon as your site is published.",
-        review_daily: "You can get one review a day. Try again tomorrow.", daily_limit: "You've used today's Ask LaunchVault messages. Try again tomorrow.", site_unreachable: "We couldn't open your site. Check it loads at https:// and try again.",
+        review_daily: "You can get one review a day. Try again tomorrow.", daily_limit: "You've used your Ask LaunchVault messages for now. They refill at the start of the week, or the month on a paid plan.", site_unreachable: "We couldn't open your site. Check it loads at https:// and try again.",
         assistant_not_configured: "Site reviews open soon.", busy: "Lots of people are asking right now. Try again in a minute.", refused: "We couldn't review this site.", not_signed_in: "Sign in again to continue."};
       const call = async (method, body) => { try { const c = window.LVAuth && LVAuth.live ? await LVAuth.load() : null, tok = c && c.session ? await c.session.getToken() : null;
         if (!tok) return {error: "not_signed_in"};
