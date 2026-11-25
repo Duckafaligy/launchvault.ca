@@ -56,22 +56,150 @@ ${f.glaze ? `<path class="lvdot-glaze" d="M11 46 C13 27 29 13 50 13 C71 13 87 27
     "p-ck": "These are your checklists.", "p-chat": "This is where members talk.", "p-acct": "Settings. I can show you where things are.", "p-ask": "This is my full-size chat. Type below." };
   const page = () => [...d.body.classList].find(c => TIPS[c]) || "";
 
-  function point(sel, text) {
-    const t = $(sel);
-    if (!t || !t.offsetParent) { say("I can't see that on this page right now."); return; }
-    mood("pointing"); say(text);
+  const ss = { get(k) { try { return JSON.parse(sessionStorage.getItem(k)); } catch { return null; } }, set(k, v) { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, JSON.stringify(v)); } catch {} } };
+  let curTimer = 0;
+
+  function ensureCur() {
+    let cur = $(".lvdot-cur");
+    if (!cur) cur = d.body.appendChild(Object.assign(d.createElement("span"), { className: "lvdot-cur", innerHTML: '<svg viewBox="0 0 20 22" width="22" height="24"><path d="M4 3.2 C4 2.2 5.1 1.6 6 2.2 L17.2 9.9 C18.1 10.5 17.8 11.9 16.7 12.1 L11.9 13 L9.4 17.6 C8.9 18.6 7.4 18.4 7.2 17.3 Z" fill="#FF4D1F" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>' }));
+    return cur;
+  }
+
+  function typeText(inp, str, cb) {
+    inp.focus(); inp.value = ""; inp.dispatchEvent(new Event("input", { bubbles: true }));
+    if (reduce) { inp.value = str; inp.dispatchEvent(new Event("input", { bubbles: true })); cb && cb(); return; }
+    let i = 0;
+    const step = () => {
+      if (i >= str.length) { cb && cb(); return; }
+      inp.value += str[i++]; inp.dispatchEvent(new Event("input", { bubbles: true }));
+      setTimeout(step, 55);
+    };
+    setTimeout(step, 180);
+  }
+
+  function point(sel, text, opts = {}) {
+    const t = typeof sel === "string" ? $(sel) : sel;
+    if (!t || (t.offsetParent === null && getComputedStyle(t).position !== "fixed")) { say("I can't see that on this page right now."); opts.done && opts.done(false); return; }
+    clearTimeout(curTimer);
+    mood("pointing"); if (text) say(text);
     t.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
     d.querySelectorAll(".lvdot-ring").forEach(n => n.classList.remove("lvdot-ring"));
     setTimeout(() => {
-      if (!el) return;                                                // hidden or rebuilt in the meantime
+      if (!el) return;
       t.classList.add("lvdot-ring");
-      const r = t.getBoundingClientRect(), k = z(), cur = $(".lvdot-cur") || d.body.appendChild(Object.assign(d.createElement("span"), { className: "lvdot-cur", innerHTML: '<svg viewBox="0 0 20 22" width="22" height="24"><path d="M4 3.2 C4 2.2 5.1 1.6 6 2.2 L17.2 9.9 C18.1 10.5 17.8 11.9 16.7 12.1 L11.9 13 L9.4 17.6 C8.9 18.6 7.4 18.4 7.2 17.3 Z" fill="#FF4D1F" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>' }));
-      const b = el.getBoundingClientRect();
+      const r = t.getBoundingClientRect(), k = z(), cur = ensureCur(), b = el.getBoundingClientRect();
       cur.style.transition = "none"; cur.style.transform = `translate(${(b.left + b.width / 2) / k}px,${(b.top + b.height / 2) / k}px)`; cur.style.opacity = 1; void cur.offsetWidth;
-      cur.style.transition = reduce ? "none" : "transform .7s cubic-bezier(.16,1,.3,1),opacity .3s";
-      cur.style.transform = `translate(${(r.left + Math.min(r.width - 8, 24)) / k}px,${(r.top + Math.min(r.height - 8, 20)) / k}px)`;
-      setTimeout(() => { t.classList.remove("lvdot-ring"); cur.style.opacity = 0; if (panel) mood("idle"); }, 5200);
-    }, reduce ? 0 : 450);
+      cur.style.transition = reduce ? "none" : "transform .65s cubic-bezier(.16,1,.3,1),opacity .25s";
+      const tx = (r.left + Math.min(Math.max(r.width * 0.35, 14), r.width - 10)) / k;
+      const ty = (r.top + Math.min(Math.max(r.height * 0.5, 14), r.height - 10)) / k;
+      cur.style.transform = `translate(${tx}px,${ty}px)`;
+      setTimeout(() => {
+        if (opts.type != null && ("value" in t)) {
+          typeText(t, opts.type, () => { opts.done && opts.done(true); });
+        } else if (opts.click) {
+          cur.style.transition = "transform .12s ease";
+          cur.style.transform = `translate(${tx}px,${ty}px) scale(.82)`;
+          setTimeout(() => {
+            cur.style.transform = `translate(${tx}px,${ty}px) scale(1)`;
+            t.click();
+            opts.done && opts.done(true);
+          }, 150);
+        } else {
+          opts.done && opts.done(true);
+        }
+      }, reduce ? 50 : 680);
+      curTimer = setTimeout(() => { t.classList.remove("lvdot-ring"); cur.style.opacity = 0; if (panel) mood("idle"); }, opts.keep ? 6500 : 4800);
+    }, reduce ? 0 : 380);
+  }
+
+  function runSteps(steps) {
+    if (!Array.isArray(steps) || !steps.length) return;
+    const [head, ...rest] = steps;
+    if (panel && panel.hidden) open(true);
+    point(head.sel, head.text, {
+      click: !!head.click,
+      type: head.type,
+      keep: rest.length > 0,
+      done: () => { if (rest.length) setTimeout(() => runSteps(rest), head.wait || 650); },
+    });
+  }
+
+  function goGuide(url, msg, steps) {
+    ss.set("lv-dot-act", { path: url.split("#")[0], steps: steps || [] });
+    if (msg) say(msg);
+    mood("pointing");
+    const navEl = $(`nav a[href="${url.split("#")[0]}"]`) || $(`a[href="${url}"]`);
+    if (navEl && navEl.offsetParent) {
+      point(navEl, msg, { click: true });
+    } else {
+      setTimeout(() => { location.href = url; }, reduce ? 0 : 450);
+    }
+  }
+
+  function routeIntent(raw) {
+    const q = raw.toLowerCase().trim();
+    let stories = [];
+    try { stories = (JSON.parse($("#lvapp").textContent).stories || []); } catch {}
+    const story = stories.find(s => q.includes(s.slug.replace(/-/g, " ")) || q.includes(s.slug) || q.includes(s.name.toLowerCase()));
+    const onPath = location.pathname;
+
+    if (story) {
+      const targetUrl = story.href;
+      const phM = q.match(/phase\s*(\d)/i);
+      const isSearch = /\b(search|find|filter|library)\b/.test(q);
+      if (isSearch && onPath === "/app/library/") {
+        runSteps([
+          { sel: "#lq", text: `Searching the library for ${story.name}…`, type: story.name, wait: 700 },
+          { sel: `a[href="${targetUrl}"]`, text: `Found ${story.name}! Opening it for you…`, click: true },
+        ]);
+        return true;
+      }
+      if (onPath === "/app/library/") {
+        runSteps([
+          { sel: "#lq", text: `Finding ${story.name} for you…`, type: story.name, wait: 650 },
+          { sel: `a[href="${targetUrl}"]`, text: `Here's ${story.name} — clicking in!`, click: true },
+        ]);
+        ss.set("lv-dot-act", { path: targetUrl, steps: [{ sel: phM ? `[data-rstep="${phM[1]}"]` : "#phases", text: `Welcome to ${story.name}! Start reading right here.`, click: !!phM }] });
+        return true;
+      }
+      if (onPath === targetUrl) {
+        const sel = phM ? `[data-rstep="${phM[1]}"]` : /\b(checklist|todo|step)\b/.test(q) ? "#todo" : "#phases";
+        runSteps([{ sel, text: `You're on ${story.name} — right here!`, click: !!phM }]);
+        return true;
+      }
+      goGuide(targetUrl + (phM ? "#ph" + phM[1] : ""), `Taking you to ${story.name}'s story…`, [
+        { sel: phM ? `[data-rstep="${phM[1]}"]` : "#phases", text: `Here's ${story.name}'s breakdown — start here!`, click: !!phM },
+      ]);
+      return true;
+    }
+
+    const routes = [
+      [/\b(librar|stories|story list|browse|ai tools|mobile apps|services)\b/, "/app/library/", "#lq", "Taking you to the Library — you can search or filter all 10 stories here."],
+      [/\b(checklist|to-do|todo|tasks?)\b/, "/app/checklists/", ".ckw", "Opening your Checklists — tick off steps right here."],
+      [/\b(my path|path|next step|roadmap)\b/, "/app/path/", ".rstep.open, main", "Here's My Path — your next step is highlighted."],
+      [/\b(saved|bookmarks?|stars?)\b/, "/app/saved/", "main .card, main", "Taking you to your Saved stories & steps."],
+      [/\b(community|chat|forum|discord|talk|rules)\b/, "/app/community/", '.cm-chans a[href="#chat/welcome"], main', "Opening the Community — jump into any channel here."],
+      [/\b(plan|pricing|pro|upgrade|billing)\b/, "/app/account/#plan", "#plan", "Showing you the Plans card right here."],
+      [/\b(setting|account|profile|flavour|flavor|email|key|preferences)\b/, "/app/account/#prefs", "#prefs, main", "Taking you to Account & Preferences."],
+      [/\b(full ask|assistant page|full chat)\b/, "/app/assistant/", "#asIn", "Opening the full-screen Ask page."],
+    ];
+    for (const [re, url, sel, msg] of routes) {
+      if (!re.test(q)) continue;
+      const base = url.split("#")[0];
+      if (onPath === base) {
+        const tabMatch = /\b(ai tools?|mobile|services)\b/.exec(q);
+        if (base === "/app/library/" && tabMatch) {
+          const tab = tabMatch[1].startsWith("ai") ? "ai" : tabMatch[1].startsWith("mobile") ? "mobile" : "services";
+          runSteps([{ sel: `button[data-tab="${tab}"]`, text: `Filtering by ${tabMatch[1]}…`, click: true }]);
+          return true;
+        }
+        runSteps([{ sel, text: msg }]);
+        return true;
+      }
+      goGuide(url, msg, [{ sel, text: msg }]);
+      return true;
+    }
+    return false;
   }
   const say = t => { $(".lvdot-say", panel).textContent = t; };
   const mood = m => { if (el) el.dataset.mood = m; };
@@ -163,6 +291,7 @@ ${f.glaze ? `<path class="lvdot-glaze" d="M11 46 C13 27 29 13 50 13 C71 13 87 27
     inp.addEventListener("blur", () => { if (el && el.dataset.mood === "listening") mood("idle"); });
     panel.addEventListener("click", e => { const t = e.target.closest("[data-tip]"); if (t) { const tip = (TIPS[page()] || [])[+t.dataset.tip]; if (tip) point(tip[1], tip[2]); } });
     $("form", panel).addEventListener("submit", e => { e.preventDefault(); const v = $("input", panel).value.trim(); if (!v) return;
+      if (routeIntent(v)) { $("input", panel).value = ""; return; }
       const a = $("#asIn");                                           // on the Ask page it goes straight into the box
       if (a && !a.disabled) { a.value = v; a.dispatchEvent(new Event("input")); a.focus(); open(false); return; }
       $("input", panel).value = ""; send(v); });
@@ -228,7 +357,16 @@ ${f.glaze ? `<path class="lvdot-glaze" d="M11 46 C13 27 29 13 50 13 C71 13 87 27
     commit: () => { ls.set("lv-dot", draft.on ? "on" : "off"); ls.set("lv-dot-flavour", draft.flavour); },
     revert: () => { draft = saved(); show(); if (api.sync) api.sync(); },
     point,
+    guide: goGuide,
+    run: runSteps,
   };
-  const start = () => { show(); controls(); };
+  const resume = () => {
+    const act = ss.get("lv-dot-act");
+    if (!act || !el) return;
+    if (act.path && act.path !== location.pathname) return;
+    ss.set("lv-dot-act", null);
+    if (Array.isArray(act.steps) && act.steps.length) setTimeout(() => runSteps(act.steps), 350);
+  };
+  const start = () => { show(); controls(); resume(); };
   if (d.readyState === "loading") d.addEventListener("DOMContentLoaded", start); else start();
 })();
