@@ -65,10 +65,51 @@
 
   // ---------- conversation list ----------
   const day = t => new Date(t).toLocaleDateString(undefined, {month: "short", day: "numeric"});
+  // pinned chats first (newest pin on top), then the rest by last use
+  const ordered = () => info.conversations.slice().sort((x, y) => (y.pinned_at ? 1 : 0) - (x.pinned_at ? 1 : 0) || String(y.pinned_at || y.updated_at).localeCompare(String(x.pinned_at || x.updated_at)));
+  const PIN = '<svg class="as-pinned" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-label="Pinned"><path d="M15 3l6 6-3 1-3 3 1 5-2 2-4-5-5 5v-2l4-4-5-4 2-2 5 1 3-3z"/></svg>';
+  const DOTS = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg>';
   function renderList() {
-    list.innerHTML = info.conversations.length ? info.conversations.map(c => `<li${c.id === cid ? ' class="on"' : ""}><button class="as-c" type="button" data-asopen="${esc(c.id)}"${c.id === cid ? ' aria-current="true"' : ""}><span>${esc(c.title)}</span><small>${esc(day(c.updated_at))}</small></button>`
-      + `<button class="as-del" type="button" data-asdel="${esc(c.id)}" aria-label="Delete chat: ${esc(c.title)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg></button></li>`).join("")
+    list.innerHTML = info.conversations.length ? ordered().map(c => `<li${c.id === cid ? ' class="on"' : ""} data-ascid="${esc(c.id)}"><button class="as-c" type="button" data-asopen="${esc(c.id)}"${c.id === cid ? ' aria-current="true"' : ""}>${c.pinned_at ? PIN : ""}<span>${esc(c.title)}</span><small>${esc(day(c.updated_at))}</small></button>`
+      + `<button class="as-more" type="button" data-asmore="${esc(c.id)}" aria-haspopup="menu" aria-expanded="false" aria-label="Options for chat: ${esc(c.title)}">${DOTS}</button></li>`).join("")
       : '<li class="as-none">No chats yet. Your first one starts the list.</li>';
+  }
+  // ---------- the three-dots menu on a chat: pin, rename, delete ----------
+  let menuEl = null;
+  const closeMenu = () => { if (!menuEl) return; const b = $(`[data-asmore="${menuEl.dataset.id}"]`); if (b) b.setAttribute("aria-expanded", "false"); menuEl.remove(); menuEl = null; };
+  function openMenu(btn) {
+    const id = btn.dataset.asmore, c = info.conversations.find(x => x.id === id); closeMenu(); if (!c) return;
+    menuEl = document.createElement("div"); menuEl.className = "as-menu"; menuEl.setAttribute("role", "menu"); menuEl.dataset.id = id;
+    menuEl.innerHTML = `<button type="button" role="menuitem" data-act="pin">${c.pinned_at ? "Unpin" : "Pin to top"}</button><button type="button" role="menuitem" data-act="rename">Rename</button><button type="button" role="menuitem" data-act="delete" class="bad">Delete</button>`;
+    document.body.appendChild(menuEl); btn.setAttribute("aria-expanded", "true");
+    const r = btn.getBoundingClientRect(), k = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--z")) || 1, mh = menuEl.offsetHeight;
+    menuEl.style.left = Math.max(8, r.left / k) + "px"; menuEl.style.top = (r.bottom + 6 + mh * k > innerHeight ? (r.top / k - mh - 6) : (r.bottom / k + 6)) + "px";
+    menuEl.querySelector("button").focus({preventScroll: true});
+    menuEl.addEventListener("click", e => { const a = e.target.closest("[data-act]"); if (!a) return; closeMenu(); ({pin: () => patch(id, {pinned: !c.pinned_at}), rename: () => rename(id), delete: () => removeChat(id)})[a.dataset.act](); });
+    menuEl.addEventListener("keydown", e => { const it = [...menuEl.querySelectorAll("button")], i = it.indexOf(document.activeElement);
+      if (e.key === "Escape") { closeMenu(); btn.focus(); } else if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); it[(i + (e.key === "ArrowDown" ? 1 : -1) + it.length) % it.length].focus(); } });
+  }
+  document.addEventListener("click", e => { if (menuEl && !e.target.closest(".as-menu,[data-asmore]")) closeMenu(); });
+  addEventListener("resize", closeMenu); list.addEventListener("scroll", closeMenu, {passive: true});
+  async function patch(id, body) {
+    const r = await api("?id=" + encodeURIComponent(id), {method: "PATCH", body: JSON.stringify(body)}).catch(() => null), d = r && r.ok ? await r.json().catch(() => null) : null;
+    if (!d || !d.conversation) { sr.textContent = "That didn't save. Try again."; if (window.LVToast) LVToast("That didn't save. Try again."); return false; }
+    Object.assign(info.conversations.find(x => x.id === id) || {}, d.conversation); renderList(); sr.textContent = "Saved."; return true;
+  }
+  function rename(id) {
+    const li = $(`li[data-ascid="${id}"]`), c = info.conversations.find(x => x.id === id); if (!li || !c) return;
+    li.classList.add("edit"); li.innerHTML = `<input class="as-ren" maxlength="80" aria-label="Chat name" value="${esc(c.title)}">`;
+    const inp = $("input", li); inp.focus(); inp.select(); let done = false;
+    const finish = async save => { if (done) return; done = true; const v = inp.value.trim().replace(/\s+/g, " ");
+      if (save && v && v !== c.title) { c.title = v; renderList(); if (!(await patch(id, {title: v}))) renderList(); } else renderList(); };
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); finish(true); } else if (e.key === "Escape") { e.preventDefault(); finish(false); } });
+    inp.addEventListener("blur", () => finish(true));
+  }
+  async function removeChat(id) {
+    if (!confirm("Delete this chat? This can't be undone.")) return;
+    const r = await api("?id=" + encodeURIComponent(id), {method: "DELETE"}).catch(() => null);
+    if (!r || !r.ok) { sr.textContent = "That chat wasn't deleted. Try again."; return; }
+    info.conversations = info.conversations.filter(c => c.id !== id); if (cid === id) newChat(); else renderList(); sr.textContent = "Chat deleted.";
   }
   const drawer = open => { if (!matchMedia("(max-width:900px)").matches) return; root.classList.toggle("drawer", open); drawerBtn.setAttribute("aria-expanded", open); if (open) { const f = $("button", side); f && f.focus(); } };
   function newChat() { cid = null; log.innerHTML = ""; log.appendChild(empty); empty.hidden = false; renderList(); drawer(false); input.focus(); }
@@ -233,12 +274,7 @@
     if (e.target.closest("[data-asnew]")) return newChat();
     const op = e.target.closest("[data-asopen]"); if (op) return openChat(op.dataset.asopen);
     if (e.target.closest("[data-asdrawer]")) return drawer(!root.classList.contains("drawer"));
-    const del = e.target.closest("[data-asdel]");
-    if (del && confirm("Delete this chat? This can't be undone.")) {
-      const id = del.dataset.asdel, r = await api("?id=" + encodeURIComponent(id), {method: "DELETE"}).catch(() => null);
-      if (!r || !r.ok) { sr.textContent = "That chat wasn't deleted. Try again."; return; }
-      info.conversations = info.conversations.filter(c => c.id !== id); if (cid === id) newChat(); else renderList(); sr.textContent = "Chat deleted.";
-    }
+    const more = e.target.closest("[data-asmore]"); if (more) { e.stopPropagation(); return menuEl && menuEl.dataset.id === more.dataset.asmore ? closeMenu() : openMenu(more); }
   });
   addEventListener("keydown", e => { if (e.key === "Escape" && root.classList.contains("drawer")) { drawer(false); drawerBtn.focus(); } });
 
