@@ -270,7 +270,13 @@
     const rest = S.rooms.filter(r => !seen.has(r.id));
     return `<nav class="cm-chans" aria-label="Channels">${out}${rest.length ? `<div class="cm-cg">${rest.map(li).join("")}</div>` : ""}</nav>`; };
   // unread dots: which channels have something newer than my last visit (asked on open, on switching channel, and when the tab comes back)
-  const loadUnread = async () => { if (!S.sb || !S.signed) return; try { S.unread = new Set((await q(S.sb.rpc("chat_unread_rooms"))).map(Number)); } catch { return; }
+  const dotNav = () => { const nav = $(".cm-chans"); if (nav && cur.room && cur.view === "chat") nav.outerHTML = chanList(cur.room); };
+  // live: a message landing in a channel you are not looking at lights its dot straight away
+  const watchAll = () => { if (S.chAll || !S.sb || !S.sb.channel) return;
+    S.chAll = S.sb.channel("lv-unread").on("postgres_changes", {event: "INSERT", schema: "public", table: "chat_messages"}, p => { const m = p.new;
+      if (!m || (S.me && m.user_id === S.me.id) || (cur.view === "chat" && cur.room && cur.room.id === m.room_id && !document.hidden)) return;
+      (S.unread || (S.unread = new Set())).add(Number(m.room_id)); dotNav(); }).subscribe(); };
+  const loadUnread = async () => { watchAll(); if (!S.sb || !S.signed) return; try { S.unread = new Set((await q(S.sb.rpc("chat_unread_rooms"))).map(Number)); } catch { return; }
     const nav = $(".cm-chans"); if (nav && cur.room && cur.view === "chat") { S.unread.delete(cur.room.id); nav.outerHTML = chanList(cur.room); } };
   // "Seen by": who has opened this channel since its latest message. Always the last line of the log.
   const paintSeen = async () => { const room = cur.room, tok = cur.tok, logEl = $("#cmLog"); if (!room || cur.view !== "chat" || !logEl || !S.sb) return;
