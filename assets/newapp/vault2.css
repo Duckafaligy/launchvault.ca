@@ -1207,3 +1207,10 @@ body.nv:has(>canvas.bg){background:none}     /* the page colour is on <html>; a 
 @keyframes dotMsg{from{opacity:0;transform:translateY(6px)}}
 @keyframes dotWait{0%{clip-path:inset(0 66% 0 0)}50%{clip-path:inset(0 33% 0 0)}100%{clip-path:inset(0 0 0 0)}}
 @media (prefers-reduced-motion:reduce){.lvdot-m,.lvdot-list,.lvdot-m.wait::after{animation:none!important}}
+
+/* chat: the time sits right beside the name (both sides); moderators can clear a deleted message from their own view */
+.nv .cm-mh time,.nv .cm-m.mine .cm-mh time{margin-left:0;margin-right:0}
+.nv .cm-m.mine .cm-mh{justify-content:flex-start}
+.nv .cm-dis{min-height:0;height:20px;padding:0 8px;border:0;border-radius:999px;background:rgba(255,255,255,.1);font:500 11px/20px var(--fd);color:#fff;cursor:pointer;transition:background-color .15s}
+.nv .cm-dis:hover{background:rgba(255,255,255,.22)}
+.nv .cm-m.cm-hid:has(.cm-dis:hover){opacity:1}
