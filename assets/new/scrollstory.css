@@ -1,0 +1,84 @@
+/* LaunchVault homepage: the two pinned "scroll to explore" sections ([data-scrollstory]): the big number and How it works.
+   Pinned mode keys on html.js (set by the inline head script) + motion allowed, so the pin space exists before first paint
+   (no layout shift on #hash loads). scrollstory.js only sets progress; if it fails, both sections still show in their finished state.
+   No JS or reduced motion: both sections are static and complete. */
+
+/* ---------- How it works, static (no JS, reduced motion): four phones side by side, 2 x 2 on phones ---------- */
+.hw-grid{--z:.6;--gp:48px;--pw:calc(401px*var(--z));position:relative;display:flex;justify-content:center;align-items:flex-start;gap:var(--gp);margin-top:52px;padding-inline:var(--mg)}
+.hw-grid .ip{--z:inherit}
+.hw-i{display:flex;flex-direction:column;align-items:center;gap:18px;flex:none;width:var(--pw);margin:0}
+.hw-i figcaption{display:flex;flex-direction:column;align-items:center;gap:4px;width:calc(var(--pw) + 20px);text-align:center}
+.hw-post,.hw-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.hw-post:not([src]){visibility:hidden}
+.hw-vid{opacity:0;transition:opacity .3s}
+.hw-vid.is-on{opacity:1}
+.hw-prog{display:none}
+.pin-screens{left:calc(50% + 1.5*var(--gp) + var(--pw) + 21px);top:5px}
+@media (max-width:1099px){.hw-grid{--z:.41;--gp:8px;justify-content:space-between;margin-top:44px}.hw-i figcaption{width:calc(var(--pw) + 14px)}.pin-screens{left:auto;right:var(--mg);top:-36px}}
+@media (max-width:599px){
+  .hw-grid{--z:.4;display:grid;grid-template-columns:repeat(2,var(--pw));justify-content:center;gap:28px 24px;margin-top:28px}
+  .hw-i figcaption{width:100%}
+  .hw-i .h5{font-size:15px;line-height:21px}
+  .hw-i .small{font-size:12px;line-height:18px}
+  .pin-screens{right:var(--mg);top:-8px}
+}
+.hw-bars{display:flex;gap:6px}
+.hw-bars i{width:7px;height:7px;border-radius:4px;background:rgba(255,255,255,.25);transition:width .35s var(--out),background-color .35s}
+.hw-bars i.is-seen{background:rgba(255,255,255,.6)}
+.hw-bars i.is-cur{width:20px;background:#fff}
+
+/* ---------- pinned mode (pin lengths live here; scrollstory.js reads the spacer height) ---------- */
+@media (prefers-reduced-motion:no-preference){
+.js [data-scrollstory] .ss-stick{position:sticky;top:var(--ss-top,var(--nav-h));min-height:calc(100vh - var(--nav-h));display:flex;flex-direction:column;justify-content:center}
+.js .bignum .ss-spacer{height:160vh}
+.js .how .ss-spacer{height:190vh}
+
+/* the big number: the count, the sentence, the card and the line are all set from the scroll (scrollstory.js writes the styles) */
+.js .bignum .cp-host{will-change:transform,opacity}
+.js .bignum .bigch .ch-svg{clip-path:inset(-14px calc(-18px + (1 - var(--ss-draw,1))*(100% + 18px)) -14px -4px)!important;transition:none!important}
+.js .bignum.ss-drawing .bigch .ch-dot{opacity:0!important;transform:scale(0)!important}
+.js .bignum:not(.ss-drawing) .bigch .ch-dot{opacity:1!important;transform:none!important;transition:opacity .3s,transform .5s var(--spring)!important}
+.js .bignum.ss-drawing .bigch :is(.ch-x,.ch-xd,.ch-tip){opacity:0!important}
+
+/* How it works: steps on the left, one phone on the right whose screen swaps; .hw-i becomes display:contents so its phone and caption sit in separate columns */
+.js .how .ss-stick{gap:44px}
+.js .how .hw-grid{--z:.62;display:grid;grid-template-columns:minmax(0,400px) var(--pw);grid-template-rows:repeat(4,auto) auto;row-gap:0;column-gap:clamp(56px,8vw,120px);align-content:center;justify-content:center;margin:0}
+.js .how .hw-i{display:contents}
+.js .how .ip{grid-column:2;grid-row:1/-1;align-self:center;transition:opacity .5s var(--out),transform .7s var(--out),visibility 0s}
+.js .how .hw-i:not(.is-cur) .ip{opacity:0;visibility:hidden;transform:translateY(18px) scale(.97);transition:opacity .4s var(--out),transform .7s var(--out),visibility 0s .4s}
+.js .how figcaption{position:relative;grid-column:1;width:auto;align-items:flex-start;text-align:left;padding:16px 0 16px 26px}
+.js .how .hw-i:nth-child(1) figcaption{grid-row:1}.js .how .hw-i:nth-child(2) figcaption{grid-row:2}
+.js .how .hw-i:nth-child(3) figcaption{grid-row:3}.js .how .hw-i:nth-child(4) figcaption{grid-row:4}
+.js .how figcaption::before,.js .how figcaption::after{content:"";position:absolute;left:0;top:10px;bottom:10px;width:2px;border-radius:1px;background:var(--line)}
+.js .how figcaption::after{background:var(--brand);transform-origin:50% 0;transform:scaleY(var(--fill,0))}
+.js .how figcaption .h5{color:var(--faint);transition:color .35s}
+.js .how figcaption .small{color:var(--faint);transition:color .35s}
+.js .how .is-seen figcaption .h5{color:var(--muted)}
+.js .how .is-cur figcaption .h5{color:#fff}
+.js .how .is-cur figcaption .small{color:var(--text)}
+.js .how .hw-prog{grid-column:1;grid-row:5;display:flex;align-items:center;gap:14px;margin-top:22px;padding-left:26px;color:var(--muted)}
+.js .how .pin-screens{position:relative;left:auto;right:auto;top:auto;grid-column:2;grid-row:1;align-self:start;justify-self:start;margin:18px 0 0 calc(var(--pw) - 14px)}
+
+@media (max-width:1099px){
+  .js .bignum .ss-spacer{height:120vh}
+  .js .how .ss-spacer{height:150vh}
+  .js .how .hw-grid{--z:.5;grid-template-columns:minmax(0,320px) var(--pw);column-gap:48px}
+  .js .how .pin-screens{justify-self:end;margin:-22px -20px 0 0}
+}
+@media (min-width:1100px) and (max-height:820px){.js .how .hw-grid{--z:.54}}
+@media (max-width:599px){
+  .js .bignum .ss-spacer{height:80vh}
+  .js .how .ss-spacer{height:100vh}
+  .js .how .ss-stick{gap:18px}
+  .js .how .hw-grid{--z:.44;grid-template-columns:minmax(0,1fr);grid-template-rows:auto repeat(4,auto) auto;padding-inline:var(--mg)}
+  .js .how .ip{grid-column:1;grid-row:1;justify-self:center;margin-bottom:14px}
+  .js .how .hw-i:nth-child(1) figcaption{grid-row:2}.js .how .hw-i:nth-child(2) figcaption{grid-row:3}
+  .js .how .hw-i:nth-child(3) figcaption{grid-row:4}.js .how .hw-i:nth-child(4) figcaption{grid-row:5}
+  .js .how figcaption{gap:0;padding:6px 0 6px 18px}
+  .js .how figcaption .small{max-height:0;overflow:hidden;transition:max-height .4s var(--out),color .35s}
+  .js .how .is-cur figcaption .small{max-height:60px}
+  .js .how figcaption::before,.js .how figcaption::after{top:6px;bottom:6px}
+  .js .how .hw-prog{grid-row:6;margin-top:10px;padding-left:18px}
+  .js .how .pin-screens{grid-column:1;grid-row:1;justify-self:end;margin:22px 0 0}
+}
+}

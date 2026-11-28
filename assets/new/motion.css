@@ -11,28 +11,22 @@
 ::view-transition-group(lv-nav),::view-transition-group(lv-logo){animation-duration:.45s;animation-timing-function:var(--out)}
 ::view-transition-old(lv-bg),::view-transition-new(lv-bg){animation-duration:.45s}
 
-/* ---------- intro: once per session, logo mark draws (350ms), then the page rises in ---------- */
-.intro{display:none}
-.intro-on .intro{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:var(--bg);pointer-events:none;animation:lv-intro-out .3s .35s ease-out both}
-.intro svg{width:44px;height:44px}
-.intro-on .intro path{stroke-dasharray:1;stroke-dashoffset:1;animation:lv-draw .35s var(--out) forwards}
-.intro-on .intro path:nth-child(2){animation-delay:.08s}.intro-on .intro path:nth-child(3){animation-delay:.16s}
-.intro-on main{animation:lv-rise .7s .3s var(--out) both}
-@keyframes lv-intro-out{to{opacity:0;visibility:hidden}}
-@keyframes lv-draw{to{stroke-dashoffset:0}}
-@keyframes lv-rise{from{opacity:0;transform:translateY(24px)}}
+/* ---------- anchor links glide; motion.js sets .lv-ready after load, so a page opened at #faq lands there at once instead of gliding ---------- */
+@media (prefers-reduced-motion:no-preference){html.lv-ready{scroll-behavior:smooth}}
 
 /* ---------- background band ---------- */
 .bg{position:fixed;inset:0;z-index:-1;width:100%;height:100%;pointer-events:none;view-transition-name:lv-bg}
 
-/* ---------- scroll reveals (play once) ---------- */
-.js [data-reveal]:not([data-reveal=words]){opacity:0;transform:translateY(24px)}
-.js [data-reveal].in{opacity:1;transform:none;transition:opacity .7s var(--out) var(--d,0s),transform .9s var(--out) var(--d,0s)}
-.js [data-reveal=words] .w{display:inline-block;opacity:.18;transform:translateY(.18em);transition:opacity .5s var(--out),transform .6s var(--out);transition-delay:calc(var(--i)*55ms)}
-.js [data-reveal=words].in .w{opacity:1;transform:none}
-.js [data-stagger]>*{opacity:0;transform:translateY(20px)}
-.js [data-stagger].in>*{opacity:1;transform:none;transition:opacity .6s var(--out),transform .8s var(--out);transition-delay:calc(var(--i,0)*80ms)}
-.js [data-stagger].done>*{transition-delay:0s}
+/* ---------- scroll reveals (play once) ----------
+   Visible by default. motion.js adds .lv-p (pending) only to elements still below the fold at load, then .in when they come near;
+   .lv-p stays on, so the hidden state is ".lv-p:not(.in)". Without JS, or above the fold, nothing is ever hidden. */
+.lv-p[data-reveal]:not([data-reveal=words]):not(.in){opacity:0;transform:translateY(24px)}
+.lv-p[data-reveal].in{transition:opacity .7s var(--out) var(--d,0s),transform .9s var(--out) var(--d,0s)}
+.lv-p[data-reveal=words] .w{display:inline-block;transition:opacity .5s var(--out),transform .6s var(--out);transition-delay:calc(var(--i)*55ms)}
+.lv-p[data-reveal=words]:not(.in) .w{opacity:.18;transform:translateY(.18em)}
+.lv-p[data-stagger]:not(.in)>*{opacity:0;transform:translateY(20px)}
+.lv-p[data-stagger].in>*{transition:opacity .6s var(--out),transform .8s var(--out);transition-delay:calc(var(--i,0)*80ms)}
+.lv-p[data-stagger].done>*{transition-delay:0s}
 [data-count]{font-variant-numeric:tabular-nums}
 .js [data-draw] :is(path,polyline,line,circle).lv-d{transition:stroke-dashoffset 1.1s var(--out)}
 
@@ -108,7 +102,7 @@ a.card:focus-visible{border-radius:var(--r)}
 .pin::after{content:"Opens in a new tab";position:absolute;left:50%;top:calc(100% + 8px);padding:5px 9px;border-radius:7px;background:#fff;font:600 11px/1 var(--fd);color:var(--night);
   opacity:0;transform:translate(-50%,-4px);transition:opacity .2s,transform .3s var(--out);pointer-events:none}
 .pin:hover::after,.pin:focus-visible::after{opacity:1;transform:translate(-50%,0)}
-.js .pin:not(.in){opacity:0}
+.pin.lv-p:not(.in){opacity:0}
 .pin.pop{animation:lv-pin-pop .22s var(--spring) both}
 .pin img{transition:width .32s var(--spring),margin .32s var(--out),transform .42s var(--spring),opacity .2s}
 .pin.typing{padding:0 13px 0 15px}
@@ -129,11 +123,6 @@ a.card:focus-visible{border-radius:var(--r)}
 .lv-sel.on i{transform:none}
 .lv-sel i:nth-child(1){left:-4px;top:-4px}.lv-sel i:nth-child(2){right:-4px;top:-4px}.lv-sel i:nth-child(3){left:-4px;bottom:-4px}.lv-sel i:nth-child(4){right:-4px;bottom:-4px}
 .lv-sel b{position:absolute;left:-1.5px;bottom:calc(100% + 5px);padding:2px 6px;border-radius:4px;background:var(--c);font:600 11px/14px var(--fd);color:#fff;white-space:nowrap}
-.lv-untyped{opacity:0!important}
-.lv-undrawn{opacity:0!important}
-.lv-sel.draw{transition:opacity .25s,width .52s cubic-bezier(.45,0,.2,1),height .52s cubic-bezier(.45,0,.2,1)}
-.lv-sel.draw b{font-variant-numeric:tabular-nums}
-.lv-arial,.lv-arial *{font-family:Arial,Helvetica,sans-serif!important;font-style:normal!important}
 .lv-grey{filter:grayscale(1) brightness(.82)}
 .lv-tcaret{position:relative;display:inline-block;width:0;height:.9em;vertical-align:-.1em;font-style:normal}
 .lv-tcaret::after{content:"";position:absolute;left:1px;top:0;width:max(2px,.05em);height:100%;background:currentColor;animation:lv-caret .7s steps(1) infinite}
@@ -172,8 +161,7 @@ a.card:focus-visible{border-radius:var(--r)}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.01ms!important;transition-delay:0s!important}
-  .js [data-reveal],.js [data-stagger]>*,.js [data-reveal=words] .w{opacity:1!important;transform:none!important}
-  .js .pin:not(.in){opacity:1}
+  .lv-p[data-reveal],.lv-p[data-stagger]>*,.lv-p[data-reveal=words] .w,.pin.lv-p{opacity:1!important;transform:none!important}
   .btn{transform:none!important}
   .card-hover:hover,.card-hover:active,.pin:hover,.pin:focus-visible{transform:none}
   .skel{animation:none;background:rgba(255,255,255,.08)}

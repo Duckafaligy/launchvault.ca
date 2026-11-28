@@ -92,8 +92,7 @@ def footer_html():
             f'<div class="foot-end"><span>© 2026 LaunchVault</span><a href="{BASE}#credits">Design credits {EXT}</a></div></div></footer>')
 
 
-HEAD_JS = ("(function(d){var h=d.documentElement;h.classList.add('js');try{if(!sessionStorage.getItem('lvIntro')&&!matchMedia('(prefers-reduced-motion:reduce)').matches)"
-           "{sessionStorage.setItem('lvIntro','1');h.classList.add('intro-on')}}catch(e){}})(document)")
+HEAD_JS = "document.documentElement.classList.add('js')"   # no splash intro: the first paint is the page itself
 FONTS = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,600&display=swap"
 
 
@@ -138,7 +137,6 @@ def render(body, title, description, path="", active=None, css=(), js=(), end_ct
 {links}{scripts}{head}</head>
 <body{battr}>
 <a class="skip" href="#main">Skip to content</a>
-<div class="intro" aria-hidden="true">{LOGO}</div>
 {nav_html(active) if chrome else ""}
 <main id="main">
 {body}

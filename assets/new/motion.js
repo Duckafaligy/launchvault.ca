@@ -1,6 +1,13 @@
 /* LaunchVault /new/ — the one shared motion system. No dependencies. Load with <script defer>.
    Everything here is driven by markup (classes / data attributes); see src/new/README.md.
-   Public API: LV.init(root) re-scans injected markup, LV.toast(msg, {type, ms}), LV.reduced. */
+   Public API: LV.init(root) re-scans injected markup, LV.toast(msg, {type, ms}), LV.reduced.
+
+   Scroll contract (for scrollstory.js and anything else that reads the scroll):
+   - The document itself scrolls. Desktop wheel smoothing (smooth() below) moves the real window with scrollTo every frame, so
+     window.scrollY is always the true position, native 'scroll' events fire on every frame, and position:sticky pins work as usual.
+     Read window.scrollY / getBoundingClientRect() in a 'scroll' listener or rAF; there is no virtual scroll and no lv:scroll event.
+   - Touch, trackpads, keyboard, anchors, find-in-page and the scrollbar all scroll natively; reduced motion turns smoothing off.
+   - Reveals never touch anything inside [data-scrollstory]. */
 (function () {
   'use strict';
   var d = document, html = d.documentElement, w = window;
@@ -13,17 +20,28 @@
   var EASE = 'cubic-bezier(.22,1,.36,1)';
   var ARROW_NE = '<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5l5-5M3.5 2.5h4v4"/></svg>';
 
-  /* ---------- scroll reveals: [data-reveal] [data-reveal=words] [data-stagger] [data-count] [data-draw] .pin ---------- */
+  /* ---------- scroll reveals: [data-reveal] [data-reveal=words] [data-stagger] [data-count] [data-draw] [data-inview] .pin ----------
+     Content is visible by default. At start only elements still below the fold get .lv-p (pending: the hidden state in motion.css).
+     They get .in when they come within 10% of the screen (IntersectionObserver) or, as a fallback, on the first scroll frame that puts
+     their top above the bottom of the screen (fast scrolls, anchor jumps, a late observer). Once in, never hidden or replayed. */
+  var pend = [], sweepRaf = 0;
   var io = 'IntersectionObserver' in w ? new IntersectionObserver(function (es) {
-    es.forEach(function (e) { if (e.isIntersecting) { io.unobserve(e.target); enter(e.target); } });
-  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }) : null;
+    es.forEach(function (e) { if (e.isIntersecting) enter(e.target); });
+  }, { rootMargin: '0px 0px 10% 0px' }) : null;
+  function sweep() {
+    sweepRaf = 0;
+    var vh = w.innerHeight;
+    pend.slice().forEach(function (el) { if (el.getBoundingClientRect().top < vh) enter(el); });
+  }
+  function kickSweep() { if (pend.length && !sweepRaf) sweepRaf = requestAnimationFrame(sweep); }
 
   function enter(el) {
+    if (io) io.unobserve(el);
+    var k = pend.indexOf(el); if (k >= 0) pend.splice(k, 1);
     if (el._lvParked) { el._lvParked = 0; return queue(el); }
     if (el._lvCount) runCount(el);
     if (el._lvDraw) el._lvDraw.forEach(function (p) { p.style.strokeDashoffset = 0; });
     if (el.classList.contains('pin')) return runPin(el);
-    if (el._lvT === el) queue(el);                         /* a heading that gets typed */
     el.classList.add('in');
     if (el.hasAttribute('data-stagger')) setTimeout(function () { el.classList.add('done'); }, 80 * el.children.length + 900);
   }
@@ -90,10 +108,9 @@
       post: b.nextSibling && b.nextSibling.nodeType === 3 ? b.nextSibling.data : '' };   /* optional words after the domain ("… rules") */
     b.insertAdjacentHTML('beforeend', ARROW_NE);
     var T = pinTarget(el), act = el.dataset.act || 'move';
-    if (!T || act === 'none' || reduced || calm || !io || !el.offsetParent) return;          /* a pin hidden at this width never plays, so its layer is left alone */
+    if (!T || act === 'none' || reduced || calm || !io || !el.offsetParent || el.closest('[data-scrollstory]')) return;   /* a pin hidden at this width never plays, so its layer is left alone */
     el._lvT = T; el._lvAct = act;
-    if (act === 'type') T.classList.add('lv-untyped', 'lv-arial');
-    else if (act === 'color') T.classList.add('lv-grey');
+    if (act === 'color') T.classList.add('lv-grey');
     else if (el.dataset.nudge !== '0') {
       var r = T.getBoundingClientRect();
       el._lvOff = [r.left + r.width / 2 > w.innerWidth / 2 ? -10 : 10, 9];
@@ -103,7 +120,6 @@
 
   /* The page is built in front of you, like a design file being worked on. A coloured cursor does one job per item, then (for a comment
      pin) clicks beside it: the bubble pops out of the click, the words type, the logo pops in last. The jobs:
-       type   the heading is typed in Arial, then switched to the real font       (data-act="type" on a pin, or data-build="type" on a heading)
        color  the layer starts grey; the cursor picks its colour
        move   the layer is selected (outline, handles, name tag) and dragged the last few pixels into place
        none   just the comment
@@ -113,7 +129,7 @@
   function pinTarget(el) { var q = el.dataset.for; try { return q ? d.querySelector(q) : null; } catch (e) { return null; } }
   function ready(el) {                                     /* put the layer in its finished state, no show */
     var T = el._lvT;
-    if (T) { T.style.translate = ''; T.classList.remove('lv-untyped', 'lv-arial', 'lv-grey', 'lv-undrawn'); }
+    if (T) { T.style.translate = ''; T.classList.remove('lv-grey'); }
   }
   var pinLive = 0, PIN_MAX = 3;                            /* how many cursors may work at once */
   function queue(el) { el._lvQ = performance.now(); pinQ.push(el); pinNext(); }
@@ -134,9 +150,8 @@
     }
   }
   function pinStart(el) {
-    var last = '', same = 0, tries = 0, v = el.getBoundingClientRect(), hidden = /type|write|draw/.test(el._lvAct || '');
-    var stale = hidden && performance.now() - el._lvQ > 3200;                   /* nothing waits blank for long */
-    if (!el.offsetParent || stale) {                       /* waited too long, or hidden at this width: it is just there */
+    var last = '', same = 0, tries = 0;
+    if (!el.offsetParent) {                                /* hidden at this width: it is just there */
       ready(el);
       if (el._lvPin) el.classList.add('in', 'lit');
       return;
@@ -156,6 +171,7 @@
     var v = el.getBoundingClientRect();
     if (v.bottom > -40 && v.top < w.innerHeight + 40) return false;
     if (el._lvPin && el._lvT) { ready(el); el._lvT._lvBusy = false; el._lvT = null; }   /* its layer is not left grey or out of place meanwhile: later it just comments */
+    if (v.bottom <= -40) { el.classList.add('in', 'lit'); return true; }   /* already scrolled past: it is simply there, nothing left blank behind the reader */
     el._lvParked = 1; io.observe(el);
     return true;
   }
@@ -259,54 +275,6 @@
       }, 320);
     }
     var ACTS = {
-      type: function () {
-        T.classList.remove('lv-arial'); var h = T.offsetHeight, font = getComputedStyle(T).fontFamily.split(',')[0].replace(/["']/g, '').trim();
-        T.classList.add('lv-arial'); T.style.height = h + 'px';             /* keeps its final height, so nothing below moves */
-        click(); T.classList.remove('lv-untyped');
-        typeText(T, 0, function () {
-          /* the text toolbar, the way a design tool shows it: font, weight, size, fill. The font menu drops open and the cursor picks the real one */
-          var hr = T.getBoundingClientRect(), cs = getComputedStyle(T), bx = hr.left, by = (hr.top > 130 ? hr.top - 46 : hr.bottom + 10) + w.scrollY;
-          var bar = d.createElement('div'); bar.className = 'lv-bar';
-          bar.innerHTML = '<span class="lv-bar-f"><b>Arial</b><svg viewBox="0 0 8 8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 3l2.5 2.5L6.5 3"/></svg></span>' +
-            '<span>' + (parseInt(cs.fontWeight, 10) >= 600 ? 'Bold' : 'Regular') + '</span><span>' + Math.round(parseFloat(cs.fontSize)) + '</span><span><u></u></span>' +
-            '<div class="lv-menu"><i class="on hv">Arial</i><i>Georgia</i><i>' + font + '</i></div>';
-          bar.style.transform = 'translate(' + bx.toFixed(0) + 'px,' + by.toFixed(0) + 'px)';
-          layer.appendChild(bar); bar.getBoundingClientRect(); bar.classList.add('on');
-          var items = bar.lastChild.children, hv = function (n) { for (var k = 0; k < 3; k++) items[k].classList.toggle('hv', k === n); };
-          at(cur, bx + 54, by + 18, 320);
-          setTimeout(function () { click(); bar.classList.add('menu'); bar.firstChild.classList.add('open'); }, 380);
-          setTimeout(function () { at(cur, bx + 64, by + 42 + 2 * 28 + 14, 380, 'cubic-bezier(.45,0,.2,1)'); }, 640);
-          setTimeout(function () { hv(1); }, 800);
-          setTimeout(function () { hv(2); }, 960);
-          setTimeout(function () {
-            click(); T.classList.remove('lv-arial');
-            items[0].classList.remove('on'); items[2].classList.add('on');
-            bar.classList.remove('menu'); bar.firstChild.classList.remove('open'); bar.firstChild.firstChild.textContent = font;
-          }, 1180);
-          setTimeout(function () { bar.classList.remove('on'); setTimeout(function () { bar.remove(); }, 300); T.style.height = ''; comment(); }, 1900);
-        });
-      },
-      write: function () {                                  /* a paragraph: typed quickly, in its own font */
-        click(); T.classList.remove('lv-untyped');
-        typeText(T, Math.max(7, Math.min(34, 1300 / T.textContent.length)), comment);
-      },
-      draw: function () {                                   /* drag the layer's box out corner to corner; then the layer is there */
-        var r = T.getBoundingClientRect(), x = r.left, y = r.top + w.scrollY;
-        cur.classList.add('down');
-        box = d.createElement('div'); box.className = 'lv-sel draw'; box.style.setProperty('--c', col);
-        box.innerHTML = '<i></i><i></i><i></i><i></i><b>' + Math.round(r.width) + ' × ' + Math.round(r.height) + '</b>';
-        box.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)'; box.style.width = box.style.height = '0px';
-        layer.appendChild(box); box.getBoundingClientRect(); box.classList.add('on');
-        box.style.width = r.width.toFixed(1) + 'px'; box.style.height = r.height.toFixed(1) + 'px';
-        at(cur, x + r.width, y + r.height, 520, 'cubic-bezier(.45,0,.2,1)');
-        first = [x + r.width, y + r.height];
-        setTimeout(function () {
-          cur.classList.remove('down');
-          T.style.transition = 'opacity .5s ' + EASE; T.classList.remove('lv-undrawn');
-          setTimeout(function () { T.style.transition = ''; }, 550);
-        }, 560);
-        setTimeout(comment, 980);
-      },
       color: function () {
         click();
         showChip('<u style="--k:#8A8A93" class="sel"></u><u style="--k:#FF4D1F"></u><u style="--k:#00C27A"></u><u style="--k:#2F6BFF"></u>');
@@ -433,25 +401,21 @@
     $$('[data-tabs]', root).forEach(prepTabs);
     $$('details[data-acc]', root).forEach(prepAcc);
     $$('.pin', root).forEach(function (el) { if (!el._lvPin) prepPin(el); });
-    if (!reduced && !calm && io) $$('[data-build]', root).forEach(function (el) {
-      if (el._lvT) return;
-      var act = el.dataset.build;
-      el._lvT = el; el._lvAct = act;
-      if (act === 'type') el.classList.add('lv-untyped', 'lv-arial');
-      else if (act === 'write') el.classList.add('lv-untyped');
-      else if (act === 'draw') el.classList.add('lv-undrawn');
-      else if (act === 'color') el.classList.add('lv-grey');
-    });
-    var els = $$('[data-reveal],[data-stagger],[data-count],[data-draw],[data-build],.pin', root).filter(function (el) { return !el._lvSeen; });
-    els.forEach(function (el) {
+    var vh = w.innerHeight;
+    $$('[data-reveal],[data-stagger],[data-count],[data-draw],[data-inview],.pin', root).forEach(function (el) {
+      if (el._lvSeen || el.closest('[data-scrollstory]')) return;          /* scroll-story sections run their own motion */
       el._lvSeen = 1;
       if (el.hasAttribute('data-stagger')) Array.prototype.forEach.call(el.children, function (c, i) { c.style.setProperty('--i', i); });
-      if (reduced || !io) return el.classList.add('in');
+      var later = el.classList.contains('pin') ? !!el._lvPin && !calm && !!el.offsetParent   /* desktop pins wait for their cursor */
+        : el.getBoundingClientRect().top >= vh;                             /* everything else: only what is still below the fold */
+      if (reduced || !io || !later) return el.classList.add('in');
       if (el.getAttribute('data-reveal') === 'words') splitWords(el);
       if (el.hasAttribute('data-count')) prepCount(el);
       if (el.hasAttribute('data-draw')) prepDraw(el);
-      io.observe(el);
+      el.classList.add('lv-p');
+      pend.push(el); io.observe(el);
     });
+    kickSweep();
   }
 
   /* ---------- nav: full bar -> pill on scroll -> card (hover on fine pointers, click/tap everywhere, Esc closes) ---------- */
@@ -468,7 +432,7 @@
     }
     function set(v) { clearTimeout(timer); if (v === open) return; open = v; openY = w.scrollY; sync(); }
     function onScroll() {
-      scrolled = w.scrollY > 40;
+      scrolled = scrolled || w.scrollY > 40;                /* once the pill has appeared it stays for the visit; it never turns back into the bar */
       if (open && Math.abs(w.scrollY - openY) > 80) open = false;
       sync();
     }
@@ -484,7 +448,10 @@
     card.addEventListener('click', function (e) { if (e.target.closest('a')) set(false); });
     w.addEventListener('scroll', onScroll, { passive: true });
     narrow.addEventListener('change', sync);
-    onScroll();
+    var still = [shell, shell.firstChild];                  /* the first shape is set without a morph (a load mid-page must not shift) */
+    still.forEach(function (n) { n.style.transition = 'none'; });
+    onScroll(); shell.offsetWidth;
+    requestAnimationFrame(function () { still.forEach(function (n) { n.style.transition = ''; }); });
   }
 
   /* ---------- custom cursor + magnetic buttons (fine pointers, motion allowed) ---------- */
@@ -673,12 +640,56 @@
     mqReduce.addEventListener('change', function (e) { reduced = e.matches; lastY = -1; kick(); });
   }
 
+  /* ---------- wheel smoothing (desktop mouse wheels only): each notch eases the real window scroll toward a target ----------
+     About 20% further per notch than the browser default, settling in ~0.3s. Trackpads (small or sideways deltas, momentum included)
+     scroll natively, as do ctrl/shift wheels, wheels over a scrollable box, keys, anchors and find-in-page: if anything else moves
+     the page mid-glide, the glide stops and hands over. Off for touch, coarse pointers and reduced motion. */
+  function smooth() {
+    var target = 0, cur = 0, raf = 0, last = 0, mine = -1, padT = -1e9;
+    function inner(el, dy) {                                 /* a box under the pointer that can still scroll this way keeps the wheel */
+      for (; el && el.nodeType === 1 && el !== d.body; el = el.parentElement) {
+        var oy = getComputedStyle(el).overflowY;
+        if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight + 1 &&
+            (dy > 0 ? el.scrollTop + el.clientHeight < el.scrollHeight - 1 : el.scrollTop > 0)) return true;
+      }
+      return false;
+    }
+    function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; mine = -1; }
+    function tick(now) {
+      if (mine >= 0 && Math.abs(w.scrollY - mine) > 2) return stop();   /* something else scrolled the page: let it */
+      var dt = Math.min(50, now - last); last = now;
+      cur += (target - cur) * (1 - Math.exp(-dt / 85));
+      if (Math.abs(target - cur) < 0.5) cur = target;
+      w.scrollTo({ top: cur, behavior: 'instant' });
+      mine = w.scrollY;
+      raf = cur === target ? 0 : requestAnimationFrame(tick);
+      if (!raf) mine = -1;
+    }
+    w.addEventListener('wheel', function (e) {
+      if (e.defaultPrevented || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
+      var now = performance.now(), dy = e.deltaY * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? w.innerHeight : 1);
+      if (e.deltaMode === 0 && (e.deltaX !== 0 || Math.abs(dy) < 40)) padT = now;   /* trackpad-like stream */
+      if (now - padT < 400) return stop();                   /* and the rest of that stream, momentum included */
+      if (!dy || inner(e.target, dy)) return;
+      e.preventDefault();
+      if (!raf) { cur = target = w.scrollY; last = now; }
+      target = Math.max(0, Math.min(html.scrollHeight - w.innerHeight, target + dy * 1.2));
+      if (!raf) raf = requestAnimationFrame(tick);
+    }, { passive: false });
+    d.addEventListener('keydown', stop);
+    d.addEventListener('pointerdown', stop);                 /* scrollbar drags, middle-click autoscroll */
+  }
+
   var started = false;
   function start() {
     if (started) return; started = true;
     if (ONLY === 'bg') return background();
     nav(); init(); background();
-    if (fine && !reduced) cursor();
+    w.addEventListener('scroll', kickSweep, { passive: true });
+    w.addEventListener('resize', kickSweep);
+    var ready = function () { kickSweep(); setTimeout(function () { html.classList.add('lv-ready'); }, 300); };
+    if (d.readyState === 'complete') ready(); else w.addEventListener('load', ready);
+    if (fine && !reduced) { cursor(); smooth(); }
   }
   w.LV = { init: init, toast: toast, reduced: reduced, type: typeText };
   /* starts at DOMContentLoaded, so a page's own deferred script (listed in meta "js") runs first and can prepare its markup */

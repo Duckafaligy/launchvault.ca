@@ -21,7 +21,9 @@
     }, { threshold: once ? 0.2 : 0.05, rootMargin: margin || '0px' });
     els.forEach(function (el) { io.observe(el); });
   }
-  watch($$('.ch,.how-row'), function (el) { el.classList.add('in'); }, true, '0px 0px -6% 0px');
+  /* charts draw and the phone row slides in through motion.js's fail-safe reveal (pending only below the fold, .in once near) */
+  $$('.ch,.how-row').forEach(function (el) { el.setAttribute('data-inview', ''); });
+  var inStory = function (el) { return !!el.closest('[data-scrollstory]'); };
   if (!reduced) watch($$('[data-demo]'), function (el, on) { el.classList.toggle('play', on); });
 
   /* one rAF-throttled scroll bus for the scrub heading and the hero parallax */
@@ -67,21 +69,19 @@
     }, { passive: true });
   }
 
-  /* ---------- closer: words light up with the scroll ---------- */
+  /* ---------- closer: words light up with the scroll, and stay lit (scrolling back never dims them; jumping past lights them all) ---------- */
   var sc = $('[data-scrub]');
-  if (sc && !reduced) {
+  if (sc && !reduced && sc.getBoundingClientRect().top > w.innerHeight * 0.88) {
     sc.setAttribute('aria-label', sc.textContent.replace(/\s+/g, ' ').trim());
     $$('span,em', sc).forEach(function (line) {
       line.innerHTML = line.textContent.trim().split(/\s+/).map(function (t) { return '<span class="w" aria-hidden="true">' + t + '</span>'; }).join(' ');
     });
-    var words = $$('.w', sc), lit = 0, scOn = false;
-    watch([sc], function (el, on) { scOn = on; if (on) scrub(); });
+    var words = $$('.w', sc), lit = 0;
     var scrub = function () {
-      if (!scOn) return;
+      if (lit >= words.length) return;
       var r = sc.getBoundingClientRect(), vh = w.innerHeight;
       var n = Math.round(clamp((vh * 0.88 - r.top) / (vh * 0.42), 0, 1) * words.length);
       for (; lit < n; lit++) words[lit].classList.add('on');
-      for (; lit > n; lit--) words[lit - 1].classList.remove('on');
     };
     jobs.push(scrub);
   }
@@ -181,7 +181,7 @@
     var fx = [];
     [['.how-row .how-i:nth-child(odd)', 'par', 0.035], ['.how-row .how-i:nth-child(even)', 'par', -0.025], ['.post-f', 'par', 0.035], ['.closer-t', 'par', 0.06],
      ['.h-num', 'zoom', 0.74], ['.panel.cp,.panel.wl,.panel.src,.panel.lbls,.endcta-in,.bd', 'zoom', 0.93]].forEach(function (c) {
-      $$(c[0]).forEach(function (el) { fx.push({ el: el, kind: c[1], k: c[2], on: false, dy: 0 }); });
+      $$(c[0]).forEach(function (el) { if (!inStory(el)) fx.push({ el: el, kind: c[1], k: c[2], on: false, dy: 0, p: 0 }); });
     });
     var byEl = new Map(fx.map(function (f) { return [f.el, f]; }));
     watch(fx.map(function (f) { return f.el; }), function (el, on) { byEl.get(el).on = on; if (on) onScroll(); }, false, '120px');
@@ -193,8 +193,9 @@
         if (f.kind === 'par') {
           f.dy = wide ? clamp((c - vh / 2) * f.k, -60, 60) : 0;      /* phones swipe sideways on small screens: no drift there */
           f.el.style.translate = f.dy ? '0 ' + f.dy.toFixed(1) + 'px' : '';
-        } else {
-          var p = clamp((vh + f.el.offsetHeight * 0.3 - c) / (vh * 0.7), 0, 1), e = 1 - Math.pow(1 - p, 3);
+        } else {                                                     /* grows into place once; scrolling back up never shrinks it again */
+          if (f.p >= 1) return;
+          var p = f.p = Math.max(f.p, clamp((vh + f.el.offsetHeight * 0.3 - c) / (vh * 0.7), 0, 1)), e = 1 - Math.pow(1 - p, 3);
           f.el.style.scale = e >= 1 ? '' : (f.k + (1 - f.k) * e).toFixed(4);
         }
       });
@@ -212,29 +213,16 @@
     c.style.setProperty('--sx', (e.clientX - r.left).toFixed(0) + 'px'); c.style.setProperty('--sy', (e.clientY - r.top).toFixed(0) + 'px');
   }, { passive: true });
 
-  /* ---------- the page is built in front of you (motion.js runs the jobs; this says which layer gets which) ----------
-     type = heading typed in Arial then switched to the real font, write = paragraph typed, draw = box dragged out then the layer appears */
-  if (!reduced && !calm) [
-    ['write', '.hero-lead,.learned-b,.prob-b,.num-cap,.st-b,.price-b,.blog .sec-h .body'],
-    ['draw', '.hero-cta .btn,.hero-ip,.hero-card,.panel.src,.panel.lbls,.panel.cp,.bd-c,.st-btn,.panel.wl,.plans>.pc,.posts>.post,.end-in .btn']
-  ].forEach(function (b) { $$(b[1]).forEach(function (el) { if (!el.dataset.build) el.dataset.build = b[0]; }); });
-
   /* ---------- the top bar is designed on load: its frame is drawn, the logo is placed and typed, the links are typed bunched together
      and then spaced out, Log in is typed, the button is dragged out as a box, typed, rounded and filled ---------- */
   (function () {
     var bar = $('.nav-bar'), run = bar && !reduced && !calm && w.LV && LV.type, started = false;
     if (!run) return html.classList.add('nb-done');
-    /* built the first time you are at the top: straight away on a normal load, or when you scroll up to it after loading further down */
-    function arm() {
-      if (started || w.scrollY >= 40) return;
-      started = true; w.removeEventListener('scroll', arm);
-      setTimeout(function () {
-        if (w.scrollY < 40 && !$('.nav').classList.contains('is-pill')) return build();
-        started = false; w.addEventListener('scroll', arm, { passive: true });
-      }, performance.now() < 1500 ? 380 : 700);                        /* coming back from the pill: let the bar finish widening first */
-    }
-    w.addEventListener('scroll', arm, { passive: true });
-    arm();
+    /* built once, only on a load at the very top; loaded further down (or scrolled away first), the bar is simply there and never rebuilt */
+    if (w.scrollY >= 40 || location.hash) return html.classList.add('nb-done');
+    setTimeout(function () {
+      if (w.scrollY < 40 && !$('.nav').classList.contains('is-pill')) build(); else html.classList.add('nb-done');
+    }, 380);
     function build() {
     var logo = $('.nav-logo', bar), box = $('.nav-links', bar), links = $$('a', box), login = $('.nav-login', bar), btn = $('.nav-start', bar), menu = $('.nav-menu', bar);
     var wide = !!box.offsetParent, hasBtn = !!btn.offsetParent;      /* tablet has no links, phone has no button either: those steps are skipped */
@@ -348,23 +336,27 @@
   }
 })();
 
-/* phone loops: play only while on screen; with reduced motion the poster stays and nothing plays */
+/* phone loops (video.scr-loop; the how-it-works row runs its own in scrollstory.js): nothing is fetched before the page has loaded,
+   a video plays only while within 200px of the screen and pauses off it. The hero loop (.scr-fade) sits over its poster image
+   (loading=lazy, so phones, where the hero phone is hidden, never fetch it) and fades in once it is really playing. Reduced motion: posters only. */
 (function () {
-  var vids = [].slice.call(document.querySelectorAll('video.scr-loop'));
+  var d = document, w = window, vids = [].slice.call(d.querySelectorAll('video.scr-loop'));
   if (!vids.length) return;
-  var still = window.matchMedia('(prefers-reduced-motion: reduce)'), seen = new WeakSet();
+  var still = w.matchMedia('(prefers-reduced-motion: reduce)'), seen = new WeakSet(), loaded = d.readyState === 'complete';
   function set(v) {
-    if (!still.matches && seen.has(v) && !document.hidden) { v.playbackRate = 1.35; var p = v.play(); if (p) p.catch(function () {}); }
+    if (loaded && !still.matches && seen.has(v) && !d.hidden) { v.playbackRate = 1.35; var p = v.play(); if (p) p.catch(function () {}); }
     else if (!v.paused) v.pause();
   }
-  function all() { vids.forEach(function (v) { if (still.matches) { v.removeAttribute('autoplay'); v.pause(); if (v.currentTime) v.load(); } set(v); }); }
-  if ('IntersectionObserver' in window) {
+  function all() { vids.forEach(function (v) { if (still.matches && v.currentTime) { v.pause(); v.load(); } set(v); }); }
+  vids.forEach(function (v) { if (v.classList.contains('scr-fade')) v.addEventListener('playing', function () { v.classList.add('is-on'); }); });
+  if ('IntersectionObserver' in w) {
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) seen.add(e.target); else seen.delete(e.target); set(e.target); });
     }, { rootMargin: '200px' });
     vids.forEach(function (v) { io.observe(v); });
   } else vids.forEach(function (v) { seen.add(v); });
+  if (!loaded) w.addEventListener('load', function () { loaded = true; all(); });
   all();
   if (still.addEventListener) still.addEventListener('change', all);
-  document.addEventListener('visibilitychange', all);
+  d.addEventListener('visibilitychange', all);
 })();

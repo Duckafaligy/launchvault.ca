@@ -1,4 +1,4 @@
 { "title": "LaunchVault · They started small. So can you.",
   "description": "How real businesses actually started, checked number by number, turned into steps you can do this week. Ten founder stories, every number sourced.",
   "path": "", "end_cta": false,
-  "css": ["/assets/new/home.css"], "js": ["/assets/new/home.js"] }
+  "css": ["/assets/new/home.css", "/assets/new/scrollstory.css"], "js": ["/assets/new/home.js", "/assets/new/scrollstory.js"] }

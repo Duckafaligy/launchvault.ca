@@ -523,28 +523,27 @@
 @media (prefers-reduced-motion:no-preference){
   /* charts draw left to right, then the end dot lands */
   .hjs .ch .ch-svg{clip-path:inset(-14px -18px -14px -4px);transition:clip-path 1.2s var(--out) var(--cd,0s)}
-  .hjs .ch:not(.in) .ch-svg{clip-path:inset(-14px 100% -14px -4px)}
+  .hjs .ch.lv-p:not(.in) .ch-svg{clip-path:inset(-14px 100% -14px -4px)}
   .hjs .ch .ch-dot{transition:opacity .3s calc(var(--cd,0s) + .85s),transform .5s var(--spring) calc(var(--cd,0s) + .85s)}
-  .hjs .ch:not(.in) .ch-dot{opacity:0;transform:scale(0)}
+  .hjs .ch.lv-p:not(.in) .ch-dot{opacity:0;transform:scale(0)}
 
-  /* hero builds itself: lines rise 120ms apart, "you." lands last, then the phone and its card */
-  .intro-on .hero{--hd:.5s}
-  .hjs :is(.hero-l1,.hero-so,.hero-lead,.hero-cta,.hero-proof>.small,.tiles){animation:h-rise .9s var(--out) backwards;animation-delay:calc(var(--hd,0s) + var(--d,0s))}
-  .hjs .hero-so{--d:.12s}.hjs .hero-lead{--d:.5s}.hjs .hero-cta{--d:.62s}.hjs .hero-proof>.small{--d:.74s}.hjs .tiles{--d:.82s}
-  .hjs .hero-you{animation:h-you 1s var(--out) backwards;animation-delay:calc(var(--hd,0s) + .4s);transform-origin:0 80%}
-  .hjs .hero-par{animation:h-phone 1.3s var(--out) backwards;animation-delay:calc(var(--hd,0s) + .25s)}
-  .hjs .hero-card{animation:h-card .9s var(--out) backwards;animation-delay:calc(var(--hd,0s) + .95s)}
-  .hjs .hero-ip:not([data-step]) .rd-ch{animation:rd-draw 1.2s var(--out) backwards;animation-delay:calc(var(--hd,0s) + 1.2s)}
+  /* hero entrance: starts with the first paint (html.js is set by the inline head script, before any CSS), every piece has landed
+     by 600ms, transform/opacity only. No JS, no animation: it is simply there. */
+  .js :is(.hero-l1,.hero-so,.hero-lead,.hero-cta,.hero-proof>.small,.tiles){animation:h-rise .45s var(--out) backwards;animation-delay:var(--d,0s)}
+  .js .hero-so{--d:.05s}.js .hero-lead{--d:.1s}.js .hero-cta{--d:.14s}.js .hero-proof>.small{--d:.15s}.js .tiles{--d:.15s}
+  .js .hero-you{animation:h-you .5s var(--out) .1s backwards;transform-origin:0 80%}
+  .js .hero-par{animation:h-phone .55s var(--out) .05s backwards}
+  .js .hero-card{animation:h-card .5s var(--out) .1s backwards}
   .hero-ip[data-step="2"] .rd-ch{animation:rd-draw 1.1s var(--out) .35s backwards}
-  @keyframes h-rise{from{opacity:0;transform:translateY(24px)}}
-  @keyframes h-you{from{opacity:0;transform:translate(-.18em,.14em) rotate(-9deg)}}
-  @keyframes h-phone{from{opacity:0;transform:translateY(60px) rotate(4deg)}}
-  @keyframes h-card{from{opacity:0;transform:translateY(28px) scale(.94)}}
+  @keyframes h-rise{from{opacity:.3;transform:translateY(14px)}}   /* text never starts fully transparent: it is part of the very first paint (LCP) */
+  @keyframes h-you{from{opacity:.3;transform:translate(-.18em,.14em) rotate(-9deg)}}
+  @keyframes h-phone{from{opacity:0;transform:translateY(24px)}}
+  @keyframes h-card{from{opacity:0;transform:translateY(16px) scale(.97)}}
   @keyframes rd-draw{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
 
   /* phones row slides in from the right, one after another */
   .hjs .how-row .how-i{transition:opacity .7s var(--out),transform 1s var(--out);transition-delay:calc(var(--i,0)*110ms)}
-  .hjs .how-row:not(.in) .how-i{opacity:0;transform:translateX(70px)}
+  .hjs .how-row.lv-p:not(.in) .how-i{opacity:0;transform:translateX(70px)}
 
   /* cursor demos: glide in on a curve, click, the card reacts, rest, repeat. Paused until the card is on screen (.play) */
   .hjs [data-demo] :is(.dc,.dc-y,.dc-ring,.rx),.hjs .src-bars i{animation-duration:var(--dur,4.2s);animation-timing-function:var(--out);animation-iteration-count:infinite;animation-delay:var(--dd,0s);animation-play-state:paused}
@@ -579,7 +578,10 @@
 }
 
 /* ---------- phone loops: one silent video per phone screen ---------- */
-.scr-loop{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.scr-loop,.scr-post{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+/* the hero loop: the poster image holds the space from the first paint; the video fades in over it once it is really playing */
+.js .scr-fade{opacity:0;transition:opacity .5s var(--out)}
+.js .scr-fade.is-on{opacity:1}
 .hero-ip .scr-home{opacity:1!important;visibility:visible!important;transform:none!important}
 /* the pre-reveal slide (70px to the right) must not widen the page */
 @media (min-width:720px){.how-row{overflow-x:clip}}

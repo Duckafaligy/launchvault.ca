@@ -165,7 +165,7 @@ Tabs without panels: use `<button class="seg-i" aria-pressed="true">`. Tabs that
 
 ## Motion you get for free
 
-Page-to-page view transitions (logo and nav stay put), the once-per-session intro, nav bar → pill → card, the particle band canvas, the custom cursor (mouse only), magnetic blue buttons, button press, link underline, focus rings. All of it turns instant under `prefers-reduced-motion`. Hidden-before-reveal states only apply when JS runs (`html.js`), so pages read fine without it.
+Page-to-page view transitions (logo and nav stay put), nav bar → pill → card (once the pill appears it stays), the particle band canvas, the custom cursor (mouse only), desktop mouse-wheel smoothing (the real window scrolls, so `window.scrollY` and `position:sticky` stay exact), magnetic blue buttons, button press, link underline, focus rings. All of it turns instant under `prefers-reduced-motion`. Reveals are fail-safe: content is visible by default; motion.js adds `.lv-p` (pending) only to elements below the fold at load and reveals them once near or as soon as a scroll passes them, and never hides them again. `[data-inview]` gets the same pending/`.in` classes with no built-in style. Anything inside `[data-scrollstory]` is left alone.
 
 If you add your own animation: use `var(--out)`, animate only `transform` / `opacity` where you can, start from a visible default, and wrap it in `@media (prefers-reduced-motion:no-preference)`.
 
