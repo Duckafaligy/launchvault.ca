@@ -1,4 +1,4 @@
-/* Story course pages (build_story.py): motion, the pinned numbers, the fit check, chapter ticks and the lesson quota.
+/* Story course pages (build_story.py): the fit check, chapter ticks and the lesson quota. No scroll-driven motion in the app (owner, 2026-11-28).
    Quota rules (Supabase RPCs lesson_status / lesson_open / lesson_remind; the database is the judge, this only shows it):
    story homes are public; chapter 1 is free for any account; other chapters go through lesson_open; Pro and the judge pass read everything.
    The chapter text is not in the page: /api/lesson returns it after the same check (signed-out visitors get the header and the sign-up gate).
@@ -6,75 +6,15 @@
 (() => {
   "use strict";
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const get = (k, d = null) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } };
   const put = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} dispatchEvent(new Event("lv:changed")); };
   const toast = m => window.LVToast && LVToast(m);
-  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  const zoom = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--z")) || 1;
 
   // old reader links (#ph3, #todo) land on the new routes
   { const m = /^#ph(\d+)$/.exec(location.hash);
     if ($("[data-story]") && m) location.replace(location.pathname + m[1] + "/");
     else if ($("[data-story]") && location.hash === "#todo") location.replace("/app/checklists/");
     else if ($("[data-story]") && location.hash === "#phases") { const d = $("#doors"); if (d) d.scrollIntoView(); } }
-
-  // ---------- hero: staggered rise on load (not scroll-driven) ----------
-  $$("[data-rise]").forEach((el, i) => {
-    if (reduce || !el.animate) { el.style.opacity = 1; return; }
-    el.style.animation = "none";
-    el.animate([{opacity: 0, transform: "translateY(18px)"}, {opacity: 1, transform: "none"}], {duration: 900, delay: 80 + i * 110, easing: "cubic-bezier(.16,1,.3,1)", fill: "both"})
-      .finished.then(() => { el.style.opacity = 1; }, () => {});
-  });
-
-  // ---------- reveal on scroll ----------
-  const io = reduce || !("IntersectionObserver" in window) ? null : new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.unobserve(e.target); e.target.classList.add("in"); } }), {threshold: .12, rootMargin: "0px 0px -8% 0px"});
-  const reveal = root => $$("[data-reveal]", root).forEach(el => io ? io.observe(el) : el.classList.add("in"));
-  reveal(document);
-
-  // ---------- The numbers: pinned while the stats count up and the line draws (scroll-driven, reversible) ----------
-  const pin = $("[data-pin]");
-  if (pin) {
-    const inner = pin.firstElementChild, line = $("[data-line]", pin), end = $("[data-end]", pin);
-    const counts = $$("[data-count]", pin).map(el => {   // same parse as the public site's count-up (motion.js prepCount)
-      const full = el.textContent, m = full.match(/\d[\d,]*(\.\d+)?/); if (!m) return null;
-      const dec = m[1] ? m[1].length - 1 : 0, to = parseFloat(m[0].replace(/,/g, ""));
-      el.setAttribute("aria-label", full);
-      return {el, full, num: m[0], to, dec, w: 0};
-    }).filter(Boolean);
-    const fmt = (v, dec) => v.toLocaleString("en-US", {minimumFractionDigits: dec, maximumFractionDigits: dec});
-    const set = p => {
-      counts.forEach(c => { c.el.textContent = p >= 1 ? c.full : c.full.replace(c.num, fmt(c.to * p, c.dec)); });
-      if (line) { line.style.strokeDasharray = "1"; line.style.strokeDashoffset = String(1 - p); }
-      if (end) end.style.opacity = p > .97 ? 1 : 0;
-    };
-    const ease = p => 1 - Math.pow(1 - p, 3);
-    if (reduce) set(1);
-    else {
-      // numbers keep their final width while counting, so the row never jumps
-      counts.forEach(c => { c.el.style.minWidth = c.el.getBoundingClientRect().width / zoom() + "px"; c.el.style.display = "inline-block"; });
-      let extra = 0, pt = 0, pinned = false, played = false;
-      const layout = () => {
-        const z = zoom(), vh = innerHeight, h = inner.getBoundingClientRect().height, phone = innerWidth <= 720;
-        pinned = h < vh - 24;   // a card taller than the screen is never pinned (phones keep scrolling freely)
-        extra = pinned ? vh * (phone ? .22 : .6) : 0; pt = pinned ? Math.max(12, (vh - h) / 2) : 0;
-        pin.classList.toggle("on", pinned);
-        pin.style.height = pinned ? (h + extra) / z + "px" : "";
-        inner.style.setProperty("--pt", pt / z + "px");
-        tick();
-      };
-      const tick = () => {
-        if (pinned) return set(ease(clamp((pt - pin.getBoundingClientRect().top) / extra, 0, 1)));
-        if (played) return;
-        const r = pin.getBoundingClientRect();
-        if (r.top < innerHeight * .75) { played = true; const t0 = performance.now(); const f = t => { const p = clamp((t - t0) / 1400, 0, 1); set(ease(p)); if (p < 1) requestAnimationFrame(f); }; requestAnimationFrame(f); }
-        else set(0);
-      };
-      let raf = 0; addEventListener("scroll", () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; tick(); }); }, {passive: true});
-      addEventListener("resize", () => { clearTimeout(layout.t); layout.t = setTimeout(layout, 150); });
-      set(0); (document.fonts ? document.fonts.ready : Promise.resolve()).then(layout);
-    }
-  }
 
   // ---------- Is it a good reference? ----------
   const fit = $("[data-fit]");
@@ -128,7 +68,7 @@
   const body = $("[data-lbody]"), retryBox = $("[data-retry]");
   let lastSt = null;
   const show = html => { L.dataset.state = "open"; body.innerHTML = html; body.hidden = false; $("[data-tease]").hidden = true; $("[data-gate]").hidden = true; retryBox.hidden = true;
-    reveal(body); steal(body); nextHint(lastSt);
+    steal(body); nextHint(lastSt);
     const s = seen(); if (!s.includes(ch)) put("lv-seen-" + slug, [...s, ch].sort((a, b) => a - b));
     put("lv-last", {slug, ph: ch, t: Date.now()}); };
   const retry = () => { L.dataset.state = "retry"; body.hidden = true; $("[data-gate]").hidden = true; retryBox.hidden = false; };

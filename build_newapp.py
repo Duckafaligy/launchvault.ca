@@ -105,7 +105,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
     css = "".join(f'\n<link rel="stylesheet" href="{NA}/{n}-dark.css">' for n in ("chart", "community") if n + ".js" in scripts)
     scss = ""
     if "story.js" in scripts:   # story home + chapters: Paper's Geist type and the template's own sheet (after vault*.css, so it wins ties)
-        scss = f'\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;650;700&family=Geist+Mono:wght@400;500;600&display=swap">\n<link rel="stylesheet" href="{NA}/story.css">\n<script>document.documentElement.classList.add("sty-js")</script>'
+        scss = f'\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;650;700&family=Geist+Mono:wght@400;500;600&display=swap">\n<link rel="stylesheet" href="{NA}/story.css">'
     cls = " ".join(x for x in ("nv", "has-back" if crumbs else "", "p-" + (active.split("-")[0] or "x")) if x)
     back = f'<a class="mback" href="{crumbs[0][0]}">{pi("back", 16, 2)}<span>{esc(crumbs[0][1])}</span></a>' if crumbs else ""
     scripts = scripts.replace("/assets/community.js", f"{NA}/community.js").replace("/assets/assistant.js", f"{NA}/assistant.js")

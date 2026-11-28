@@ -1,11 +1,10 @@
 /* LaunchVault new dashboard (/app/): the Vault shell's own behaviour, on top of app.js (same lv-* storage keys).
    Sidebar "Continue" card, recent-activity bell, the paged story reader (one phase at a time, Paper Story reader),
-   the upgrade sheet, and the small motion pieces (count-up, chart line draw). Everything honours prefers-reduced-motion. */
+   and the upgrade sheet. Numbers and charts render in their final state (no count-up, no line draw). */
 (() => {
   "use strict";
   if (!window.LVGate || !LVGate.ok) return;   // nothing runs before the age gate passes (same rule as app.js)
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
   const get = (k, d = null) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } };
   const put = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} dispatchEvent(new Event("lv:changed")); };
@@ -69,16 +68,4 @@
   { const inp = $("#asIn"), q = new URLSearchParams(location.search).get("q");
     if (inp && q) { inp.value = q.slice(0, 400); inp.dispatchEvent(new Event("input")); try { history.replaceState(null, "", location.pathname); } catch {} } }
 
-  // ---------- motion: numbers count up once, the chart line draws in ----------
-  if (!reduce) {
-    const done = new WeakSet();
-    const count = el => { if (done.has(el)) return; done.add(el); const to = +el.dataset.count; if (!(to > 0)) return; const t0 = performance.now();
-      const f = t => { const p = Math.min(1, (t - t0) / 600), v = Math.round(to * (1 - Math.pow(1 - p, 3))); el.textContent = v; if (p < 1 && el.isConnected) requestAnimationFrame(f); else el.textContent = to; }; requestAnimationFrame(f); };
-    const scan = () => $$("[data-count]").forEach(count); scan();
-    new MutationObserver(scan).observe(document.body, {childList: true, subtree: true});
-    addEventListener("load", () => setTimeout(() => $$(".lvchart .plot svg").forEach(svg => {
-      const p = [...svg.querySelectorAll("path")].filter(x => getComputedStyle(x).fill === "none" && x.getTotalLength).sort((a, b) => b.getTotalLength() - a.getTotalLength())[0]; if (!p) return;
-      const len = p.getTotalLength(); if (!len || p.getAttribute("stroke-dasharray")) return;
-      p.animate([{strokeDasharray: len, strokeDashoffset: len}, {strokeDasharray: len, strokeDashoffset: 0}], {duration: 900, easing: "cubic-bezier(.16,1,.3,1)"}); }), 60));
-  }
 })();

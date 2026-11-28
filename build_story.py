@@ -76,8 +76,8 @@ def numbers_chart(S):
     label = esc(f'{S["name"]}: {se["what"].lower()}, ' + ", ".join(f"{mlab(p[0])} {money(p[1])}" for p in pts))
     svg = (f'<svg class="nch" viewBox="0 0 1200 270" preserveAspectRatio="none" role="img" aria-label="{label}">'
            '<line x1="40" y1="260" x2="1180" y2="260" class="g0"/><line x1="40" y1="145" x2="1180" y2="145" class="g1"/><line x1="40" y1="30" x2="1180" y2="30" class="g1"/>'
-           f'<polyline points="{line}" class="nline" data-line pathLength="1"/>'
-           f'<circle cx="{X(mi(last[0])):.1f}" cy="{Y(last[1]):.1f}" r="5" class="end" data-end/>'
+           f'<polyline points="{line}" class="nline" pathLength="1"/>'
+           f'<circle cx="{X(mi(last[0])):.1f}" cy="{Y(last[1]):.1f}" r="5" class="end"/>'
            f'<text x="44" y="141" class="nglab">{esc(hl)}</text></svg>')
     # axis: where the chart starts, the chapters that start inside it, where it ends (Paper "Chart axis")
     axis = [mlab(se["start"]) + " · started" if se.get("start") else mlab(pts[0][0])]
@@ -86,18 +86,28 @@ def numbers_chart(S):
     axis += [f"{mlab(fm)} · {nm}" for fm, nm in mids]
     axis.append(mlab(last[0]))
     ax = "".join(f'<span{" class=" + chr(34) + "nnow" + chr(34) if i == len(axis) - 1 else ""}>{esc(t)}</span>' for i, t in enumerate(axis))
-    return f'<div class="nchw">{svg}</div><div class="nax" aria-hidden="true">{ax}</div><div class="ntab">{B.chart_table(S)}</div>'
+    labs = [p[2] if len(p) > 2 else se.get("label", "") for p in pts]; cnt = {l: labs.count(l) for l in dict.fromkeys(labs) if l}
+    srcl = src_link({"source": se.get("source", "")}) if str(se.get("source", "")).startswith("http") else f'<span class="slink">{esc(se.get("source", ""))}</span>'
+    cap = (f'<p class="ncap">{esc(se["what"])}, {esc(mlab(pts[0][0]))} to {esc(mlab(last[0]))}. Source: {srcl}. Points: '
+           + ", ".join(f'{lbt(l, dot=False)} {c}' for l, c in cnt.items()) + '. Each point\'s label and source are in the table.</p>')
+    return f'<div class="nchw">{svg}</div><div class="nax" aria-hidden="true">{ax}</div>{cap}<div class="ntab">{B.chart_table(S)}</div>'
+
+
+def src_link(x, cls="slink"):
+    """Where a fact comes from: a link when the source is a URL, else the source's name (always shown)."""
+    s = x.get("source") or x.get("url") or ""; nm = B.src_name(x).split(":")[0] or "Source"
+    return f'<a class="{cls}" href="{esc(s)}" target="_blank" rel="noopener">{esc(nm)} ↗</a>' if s.startswith("http") else f'<span class="{cls}">{esc(nm)}</span>'
 
 
 def home_body(S, cover, pi):
     B.set_srcmap(S); slug, name = S["slug"], S["name"]; n = len(S["phases"])
     h = S.get("hero") or {}; title = h.get("title") or S["title"]; tags = h.get("tags") or []
     fit = S.get("fit") or []; vids = S.get("videos") or []; soc = S.get("social") or {}
-    hero = (f'<header class="shero" data-hero><div class="shl"><div class="shco" data-rise><span class="shlogo"><img src="{esc(S["logo"])}" alt="" width="56" height="56"></span>'
+    hero = (f'<header class="shero"><div class="shl"><div class="shco"><span class="shlogo"><img src="{esc(S["logo"])}" alt="" width="56" height="56"></span>'
             f'<span><b>{esc(name)}</b><small>{esc(S["what"])}</small></span></div>'
-            f'<h1 class="shh" data-rise>{esc(title)}</h1>'
-            + (f'<ul class="shtags" data-rise>{"".join(f"<li>{esc(t)}</li>" for t in tags)}</ul>' if tags else "")
-            + '</div><div class="sha" data-rise>'
+            f'<h1 class="shh">{esc(title)}</h1>'
+            + (f'<ul class="shtags">{"".join(f"<li>{esc(t)}</li>" for t in tags)}</ul>' if tags else "")
+            + '</div><div class="sha">'
             + (f'<a class="bw" href="#fit">Use as a reference{ARW}</a>' if len(fit) == 3 else "")
             + f'<button class="sstar" type="button" data-star="{slug}" aria-pressed="false" aria-label="Save {esc(name)}">{STAR}<span class="sr">Save</span></button></div></header>')
     nums = S["numbers"][:5]
@@ -107,16 +117,16 @@ def home_body(S, cover, pi):
         if s and s not in srcs and x.get("label") != "Wayback": srcs.append(s)
     upd = (" and ".join([", ".join(srcs[:-1]), srcs[-1]]) if len(srcs) > 1 else srcs[0]) if srcs else ""
     when = B.latest_date(x["date"] for x in nums)
-    stats = "".join(f'<div class="nst{" sbig" if i == 0 else ""}"><span class="nk">{esc(x.get("long") or x["k"])}</span><b data-count>{esc(x["v"])}</b>{lbt(x["label"])}</div>' for i, x in enumerate(nums))
-    numbers = (f'<section class="npin" id="chart" data-pin><div class="npin-in"><div class="ncard"><div class="nhd"><h2>The numbers</h2>'
+    stats = "".join(f'<div class="nst{" sbig" if i == 0 else ""}"><span class="nk">{esc(x.get("long") or x["k"])}</span><b>{esc(x["v"])}</b><span class="nsrc">{lbt(x["label"])} · {esc(x["date"])}<br>{src_link(x)}</span></div>' for i, x in enumerate(nums))
+    numbers = (f'<section class="npin" id="chart"><div class="npin-in"><div class="ncard"><div class="nhd"><h2>The numbers</h2>'
                + (f'<span>Updated from {esc(upd)}{" · " + esc(when) if when else ""}</span>' if upd else "")
                + f'</div><div class="nstats">{stats}</div>{numbers_chart(S)}</div></div></section>')
     # door 1: the full story
     img = f"/assets/figures/{slug}-site.webp" if os.path.exists(os.path.join(ROOT, "assets", "figures", f"{slug}-site.webp")) else cover(slug)
     mv = S.get("moves") or []
     pick = [mv[round(i * (len(mv) - 1) / 2)] for i in range(3)] if len(mv) >= 3 else mv
-    rows = "".join(f'<li><span>{esc(m.get("when", ""))}</span><b>{esc(m["text"])}</b></li>' for m in pick)
-    d1 = (f'<a class="door" href="/app/story/{slug}/1/" data-reveal>' + (f'<span class="dimg"><img src="{esc(img)}" alt="" width="960" height="540" loading="lazy" decoding="async"></span>' if img else "")
+    rows = "".join(f'<li><span>{esc(m.get("when", ""))}</span><b>{esc(m["text"])}</b>{lbt(m.get("label"), dot=False)}</li>' for m in pick)
+    d1 = (f'<a class="door" href="/app/story/{slug}/1/">' + (f'<span class="dimg"><img src="{esc(img)}" alt="" width="960" height="540" loading="lazy" decoding="async"></span>' if img else "")
           + f'<span class="dtx"><span class="dk">{n} chapter{"s" if n != 1 else ""} · Chapter 1 is free</span><b class="dh">The full story</b><span class="dd">{esc(S["dek"])}</span>'
           + (f'<ul class="drows">{rows}</ul>' if rows else "") + f'<span class="dl">Start Chapter 1 →</span></span></a>')
     d2 = ""
@@ -125,7 +135,7 @@ def home_body(S, cover, pi):
         acc = soc.get("accounts") or []
         chips = "".join(f'<a class="dchip" href="{esc(a["url"])}" target="_blank" rel="noopener">{esc(a["label"])}</a>' for a in acc if str(a.get("url", "")).startswith("https://"))
         has_own = any(v.get("kind") == "own" for v in vids)
-        d2 = (f'<div class="door" data-reveal>' + (f'<div class="dsys"><span class="dsk">Their posting system</span><ul>{sysc}</ul>' + (f'<span class="dsn">{esc(soc["note"])}</span>' if soc.get("note") else "") + '</div>' if sysc else "")
+        d2 = (f'<div class="door">' + (f'<div class="dsys"><span class="dsk">Their posting system</span><ul>{sysc}</ul>' + (f'<span class="dsn">{esc(soc["note"])}</span>' if soc.get("note") else "") + '</div>' if sysc else "")
               + '<div class="dtx">' + (f'<span class="dk">{" · ".join(esc(a["label"]) for a in acc)}</span>' if acc else "")
               + f'<h2 class="dh">Their social media story</h2>' + (f'<p class="dd">{esc(soc["summary"])}</p>' if soc.get("summary") else "")
               + (f'<div class="dchips">{chips}</div>' if chips else "") + (f'<a class="dl" href="#watch-own">See their social media story →</a>' if has_own else "") + '</div></div>')
@@ -135,21 +145,21 @@ def home_body(S, cover, pi):
     if vids:
         iv = [v for v in vids if v.get("kind") != "own"]; own = [v for v in vids if v.get("kind") == "own"]
         grp = lambda t, L, id_: (f'<div class="wgrp"{f" id={chr(34)}{id_}{chr(34)}" if id_ else ""}><h3>{t}</h3><div class="wrow">' + "".join(video_card(v, vsub(v)) for v in L) + '</div></div>') if L else ""
-        watch = (f'<section class="watch" id="watch" data-reveal><div class="shd"><h2>Watch the business</h2><span>Interviews about {esc(name)}, and videos from {esc(name)} itself</span></div>'
+        watch = (f'<section class="watch" id="watch"><div class="shd"><h2>Watch the business</h2><span>Interviews about {esc(name)}, and videos from {esc(name)} itself</span></div>'
                  + grp("Interviews and breakdowns", iv, "") + grp("From their own channels", own, "watch-own") + '</section>')
     fitsec = ""
     if len(fit) == 3:
         qs = "".join(f'<div class="fq" data-fq><span>{esc(q)}</span><div class="fyn" role="group" aria-label="{esc(q)}"><button type="button" data-yn="1" aria-pressed="false">Yes</button><button type="button" data-yn="0" aria-pressed="false">No</button></div></div>' for q in fit)
-        fitsec = (f'<section class="fit" id="fit" data-reveal data-fit="{slug}"><div class="fitl"><h2>Is {esc(name)} a good reference for your project?</h2>'
+        fitsec = (f'<section class="fit" id="fit" data-fit="{slug}"><div class="fitl"><h2>Is {esc(name)} a good reference for your project?</h2>'
                   f'<p>Answer three quick questions. If it fits, pin {esc(name)} to your saved stories so it is there when you plan your next step.</p></div>'
                   f'<div class="fitr">{qs}<div class="fsum"><span data-fsum>So far: <b>answer the questions</b></span><button class="bw" type="button" data-pin-ref="{slug}">Pin to my project</button></div></div></section>')
     # sources and fact checks: every number above traces back here
     srow = lambda x: ((f'<a class="srw" href="{esc(x["url"])}" target="_blank" rel="noopener">' if x.get("url") else '<div class="srw">')
-                      + f'<b>{esc(x["name"])}</b><small>{esc(x.get("what", ""))}</small><span>{esc(x["date"])}</span>{lbt(x["label"])}' + ("</a>" if x.get("url") else "</div>"))
+                      + f'<b>{esc(x["name"])}{" ↗" if x.get("url") else ""}</b><small>{esc(x.get("what", ""))}</small><span>{esc(x["date"])}</span>{lbt(x["label"])}' + ("</a>" if x.get("url") else "</div>"))
     fcs = "".join(f'<div class="sfc"><p><b>Said:</b> {esc(f["claim"])}</p><p><b>Found:</b> {esc(f["found"])}</p><small>{lbt(f["label"])} · {esc(f.get("who") or B.src_name(f))} · {esc(f["date"])}</small></div>' for f in S["fact_checks"])
-    sources = (f'<details class="ssrc" id="sources" data-reveal><summary><b>All {len(S["sources"])} sources and the fact check</b><span>Where every number on this page comes from</span>{CHEV}</summary>'
+    sources = (f'<section class="ssrc" id="sources"><div class="ssh"><h2>Sources</h2><span>Where every number on this page comes from: {len(S["sources"])} sources, each with its label and the date we read it</span></div>'
                f'<div class="ssb"><div class="srl">{"".join(srow(x) for x in S["sources"])}</div><h3 id="facts">Fact check</h3>{fcs}'
-               f'<button type="button" class="stl" data-report="{esc(slug)}">Report a mistake</button></div></details>')
+               f'<button type="button" class="stl" data-report="{esc(slug)}">Report a mistake</button></div></section>')
     return f'<div class="sty shome" data-story="{slug}">{hero}{numbers}{doors}{watch}{fitsec}{sources}</div>'
 
 
@@ -185,16 +195,16 @@ def chapter_body(S, i, cover, pi):
             inner = f'<span class="rnote">{plat}<b>{esc(r.get("text", ""))}</b></span>{cap}'; cls = "rc rnt"
         u = r.get("url") or ""
         return f'<a class="{cls}" href="{esc(u)}" target="_blank" rel="noopener">{inner}</a>' if u.startswith("http") else f'<div class="{cls}">{inner}</div>'
-    proof = (f'<section class="lsec lproof" data-reveal><div class="lsh"><h2>The proof</h2>{"<span>Click any receipt to open the original</span>" if any((r.get("url") or "").startswith("http") for r in rc) else ""}</div>'
+    proof = (f'<section class="lsec lproof"><div class="lsh"><h2>The proof</h2>{"<span>Click any receipt to open the original</span>" if any((r.get("url") or "").startswith("http") for r in rc) else ""}</div>'
              f'<div class="rcs">{"".join(receipt(r) for r in rc)}</div>') if rc else ""
     res = p.get("results") or []
     if res:
-        proof = proof or '<section class="lsec lproof" data-reveal><div class="lsh"><h2>The proof</h2></div>'
-        proof += (f'<div class="lres"><span class="lrk">What happened next</span>' + "".join(f'<div><b>{esc(x["v"])}</b><small>{esc(x.get("sub", ""))}{" · " if x.get("sub") and x.get("label") else ""}{esc(x.get("label", ""))}</small></div>' for x in res) + '</div>')
+        proof = proof or '<section class="lsec lproof"><div class="lsh"><h2>The proof</h2></div>'
+        proof += (f'<div class="lres"><span class="lrk">What happened next</span>' + "".join(f'<div><b>{esc(x["v"])}</b><small>{esc(" · ".join(y for y in (x.get("sub"), x.get("label"), x.get("date")) if y))}{"<br>" + src_link(x) if x.get("source") else ""}</small></div>' for x in res) + '</div>')
     if proof: proof += "</section>"
-    why = f'<section class="lsec" data-reveal><h2>Why it matters for you</h2><blockquote class="lq">{esc(p["lesson"])}</blockquote>' + "".join(f'<p class="lwhy">{esc(t)}</p>' for t in (p.get("why") or "").split("\n\n") if t.strip()) + '</section>'
+    why = f'<section class="lsec"><h2>Why it matters for you</h2><blockquote class="lq">{esc(p["lesson"])}</blockquote>' + "".join(f'<p class="lwhy">{esc(t)}</p>' for t in (p.get("why") or "").split("\n\n") if t.strip()) + '</section>'
     pv = [vids[v] for v in p.get("videos") or [] if v in vids]
-    watch = (f'<section class="lsec" data-reveal><h2>Watch it explained</h2><div class="lvids">{"".join(video_card(v, vsub(v), big=True) for v in pv)}</div></section>') if pv else ""
+    watch = (f'<section class="lsec"><h2>Watch it explained</h2><div class="lvids">{"".join(video_card(v, vsub(v), big=True) for v in pv)}</div></section>') if pv else ""
     st = p.get("steal") or {}
     items, key = (st.get("items") or [], f"lv-steal-{slug}-{k}") if st.get("items") else (None, f"lv-{slug}-checks")
     idx = None
@@ -204,7 +214,7 @@ def chapter_body(S, i, cover, pi):
     steal = ""
     if items:
         rows = "".join(f'<button class="stk" type="button" role="checkbox" aria-checked="false" data-i="{(idx[j] if idx else j)}"><span class="stbx">{CHK}</span><span class="stt">{esc(t)}</span></button>' for j, t in enumerate(items))
-        steal = (f'<section class="steal" data-reveal data-steal="{key}"><div class="sth"><div><b>{esc(st.get("title") or "Steal this: your steps from this chapter")}</b><span>Built from what they did. Tick it off as you go.</span></div>'
+        steal = (f'<section class="steal" data-steal="{key}"><div class="sth"><div><b>{esc(st.get("title") or "Steal this: your steps from this chapter")}</b><span>Built from what they did. Tick it off as you go.</span></div>'
                  f'<button type="button" class="stl" data-copyall>Copy all</button></div><div class="sks">{rows}</div></section>')
     prev = (f'<a class="lprev" href="{base}{k - 1}/"><small>Previous</small><b>{esc(P[i - 1]["name"])}</b></a>' if k > 1
             else f'<a class="lprev" href="{base}"><small>Story home</small><b>{esc(name)}</b></a>')
@@ -236,7 +246,7 @@ def chapter_body(S, i, cover, pi):
     rail = f'<aside class="lref" aria-label="About {esc(name)}">{tcard}{around}{rsrc}</aside>'
     # phones: the rail folds into one card after the lesson (Paper Lesson · Phone)
     chips = "".join(f'<a class="dchip" href="{esc(u)}" target="_blank" rel="noopener">{t if kk != "github" or not gh_n else "GitHub ★ " + esc(gh_n["v"])}</a>' for kk, t, sub, u, r in web)
-    mob = (f'<section class="lmob" data-reveal><div class="lmh"><span><b>{esc(big["v"])} · {esc(big.get("long") or big["k"])}</b><small>{esc(B.src_name(big))} · {esc(big["date"])}</small></span>{pill(big["label"])}</div>'
+    mob = (f'<section class="lmob"><div class="lmh"><span><b>{esc(big["v"])} · {esc(big.get("long") or big["k"])}</b><small>{esc(B.src_name(big))} · {esc(big["date"])}</small></span>{pill(big["label"])}</div>'
            + (f'<div class="dchips">{chips}</div>' if chips else "")
            + f'<details class="lms"><summary><b>Sources for this chapter</b><span>{len(csrc)}</span></summary>' + (f'<ol>{slist}</ol>' if slist else "") + allsrc + '</details></section>')
     # left rail + phone/tablet chapter menu
@@ -267,7 +277,7 @@ def chapter_body(S, i, cover, pi):
             '<div class="lgopts"><a class="lgpro" href="/app/account/#plan" data-gpro><span><b data-gpt>Keep reading with Pro</b><small data-gpd>Every lesson in every story, and more assistant chats</small></span><span class="lgbtn" data-gpb>See Pro</span></a>'
             f'<a class="lgstu" href="/app/account/#student" data-gstu><span class="lgi">{CAP}</span><span><b>Student? Get 10 lessons a month, free</b><small>Verify a .edu email or a Canadian school, college or university email. Plus 50 chats a week.</small></span><span class="lgv">Verify email</span></a>'
             '<div class="lgw" data-gwait><span data-gwt>Happy to wait? We\'ll email you when your lessons reset.</span><button type="button" data-remind>Remind me</button></div></div></section>')
-    content = f'<section class="lsec lwhat" data-reveal><h2>What happened</h2>{what}</section>{proof}{why}{mob}{watch}{steal}{pnav}'
+    content = f'<section class="lsec lwhat"><h2>What happened</h2>{what}</section>{proof}{why}{mob}{watch}{steal}{pnav}'
     shell_html = (f'<div class="sty les" data-lesson data-slug="{slug}" data-ch="{k}" data-n="{n}" data-state="wait">{bar}'
                   f'<div class="lgrid">{lrail}<article class="lart">{head}<div class="lbody" data-lbody aria-live="polite"></div>{tease}{retry}{gate}</article>{rail}</div></div>')
     return shell_html, content, (paras[0] if paras else "")
