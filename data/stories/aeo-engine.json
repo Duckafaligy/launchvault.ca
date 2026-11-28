@@ -12,10 +12,10 @@
   "dek": "It did not start from zero. An Amazon marketing agency from 2018 re-launched as an 'answer engine' agency in January 2026, just as brands started asking how to show up in ChatGPT. Its MRR (monthly recurring revenue: what clients pay every month) is $190,513, read straight from Stripe. A month's revenue is the money actually collected that month, so it doesn't match MRR exactly.",
   "pattern": "Ride a wave",
   "numbers": [
-    {"k": "MRR", "v": "$190,513", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/aeo-engine"},
+    {"k": "MRR", "v": "$192,516", "label": "Verified", "date": "Nov 28 2026", "source": "https://trustmrr.com/startup/aeo-engine"},
     {"k": "Revenue in Oct 2026", "v": "$204,043", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/aeo-engine"},
-    {"k": "Revenue, all-time", "v": "$2,787,226", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/aeo-engine"},
-    {"k": "Active subscriptions", "v": "63", "label": "Verified", "date": "Nov 19 2026", "source": "https://trustmrr.com/startup/aeo-engine.md"},
+    {"k": "Revenue, all-time", "v": "$2,844,933", "label": "Verified", "date": "Nov 28 2026", "source": "https://trustmrr.com/startup/aeo-engine"},
+    {"k": "Active subscriptions", "v": "62", "label": "Verified", "date": "Nov 28 2026", "source": "https://trustmrr.com/startup/aeo-engine.md"},
     {"k": "Starting price", "v": "$1,597/mo", "label": "Live", "date": "Nov 19 2026", "source": "https://aeoengine.ai/pricing"}
   ],
   "series": {
@@ -92,7 +92,7 @@
     {"claim": "$65,000 a month in revenue", "who": "Founder-story profile on FounderBase (first archived Apr 10 2026)", "date": "Apr 10 2026", "source": "https://founderbase.ai/interviews/aeo-engine", "found": "Stripe shows $65,126 in January 2026 and $67,223 in February 2026. The claim matches.", "label": "Verified"},
     {"claim": "Founded in 2018", "who": "TrustMRR profile and company PR page", "date": "Nov 19 2026", "source": "https://aeoengine.ai/pr", "found": "True for the older Amazon agency; the AEO Engine name dates from about January 2026. All-time revenue is $2.79M, but only $1.08M of it falls in the monthly chart (Dec 2025 to Oct 2026). We couldn't verify how much of the rest came from the old Amazon agency work.", "label": "Couldn't verify"},
     {"claim": "One founder", "who": "TrustMRR listing", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/aeo-engine", "found": "The company's About page lists a founder and CEO plus a co-founder and CMO.", "label": "Sources differ"},
-    {"claim": "Serves 50+ brands worldwide", "who": "Company About page", "date": "Nov 19 2026", "source": "https://aeoengine.ai/about", "found": "Stripe shows 63 active subscriptions on Nov 19 2026. One brand can hold more than one subscription, so this fits but doesn't prove the number.", "label": "Claimed"}
+    {"claim": "Serves 50+ brands worldwide", "who": "Company About page", "date": "Nov 19 2026", "source": "https://aeoengine.ai/about", "found": "Stripe shows 62 active subscriptions on Nov 28 2026. One brand can hold more than one subscription, so this fits but doesn't prove the number.", "label": "Claimed"}
   ],
   "wayback": [
     {"date": "Jan 21 2019", "headline": "Research, Optimize & Scale your Amazon FBA Business", "sub": "Product research, listing optimization, free tools and a free product audit", "prices": "Not captured", "source": "https://web.archive.org/web/20190121171201/http://fosterfba.com/"},

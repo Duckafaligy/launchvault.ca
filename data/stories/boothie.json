@@ -5,7 +5,23 @@
   "what": "An AI photo app for iPhone and Android that restyles your selfie as film, digicam or photobooth shots.",
   "logo": "/assets/logos/boothie.png",
   "site": "https://boothieapp.com",
-  "founder_photo": {"src": "/assets/founders/boothie.jpg", "name": "Keremcan Şeker", "role": "founder of Boothie", "alt": "Keremcan Şeker, founder of Boothie", "w": 400, "h": 400, "author": "Şeker, K. [keremcanseker]", "date": "n.d.", "title": "Profile photo", "publisher": "GitHub", "url": "https://github.com/keremcanseker", "image_url": "https://avatars.githubusercontent.com/u/72311638?v=4", "found_via": "https://trustmrr.com/founder/keremcanseker_", "retrieved": "November 20, 2026", "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."},
+  "founder_photo": {
+    "src": "/assets/founders/boothie.jpg",
+    "name": "Keremcan Şeker",
+    "role": "founder of Boothie",
+    "alt": "Keremcan Şeker, founder of Boothie",
+    "w": 400,
+    "h": 400,
+    "author": "Şeker, K. [keremcanseker]",
+    "date": "n.d.",
+    "title": "Profile photo",
+    "publisher": "GitHub",
+    "url": "https://github.com/keremcanseker",
+    "image_url": "https://avatars.githubusercontent.com/u/72311638?v=4",
+    "found_via": "https://trustmrr.com/founder/keremcanseker_",
+    "retrieved": "November 20, 2026",
+    "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."
+  },
   "published": "2026-11-19",
   "read_min": 7,
   "title": "Boothie made $208K in five months by riding the digicam selfie trend on TikTok",
@@ -21,23 +37,23 @@
     },
     {
       "k": "MRR (money coming in each month from subscriptions)",
-      "v": "$54,617",
+      "v": "$53,090",
       "label": "Verified",
-      "date": "Nov 18 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/boothie"
     },
     {
       "k": "Revenue, all-time (since connected)",
-      "v": "$208,574",
+      "v": "$225,697",
       "label": "Verified",
-      "date": "Nov 18 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/boothie"
     },
     {
       "k": "Active subscriptions",
-      "v": "2,401",
+      "v": "2,325",
       "label": "Verified",
-      "date": "Nov 19 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/boothie"
     },
     {
@@ -221,7 +237,7 @@
       "who": "Sale listing on whatsthe.app (author not named)",
       "date": "Oct 1 2026",
       "source": "https://www.whatsthe.app/boothie",
-      "found": "Verified revenue was $43,416 in September 2026, so $38K MRR fits. But the same page shows 1,402 active subscriptions, and TrustMRR shows 2,401 in November. 8,200 paying users doesn't match.",
+      "found": "Verified revenue was $43,416 in September 2026, so $38K MRR fits. But the same page shows 1,402 active subscriptions, and TrustMRR shows 2,325 in November. 8,200 paying users doesn't match.",
       "label": "Sources differ"
     },
     {
@@ -237,7 +253,7 @@
       "who": "Founder's GitHub profile",
       "date": "Nov 9 2026",
       "source": "https://github.com/keremcanseker/keremcanseker/blob/main/README.md",
-      "found": "TrustMRR shows $208,574 all-time revenue by Nov 18 2026, about five months after the June 23 launch. The monthly numbers already passed $100,000 before November, when the claim was made.",
+      "found": "TrustMRR shows $225,697 all-time revenue by Nov 28 2026, about five months after the June 23 launch. The monthly numbers already passed $100,000 before November, when the claim was made.",
       "label": "Verified"
     },
     {
@@ -338,5 +354,7 @@
       "label": "Wayback"
     }
   ],
-  "links": {"site": "https://boothieapp.com"}
+  "links": {
+    "site": "https://boothieapp.com"
+  }
 }

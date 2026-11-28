@@ -10,19 +10,19 @@
   "founder_photo": {"src": "/assets/founders/postiz.jpg", "name": "Nevo David", "role": "founder of Postiz", "alt": "Nevo David, founder of Postiz", "w": 400, "h": 400, "author": "David, N. [@wickedguro]", "date": "n.d.", "title": "Profile photo", "publisher": "X", "url": "https://x.com/wickedguro", "image_url": "https://pbs.twimg.com/profile_images/2089387713976041474/I8Jv6dD0.jpg", "found_via": "https://trustmrr.com/founder/wickedguro", "retrieved": "November 20, 2026", "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."},
   "published": "2026-11-17",
   "read_min": 10,
-  "title": "Postiz: almost two years under $15K a month, then $482K",
-  "title_em": "then $482K.",
-  "hero": {"title": "One developer gave his app away, then reached $482K a month", "tags": ["Give it away free, charge for the easy version", "Solo", "Open source"]},
+  "title": "Postiz: almost two years under $15K a month, then $484K",
+  "title_em": "then $484K.",
+  "hero": {"title": "One developer gave his app away, then reached $484K a month", "tags": ["Give it away free, charge for the easy version", "Solo", "Open source"]},
   "dek": "A social media scheduler built by one main developer. What he did, what the numbers did after each move, and what you can take from it. MRR (monthly recurring revenue) means what all current subscriptions add up to each month.",
   "pattern": "Give it away free, charge for the easy version",
   "numbers": [
-    {"k": "MRR", "long": "Monthly recurring revenue", "v": "$482,722", "label": "Verified", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"},
-    {"k": "Revenue, all-time", "v": "$2,149,737", "label": "Verified", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"},
-    {"k": "Subscriptions", "long": "Active subscriptions", "v": "14,193", "label": "Verified", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"},
+    {"k": "MRR", "long": "Monthly recurring revenue", "v": "$484,632", "label": "Verified", "date": "Nov 28 2026", "source": "https://trustmrr.com/startup/postiz"},
+    {"k": "Revenue, all-time", "v": "$2,158,960", "label": "Verified", "date": "Nov 28 2026", "source": "https://trustmrr.com/startup/postiz"},
+    {"k": "Subscriptions", "long": "Active subscriptions", "v": "14,247", "label": "Verified", "date": "Nov 28 2026", "source": "https://trustmrr.com/startup/postiz"},
     {"k": "GitHub stars", "v": "41,810", "label": "Live", "date": "Nov 17 2026", "source": "https://github.com/gitroomhq/postiz-app"},
     {"k": "Starting price", "v": "$29/mo", "label": "Wayback", "date": "Sep 2024", "note": "Same as 2024", "source": "https://web.archive.org/web/20240921002655/https://postiz.com/pricing"}
   ],
-  "headline": {"k": "MRR", "value": 482722, "label": "Verified", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"},
+  "headline": {"k": "MRR", "value": 484632, "label": "Verified", "date": "Nov 28 2026", "source": "https://trustmrr.com/startup/postiz"},
   "series": {
     "what": "Monthly revenue", "label": "Claimed", "source": "Founder posts and the Superframeworks case study; the last point TrustMRR",
     "start": "2024-01",
@@ -36,10 +36,10 @@
       ["2026-06", 118000, "Claimed", "Superframeworks case study"],
       ["2026-07", 145000, "Claimed", "Founder, via Superframeworks"],
       ["2026-09", 186713, "Claimed", "Founder's Stripe chart"],
-      ["2026-11", 482722, "Verified", "TrustMRR, read from Stripe"]
+      ["2026-11", 484632, "Verified", "TrustMRR, read from Stripe"]
     ],
     "alt": [["2026-03", 45000, "Sources differ", "Founder, Mixergy interview, Mar 11 2026"]],
-    "point_dates": {"2026-07": "Jul 2 2026", "2026-11": "Nov 27 2026"},
+    "point_dates": {"2026-07": "Jul 2 2026", "2026-11": "Nov 28 2026"},
     "empty_note": "No public revenue numbers before Sep 2024"
   },
   "facts": {
@@ -110,12 +110,12 @@
     {"name": "Scaling the content", "when": "Sep 2026 to now", "moves": [7, 8],
      "story": "A weekly system on X: a Monday video that is useful on its own and only mentions Postiz, clips of it all week, then the same idea as a long X article the next week. He replies to every comment, and runs daily short videos through creators, where he says about 1 in 30 takes off.",
      "number": [{"v": "Reported $186,713 a month in September 2026.", "label": "Claimed", "date": "Sep 2026", "source": "Postiz blog"},
-                {"v": "$482,722 a month on November 27, 2026.", "label": "Verified", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"}],
+                {"v": "$484,632 a month on November 28, 2026.", "label": "Verified", "date": "Nov 28 2026", "source": "https://trustmrr.com/startup/postiz"}],
      "lesson": "One idea, repackaged several times, beats new content every day.",
      "title": "Scaling the content: one idea, packaged many ways",
      "dek": "A weekly system on X turns one useful video into clips and a long article, and creators post short videos every day.",
-     "receipts": [{"kind": "image", "src": "/assets/receipts/postiz/trustmrr.png", "caption": "TrustMRR: $482,722 MRR, read from Stripe", "label": "Verified", "date": "Nov 27 2026", "url": "https://trustmrr.com/startup/postiz"}],
-     "results": [{"v": "$482,722", "sub": "a month, read from Stripe", "label": "Verified", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"}],
+     "receipts": [{"kind": "image", "src": "/assets/receipts/postiz/trustmrr.png", "caption": "TrustMRR: $482,722 MRR, read from Stripe (capture of Nov 27 2026)", "label": "Verified", "date": "Nov 27 2026", "url": "https://trustmrr.com/startup/postiz"}],
+     "results": [{"v": "$484,632", "sub": "a month, read from Stripe", "label": "Verified", "date": "Nov 28 2026", "source": "https://trustmrr.com/startup/postiz"}],
      "source_ids": [6, 0]}
   ],
   "moves": [
@@ -126,14 +126,14 @@
     {"at": "2025-11", "when": "Nov 2025", "text": "$14K a month, burned out", "detail": "Over a year of slow growth after going open source.", "label": "Claimed", "source": "The founder on Dev.to"},
     {"at": "2026-02", "when": "Early 2026", "text": "Ready for the OpenClaw wave", "detail": "An MCP server, a command-line tool and an OpenClaw skill.", "label": "Claimed", "source": "Mixergy interview"},
     {"at": "2026-09", "when": "Sep 2026", "text": "Weekly X content system", "detail": "One idea a week: a video, clips, then a long article.", "label": "Claimed", "source": "Postiz blog"},
-    {"at": "2026-11", "when": "Nov 27 2026", "text": "$482,722 a month", "detail": "Read from Stripe by TrustMRR.", "label": "Verified", "source": "https://trustmrr.com/startup/postiz"}
+    {"at": "2026-11", "when": "Nov 28 2026", "text": "$484,632 a month", "detail": "Read from Stripe by TrustMRR.", "label": "Verified", "source": "https://trustmrr.com/startup/postiz"}
   ],
   "fact_checks": [
-    {"claim": "Monthly recurring revenue", "found": "TrustMRR reads it straight from Stripe: $482,722, updated Nov 27 2026.", "label": "Verified", "who": "TrustMRR", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"},
+    {"claim": "Monthly recurring revenue", "found": "TrustMRR reads it straight from Stripe: $484,632, updated Nov 28 2026.", "label": "Verified", "who": "TrustMRR", "date": "Nov 28 2026", "source": "https://trustmrr.com/startup/postiz"},
     {"claim": "When Postiz started", "found": "We couldn't verify it. TrustMRR says July 2024, the founder says he \"started Postiz\" in September 2024, and a case study says work began in January 2024.", "label": "Couldn't verify", "who": "TrustMRR, the founder, a case study", "date": "Nov 17 2026", "source": "https://trustmrr.com/startup/postiz"},
     {"claim": "Revenue in March 2026", "found": "A case study says $21K. The founder said \"$45,000 per month\" in a Mixergy interview published Mar 11 2026. The chart uses $21K and shows $45K as a second point.", "label": "Sources differ", "who": "Superframeworks case study; Mixergy interview", "date": "Mar 11 2026", "source": "Mixergy interview"},
     {"claim": "$12,648 in \"August 2024\"", "found": "The same article lists $6,523 for July 2025 and says August nearly doubled it, so August 2025 is almost certainly what was meant. The chart uses Aug 2025.", "label": "Claimed", "who": "The founder on Dev.to", "date": "Nov 2025", "source": "The founder on Dev.to"},
-    {"claim": "$186K (Sep 2026) to $482K (Nov 2026)", "found": "Public numbers show $186,713 (Sep 2026, Postiz blog) and $482,722 MRR (Nov 27 2026, TrustMRR). We couldn't verify what drove the jump.", "label": "Couldn't verify", "who": "Postiz blog; TrustMRR", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"},
+    {"claim": "$186K (Sep 2026) to $484K (Nov 2026)", "found": "Public numbers show $186,713 (Sep 2026, Postiz blog) and $484,632 MRR (Nov 28 2026, TrustMRR). We couldn't verify what drove the jump.", "label": "Couldn't verify", "who": "Postiz blog; TrustMRR", "date": "Nov 28 2026", "source": "https://trustmrr.com/startup/postiz"},
     {"claim": "\"A single developer\"", "found": "From the founder's 2025 article title. Team size today isn't public.", "label": "Claimed", "who": "The founder", "date": "2025", "source": "The founder's 2025 article title"}
   ],
   "fact_checks_read": "Nov 17 2026",
@@ -151,7 +151,7 @@
     {"id": "c6", "text": "Plan for a long flat stretch. Postiz stayed under $15K a month for about 14 months after going open source. Pace yourself around school.", "from": "Open source"}
   ],
   "sources": [
-    {"name": "TrustMRR: Postiz", "url": "https://trustmrr.com/startup/postiz", "what": "Revenue, subscriptions, start date, price.", "date": "Nov 27 2026", "label": "Verified", "logo": "/assets/logos/trustmrr.png"},
+    {"name": "TrustMRR: Postiz", "url": "https://trustmrr.com/startup/postiz", "what": "Revenue, subscriptions, start date, price.", "date": "Nov 28 2026", "label": "Verified", "logo": "/assets/logos/trustmrr.png"},
     {"name": "GitHub: gitroomhq/postiz-app", "url": "https://github.com/gitroomhq/postiz-app", "what": "41,810 stars.", "date": "Nov 17 2026", "label": "Live", "logo": "/assets/logos/github.svg"},
     {"name": "Wayback Machine: postiz.com", "url": "https://web.archive.org/web/20240703150110/https://postiz.com/", "what": "Homepage and pricing, then and now.", "date": "Jul 2024 · Sep 2024", "label": "Wayback", "logo": "/assets/logos/internetarchive.png"},
     {"name": "The founder on Dev.to", "url": null, "what": "Open-source rules, Docker, n8n, Skool, affiliates, revenue to $14K.", "date": "Nov 2025", "label": "Claimed", "logo": "/assets/logos/devto.png"},

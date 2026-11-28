@@ -5,18 +5,34 @@
   "what": "A marketing agency (a company hired to do marketing for clients) that grows founders' personal brands, mainly on LinkedIn.",
   "logo": "/assets/logos/windmillgrowth.png",
   "site": "https://windmillgrowth.com",
-  "founder_photo": {"src": "/assets/founders/windmill-growth.jpg", "name": "Ben Buaron", "role": "founder of Windmill Growth", "alt": "Ben Buaron, founder of Windmill Growth", "w": 400, "h": 400, "author": "Buaron, B. [@benbuaron_]", "date": "n.d.", "title": "Profile photo", "publisher": "X", "url": "https://x.com/benbuaron_", "image_url": "https://pbs.twimg.com/profile_images/2098259156935274503/nTFGqkf0.jpg", "found_via": "https://trustmrr.com/founder/benbuaron_", "retrieved": "November 20, 2026", "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."},
+  "founder_photo": {
+    "src": "/assets/founders/windmill-growth.jpg",
+    "name": "Ben Buaron",
+    "role": "founder of Windmill Growth",
+    "alt": "Ben Buaron, founder of Windmill Growth",
+    "w": 400,
+    "h": 400,
+    "author": "Buaron, B. [@benbuaron_]",
+    "date": "n.d.",
+    "title": "Profile photo",
+    "publisher": "X",
+    "url": "https://x.com/benbuaron_",
+    "image_url": "https://pbs.twimg.com/profile_images/2098259156935274503/nTFGqkf0.jpg",
+    "found_via": "https://trustmrr.com/founder/benbuaron_",
+    "retrieved": "November 20, 2026",
+    "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."
+  },
   "published": "2026-11-19",
   "read_min": 8,
   "title": "Windmill Growth started with a $500-a-month LinkedIn service and now brings in about $118K a month",
-  "dek": "It began by selling likes and comments on founders' LinkedIn posts, then sold the bigger job: writing the posts. Its MRR (monthly recurring revenue: what clients pay every month) is $119,347, read straight from Stripe.",
+  "dek": "It began by selling likes and comments on founders' LinkedIn posts, then sold the bigger job: writing the posts. Its MRR (monthly recurring revenue: what clients pay every month) is $112,897, read straight from Stripe.",
   "pattern": "Start with a small, cheap service, then sell the bigger one",
   "numbers": [
     {
       "k": "MRR",
-      "v": "$119,347",
+      "v": "$112,897",
       "label": "Verified",
-      "date": "Nov 18 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/windmill-growth-llc"
     },
     {
@@ -28,16 +44,16 @@
     },
     {
       "k": "Revenue, all-time",
-      "v": "$2,365,950",
+      "v": "$2,408,150",
       "label": "Verified",
-      "date": "Nov 18 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/windmill-growth-llc"
     },
     {
       "k": "Active subscriptions",
-      "v": "75",
+      "v": "74",
       "label": "Verified",
-      "date": "Nov 19 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/windmill-growth-llc.md"
     },
     {
@@ -252,7 +268,7 @@
       "who": "Windmill homepage",
       "date": "Nov 19 2026",
       "source": "https://windmillgrowth.com/",
-      "found": "Stripe shows 75 active subscriptions on Nov 19 2026. Some clients may pay for more than one thing, but 75 is well above 30.",
+      "found": "Stripe shows 74 active subscriptions on Nov 28 2026. Some clients may pay for more than one thing, but 74 is well above 30.",
       "label": "Sources differ"
     },
     {
@@ -362,5 +378,9 @@
       "label": "Live"
     }
   ],
-  "links": {"site": "https://windmillgrowth.com", "x": "https://x.com/WindmillGrowth", "linkedin": "https://www.linkedin.com/company/windmill-growth/"}
+  "links": {
+    "site": "https://windmillgrowth.com",
+    "x": "https://x.com/WindmillGrowth",
+    "linkedin": "https://www.linkedin.com/company/windmill-growth/"
+  }
 }

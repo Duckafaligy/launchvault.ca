@@ -8,14 +8,14 @@
   "published": "2026-11-19",
   "read_min": 7,
   "title": "Upscale B2B sold $3 email inboxes to cold-email agencies, then became one, and now makes about $99K a month",
-  "dek": "It started by selling the 'picks and shovels' of cold email (the tools everyone doing it needs): ready-to-send inboxes for a few dollars a month. Then it started running campaigns itself, with a free-to-try pilot. Its MRR (monthly recurring revenue: what customers pay every month) is $140,324, read straight from Stripe. That is higher than October's revenue, the money actually collected that month, so the two numbers don't match.",
+  "dek": "It started by selling the 'picks and shovels' of cold email (the tools everyone doing it needs): ready-to-send inboxes for a few dollars a month. Then it started running campaigns itself, with a free-to-try pilot. Its MRR (monthly recurring revenue: what customers pay every month) is $126,300, read straight from Stripe. That is higher than October's revenue, the money actually collected that month, so the two numbers don't match.",
   "pattern": "Sell the tools to people already in the game",
   "numbers": [
     {
       "k": "MRR",
-      "v": "$140,324",
+      "v": "$126,300",
       "label": "Verified",
-      "date": "Nov 18 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/upscale-system-llc"
     },
     {
@@ -27,16 +27,16 @@
     },
     {
       "k": "Revenue, all-time",
-      "v": "$917,179",
+      "v": "$947,684",
       "label": "Verified",
-      "date": "Nov 18 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/upscale-system-llc"
     },
     {
       "k": "Active subscriptions",
-      "v": "471",
+      "v": "459",
       "label": "Verified",
-      "date": "Nov 19 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/upscale-system-llc.md"
     },
     {
@@ -229,7 +229,7 @@
       "label": "Sources differ"
     },
     {
-      "claim": "MRR of $140,324",
+      "claim": "MRR of $126,300",
       "who": "TrustMRR",
       "date": "Nov 18 2026",
       "source": "https://trustmrr.com/startup/upscale-system-llc",
@@ -334,5 +334,8 @@
       "label": "Live"
     }
   ],
-  "links": {"site": "https://upscaleb2b.com", "instagram": "https://www.instagram.com/upscaleb2b/"}
+  "links": {
+    "site": "https://upscaleb2b.com",
+    "instagram": "https://www.instagram.com/upscaleb2b/"
+  }
 }
