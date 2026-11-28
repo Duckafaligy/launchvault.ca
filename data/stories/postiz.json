@@ -10,18 +10,19 @@
   "founder_photo": {"src": "/assets/founders/postiz.jpg", "name": "Nevo David", "role": "founder of Postiz", "alt": "Nevo David, founder of Postiz", "w": 400, "h": 400, "author": "David, N. [@wickedguro]", "date": "n.d.", "title": "Profile photo", "publisher": "X", "url": "https://x.com/wickedguro", "image_url": "https://pbs.twimg.com/profile_images/2089387713976041474/I8Jv6dD0.jpg", "found_via": "https://trustmrr.com/founder/wickedguro", "retrieved": "November 20, 2026", "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."},
   "published": "2026-11-17",
   "read_min": 10,
-  "title": "Postiz: almost two years under $15K a month, then $431K",
-  "title_em": "then $431K.",
+  "title": "Postiz: almost two years under $15K a month, then $482K",
+  "title_em": "then $482K.",
+  "hero": {"title": "One developer gave his app away, then reached $482K a month", "tags": ["Give it away free, charge for the easy version", "Solo", "Open source"]},
   "dek": "A social media scheduler built by one main developer. What he did, what the numbers did after each move, and what you can take from it. MRR (monthly recurring revenue) means what all current subscriptions add up to each month.",
   "pattern": "Give it away free, charge for the easy version",
   "numbers": [
-    {"k": "MRR", "long": "Monthly recurring revenue", "v": "$430,896", "label": "Verified", "date": "Nov 17 2026", "source": "https://trustmrr.com/startup/postiz"},
-    {"k": "Revenue, all-time", "v": "$1,946,080", "label": "Verified", "date": "Nov 17 2026", "source": "https://trustmrr.com/startup/postiz"},
-    {"k": "Subscriptions", "long": "Active subscriptions", "v": "12,674", "label": "Verified", "date": "Nov 17 2026", "source": "https://trustmrr.com/startup/postiz"},
+    {"k": "MRR", "long": "Monthly recurring revenue", "v": "$482,722", "label": "Verified", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"},
+    {"k": "Revenue, all-time", "v": "$2,149,737", "label": "Verified", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"},
+    {"k": "Subscriptions", "long": "Active subscriptions", "v": "14,193", "label": "Verified", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"},
     {"k": "GitHub stars", "v": "41,810", "label": "Live", "date": "Nov 17 2026", "source": "https://github.com/gitroomhq/postiz-app"},
     {"k": "Starting price", "v": "$29/mo", "label": "Wayback", "date": "Sep 2024", "note": "Same as 2024", "source": "https://web.archive.org/web/20240921002655/https://postiz.com/pricing"}
   ],
-  "headline": {"k": "MRR", "value": 430896, "label": "Verified", "date": "Nov 17 2026", "source": "https://trustmrr.com/startup/postiz"},
+  "headline": {"k": "MRR", "value": 482722, "label": "Verified", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"},
   "series": {
     "what": "Monthly revenue", "label": "Claimed", "source": "Founder posts and the Superframeworks case study; the last point TrustMRR",
     "start": "2024-01",
@@ -35,10 +36,10 @@
       ["2026-06", 118000, "Claimed", "Superframeworks case study"],
       ["2026-07", 145000, "Claimed", "Founder, via Superframeworks"],
       ["2026-09", 186713, "Claimed", "Founder's Stripe chart"],
-      ["2026-11", 430896, "Verified", "TrustMRR, read from Stripe"]
+      ["2026-11", 482722, "Verified", "TrustMRR, read from Stripe"]
     ],
     "alt": [["2026-03", 45000, "Sources differ", "Founder, Mixergy interview, Mar 11 2026"]],
-    "point_dates": {"2026-07": "Jul 2 2026", "2026-11": "Nov 17 2026"},
+    "point_dates": {"2026-07": "Jul 2 2026", "2026-11": "Nov 27 2026"},
     "empty_note": "No public revenue numbers before Sep 2024"
   },
   "facts": {
@@ -55,28 +56,67 @@
     {"name": "Before Postiz", "when": "2022 to 2023", "moves": [],
      "story": "The founder was a growth marketer at Novu, another open-source company (it shares its code free for anyone to use), where the project grew to 30,000 GitHub stars (like bookmarks on GitHub, the site where code is shared) in two years. His first solo product, Gitroom, made some money but \"the market was tiny\". He dropped it after about six months.",
      "number": [],
-     "lesson": "Start where you already understand how people find things. Drop a product quickly when the market is too small."},
+     "lesson": "Start where you already understand how people find things. Drop a product quickly when the market is too small.",
+     "title": "Before Postiz: a tiny market, dropped fast",
+     "dek": "He learned how open-source projects get found at another company. His first product of his own made some money, but the market was too small, so he stopped after about six months.",
+     "source_ids": [5]},
     {"name": "Building", "when": "Jan to Aug 2024", "moves": [1, 2],
      "story": "Postiz started as a regular social media scheduler for creators, businesses and agencies. He spent about $12,000 on SEO articles (articles meant to rank on Google) for a brand-new website. They brought almost no traffic, and he stopped.",
      "number": [{"v": "July 2024 homepage: \"Your ultimate social media scheduling tool.\" Nothing that stood out from Buffer or Hootsuite yet.", "label": "Claimed", "date": "Jul 2024", "source": "https://web.archive.org/web/20240703150110/https://postiz.com/"}],
-     "lesson": "A new domain has no authority with Google. Paying for SEO in month one is usually money gone."},
+     "lesson": "A new domain has no authority with Google. Paying for SEO in month one is usually money gone.",
+     "title": "Building: $12K on SEO that didn't work",
+     "dek": "Postiz started as a regular scheduler that looked like Buffer or Hootsuite. He paid for SEO articles on a brand-new site, got almost no traffic, and cut the channel.",
+     "receipts": [{"kind": "image", "src": "/assets/receipts/postiz/wayback-2024.png", "caption": "postiz.com in July 2024: \"Your ultimate social media scheduling tool\"", "label": "Wayback", "date": "Jul 2024", "url": "https://web.archive.org/web/20240703150110/https://postiz.com/"}],
+     "source_ids": [5, 2]},
     {"name": "Open source", "when": "Sep 2024 to 2025", "moves": [3],
-     "story": "He open-sourced it and ran launch weeks on Hacker News, Reddit, Dev.to and Product Hunt (sites where people share new projects) to reach GitHub's trending page. Reddit users asked for a Docker setup (an easy way to install it on a server), so he built one. GitHub stars went from about 3K to 14K in three months.",
+     "story": "In September 2024 he made Postiz open source: anyone could read the code, run it on their own server for free, or pay to use the hosted version.\n\nThen he ran launch weeks on Hacker News, Reddit, Dev.to and Product Hunt (sites where people share new projects), all aimed at one goal: GitHub's trending page, where developers look for new projects.\n\nReddit users kept asking for a Docker setup, an easy way to install it on a server. He built it. GitHub stars went from about 3,000 to 14,000 in three months.",
      "number": [{"v": "Revenue went from about $700 a month to $6.5K by July 2025 and $14K by November 2025. Over a year of slow growth.", "label": "Claimed", "date": "Nov 2025", "source": "The founder on Dev.to"}],
-     "lesson": "Free gets attention, but attention is not revenue. Expect a long stretch where the free version grows and the paid version barely moves."},
+     "lesson": "Free gets attention, but attention is not revenue. Expect a long stretch where the free version grows and the paid version barely moves.",
+     "title": "Open source: free gets attention, not revenue",
+     "dek": "He gave the code away, ran launch weeks and climbed GitHub. Stars grew fast. The money took more than a year to follow.",
+     "why": "Stars proved people wanted it. They didn't prove people would pay. If you give something away, decide in advance how long you can keep going while it stays flat.",
+     "receipts": [
+       {"kind": "image", "src": "/assets/receipts/postiz/stars.png", "caption": "GitHub star history · star-history.com", "label": "Live", "date": "Nov 27 2026", "url": "https://star-history.com/#gitroomhq/postiz-app&Date"},
+       {"kind": "note", "src": "", "caption": "The founder on Dev.to", "label": "Claimed", "date": "Nov 2025", "source": "The founder on Dev.to", "text": "Users asked for a Docker setup, so he built one.", "platform": "Reddit"}
+     ],
+     "results": [
+       {"v": "★ 3K → 14K", "sub": "GitHub stars, 3 months", "label": "Claimed", "date": "Jul 2026", "source": "Superframeworks case study"},
+       {"v": "$700 → $14K", "sub": "a month, over 14 months", "label": "Claimed", "date": "Nov 2025", "source": "The founder on Dev.to"}
+     ],
+     "steal": {"title": "Steal this: his launch-week checklist", "items": [
+       "Make the free version easy to install. He added Docker when Reddit asked.",
+       "Pick your launch sites. His were Hacker News, Reddit, Dev.to and Product Hunt.",
+       "Aim every post at one goal. His was GitHub's trending page.",
+       "Decide how many months you can keep going while revenue stays flat."]},
+     "videos": ["RPM4ImzcIFc", "Ul2LaZIPqMY"],
+     "source_ids": [3, 5, 2]},
     {"name": "Finding the users who stay", "when": "2025", "moves": [4, 5],
      "story": "He noticed people using Postiz inside n8n automations (n8n connects apps so tasks run by themselves) and YouTube tutorials about automating social media. He published an official n8n node, improved the public API (the way other software talks to Postiz), messaged Skool communities (paid online groups) to promote Postiz, and started an affiliate program (people who bring in customers get a cut) paying about 30% every month for as long as the customer stays.\n\nHis reasoning: people posting by hand cancel, but \"when people are posting with automation, that's a whole different story.\"",
      "number": [],
-     "lesson": "Look at who your most active users are, then build for them."},
+     "lesson": "Look at who your most active users are, then build for them.",
+     "title": "Finding the users who stay: build for the automators",
+     "dek": "People were posting through Postiz from n8n automations. He built an n8n node, a better API and an affiliate program for them, because people who automate their posting tend to stay.",
+     "source_ids": [3]},
     {"name": "The turning point", "when": "Early 2026", "moves": [6], "turn": true,
      "story": "OpenClaw, an AI agent project, went viral. Postiz was ready with an MCP server (a way for AI agents to use Postiz), a command-line tool (you control it by typing commands) and an OpenClaw skill. A third-party writer published a popular article about an agent that posted TikTok slideshows through Postiz.",
      "number": [{"v": "Reported: $21K a month in March 2026, $80K in April, $118K in June, $145K on July 2.", "label": "Claimed", "date": "Jul 2026", "source": "Superframeworks case study"}],
-     "lesson": "You can't plan a viral moment, but you can be the tool that's ready when one happens."},
+     "lesson": "You can't plan a viral moment, but you can be the tool that's ready when one happens.",
+     "title": "The turning point: ready when AI agents went viral",
+     "dek": "When OpenClaw went viral, Postiz already had an MCP server, a command-line tool and an OpenClaw skill. A popular article used Postiz, and signups jumped.",
+     "receipts": [{"kind": "image", "src": "/assets/receipts/postiz/postiz-now.png", "caption": "postiz.com today: \"Run your social media on autopilot with\" AI agents like ChatGPT", "label": "Live", "date": "Nov 27 2026", "url": "https://postiz.com/"}],
+     "results": [{"v": "$21K → $118K", "sub": "a month, March to June 2026", "label": "Claimed", "date": "Jul 2026", "source": "Superframeworks case study"}],
+     "videos": ["iyrzsoEniS8", "n7Obxh9-Rc8"],
+     "source_ids": [5, 4]},
     {"name": "Scaling the content", "when": "Sep 2026 to now", "moves": [7, 8],
      "story": "A weekly system on X: a Monday video that is useful on its own and only mentions Postiz, clips of it all week, then the same idea as a long X article the next week. He replies to every comment, and runs daily short videos through creators, where he says about 1 in 30 takes off.",
      "number": [{"v": "Reported $186,713 a month in September 2026.", "label": "Claimed", "date": "Sep 2026", "source": "Postiz blog"},
-                {"v": "$430,896 a month on November 17, 2026.", "label": "Verified", "date": "Nov 17 2026", "source": "https://trustmrr.com/startup/postiz"}],
-     "lesson": "One idea, repackaged several times, beats new content every day."}
+                {"v": "$482,722 a month on November 27, 2026.", "label": "Verified", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"}],
+     "lesson": "One idea, repackaged several times, beats new content every day.",
+     "title": "Scaling the content: one idea, packaged many ways",
+     "dek": "A weekly system on X turns one useful video into clips and a long article, and creators post short videos every day.",
+     "receipts": [{"kind": "image", "src": "/assets/receipts/postiz/trustmrr.png", "caption": "TrustMRR: $482,722 MRR, read from Stripe", "label": "Verified", "date": "Nov 27 2026", "url": "https://trustmrr.com/startup/postiz"}],
+     "results": [{"v": "$482,722", "sub": "a month, read from Stripe", "label": "Verified", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"}],
+     "source_ids": [6, 0]}
   ],
   "moves": [
     {"at": "2024-01", "when": "Jan 2024", "text": "Starts building Postiz", "detail": "After dropping his first product, Gitroom.", "label": "Claimed", "source": "Superframeworks case study"},
@@ -86,14 +126,14 @@
     {"at": "2025-11", "when": "Nov 2025", "text": "$14K a month, burned out", "detail": "Over a year of slow growth after going open source.", "label": "Claimed", "source": "The founder on Dev.to"},
     {"at": "2026-02", "when": "Early 2026", "text": "Ready for the OpenClaw wave", "detail": "An MCP server, a command-line tool and an OpenClaw skill.", "label": "Claimed", "source": "Mixergy interview"},
     {"at": "2026-09", "when": "Sep 2026", "text": "Weekly X content system", "detail": "One idea a week: a video, clips, then a long article.", "label": "Claimed", "source": "Postiz blog"},
-    {"at": "2026-11", "when": "Nov 17 2026", "text": "$430,896 a month", "detail": "Read from Stripe by TrustMRR.", "label": "Verified", "source": "https://trustmrr.com/startup/postiz"}
+    {"at": "2026-11", "when": "Nov 27 2026", "text": "$482,722 a month", "detail": "Read from Stripe by TrustMRR.", "label": "Verified", "source": "https://trustmrr.com/startup/postiz"}
   ],
   "fact_checks": [
-    {"claim": "Monthly recurring revenue", "found": "TrustMRR reads it straight from Stripe: $430,896, updated Nov 17 2026.", "label": "Verified", "who": "TrustMRR", "date": "Nov 17 2026", "source": "https://trustmrr.com/startup/postiz"},
+    {"claim": "Monthly recurring revenue", "found": "TrustMRR reads it straight from Stripe: $482,722, updated Nov 27 2026.", "label": "Verified", "who": "TrustMRR", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"},
     {"claim": "When Postiz started", "found": "We couldn't verify it. TrustMRR says July 2024, the founder says he \"started Postiz\" in September 2024, and a case study says work began in January 2024.", "label": "Couldn't verify", "who": "TrustMRR, the founder, a case study", "date": "Nov 17 2026", "source": "https://trustmrr.com/startup/postiz"},
     {"claim": "Revenue in March 2026", "found": "A case study says $21K. The founder said \"$45,000 per month\" in a Mixergy interview published Mar 11 2026. The chart uses $21K and shows $45K as a second point.", "label": "Sources differ", "who": "Superframeworks case study; Mixergy interview", "date": "Mar 11 2026", "source": "Mixergy interview"},
     {"claim": "$12,648 in \"August 2024\"", "found": "The same article lists $6,523 for July 2025 and says August nearly doubled it, so August 2025 is almost certainly what was meant. The chart uses Aug 2025.", "label": "Claimed", "who": "The founder on Dev.to", "date": "Nov 2025", "source": "The founder on Dev.to"},
-    {"claim": "$186K (Sep 2026) to $431K (Nov 2026)", "found": "Public numbers show $186,713 (Sep 2026, Postiz blog) and $430,896 MRR (Nov 17 2026, TrustMRR). We couldn't verify what drove the jump.", "label": "Couldn't verify", "who": "Postiz blog; TrustMRR", "date": "Nov 17 2026", "source": "https://trustmrr.com/startup/postiz"},
+    {"claim": "$186K (Sep 2026) to $482K (Nov 2026)", "found": "Public numbers show $186,713 (Sep 2026, Postiz blog) and $482,722 MRR (Nov 27 2026, TrustMRR). We couldn't verify what drove the jump.", "label": "Couldn't verify", "who": "Postiz blog; TrustMRR", "date": "Nov 27 2026", "source": "https://trustmrr.com/startup/postiz"},
     {"claim": "\"A single developer\"", "found": "From the founder's 2025 article title. Team size today isn't public.", "label": "Claimed", "who": "The founder", "date": "2025", "source": "The founder's 2025 article title"}
   ],
   "fact_checks_read": "Nov 17 2026",
@@ -111,7 +151,7 @@
     {"id": "c6", "text": "Plan for a long flat stretch. Postiz stayed under $15K a month for about 14 months after going open source. Pace yourself around school.", "from": "Open source"}
   ],
   "sources": [
-    {"name": "TrustMRR: Postiz", "url": "https://trustmrr.com/startup/postiz", "what": "Revenue, subscriptions, start date, price.", "date": "Nov 17 2026", "label": "Verified", "logo": "/assets/logos/trustmrr.png"},
+    {"name": "TrustMRR: Postiz", "url": "https://trustmrr.com/startup/postiz", "what": "Revenue, subscriptions, start date, price.", "date": "Nov 27 2026", "label": "Verified", "logo": "/assets/logos/trustmrr.png"},
     {"name": "GitHub: gitroomhq/postiz-app", "url": "https://github.com/gitroomhq/postiz-app", "what": "41,810 stars.", "date": "Nov 17 2026", "label": "Live", "logo": "/assets/logos/github.svg"},
     {"name": "Wayback Machine: postiz.com", "url": "https://web.archive.org/web/20240703150110/https://postiz.com/", "what": "Homepage and pricing, then and now.", "date": "Jul 2024 · Sep 2024", "label": "Wayback", "logo": "/assets/logos/internetarchive.png"},
     {"name": "The founder on Dev.to", "url": null, "what": "Open-source rules, Docker, n8n, Skool, affiliates, revenue to $14K.", "date": "Nov 2025", "label": "Claimed", "logo": "/assets/logos/devto.png"},
@@ -119,5 +159,22 @@
     {"name": "Superframeworks case study", "url": null, "what": "Gitroom, the SEO spend, stars, monthly revenue through July 2026.", "date": "Jul 2026", "label": "Claimed", "logo": "/assets/logos/superframeworks.png"},
     {"name": "Postiz blog", "url": null, "what": "The X content system, short-video creators, a $186,713 Stripe chart.", "date": "Sep 2026", "label": "Claimed", "logo": "/assets/logos/postiz.svg"}
   ],
+  "videos": [
+    {"id": "n7Obxh9-Rc8", "kind": "interview", "title": "How Postiz Went From $17K to $143K/Month in 4 Months", "channel": "Starter Story", "duration": "16:11", "thumb": "/assets/receipts/postiz/yt-n7Obxh9-Rc8.jpg"},
+    {"id": "Ul2LaZIPqMY", "kind": "interview", "title": "The Marketing Playbook behind a $207K/month SaaS", "channel": "notJustdev", "duration": "1:05:43", "thumb": "/assets/receipts/postiz/yt-Ul2LaZIPqMY.jpg"},
+    {"id": "iyrzsoEniS8", "kind": "interview", "title": "$21K → $100K MRR in Weeks by Selling to AI Agents", "channel": "SyntaxGTM", "duration": "21:55", "thumb": "/assets/receipts/postiz/yt-iyrzsoEniS8.jpg"},
+    {"id": "RPM4ImzcIFc", "kind": "interview", "title": "How I Built It: $17K/Month Open Source SaaS", "channel": "Starter Story", "duration": "22:52", "thumb": "/assets/receipts/postiz/yt-RPM4ImzcIFc.jpg"},
+    {"id": "HXkHbZrsmFY", "kind": "own", "title": "How to go viral on Instagram with Claude AI", "channel": "Postiz", "duration": "7:59", "views": "8.2K", "views_date": "Nov 27 2026", "thumb": "/assets/receipts/postiz/yt-HXkHbZrsmFY.jpg"},
+    {"id": "06PssJnXsIc", "kind": "own", "title": "My Claude AI system for viral TikTok slideshows", "channel": "Postiz", "duration": "6:14", "views": "10K", "views_date": "Nov 27 2026", "thumb": "/assets/receipts/postiz/yt-06PssJnXsIc.jpg"},
+    {"id": "LnNB_vs4HvM", "kind": "own", "title": "Add social scheduling to your software with Postiz", "channel": "Postiz", "duration": "1:51", "thumb": "/assets/receipts/postiz/yt-LnNB_vs4HvM.jpg"}
+  ],
+  "social": {
+    "summary": "A weekly system on X: one useful video on Monday that only mentions Postiz, clips of it all week, then the same idea as a long X article the next week. He replies to every comment.",
+    "system": [{"when": "Mon", "what": "One useful video"}, {"when": "Tue–Sun", "what": "Clips of it"}, {"when": "Next week", "what": "Same idea, long article"}],
+    "note": "Plus daily short videos through creators: about 1 in 30 takes off",
+    "label": "Claimed", "date": "Sep 2026", "source": "Postiz blog",
+    "accounts": [{"label": "@getpostiz on X", "url": "https://x.com/getpostiz"}, {"label": "YouTube", "url": "https://www.youtube.com/@getpostiz"}, {"label": "Launch on Product Hunt", "url": "https://www.producthunt.com/products/postiz"}, {"label": "Discord", "url": "https://discord.gg/sf7QjTcX37"}]
+  },
+  "fit": ["Could you give a version away for free?", "Are you building mostly on your own?", "Can you keep going for a year if money stays flat?"],
   "links": {"site": "https://postiz.com", "x": "https://x.com/getpostiz", "linkedin": "https://www.linkedin.com/company/postiz", "youtube": "https://www.youtube.com/@getpostiz", "github": "https://github.com/gitroomhq/postiz-app", "producthunt": "https://www.producthunt.com/products/postiz", "discord": "https://discord.gg/sf7QjTcX37"}
 }

@@ -6,5 +6,7 @@ PUBLISHING.md
 publish_story.py
 build_app.py
 scripts
+docs
+data/stories/drafts
 _gen
 _covers_tmp

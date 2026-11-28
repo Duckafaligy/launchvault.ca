@@ -11,7 +11,7 @@ Run:  python build_newapp.py
 import json, os, re, sys, types
 ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT); sys.path.insert(0, os.path.join(ROOT, "scripts"))
-import build, build_app as B, darken
+import build, build_app as B, build_story, darken
 
 esc, NL, ic = B.esc, B.NL, B.ic
 PRE = ""                                       # route prefix: none since the root swap (2026-11-24); the assets/newapp/*.js paths are unprefixed too
@@ -70,31 +70,12 @@ def head(title, desc, extra="", og_slug="", gate=True):
 </head>
 '''
 
-def reader_hero(e):
-    """Paper Story reader hero: image, company line, phase title, meta, clickable phase stepper. ui.js keeps it on the current phase."""
-    S = e["S"]; n = len(S["phases"]); cv = cover(e["slug"])
-    steps = "".join(f'<a href="#ph{i + 1}" data-rstep="{i + 1}"><i></i><span>{i + 1}. {esc(p.get("short") or p["name"])}</span></a>' for i, p in enumerate(S["phases"]))
-    return (f'<header class="rhero" data-rhero>{f"""<div class="cv rhcv"><img src="{cv}" alt="" width="960" height="540" fetchpriority="high"></div>""" if cv else ""}'
-            f'<div class="rhfl"><a class="circ" href="{PRE}/app/library/" aria-label="Back to Library">{pi("back", 18, 2.2)}</a>'
-            f'<button class="circ" type="button" data-star="{e["slug"]}" aria-pressed="false" aria-label="Save this story">{STAR}<span class="sr">Save</span></button></div>'
-            f'<div class="rht"><p class="rhm"><span class="tile"><img src="{S["logo"]}" alt="" width="16" height="16"></span><b>{esc(S["name"])} · {esc(e["type"])}</b>{B.lb(e["hl"])}</p>'
-            f'<h1 class="rhh" data-rtitle>Phase 1: {esc(S["phases"][0]["name"])}</h1>'
-            f'<p class="rhs">{S["read_min"]} min read · {len(S["sources"])} sources · numbers read {esc(e["hd"])}</p>'
-            f'<nav class="stepper lab" aria-label="Phases" data-rsteps style="--n:{n}">{steps}</nav></div></header>')
-
-def reader_extras(e, body):
-    """Fact check card for the right rail (same lock as the full Fact checks panel) + the phase action bar."""
-    S = e["S"]; locked = 'data-locked="1" hidden' in body or "data-locked=\"1\" hidden" in body
-    rows = "".join(f'<li>{B.lb(f["label"])}<b>{esc(f["claim"])}</b><span>{esc(f.get("who") or B.src_name(f))} · {esc(f["date"])}</span></li>' for f in S["fact_checks"][:4])
-    fc = (f'<section class="card rfc"{" data-locked=" + chr(34) + "1" + chr(34) + " hidden" if locked else ""}><div class="ch"><h2>Fact check</h2>'
-          f'<button type="button" class="tl" data-report="{esc(e["slug"])}">Report a mistake</button></div><ul>{rows}</ul>'
-          f'<a class="tl" href="#facts">All {len(S["fact_checks"])} fact checks</a></section>'
-          '<section class="card rstepc" data-rstepc hidden><div class="ch"><h2>Your step this phase</h2></div><p data-rsteptxt></p>'
-          '<button class="btn btn-p" type="button" data-rstepadd aria-pressed="false">Add to my checklist</button></section>')
-    bar = ('<div class="rbar" data-rbar><div class="rbar-in"><button class="btn btn-p" type="button" data-rdonebtn>Mark phase done'
-           + '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 3l4 4-4 4"/></svg></button>'
-           '<button class="btn btn-s" type="button" data-rnextbtn><span data-rnextl>Next</span></button></div></div>')
-    return fc, bar
+def story_reader(E, S, gate=True):
+    """Ready stories: the story-course template (build_story.py). Writes /app/story/<slug>/<n>/ itself, returns the story home.
+    Every chapter after 1 goes through the lesson quota in story.js, so build_app's per-story Pro gate (gate=) no longer applies."""
+    home, chs = build_story.pages(E, S, shell, cover, pi)
+    for k, t in enumerate(chs, 1): B.wr(os.path.join(ROOT, "app", "story", S["slug"], str(k), "index.html"), t)
+    return home
 
 def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_slug=""):
     ready = [e for e in E if e["status"] == "ready"]; week = next((e for e in ready if not e["stale"]), ready[0])
@@ -113,15 +94,13 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
     cont = (f'<a class="sbc" href="{week["href"]}" data-sbcont>{f"""<span class="cv"><img src="{wcv}" alt="" width="376" height="212" loading="lazy"></span>""" if wcv else ""}'
             f'<span class="r"><b data-sbcn>This week: {esc(week["name"])}</b><small data-sbcp></small></span><span class="bar"><i data-sbcb></i></span></a>')
     css = "".join(f'\n<link rel="stylesheet" href="{NA}/{n}-dark.css">' for n in ("chart", "community") if n + ".js" in scripts)
-    hero = fc = rbar = ""
-    if story and story["status"] == "ready":
-        hero = reader_hero(story); fc, rbar = reader_extras(story, body)
-        body = body.replace('<aside class="rrail">', '<aside class="rrail">' + fc, 1)
-        body = body.replace("<h1>", '<h2 class="st">', 1).replace("</h1>", "</h2>", 1)   # the hero carries the page's h1
-    cls = " ".join(x for x in ("nv", "has-back" if crumbs else "", "is-reader" if hero else "", "p-" + (active.split("-")[0] or "x")) if x)
+    scss = ""
+    if "story.js" in scripts:   # story home + chapters: Paper's Geist type and the template's own sheet (after vault*.css, so it wins ties)
+        scss = f'\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;650;700&family=Geist+Mono:wght@400;500;600&display=swap">\n<link rel="stylesheet" href="{NA}/story.css">\n<script>document.documentElement.classList.add("sty-js")</script>'
+    cls = " ".join(x for x in ("nv", "has-back" if crumbs else "", "p-" + (active.split("-")[0] or "x")) if x)
     back = f'<a class="mback" href="{crumbs[0][0]}">{pi("back", 16, 2)}<span>{esc(crumbs[0][1])}</span></a>' if crumbs else ""
     scripts = scripts.replace("/assets/community.js", f"{NA}/community.js").replace("/assets/assistant.js", f"{NA}/assistant.js")
-    return (head(title + " · LaunchVault", desc, css, og_slug) + f'''<body class="{cls}">
+    return (head(title + " · LaunchVault", desc, css, og_slug).replace("</head>", scss + "\n</head>", 1) + f'''<body class="{cls}">
 <a class="skip" href="#main">Skip to content</a>
 <div class="shell">
 <aside class="side" aria-label="App">
@@ -129,7 +108,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
   <button class="srch sbs" type="button" data-cmd>{pi("srch", 16, 2)}<span>Search</span><kbd>⌘K</kbd></button>
   <nav aria-label="Main">{side}</nav>
   <div class="foot">{cont}
-    <div class="plan" data-state="free"><div><b data-plan>Free plan</b><small data-plansub>1 of {len(ready)} stories</small></div><a href="{A}account/#plan" data-upg>Get Pro</a></div>
+    <div class="plan" data-state="free"><div><b data-plan>Free plan</b><small data-plansub>5 lessons a month</small></div><a href="{A}account/#plan" data-upg>Get Pro</a></div>
     <a class="sbme" href="{A}account/"{' aria-current="page"' if active == "acct" else ""} title="Account and settings" data-sbme aria-haspopup="menu" aria-expanded="false" aria-controls="sbm"><span class="av" data-av aria-hidden="true">{pi("user", 18)}</span><span class="t"><b data-me>Your account</b><small>Account and settings</small></span>{pi("chev", 14, 2)}</a>
   </div>
 </aside>
@@ -142,7 +121,7 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
     <div class="avw"><button class="avb" type="button" data-avb aria-expanded="false" aria-controls="avm" aria-label="Account menu"><span class="av" data-av aria-hidden="true">{pi("user", 18)}</span></button><div class="avm" id="avm" aria-label="Account" hidden></div></div>
   </header>
   <main id="main">
-{hero}{body}{rbar}
+{body}
   </main>
 </div>
 </div>
@@ -162,12 +141,17 @@ def shell(E, title, desc, active, body, crumbs=None, wide=False, scripts="", og_
 ''')
 
 # ---- Settings (Paper Settings: nav + one glass card per section; phone "You": profile header, grouped lists, sections open as sub-pages) ----
-ASEC = [("profile", "Profile", "user"), ("plan", "Plan and billing", "lib"), ("email", "Notifications", "bell"), ("prefs", "Preferences", "ck"), ("site", "Your website", "ask"), ("data", "Privacy and data", "ck")]
+ASEC = [("profile", "Profile", "user"), ("plan", "Plan and billing", "lib"), ("student", "Student plan", "ck"), ("email", "Notifications", "bell"), ("prefs", "Preferences", "ck"), ("site", "Your website", "ask"), ("data", "Privacy and data", "ck")]
 def account_body(t):
     """Same controls and hooks as the live account page; the sections are put in Paper's order, renamed, and the two navs rebuilt."""
     head, rest = t.split('<div class="acc">', 1); assert rest.count('<section class="asec" id="') == 6, "account body changed"
     pre, *secs = rest.split('<section class="asec" id="'); secs[-1], tail = secs[-1].rsplit("</section>", 1)[0] + "</section>", secs[-1].rsplit("</section>", 1)[1]
     by = {s.split('"', 1)[0]: '<section class="asec" id="' + s for s in secs}
+    # new-app only: the Student plan section (filled by app.js [data-student]) and the free plan's limits (migration 20261128120000)
+    by["student"] = ('<section class="asec" id="student"><h2>Student plan</h2><p>Students get 10 lessons a month and 50 Ask chats a week, free. '
+                     'Verify with your school email, then again once a year.</p>\n  <div class="card acard sitec" data-student><div class="arow"><span class="v"><small>Loading…</small></span></div></div></section>')
+    free = "<li>10 Ask messages a week</li>"; assert free in by["plan"], "free plan list changed"
+    by["plan"] = by["plan"].replace(free, "<li>5 lessons a month · 10 chats a week</li>", 1).replace("<li>The first phase of every other story</li>", "<li>Chapter 1 of every story</li>", 1)
     for k, lab, _ in ASEC:   # Paper's section names; a "back to You" link for the phone sub-page
         h = re.search(r"<h2>.*?</h2>", by[k]).group(0)
         by[k] = by[k].replace(h, f'<a class="youback" href="#top">{pi("back", 16, 2)}<span>You</span></a><h2>{lab}</h2>', 1)
@@ -245,9 +229,9 @@ def home(E):
 
 def library(E):
     ready = [e for e in E if e["status"] == "ready"]; wk = next((e for e in ready if not e["stale"]), ready[0]); cv = cover(wk["slug"])
-    feat = (f'<a class="card feat" href="{wk["href"]}">{f"""<span class="cv"><img src="{cv}" alt="" width="960" height="540"></span>""" if cv else ""}<span class="ft"><span class="fk">Free this week</span>'
-            f'<span class="fh">{esc(wk["title"] if wk["title"].startswith(wk["name"]) else wk["name"] + ": " + wk["title"])}</span><span class="fp">Every phase is open to everyone this week. {"The other " + str(len(ready) - 1) + " open phase 1 free." if len(ready) > 1 else ""}</span>'
-            f'<span class="btn btn-p">Read it free<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 3l4 4-4 4"/></svg></span></span></a>')
+    feat = (f'<a class="card feat" href="{wk["href"]}">{f"""<span class="cv"><img src="{cv}" alt="" width="960" height="540"></span>""" if cv else ""}<span class="ft"><span class="fk">New this week</span>'
+            f'<span class="fh">{esc(wk["title"] if wk["title"].startswith(wk["name"]) else wk["name"] + ": " + wk["title"])}</span><span class="fp">Chapter 1 of every story is free. Your free plan opens 5 more lessons a month.</span>'
+            f'<span class="btn btn-p">Start the story<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 3l4 4-4 4"/></svg></span></span></a>')
     body = f'''<div class="pg lib">
 <h1 class="pg-h">Library</h1><p class="pg-s">{len(ready)} founder stories, every number sourced.</p>
 <label class="lsearch jsonly">{pi("srch", 16, 2)}<input type="search" id="lq" placeholder="Search the library" aria-label="Search the library"></label>
@@ -300,7 +284,7 @@ def main():
     norm_ready = B.norm_ready
     def nr(S, legacy): e = norm_ready(S, legacy); e["cover"] = cover(S["slug"]); return e
     noop = lambda *a, **k: None
-    B.wr, B.rd, B.head, B.shell, B.home, B.library, B.norm_ready, B.soon_page, B.saved = wr, rd, head, shell, home, library, nr, soon_page, saved
+    B.wr, B.rd, B.head, B.shell, B.home, B.library, B.norm_ready, B.soon_page, B.saved, B.reader = wr, rd, head, shell, home, library, nr, soon_page, saved, story_reader
     B.make_cover = B.update_cards = B.update_story_cards = B.write_sitemap = B.add_meta = build.main = noop
     B.shutil = types.SimpleNamespace(rmtree=noop)
     ready, E = B.main()

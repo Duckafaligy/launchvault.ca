@@ -1,6 +1,7 @@
 # Publishing a story
 
-One story = one file: `data/stories/<slug>.json` (format: `data/stories/SCHEMA.md`).
+One story = one file: `data/stories/<slug>.json` (format: `docs/STORY-FORMAT.md`). Drafts wait in `data/stories/drafts/` and are never built.
+Before publishing: `python scripts/validate_story.py <slug> --links`. Daily numbers: `python scripts/refresh_numbers.py --write`. Scheduled routine: `docs/STORY-ROUTINE.md`.
 
 ```
 python publish_story.py <slug>

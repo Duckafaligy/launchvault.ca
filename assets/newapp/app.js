@@ -81,6 +81,7 @@
     toastEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6EE7B7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>${esc(msg)}</span>` + (undo ? '<button type="button">Undo</button>' : "");
     toastEl.classList.add("on"); if (undo) toastEl.querySelector("button").onclick = () => { undo(); toastEl.classList.remove("on"); };
     tt = setTimeout(() => toastEl.classList.remove("on"), 4200); };
+  window.LVToast = toast;   // story.js (lesson reminders, copy, pin)
 
   // ---------- offline: everything on this device keeps working; only sending (feedback, reports) needs a connection ----------
   const sendErr = err => navigator.onLine === false ? "You're offline, so that didn't send. What you wrote is still here. Try again when you're back online." : "Sorry, that didn't send (" + err.message + "). Please try again in a minute.";
@@ -713,7 +714,7 @@
     const so = $("#so"); if (so && window.LVAuth) so.addEventListener("click", () => LVAuth.signOut());
     const nav = $$(".anav a, .anavm a"), strip = $(".anavm .snav-in");
     // the section in view is highlighted in both navs; at the very bottom the last section wins (it may never reach the top)
-    const H = ["#profile", "#plan", "#email", "#prefs", "#site", "#data"];   // the order the sections are in on the page (build_newapp.py ASEC)
+    const H = ["#profile", "#plan", "#student", "#email", "#prefs", "#site", "#data"];   // the order the sections are in on the page (build_newapp.py ASEC)
     const mark = cur => { nav.forEach(a => { const on = a.getAttribute("href") === cur; a.classList.toggle("on", on); if (on) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); });
       const on = strip && $("a.on", strip); if (on && strip.scrollWidth > strip.clientWidth) strip.scrollTo({left: on.offsetLeft - 16, behavior: reduce ? "auto" : "smooth"});
       glide($(".acc .anav"), "a.on"); glide(strip, "a.on"); };
@@ -825,7 +826,9 @@
     $$('[data-locked="1"]').forEach(el => { el.hidden = !on; });
     $$(".gatewrap, #gate").forEach(el => { el.hidden = on; });
     $$("[data-plan]").forEach(el => { el.textContent = j ? "Judge view" : on ? name + " plan" : "Free plan"; });
-    $$("[data-plansub]").forEach(el => { el.textContent = on ? `All ${READY.length} stories` : `1 of ${READY.length} stories`; });
+    // lesson meter: the last lesson_status story.js saw (lv-lessons), until its reset date passes
+    const lq = ls.get("lv-lessons"), lok = lq && lq.limit && Date.parse(lq.resets_at) > Date.now();
+    $$("[data-plansub]").forEach(el => { el.textContent = on ? "Every lesson open" : lok ? `${Math.max(0, lq.limit - lq.used)} of ${lq.limit} lessons left` : "5 lessons a month"; });
     $$("[data-upg]").forEach(el => { el.textContent = on ? "Manage" : "Get Pro"; });
     $$(".side .plan").forEach(el => { el.dataset.state = j ? "judge" : p ? "paid" : "free"; });   // sidebar card look: upgrade card, calm paid state, judge badge
     $$("[data-plan-chip]").forEach(el => { el.textContent = on ? name : "Free"; });
@@ -892,6 +895,7 @@
         let n = 0; const poll = () => { if (paidRow() || ++n > 6) return; if (window.LVSync) LVSync.plan().catch(() => {}); setTimeout(poll, 3000); }; setTimeout(poll, 1500); } }
   }
   addEventListener("lv:plan", () => { syncJudge(); renderAll(); });
+  addEventListener("lv:lessons", syncJudge);   // story.js got a fresh lesson_status
   $$("form[data-judge]").forEach(f => f.addEventListener("submit", e => {
     e.preventDefault();
     const inp = $("input[name=code]", f), err = $(".jerr", f), v = (inp ? inp.value : "").trim().toUpperCase();
@@ -966,6 +970,59 @@
         const judge = ls.get("lv-judge") === JCODE, c = window.LVAuth && LVAuth.live ? await LVAuth.load().catch(() => null) : null;
         if (!c || !c.user) { if (acct) acct.innerHTML = `<div class="arow"><span class="v"><small>${judge ? "Judge view has no account, so there's no website to connect. Members connect theirs here." : "Sign in to connect your website."}</small></span></div>`; drawHome(judge ? "judge" : "out"); return; }
         const d = await call("GET"); site = d.site || null; ai = !!d.ai; draw("");
+      })();
+    } }
+
+  // ---------- Student plan (Account #student): prove a school email, get 10 lessons a month + 50 Ask chats a week for a year ----------
+  // Proof: Clerk emails a code to the address; once verified it is made the PRIMARY email for a moment so the Clerk session token
+  // carries it (custom session claim "email"), student_verify() checks that claim, then the old primary comes back and the school
+  // address is removed from the Clerk account. The server keeps only the school's domain. Migration 20261128120000_free_plan_limits.
+  { const box = $("[data-student]");
+    if (box) {
+      const HELP = "";   // the address for "Email us" (none published yet); with it empty the line is shown without a link
+      const ERR = {bad_email: "That doesn't look like an email address.", not_school: "That email isn't from a school on our list.", email_in_use: "That school email is already verifying another account.",
+        not_proven: "We couldn't confirm it automatically yet, so your request is saved and waiting. We'll check it soon.", form_identifier_exists: "That email is already on another LaunchVault account.",
+        form_code_incorrect: "That code isn't right. Check the latest email and try again.", verification_expired: "That code expired. Send a new one.", verification_failed: "That code didn't work. Send a new one.", too_many_requests: "Too many tries. Wait a minute and try again."};
+      const errOf = e => { const x = e && e.errors && e.errors[0]; return x ? ERR[x.code] || x.longMessage || x.message : "Something went wrong. Try again."; };
+      const day = s => new Date(s).toLocaleDateString(undefined, {month: "short", day: "numeric", year: "numeric"});
+      let clerk = null, sb = null, st = null, ea = null, email = "", added = false;
+      const rpc = async (fn, args) => { const {data, error} = await sb.rpc(fn, args); if (error) throw error; return data; };
+      const help = `<p class="fine">School email not on our list? ${HELP ? `<a href="mailto:${esc(HELP)}">Email us</a>` : "Email us"} and we'll check it by hand.</p>`;
+      const draw = (msg = "") => { const say = msg ? `<p class="smsg" role="status">${esc(msg)}</p>` : "";
+        if (st && st.verified) { box.innerHTML = `<div class="sok"><p class="sdom"><b>${esc(st.email_domain)}</b> <span class="lb v">Verified student</span></p><p>10 lessons a month and 50 Ask chats a week until ${esc(day(st.until))}. After that, verify again with your school email.</p>${say}</div>`; return; }
+        if (ea) { box.innerHTML = `<form class="sform" data-stcode novalidate><label for="stCode">Code we emailed to ${esc(email)}</label><div class="srow"><input id="stCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code"><button class="btn btn-p" type="submit">Verify</button></div>${say}<div class="sact"><button class="tl" type="button" data-stagain>Use a different email</button></div></form>`; return; }
+        const pend = st && st.pending ? `<p class="sdom"><b>${esc(st.email_domain)}</b> <span class="lb n">Not verified yet</span></p>` : st && st.expired ? `<p class="sdom"><b>${esc(st.email_domain)}</b> <span class="lb n">Expired ${esc(day(st.until))}</span></p>` : "";
+        box.innerHTML = `${pend}<form class="sform" data-stmail novalidate><label for="stMail">School email</label><div class="srow"><input id="stMail" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="you@school.ca" maxlength="254"><button class="btn btn-p" type="submit">Send code</button></div>${say}<p class="fine">We email you a code to prove it's yours. We keep only your school's name, not the address.</p></form>${help}`; };
+      const busy = (b, t) => { b.disabled = true; b.textContent = t; };
+      // make the school address primary, check it on the server with a fresh token, then put the old primary back and remove it
+      const prove = async added => { const old = clerk.user.primaryEmailAddressId, mine = clerk.user.emailAddresses.find(x => x.id === ea.id) || ea; let r;
+        try { if (old !== mine.id) await clerk.user.update({primaryEmailAddressId: mine.id}); await clerk.session.getToken({skipCache: true}); r = await rpc("student_verify", {p_email: email}); }
+        finally { if (old && old !== mine.id) { try { await clerk.user.update({primaryEmailAddressId: old}); if (added) await mine.destroy(); } catch {} await clerk.session.getToken({skipCache: true}).catch(() => {}); } }
+        return r; };
+      document.addEventListener("click", e => { if (e.target.closest("[data-stagain]")) { ea = null; draw(); $("#stMail").focus(); } });
+      document.addEventListener("submit", async e => {
+        const f = e.target.closest("[data-stmail], [data-stcode]"); if (!f) return; e.preventDefault(); const b = $("button[type=submit]", f);
+        try {
+          if (f.matches("[data-stmail]")) {
+            email = $("#stMail", f).value.trim().toLowerCase(); if (!email) return $("#stMail", f).focus(); busy(b, "Checking…");
+            const r = await rpc("student_verify", {p_email: email});   // the list check; already proven when it is this account's primary email
+            if (r.verified) { st = await rpc("student_status"); toast("Student plan on"); return draw(); }
+            if (r.error !== "not_proven") return draw(ERR[r.error] || "Something went wrong. Try again.");
+            const have = clerk.user.emailAddresses.find(x => x.emailAddress.toLowerCase() === email);
+            if (have && have.verification && have.verification.status === "verified") { ea = have; const v = await prove(false); ea = null; st = await rpc("student_status"); return draw(v && v.verified ? "" : ERR[(v && v.error) || "not_proven"]); }
+            added = !have; ea = have || await clerk.user.createEmailAddress({emailAddress: email}); await ea.prepareVerification({strategy: "email_code"});
+            draw(""); $("#stCode").focus(); return;
+          }
+          const code = $("#stCode", f).value.trim(); if (!/^\d{6}$/.test(code)) return $("#stCode", f).focus(); busy(b, "Verifying…");
+          ea = await ea.attemptVerification({code}); await clerk.user.reload();
+          const v = await prove(added); ea = null; st = await rpc("student_status"); draw(v && v.verified ? "" : ERR[(v && v.error) || "not_proven"]); if (v && v.verified) toast("Student plan on");
+        } catch (err) { draw(errOf(err)); }
+      });
+      (async () => {
+        clerk = window.LVAuth && LVAuth.live ? await LVAuth.load().catch(() => null) : null;
+        if (!clerk || !clerk.user) { box.innerHTML = `<div class="arow"><span class="v"><small>${ls.get("lv-judge") === JCODE ? "Judge view has no account. Members verify their school email here." : "Sign in to verify your school email."}</small></span></div>`; return; }
+        for (let i = 0; i < 60 && !window.LVSync; i++) { if (i === 0 && !$('script[src="/assets/supabase.js"]')) { const s = document.createElement("script"); s.src = "/assets/supabase.js"; document.head.appendChild(s); } await new Promise(r => setTimeout(r, 100)); }
+        try { sb = await LVSync.make(clerk); st = await rpc("student_status"); draw(); } catch { box.innerHTML = `<div class="arow"><span class="v"><small>Student plans open soon.</small></span></div>`; }
       })();
     } }
 
