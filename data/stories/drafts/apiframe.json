@@ -1,0 +1,419 @@
+{
+  "slug": "apiframe",
+  "name": "Apiframe",
+  "category": "AI tools",
+  "status": "draft",
+  "what": "One API that lets developers add AI image, video and music generation to their apps without dealing with each AI company separately.",
+  "logo": "/assets/logos/apiframe.png",
+  "site": "https://apiframe.ai/",
+  "published": "2026-11-28",
+  "read_min": 6,
+  "title": "Apiframe: from $6.8K to $47K a month in nine months by selling one API for 70+ AI models",
+  "title_em": "$47K a month",
+  "dek": "A developer tool that started with a single AI image model now sells access to 70+ models through one connection. Its MRR (monthly recurring revenue: what subscribers pay every month) is $29,932, and its best month so far brought in $47,039.",
+  "pattern": "Sell the plumbing, not the AI",
+  "hero": {
+    "title": "One small API for AI images grew into a $47K-a-month business",
+    "tags": [
+      "Sell the plumbing, not the AI",
+      "Developer tool",
+      "Usage-based pricing"
+    ]
+  },
+  "numbers": [
+    {
+      "k": "MRR (money coming in each month from subscriptions)",
+      "v": "$29,932",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/apiframe"
+    },
+    {
+      "k": "Revenue in Sep 2026",
+      "v": "$47,039",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/apiframe"
+    },
+    {
+      "k": "Revenue in Oct 2026",
+      "v": "$44,106",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/apiframe"
+    },
+    {
+      "k": "Revenue, all-time",
+      "v": "$555,386",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/apiframe"
+    },
+    {
+      "k": "Active subscriptions",
+      "v": "727",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/apiframe.md"
+    },
+    {
+      "k": "Profit margin, last 30 days",
+      "v": "67%",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/apiframe.md"
+    },
+    {
+      "k": "Models offered",
+      "v": "70+ AI models",
+      "label": "Live",
+      "date": "Nov 28 2026",
+      "source": "https://apiframe.ai/"
+    },
+    {
+      "k": "Cheapest paid plan",
+      "v": "$39/month",
+      "label": "Live",
+      "date": "Nov 28 2026",
+      "source": "https://apiframe.ai/pricing"
+    }
+  ],
+  "series": {
+    "what": "Revenue each month",
+    "label": "Verified",
+    "source": "https://trustmrr.com/startup/apiframe.md",
+    "points": [
+      [
+        "2025-12",
+        13488
+      ],
+      [
+        "2026-01",
+        6766
+      ],
+      [
+        "2026-02",
+        10919
+      ],
+      [
+        "2026-03",
+        14179
+      ],
+      [
+        "2026-04",
+        17196
+      ],
+      [
+        "2026-05",
+        15819
+      ],
+      [
+        "2026-06",
+        27063
+      ],
+      [
+        "2026-07",
+        30661
+      ],
+      [
+        "2026-08",
+        31873
+      ],
+      [
+        "2026-09",
+        47039
+      ],
+      [
+        "2026-10",
+        44106
+      ]
+    ],
+    "point_dates": {
+      "2026-10": "Nov 28 2026"
+    },
+    "alt": "Monthly revenue, Dec 2025 to Oct 2026, read from Stripe by TrustMRR. It dips to $6.8K in January 2026, then climbs to $47K in September."
+  },
+  "phases": [
+    {
+      "name": "One model",
+      "when": "2024",
+      "title": "Apiframe: it started as one API for one tool",
+      "dek": "The first public launch we can find was a single-purpose API. That is a small, clear thing to sell.",
+      "story": "The earliest public trace we found is a Product Hunt launch on June 18, 2024. It was called \"Midjourney API by APIFRAME\" and its tagline was \"A scalable and stable Midjourney API\". The page shows 0 points, so it was not a big launch.\n\nThe idea is easy to say in one sentence: some popular AI tools have no public way for other apps to use them, and developers wanted one. We couldn't find the founder telling this story in their own words, so we can't say how the first customers were found or what the first month earned.\n\nThere is also a gap in the dates. TrustMRR lists the company as founded on August 4, 2021, while the data tracker GetLatka says 2023. We show both and don't pick one.",
+      "number": [
+        {
+          "v": "Launched on Product Hunt on June 18, 2024 with 0 points",
+          "label": "Live",
+          "date": "Nov 28 2026",
+          "source": "https://www.producthunt.com/products/apiframe/launches"
+        }
+      ],
+      "lesson": "A tiny, clear product is enough to start. Say what it does in one line.",
+      "why": "You don't need a big launch. This one got 0 points on Product Hunt and the company is still here two years on.",
+      "receipts": [
+        {
+          "kind": "note",
+          "src": "",
+          "text": "The first launch page we found describes the product as a Midjourney API and not yet as a many-model service.",
+          "caption": "Product Hunt launch page, June 18, 2024",
+          "label": "Live",
+          "date": "Nov 28 2026",
+          "source": "Product Hunt"
+        }
+      ],
+      "source_ids": [
+        4,
+        5,
+        1
+      ]
+    },
+    {
+      "name": "Many models",
+      "when": "2026",
+      "title": "Apiframe: from one model to 70+ behind one connection",
+      "dek": "Today the pitch is not one AI tool but all of them, behind a single API.",
+      "story": "The homepage today describes \"One unified API for AI image, video, and music generation\" and says it gives access to 70+ models through one REST endpoint (a standard web address developers send requests to). It also mentions webhooks (automatic messages when a job is done) and CDN hosting (fast file delivery).\n\nThe company says it is an official partner of BytePlus, Alibaba Cloud and MiniMax, and the site says it partnered with ByteDance and MiniMax to offer specific models. We read these as claims on the company's own site. We did not confirm them with those companies.\n\nThe point for the customer: they connect once and can switch models when a better one comes out, instead of signing up to many providers.",
+      "number": [
+        {
+          "v": "70+ models through one API",
+          "label": "Live",
+          "date": "Nov 28 2026",
+          "source": "https://apiframe.ai/"
+        }
+      ],
+      "lesson": "When the thing you wrap keeps changing, sell the wrapper. Customers want to stop caring which model is newest.",
+      "why": "New AI models appear all the time. A service that adds them for you saves developers work every month.",
+      "source_ids": [
+        2,
+        1
+      ]
+    },
+    {
+      "name": "The climb",
+      "when": "Jan 2026 to Sep 2026",
+      "title": "Apiframe: revenue went up about seven times in eight months",
+      "dek": "Revenue fell to $6,766 in January 2026 and reached $47,039 in September.",
+      "story": "The TrustMRR numbers, read from Stripe (the payment system), show a slow start to 2026. Revenue was $13,488 in December 2025, dropped to $6,766 in January, then rose to $17,196 in April.\n\nThe big step came in June ($27,063). After that: $30,661 in July, $31,873 in August and $47,039 in September.\n\nWe couldn't find a public reason for the jump. The company has no public founder interview or growth post that we could open, so we won't guess whether it was a new model, a price change or something else.",
+      "number": [
+        {
+          "v": "$6,766 (Jan 2026) to $47,039 (Sep 2026)",
+          "label": "Verified",
+          "date": "Nov 28 2026",
+          "source": "https://trustmrr.com/startup/apiframe.md"
+        }
+      ],
+      "results": [
+        {
+          "v": "$6.8K → $47K",
+          "sub": "Revenue each month, Jan to Sep 2026",
+          "label": "Verified",
+          "date": "Nov 28 2026",
+          "source": "https://trustmrr.com/startup/apiframe.md"
+        }
+      ],
+      "lesson": "Growth is rarely a straight line. A weak January didn't stop a strong summer.",
+      "why": "Look at the whole chart before judging a month. This one lost half its revenue in one month and still ended the year far higher.",
+      "steal": {
+        "title": "Steal this: read a revenue chart",
+        "items": [
+          "Write down the lowest and highest month, not just today's number.",
+          "Ask what changed between two months, and write \"we don't know\" if you can't find out.",
+          "Compare revenue to the monthly subscription number (MRR) to see if it is steady."
+        ]
+      },
+      "source_ids": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "The dip",
+      "when": "Oct to Nov 2026",
+      "title": "Apiframe: after the peak, a small step back",
+      "dek": "October brought in $44,106, and the 30-day trend now points down.",
+      "story": "October revenue was $44,106, a little below September. TrustMRR shows MRR at $29,932 and 727 active subscriptions on November 28, 2026.\n\nIt also shows MRR down 16.9% over the last 30 days. Revenue (money collected) can be higher than MRR when customers buy extra usage credits, since pricing is based on credits. We couldn't confirm that this explains the gap.\n\nThe same page shows a 67% profit margin for the last 30 days. We don't know how TrustMRR gets that number beyond what the founder connected, so treat it as a founder-connected snapshot.",
+      "number": [
+        {
+          "v": "MRR $29,932, down 16.9% in 30 days",
+          "label": "Verified",
+          "date": "Nov 28 2026",
+          "source": "https://trustmrr.com/startup/apiframe.md"
+        }
+      ],
+      "results": [
+        {
+          "v": "$29,932",
+          "sub": "MRR on Nov 28 2026",
+          "label": "Verified",
+          "date": "Nov 28 2026",
+          "source": "https://trustmrr.com/startup/apiframe.md"
+        }
+      ],
+      "lesson": "A company can be healthy and still have a down month. Check the trend over several months.",
+      "source_ids": [
+        0,
+        1,
+        3
+      ]
+    }
+  ],
+  "moves": [
+    {
+      "at": "2024-06",
+      "when": "Jun 18 2024",
+      "text": "Launched as a Midjourney API on Product Hunt",
+      "detail": "The page shows 0 points.",
+      "label": "Live",
+      "source": "https://www.producthunt.com/products/apiframe/launches"
+    },
+    {
+      "at": "2026-01",
+      "when": "Jan 2026",
+      "text": "Revenue fell to $6,766",
+      "detail": "Down from $13,488 in December 2025.",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/apiframe.md"
+    },
+    {
+      "at": "2026-04",
+      "when": "Apr 2026",
+      "text": "Revenue reached $17,196",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/apiframe.md"
+    },
+    {
+      "at": "2026-06",
+      "when": "Jun 2026",
+      "text": "Revenue jumped to $27,063",
+      "detail": "A public reason wasn't found.",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/apiframe.md"
+    },
+    {
+      "at": "2026-09",
+      "when": "Sep 2026",
+      "text": "Best month so far: $47,039",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/apiframe.md"
+    },
+    {
+      "at": "2026-11",
+      "when": "Nov 28 2026",
+      "text": "MRR $29,932 with 727 active subscriptions",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/apiframe.md"
+    }
+  ],
+  "fact_checks": [
+    {
+      "claim": "Founded in 2021",
+      "found": "TrustMRR lists Aug 4, 2021 as the founded date. GetLatka lists 2023 and says its numbers are company-reported or its own estimates. The first public trace we found is a Product Hunt launch on June 18, 2024.",
+      "label": "Sources differ",
+      "who": "TrustMRR profile; GetLatka; Product Hunt",
+      "date": "Nov 28 2026",
+      "source": "https://getlatka.com/companies/midjourney-api-by-apiframe"
+    },
+    {
+      "claim": "Official partner of BytePlus, Alibaba Cloud and MiniMax",
+      "found": "The homepage and the TrustMRR profile say so. We didn't find the same statement on those companies' own sites.",
+      "label": "Claimed",
+      "who": "Apiframe homepage",
+      "date": "Nov 28 2026",
+      "source": "https://apiframe.ai/"
+    },
+    {
+      "claim": "About 9,800 users",
+      "found": "TrustMRR shows an estimated user count of 9,800 on the profile, provided by the founder. Stripe shows 727 active subscriptions. We couldn't verify the user count.",
+      "label": "Couldn't verify",
+      "who": "TrustMRR profile (founder-provided)",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/apiframe.md"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "c1",
+      "text": "Write a one-line description of a tool you could wrap for other people, in the style \"one API for X\".",
+      "from": "Phase 1"
+    },
+    {
+      "id": "c2",
+      "text": "Pick two AI tools and list what a developer has to do to use each one. Where is the pain?",
+      "from": "Phase 2"
+    },
+    {
+      "id": "c3",
+      "text": "Open the pricing page of a developer tool and write down how it charges: per month, per use, or both.",
+      "from": "Phase 2"
+    },
+    {
+      "id": "c4",
+      "text": "Draw a monthly revenue chart from a public source and mark the lowest month. Write what could have caused it.",
+      "from": "Phase 3"
+    },
+    {
+      "id": "c5",
+      "text": "Look up a startup on TrustMRR and compare its MRR with its latest month of revenue.",
+      "from": "Phase 4"
+    },
+    {
+      "id": "c6",
+      "text": "Launch something tiny this week, even if you expect 0 points. Note what happens.",
+      "from": "Phase 1"
+    }
+  ],
+  "fit": [
+    "Could you build a tool that connects other people's tools?",
+    "Are you comfortable selling to developers or other businesses?",
+    "Can you handle months where revenue drops without panicking?"
+  ],
+  "sources": [
+    {
+      "name": "TrustMRR: Apiframe",
+      "url": "https://trustmrr.com/startup/apiframe",
+      "what": "MRR, revenue, monthly series, founded date",
+      "date": "Nov 28 2026",
+      "label": "Verified",
+      "logo": "/assets/logos/trustmrr.png"
+    },
+    {
+      "name": "TrustMRR: Apiframe (Markdown profile)",
+      "url": "https://trustmrr.com/startup/apiframe.md",
+      "what": "Subscriptions, margin, monthly revenue table, user estimate",
+      "date": "Nov 28 2026",
+      "label": "Verified",
+      "logo": "/assets/logos/trustmrr.png"
+    },
+    {
+      "name": "Apiframe homepage",
+      "url": "https://apiframe.ai/",
+      "what": "70+ models, partner claims",
+      "date": "Nov 28 2026",
+      "label": "Live",
+      "logo": "/assets/logos/apiframe.png"
+    },
+    {
+      "name": "Apiframe pricing",
+      "url": "https://apiframe.ai/pricing",
+      "what": "Plans from $39 a month",
+      "date": "Nov 28 2026",
+      "label": "Live",
+      "logo": "/assets/logos/apiframe.png"
+    },
+    {
+      "name": "Product Hunt: Midjourney API by APIFRAME",
+      "url": "https://www.producthunt.com/products/apiframe/launches",
+      "what": "Launch of June 18, 2024",
+      "date": "Nov 28 2026",
+      "label": "Live",
+      "logo": "/assets/logos/producthunt.png"
+    },
+    {
+      "name": "GetLatka: Apiframe",
+      "url": "https://getlatka.com/companies/midjourney-api-by-apiframe",
+      "what": "Founded 2023, 2023 revenue $6K, 10 customers",
+      "date": "Nov 28 2026",
+      "label": "Claimed"
+    }
+  ]
+}
