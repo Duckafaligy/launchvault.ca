@@ -5,7 +5,23 @@
   "what": "A daily motivation app that wakes you up with famous speeches, with streaks and leaderboards.",
   "logo": "/assets/logos/mindset.png",
   "site": "https://mindsetapp.com",
-  "founder_photo": {"src": "/assets/founders/mindset.jpg", "name": "Brandon Azevedo", "role": "the Mindset founder listed on TrustMRR", "alt": "Brandon Azevedo, the Mindset founder listed on TrustMRR", "w": 400, "h": 400, "author": "Azevedo, B. [@brandonvedo]", "date": "n.d.", "title": "Profile photo", "publisher": "X", "url": "https://x.com/brandonvedo", "image_url": "https://pbs.twimg.com/profile_images/1633658018205405184/tHUk0565.jpg", "found_via": "https://trustmrr.com/founder/brandonvedo", "retrieved": "November 20, 2026", "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."},
+  "founder_photo": {
+    "src": "/assets/founders/mindset.jpg",
+    "name": "Brandon Azevedo",
+    "role": "the Mindset founder listed on TrustMRR",
+    "alt": "Brandon Azevedo, the Mindset founder listed on TrustMRR",
+    "w": 400,
+    "h": 400,
+    "author": "Azevedo, B. [@brandonvedo]",
+    "date": "n.d.",
+    "title": "Profile photo",
+    "publisher": "X",
+    "url": "https://x.com/brandonvedo",
+    "image_url": "https://pbs.twimg.com/profile_images/1633658018205405184/tHUk0565.jpg",
+    "found_via": "https://trustmrr.com/founder/brandonvedo",
+    "retrieved": "November 20, 2026",
+    "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."
+  },
   "published": "2026-11-19",
   "read_min": 8,
   "title": "Mindset reached $24K a month by building on its team's YouTube audience first",
@@ -21,23 +37,23 @@
     },
     {
       "k": "MRR (money coming in each month from subscriptions)",
-      "v": "$24,251",
+      "v": "$24,176",
       "label": "Verified",
-      "date": "Nov 18 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/mindset-app"
     },
     {
       "k": "Revenue, all-time (since connected)",
-      "v": "$781,426",
+      "v": "$790,334",
       "label": "Verified",
-      "date": "Nov 18 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/mindset-app"
     },
     {
       "k": "Active subscriptions",
-      "v": "5,861",
+      "v": "5,860",
       "label": "Verified",
-      "date": "Nov 19 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/mindset-app"
     },
     {
@@ -185,7 +201,7 @@
     {
       "name": "Alarms, streaks and subscriptions",
       "when": "2023 to now",
-      "story": "Today the app leads with an alarm clock that wakes you to a famous speech, plus streaks, widgets and leaderboards. It charges $4.99 a week, $9.99 a month or $59.99 a year. MRR means monthly recurring revenue: money that comes in every month from subscriptions. Mindset's is $24,251. A month's revenue can be higher, because it counts all money collected that month, including yearly plans paid up front. Revenue moves between about $16,000 and $35,000 a month.",
+      "story": "Today the app leads with an alarm clock that wakes you to a famous speech, plus streaks, widgets and leaderboards. It charges $4.99 a week, $9.99 a month or $59.99 a year. MRR means monthly recurring revenue: money that comes in every month from subscriptions. Mindset's is $24,176. A month's revenue can be higher, because it counts all money collected that month, including yearly plans paid up front. Revenue moves between about $16,000 and $35,000 a month.",
       "number": {
         "v": "$35,034 in Sep 2026, the best month shown",
         "label": "Verified",
@@ -261,7 +277,7 @@
       "who": "TrustMRR listing (founder-provided)",
       "date": "Nov 19 2026",
       "source": "https://trustmrr.com/startup/mindset-app.md",
-      "found": "TrustMRR can only verify revenue since the payment data was connected: $781,426 all-time on Nov 18 2026. Earlier revenue isn't public.",
+      "found": "TrustMRR can only verify revenue since the payment data was connected: $790,334 all-time on Nov 28 2026. Earlier revenue isn't public.",
       "label": "Couldn't verify"
     },
     {
@@ -383,5 +399,8 @@
       "label": "Wayback"
     }
   ],
-  "links": {"site": "https://mindsetapp.com", "instagram": "https://www.instagram.com/mindsetapp/"}
+  "links": {
+    "site": "https://mindsetapp.com",
+    "instagram": "https://www.instagram.com/mindsetapp/"
+  }
 }

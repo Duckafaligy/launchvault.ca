@@ -9,12 +9,12 @@
   "published": "2026-11-19",
   "read_min": 9,
   "title": "Rezi started as a resume template on Reddit and made $216K in October 2026",
-  "dek": "A free template, four slow years, then an early bet on AI writing. October 2026 brought in $216,471, read straight from Stripe. That is about 21% less than April 2026 ($275,551), and revenue has dropped every month since. Rezi's MRR (monthly recurring revenue) is $234,707: what all current subscriptions add up to per month, while $216,471 is the money actually collected in October.",
+  "dek": "A free template, four slow years, then an early bet on AI writing. October 2026 brought in $216,471, read straight from Stripe. That is about 21% less than April 2026 ($275,551), and revenue has dropped every month since. Rezi's MRR (monthly recurring revenue) is $229,097: what all current subscriptions add up to per month, while $216,471 is the money actually collected in October.",
   "pattern": "Give it away free, charge for the easy version",
   "numbers": [
-    {"k": "MRR", "v": "$234,707", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/rezi"},
+    {"k": "MRR", "v": "$229,097", "label": "Verified", "date": "Nov 28 2026", "source": "https://trustmrr.com/startup/rezi"},
     {"k": "Revenue in Oct 2026", "v": "$216,471", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/rezi"},
-    {"k": "Revenue, all-time", "v": "$10,585,547", "label": "Verified", "date": "Nov 18 2026", "source": "https://trustmrr.com/startup/rezi"},
+    {"k": "Revenue, all-time", "v": "$10,641,968", "label": "Verified", "date": "Nov 28 2026", "source": "https://trustmrr.com/startup/rezi"},
     {"k": "Users (Rezi's homepage claim)", "v": "4.5M", "label": "Claimed", "date": "Oct 12 2026", "source": "https://web.archive.org/web/20261012004025/https://rezi.ai/"},
     {"k": "First product price", "v": "about $9.69", "label": "Claimed", "date": "Aug 8 2024", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder"}
   ],
@@ -100,7 +100,7 @@
     {"claim": "The free-plan giveaway brought just under 70,000 signups in one day in October 2023", "who": "Founder, Starter Story interview", "date": "Aug 8 2024", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder", "found": "Rezi's own 2023 review mentions 55,376 new users in less than a day in November 2023, without saying why. If it's the same day, the month and the number differ.", "label": "Sources differ"},
     {"claim": "Team size", "who": "Founder, Starter Story interview", "date": "Aug 8 2024", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder", "found": "The same page says 15 employees in one place and 11 in another. Rezi's 2023 review says 12. TrustMRR lists 1 founder, which counts founders, not staff.", "label": "Sources differ"},
     {"claim": "$215K revenue a month", "who": "Founder, Starter Story interview", "date": "Aug 8 2024", "source": "https://www.starterstory.com/stories/ai-powered-free-ats-resume-builder", "found": "TrustMRR's monthly series starts in Dec 2025, so we can't check Aug 2024. Since then every month has been between $216,471 and $275,551.", "label": "Couldn't verify"},
-    {"claim": "$5M+ in lifetime revenue", "who": "We Are Founders article", "date": "Mar 15 2025", "source": "https://www.wearefounders.uk/from-resume-template-to-5m-saas-how-jacob-built-rezi/", "found": "TrustMRR shows $10,585,547 all-time on Nov 18 2026, and $2,723,056 of that came in Dec 2025 to Oct 2026 alone. That is consistent with $5M+ in March 2025, but no verified number shows the total on that date, so we can't confirm it.", "label": "Couldn't verify"}
+    {"claim": "$5M+ in lifetime revenue", "who": "We Are Founders article", "date": "Mar 15 2025", "source": "https://www.wearefounders.uk/from-resume-template-to-5m-saas-how-jacob-built-rezi/", "found": "TrustMRR shows $10,641,968 all-time on Nov 28 2026, and $2,723,056 of that came in Dec 2025 to Oct 2026 alone. That is consistent with $5M+ in March 2025, but no verified number shows the total on that date, so we can't confirm it.", "label": "Couldn't verify"}
   ],
   "wayback": [
     {"date": "Mar 22 2021", "headline": "Create Your Resume With Rezi. AI-Powered ATS Resume Builder", "sub": "POWERED BY GPT-3. Rezi understands what kind of skills and experience employers need, so it can help you complete your resume in minutes.", "prices": "Not on the homepage", "source": "https://web.archive.org/web/20210322084409/https://rezi.ai/"},

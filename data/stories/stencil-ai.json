@@ -5,7 +5,23 @@
   "what": "An app that turns a photo, sketch or design into a print-ready tattoo stencil for tattoo artists.",
   "logo": "/assets/logos/stencilai.png",
   "site": "https://www.stencilai.app",
-  "founder_photo": {"src": "/assets/founders/stencil-ai.jpg", "name": "Simon Turkovič", "role": "founder of Stencil AI", "alt": "Simon Turkovič, founder of Stencil AI", "w": 400, "h": 400, "author": "Turkovič, S. [@simon_turkovic]", "date": "n.d.", "title": "Profile photo", "publisher": "X", "url": "https://x.com/simon_turkovic", "image_url": "https://pbs.twimg.com/profile_images/2120949348125032448/KmPdGf9y.jpg", "found_via": "https://trustmrr.com/founder/simon_turkovic", "retrieved": "November 20, 2026", "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."},
+  "founder_photo": {
+    "src": "/assets/founders/stencil-ai.jpg",
+    "name": "Simon Turkovič",
+    "role": "founder of Stencil AI",
+    "alt": "Simon Turkovič, founder of Stencil AI",
+    "w": 400,
+    "h": 400,
+    "author": "Turkovič, S. [@simon_turkovic]",
+    "date": "n.d.",
+    "title": "Profile photo",
+    "publisher": "X",
+    "url": "https://x.com/simon_turkovic",
+    "image_url": "https://pbs.twimg.com/profile_images/2120949348125032448/KmPdGf9y.jpg",
+    "found_via": "https://trustmrr.com/founder/simon_turkovic",
+    "retrieved": "November 20, 2026",
+    "license": "Not openly licensed: the founder's own public profile image, shown with credit and a link. Owner can ask for removal."
+  },
   "published": "2026-11-19",
   "read_min": 8,
   "title": "Stencil AI went from $16K to $63K a month in 2026 by fixing one boring job for tattoo artists",
@@ -21,23 +37,23 @@
     },
     {
       "k": "MRR (money coming in each month from subscriptions)",
-      "v": "$48,693",
+      "v": "$48,832",
       "label": "Verified",
-      "date": "Nov 18 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/stencil-ai"
     },
     {
       "k": "Revenue, all-time (since connected)",
-      "v": "$488,648",
+      "v": "$506,430",
       "label": "Verified",
-      "date": "Nov 18 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/stencil-ai"
     },
     {
       "k": "Active subscriptions",
-      "v": "1,753",
+      "v": "1,758",
       "label": "Verified",
-      "date": "Nov 19 2026",
+      "date": "Nov 28 2026",
       "source": "https://trustmrr.com/startup/stencil-ai"
     },
     {
@@ -179,7 +195,7 @@
     {
       "name": "Holding steady and getting found",
       "when": "Aug 2026 to now",
-      "story": "Since July, revenue has stayed between about $60,000 and $64,000 a month. The site has a blog of how-to guides, like how to print a stencil or make one in Procreate, so artists searching Google land on it. Its MRR was $48,693 when we read it, lower than October's $62,976. Both numbers are real but measure different things: MRR only counts subscriptions active on the day it was read, as a monthly amount, while a month's revenue is all the money collected that month, which can include yearly plans paid up front. The TrustMRR listing names app store search, SEO (getting found on Google), a blog, TikTok, Instagram, Pinterest and YouTube as its channels.",
+      "story": "Since July, revenue has stayed between about $60,000 and $64,000 a month. The site has a blog of how-to guides, like how to print a stencil or make one in Procreate, so artists searching Google land on it. Its MRR was $48,832 when we read it, lower than October's $62,976. Both numbers are real but measure different things: MRR only counts subscriptions active on the day it was read, as a monthly amount, while a month's revenue is all the money collected that month, which can include yearly plans paid up front. The TrustMRR listing names app store search, SEO (getting found on Google), a blog, TikTok, Instagram, Pinterest and YouTube as its channels.",
       "number": {
         "v": "$62,976 in Oct 2026",
         "label": "Verified",
@@ -255,11 +271,11 @@
       "who": "Stencil AI homepage",
       "date": "Oct 11 2026",
       "source": "https://web.archive.org/web/20261011204859/https://www.stencilai.app/",
-      "found": "TrustMRR shows 1,753 active subscriptions on Nov 19 2026. \"Artists\" may include people who tried it without paying. We couldn't check the artist count.",
+      "found": "TrustMRR shows 1,758 active subscriptions on Nov 28 2026. \"Artists\" may include people who tried it without paying. We couldn't check the artist count.",
       "label": "Claimed"
     },
     {
-      "claim": "$48,693 MRR",
+      "claim": "$48,832 MRR",
       "who": "TrustMRR",
       "date": "Nov 18 2026",
       "source": "https://trustmrr.com/startup/stencil-ai",
@@ -356,5 +372,17 @@
       "label": "Live"
     }
   ],
-  "links": {"site": "https://www.stencilai.app", "instagram": "https://www.instagram.com/stencil_ai_app", "tiktok": "https://www.tiktok.com/@stencil_ai_app", "youtube": "https://www.youtube.com/@stencil_ai_app", "producthunt": "https://www.producthunt.com/products/stencil-ai", "other": [{"name": "Facebook", "url": "https://www.facebook.com/profile.php?id=61581445628912"}]}
+  "links": {
+    "site": "https://www.stencilai.app",
+    "instagram": "https://www.instagram.com/stencil_ai_app",
+    "tiktok": "https://www.tiktok.com/@stencil_ai_app",
+    "youtube": "https://www.youtube.com/@stencil_ai_app",
+    "producthunt": "https://www.producthunt.com/products/stencil-ai",
+    "other": [
+      {
+        "name": "Facebook",
+        "url": "https://www.facebook.com/profile.php?id=61581445628912"
+      }
+    ]
+  }
 }
