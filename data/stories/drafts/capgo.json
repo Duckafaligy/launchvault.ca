@@ -1,0 +1,446 @@
+{
+  "slug": "capgo",
+  "name": "Capgo",
+  "category": "Developer tools / open source",
+  "tab": "ai",
+  "type_label": "Developer tools / open source",
+  "status": "draft",
+  "what": "A service that lets developers push fixes to their Capacitor mobile apps in minutes, without waiting for App Store review.",
+  "logo": "/assets/logos/capgo.png",
+  "site": "https://capgo.app/",
+  "published": "2026-12-01",
+  "read_min": 7,
+  "title": "Capgo went from a side-project fix to $34K a month by charging for one narrow job",
+  "title_em": "$34K a month",
+  "dek": "One developer needed cheap live updates for his own app, built them, gave the core away and started charging for hosting. MRR (monthly recurring revenue) is what current subscriptions add up to each month. Capgo's is now about $34K.",
+  "pattern": "Fix your own annoying problem, open the code, charge for the hosting",
+  "hero": {
+    "title": "A developer fixed his own app-update problem, then built a $33K-a-month business on it",
+    "tags": [
+      "Fix your own problem",
+      "Solo to small team",
+      "Open source"
+    ]
+  },
+  "numbers": [
+    {
+      "k": "MRR",
+      "long": "Monthly recurring revenue",
+      "v": "$33,785",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/capgo"
+    },
+    {
+      "k": "Revenue in Oct 2026",
+      "v": "$40,638",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/capgo.md"
+    },
+    {
+      "k": "Revenue, all-time",
+      "v": "$621,282",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/capgo"
+    },
+    {
+      "k": "Active subscriptions",
+      "v": "1,215",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/capgo"
+    },
+    {
+      "k": "Apps in production",
+      "v": "4.7K+",
+      "label": "Claimed",
+      "date": "Nov 28 2026",
+      "source": "https://capgo.app/"
+    },
+    {
+      "k": "Cheapest plan",
+      "v": "$12/month (Solo, billed yearly)",
+      "label": "Live",
+      "date": "Nov 28 2026",
+      "source": "https://capgo.app/"
+    }
+  ],
+  "series": {
+    "what": "Revenue each month (Nov 2026 is not a full month yet)",
+    "label": "Verified",
+    "source": "https://trustmrr.com/startup/capgo.md",
+    "points": [
+      [
+        "2025-12",
+        14401
+      ],
+      [
+        "2026-01",
+        18044
+      ],
+      [
+        "2026-02",
+        24197
+      ],
+      [
+        "2026-03",
+        24977
+      ],
+      [
+        "2026-04",
+        22080
+      ],
+      [
+        "2026-05",
+        20449
+      ],
+      [
+        "2026-06",
+        30110
+      ],
+      [
+        "2026-07",
+        28283
+      ],
+      [
+        "2026-08",
+        38229
+      ],
+      [
+        "2026-09",
+        36323
+      ],
+      [
+        "2026-10",
+        40638
+      ],
+      [
+        "2026-11",
+        35356,
+        "Verified",
+        "TrustMRR, read from Stripe, month still running"
+      ]
+    ],
+    "point_dates": {
+      "2026-11": "Nov 28 2026"
+    },
+    "alt": "Monthly revenue rising from $14K in December 2025 to $41K in October 2026."
+  },
+  "phases": [
+    {
+      "name": "The itch",
+      "when": "2020 to Oct 2021",
+      "moves": [
+        0
+      ],
+      "title": "Capgo: it starts with a missing tool",
+      "dek": "Developers wanted a way to update an app without App Store review. Nobody had built a cheap one.",
+      "story": "Capacitor is a tool for building phone apps with web code. Normally, every fix has to go through Apple's and Google's review before users see it.\n\nIn July 2020 a community member asked for a \"Capacitor Hot Code Push\" plugin, which would send fixes straight to users. The request collected 65 likes. The founder says he only saw it more than a year later.\n\nIn 2021 he left his job as a CTO and worked as a digital nomad, mostly on a CrossFit timer app. He wanted cheap updates for it, and the paid options looked expensive and inflexible to him.",
+      "number": [
+        {
+          "v": "65 likes on the July 2020 plugin request",
+          "label": "Claimed",
+          "date": "Aug 27 2026",
+          "source": "Capgo blog"
+        }
+      ],
+      "lesson": "The best ideas are often already requested in public. Someone just has to read the thread.",
+      "why": "The demand was written down before he started. He still needed his own need to push him to build it.",
+      "steal": {
+        "title": "Steal this: find the thread",
+        "items": [
+          "Search GitHub issues and forums for the tool you wish existed.",
+          "Count the likes. Public demand is a free survey.",
+          "Build it first for yourself."
+        ]
+      },
+      "source_ids": [
+        3
+      ]
+    },
+    {
+      "name": "First version",
+      "when": "Oct 2021 to Mar 2022",
+      "moves": [
+        1
+      ],
+      "title": "Capgo: build in public, small first",
+      "dek": "A working iPhone version took about a month. Android and safety features came after.",
+      "story": "On October 24, 2021 he said in a GitHub thread that he would build a module that downloads updates from a web address.\n\nBy November 22, 2021 an iOS version worked. Android support, keeping the update after the app is closed, and rolling back to the original version followed.\n\nIn March 2022 the project became Capgo. Developers could use it with their own server for free, or use Capgo's service.",
+      "number": [
+        {
+          "v": "About 1 month from announcement to a working iOS version",
+          "label": "Claimed",
+          "date": "Aug 27 2026",
+          "source": "Capgo blog"
+        }
+      ],
+      "lesson": "Say what you are building in the place where the people who need it already hang out.",
+      "receipts": [
+        {
+          "kind": "note",
+          "src": "",
+          "platform": "GitHub",
+          "text": "He announced the module in a GitHub thread on Oct 24, 2021 and had an iOS version working on Nov 22, 2021.",
+          "caption": "Timeline in the Capgo origin post",
+          "label": "Claimed",
+          "date": "Aug 27 2026",
+          "source": "Capgo blog"
+        }
+      ],
+      "source_ids": [
+        3
+      ]
+    },
+    {
+      "name": "Charging",
+      "when": "Jun 2022",
+      "moves": [
+        2
+      ],
+      "title": "Capgo: free for the code, paid for the hosting",
+      "dek": "The plugin stayed free to use yourself. Running the service for you became the product.",
+      "story": "On June 11, 2022 he announced that Capgo would start charging for usage in 15 days.\n\nThe free path stayed: use the plugin in manual mode or with your own server. Paying customers got hosting, so they did not have to run the update servers themselves.\n\nStarter Story reports he got early customers by answering a long GitHub issue with a working fix, posting progress on social media, and using Discord for feedback. That is a third-party summary.",
+      "lesson": "Giving the code away did not stop people paying. They paid so they would not have to run it.",
+      "why": "If your product runs all day, someone will pay you to run it. That is a business.",
+      "steal": {
+        "title": "Steal this: his free-versus-paid line",
+        "items": [
+          "Keep the part people can run themselves free.",
+          "Charge for the part that needs to be online, safe and watched.",
+          "Give notice before you start charging. He gave 15 days."
+        ]
+      },
+      "source_ids": [
+        3,
+        5
+      ]
+    },
+    {
+      "name": "Open core",
+      "when": "2023 to 2025",
+      "moves": [
+        3
+      ],
+      "title": "Capgo: open code, small team",
+      "dek": "The code is public. The team stayed small and paid for itself.",
+      "story": "The main Capgo code is on GitHub under the AGPL license (a rule that says anyone running a changed copy as a service must share their changes). The README says the repo is the open-source core: the web console, the backend and the command-line tool.\n\nThe company says it is bootstrapped, which means no investors. It says it answers \"to customers, not investors\". The About page lists a team of 5 in four areas: product, native, support and delivery.\n\nThe company also lists 150+ open-source Capacitor plugins on its homepage.",
+      "number": [
+        {
+          "v": "150+ open-source plugins",
+          "label": "Claimed",
+          "date": "Nov 28 2026",
+          "source": "https://capgo.app/"
+        }
+      ],
+      "lesson": "Open code builds trust. Paid hosting builds the business.",
+      "receipts": [],
+      "source_ids": [
+        4,
+        6,
+        2
+      ]
+    },
+    {
+      "name": "Today",
+      "when": "2026",
+      "moves": [
+        4,
+        5
+      ],
+      "title": "Capgo: $14K to $41K a month in under a year",
+      "dek": "Verified revenue nearly tripled between December 2025 and October 2026.",
+      "story": "TrustMRR reads revenue from Stripe. It shows $14,401 in December 2025 and $40,638 in October 2026. November is not finished, so its $35,356 is partial.\n\nOn Nov 28 2026 MRR was $33,785 from 1,215 active subscriptions.\n\nThe product has grown beyond updates. The homepage now says it also builds iOS and Android apps without a Mac and works with AI coding agents.",
+      "number": [
+        {
+          "v": "$33,785 MRR, 1,215 subscriptions",
+          "label": "Verified",
+          "date": "Nov 28 2026",
+          "source": "https://trustmrr.com/startup/capgo"
+        }
+      ],
+      "lesson": "A narrow tool, kept alive for years, can grow faster than a broad one.",
+      "why": "The business is four years old. The fast growth in this chart came after the first years of work.",
+      "receipts": [
+        {
+          "kind": "image",
+          "src": "/assets/receipts/capgo/trustmrr.png",
+          "caption": "TrustMRR page for Capgo, read from Stripe",
+          "label": "Verified",
+          "date": "Nov 28 2026",
+          "url": "https://trustmrr.com/startup/capgo"
+        },
+        {
+          "kind": "image",
+          "src": "/assets/receipts/capgo/capgo-now.png",
+          "caption": "capgo.app homepage today",
+          "label": "Live",
+          "date": "Nov 28 2026",
+          "url": "https://capgo.app/"
+        }
+      ],
+      "results": [
+        {
+          "v": "$14K → $41K",
+          "sub": "Monthly revenue, Dec 2025 to Oct 2026",
+          "label": "Verified",
+          "date": "Nov 28 2026",
+          "source": "https://trustmrr.com/startup/capgo.md"
+        }
+      ],
+      "source_ids": [
+        0,
+        1,
+        2
+      ]
+    }
+  ],
+  "moves": [
+    {
+      "at": "2021-10",
+      "when": "Oct 24 2021",
+      "text": "Announces a module for live app updates",
+      "detail": "In a GitHub thread.",
+      "label": "Claimed",
+      "source": "https://capgo.app/blog/birth-of-capgo-my-challenging-journey-as-a-solo-maker"
+    },
+    {
+      "at": "2021-11",
+      "when": "Nov 22 2021",
+      "text": "A working iOS version",
+      "label": "Claimed",
+      "source": "https://capgo.app/blog/birth-of-capgo-my-challenging-journey-as-a-solo-maker"
+    },
+    {
+      "at": "2022-06",
+      "when": "Jun 11 2022",
+      "text": "Announces that charging starts in 15 days",
+      "label": "Claimed",
+      "source": "https://capgo.app/blog/birth-of-capgo-my-challenging-journey-as-a-solo-maker"
+    },
+    {
+      "at": "2025-12",
+      "when": "Dec 2025",
+      "text": "Verified revenue of $14,401 that month",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/capgo.md"
+    },
+    {
+      "at": "2026-08",
+      "when": "Aug 2026",
+      "text": "Verified revenue passes $38K that month",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/capgo.md"
+    },
+    {
+      "at": "2026-11",
+      "when": "Nov 28 2026",
+      "text": "MRR of $33,785 and 1,215 active subscriptions",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/capgo"
+    }
+  ],
+  "fact_checks": [
+    {
+      "claim": "3,246+ GitHub stars (homepage)",
+      "found": "The homepage says 3,246+ stars. The main repo page showed 214 stars. The homepage may count more than one repo, but it doesn't say.",
+      "label": "Sources differ",
+      "who": "capgo.app and github.com/Cap-go/capgo",
+      "date": "Nov 28 2026",
+      "source": "https://github.com/Cap-go/capgo"
+    },
+    {
+      "claim": "Revenue figures from third-party profiles",
+      "found": "Starter Story lists $7.8K a month in its title and $33.4K in its header. TrustMRR, read from Stripe, shows $33,785 MRR.",
+      "label": "Sources differ",
+      "who": "Starter Story and TrustMRR",
+      "date": "Nov 28 2026",
+      "source": "https://www.starterstory.com/capgo-breakdown"
+    },
+    {
+      "claim": "Founded in 2021",
+      "found": "The About page and TrustMRR say 2021. The About page's structured data says 2022-12-01.",
+      "label": "Sources differ",
+      "who": "capgo.app/about and TrustMRR",
+      "date": "Nov 28 2026",
+      "source": "https://capgo.app/about"
+    },
+    {
+      "claim": "4.7K+ apps in production and 1B+ updates a month",
+      "found": "These are the company's own homepage numbers. We couldn't verify them.",
+      "label": "Couldn't verify",
+      "who": "capgo.app",
+      "date": "Nov 28 2026",
+      "source": "https://capgo.app/"
+    }
+  ],
+  "checklist": [
+    "Search GitHub issues for a tool people keep asking for.",
+    "Build the tiny version for yourself first and write down how long it took.",
+    "Post your progress where the users already are.",
+    "Decide which part stays free and which part you charge for.",
+    "Tell users before you start charging and give a date.",
+    "Check a business's revenue on TrustMRR before you copy it."
+  ],
+  "sources": [
+    {
+      "name": "TrustMRR: Capgo",
+      "url": "https://trustmrr.com/startup/capgo",
+      "what": "MRR, all-time revenue, subscriptions, founded date",
+      "date": "Nov 28 2026",
+      "label": "Verified",
+      "logo": "/assets/logos/trustmrr.png"
+    },
+    {
+      "name": "TrustMRR: Capgo (markdown profile)",
+      "url": "https://trustmrr.com/startup/capgo.md",
+      "what": "Monthly revenue table",
+      "date": "Nov 28 2026",
+      "label": "Verified",
+      "logo": "/assets/logos/trustmrr.png"
+    },
+    {
+      "name": "capgo.app",
+      "url": "https://capgo.app/",
+      "what": "Homepage claims, plans, prices",
+      "date": "Nov 28 2026",
+      "label": "Live"
+    },
+    {
+      "name": "Capgo blog: the birth of Capgo",
+      "url": "https://capgo.app/blog/birth-of-capgo-my-challenging-journey-as-a-solo-maker",
+      "what": "Origin timeline 2020 to 2022 (page dated Aug 27 2026)",
+      "date": "Aug 27 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "Capgo About page",
+      "url": "https://capgo.app/about",
+      "what": "Team, bootstrapped statement, timeline",
+      "date": "Nov 28 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "Starter Story: Capgo breakdown",
+      "url": "https://www.starterstory.com/capgo-breakdown",
+      "what": "Third-party summary of how it got customers; figures conflict",
+      "date": "Nov 28 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "GitHub: Cap-go/capgo",
+      "url": "https://github.com/Cap-go/capgo",
+      "what": "Open-source core, AGPL license, star count",
+      "date": "Nov 28 2026",
+      "label": "Live",
+      "logo": "/assets/logos/github.svg"
+    }
+  ],
+  "fit": [
+    "Do you have a problem of your own that other developers share?",
+    "Could you give some of the code away and charge for running it?",
+    "Can you work on one narrow tool for years?"
+  ]
+}
