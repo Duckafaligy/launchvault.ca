@@ -942,7 +942,9 @@ def main():
     write_sitemap()
     # the public posts load the shared chart renderer
     for S in ready:
-        p = os.path.join(ROOT, "blog", S["slug"], "index.html"); t = rd(p)
+        p = os.path.join(ROOT, "blog", S["slug"], "index.html")
+        if not os.path.exists(p): continue   # new story: build_new.build() writes its post afterwards
+        t = rd(p)
         if "chart.js" not in t: wr(p, t.replace("</body>", '<script src="/assets/chart.js" defer></script>\n</body>').replace("</head>", '<link rel="stylesheet" href="/assets/chart.css">\n</head>'))
     add_meta()
     print(f"app: {len(E)} stories ({len(ready)} ready, {len(E) - len(ready)} coming soon)")

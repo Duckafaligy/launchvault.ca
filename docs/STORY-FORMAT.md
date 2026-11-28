@@ -50,7 +50,7 @@ A chapter page shows, top to bottom: `title` + `dek` + the main label chip, "Wha
 | `dek` | string | one or two sentences; explain MRR once |
 | `pattern` | string | short pattern name, e.g. "Give it away free, charge for the easy version" |
 | `numbers` | list | `{"k", "v", "label", "date", "source", "long"?, "note"?}`; first = the headline number |
-| `series` | object | `{"what", "label", "source", "points": [["YYYY-MM", number, label?, source?], ...], "point_dates"?, "alt"?, "empty_note"?}`; at least 2 real points |
+| `series` | object | `{"what", "label", "source", "points": [["YYYY-MM", number, label?, source?], ...], "point_dates"?, "alt"? (a LIST of second-source points, same shape as points, for "Sources differ" values; never text), "alt_text"? (one sentence describing the chart for screen readers), "empty_note"?}`; at least 2 real points |
 | `phases` | list | see below |
 | `moves` | list | `{"at": "YYYY-MM", "when", "text", "detail"?, "label", "source"}`; 4 to 8 |
 | `fact_checks` | list | `{"claim", "found", "label", "who", "date", "source"}`; 2 to 4 |

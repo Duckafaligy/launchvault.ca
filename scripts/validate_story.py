@@ -67,6 +67,8 @@ def extra(S, root=SITE):
     if S.get("status") not in (None, "draft", "ready"): e.append("status must be draft or ready")
     h = S.get("headline")
     if h: e += fact_errs(h, "headline")
+    if h and "value" in h and not isinstance(h["value"], (int, float)): e.append("headline.value must be a number (e.g. 28000), not text")
+    if not isinstance(S.get("series", {}).get("alt", []), list): e.append("series.alt must be a list of second-source points; put chart descriptions in series.alt_text")
     hero = S.get("hero")
     if hero is not None:
         if not isinstance(hero.get("title"), str) or not hero["title"]: e.append("hero.title: a non-empty string")

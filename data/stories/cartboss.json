@@ -2,11 +2,11 @@
   "slug": "cartboss",
   "name": "CartBoss",
   "category": "SaaS",
-  "status": "draft",
+  "status": "ready",
   "what": "A pay-as-you-go tool that sends text-message reminders to shoppers who left items in their cart on Shopify and WooCommerce stores.",
   "logo": "/assets/logos/cartboss.png",
   "site": "https://www.cartboss.io/",
-  "published": "2026-12-05",
+  "published": "2026-11-28",
   "read_min": 6,
   "title": "CartBoss: $73K in 30 days from texting people who forgot their cart",
   "title_em": "$73K in 30 days",
@@ -123,7 +123,7 @@
     "point_dates": {
       "2026-11": "Nov 28 2026"
     },
-    "alt": "Monthly revenue falls from $43K to $35K, climbs to $53K by July, drops to $27K in September, then jumps to $72K in November (month not finished)."
+    "alt_text": "Monthly revenue falls from $43K to $35K, climbs to $53K by July, drops to $27K in September, then jumps to $72K in November (month not finished)."
   },
   "phases": [
     {

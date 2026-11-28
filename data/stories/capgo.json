@@ -4,11 +4,11 @@
   "category": "Developer tools / open source",
   "tab": "ai",
   "type_label": "Developer tools / open source",
-  "status": "draft",
+  "status": "ready",
   "what": "A service that lets developers push fixes to their Capacitor mobile apps in minutes, without waiting for App Store review.",
   "logo": "/assets/logos/capgo.png",
   "site": "https://capgo.app/",
-  "published": "2026-12-01",
+  "published": "2026-11-28",
   "read_min": 7,
   "title": "Capgo went from a side-project fix to $34K a month by charging for one narrow job",
   "title_em": "$34K a month",
@@ -126,7 +126,7 @@
     "point_dates": {
       "2026-11": "Nov 28 2026"
     },
-    "alt": "Monthly revenue rising from $14K in December 2025 to $41K in October 2026."
+    "alt_text": "Monthly revenue rising from $14K in December 2025 to $41K in October 2026."
   },
   "phases": [
     {

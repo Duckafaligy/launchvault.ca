@@ -637,7 +637,9 @@ def extras(posts, B):
 # ---------------------------------------------------------------- entry points
 
 def register(B):
-    posts = load()
+    # Only hand-written breakdowns (listed in SEO_TITLE) get a public post: chapter text is account-only since 2026-11-28,
+    # so stories added later (e.g. by the daily routine) live in the app only.
+    posts = [p for p in load() if p["kind"] != "breakdown" or p["slug"] in SEO_TITLE]
     og_images(posts)
     robots = "index, follow, max-image-preview:large" if INDEXABLE else "noindex, nofollow"
     common = dict(active="Blog", css=["/assets/new/blog.css"], js=["/assets/new/blog.js"], robots=robots)

@@ -2,7 +2,7 @@
   "slug": "apiframe",
   "name": "Apiframe",
   "category": "AI tools",
-  "status": "draft",
+  "status": "ready",
   "what": "One API that lets developers add AI image, video and music generation to their apps without dealing with each AI company separately.",
   "logo": "/assets/logos/apiframe.png",
   "site": "https://apiframe.ai/",
@@ -131,7 +131,7 @@
     "point_dates": {
       "2026-10": "Nov 28 2026"
     },
-    "alt": "Monthly revenue, Dec 2025 to Oct 2026, read from Stripe by TrustMRR. It dips to $6.8K in January 2026, then climbs to $47K in September."
+    "alt_text": "Monthly revenue, Dec 2025 to Oct 2026, read from Stripe by TrustMRR. It dips to $6.8K in January 2026, then climbs to $47K in September."
   },
   "phases": [
     {

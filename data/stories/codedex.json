@@ -6,8 +6,8 @@
   "what": "A game-style website that teaches beginners to code, free to start, with a paid Club for the full course set.",
   "logo": "/assets/logos/codedex.png",
   "site": "https://www.codedex.io/",
-  "status": "draft",
-  "published": "2026-12-05",
+  "status": "ready",
+  "published": "2026-11-28",
   "read_min": 7,
   "title": "Codédex: a coding game that reached $79K a month from a $9.99 plan",
   "title_em": "$79K a month",
@@ -154,8 +154,8 @@
     "point_dates": {
       "2026-11": "Nov 28 2026"
     },
-    "alt": "Monthly revenue rises from $65K in Dec 2025 to a peak of $80K in Jul 2026, then slips to $61K in Nov 2026 so far.",
-    "empty_note": "TrustMRR only shows the months since the payment account was connected."
+    "empty_note": "TrustMRR only shows the months since the payment account was connected.",
+    "alt_text": "Monthly revenue rises from $65K in Dec 2025 to a peak of $80K in Jul 2026, then slips to $61K in Nov 2026 so far."
   },
   "phases": [
     {
