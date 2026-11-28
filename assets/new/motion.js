@@ -21,17 +21,19 @@
   var ARROW_NE = '<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5l5-5M3.5 2.5h4v4"/></svg>';
 
   /* ---------- scroll reveals: [data-reveal] [data-reveal=words] [data-stagger] [data-count] [data-draw] [data-inview] .pin ----------
-     Content is visible by default. At start only elements still below the fold get .lv-p (pending: the hidden state in motion.css).
-     They get .in when they come within 10% of the screen (IntersectionObserver) or, as a fallback, on the first scroll frame that puts
-     their top above the bottom of the screen (fast scrolls, anchor jumps, a late observer). Once in, never hidden or replayed. */
+     Content is visible by default. At start only elements still below the fold get .lv-p (pending: the hidden state in motion.css);
+     on a load at the top of the page with no #hash, everything outside the .hero is pending too, so the first screen is the hero alone.
+     They get .in once their top is 12% above the bottom of the screen (IntersectionObserver) or, as a fallback, on the first scroll frame
+     that puts them there or past (fast scrolls, anchor jumps, a late observer, the end of the page). Once in, never hidden or replayed.
+     Pins on tablet and phone (no cursor there) pop in on their own once on screen; hero pins wait for the hero to finish building. */
   var pend = [], sweepRaf = 0;
   var io = 'IntersectionObserver' in w ? new IntersectionObserver(function (es) {
     es.forEach(function (e) { if (e.isIntersecting) enter(e.target); });
-  }, { rootMargin: '0px 0px 10% 0px' }) : null;
+  }, { rootMargin: '0px 0px -12% 0px' }) : null;     /* builds once it is really on screen (its top 12% above the bottom edge), so the reader sees it happen */
   function sweep() {
     sweepRaf = 0;
-    var vh = w.innerHeight;
-    pend.slice().forEach(function (el) { if (el.getBoundingClientRect().top < vh) enter(el); });
+    var vh = w.innerHeight, end = w.scrollY + vh >= html.scrollHeight - 2;   /* at the very bottom nothing can scroll further up: show what is left */
+    pend.slice().forEach(function (el) { var r = el.getBoundingClientRect(); if (r.top < vh * 0.88 || r.bottom < 0 || (end && r.top < vh)) enter(el); });
   }
   function kickSweep() { if (pend.length && !sweepRaf) sweepRaf = requestAnimationFrame(sweep); }
 
@@ -132,9 +134,18 @@
     if (T) { T.style.translate = ''; T.classList.remove('lv-grey'); }
   }
   var pinLive = 0, PIN_MAX = 3;                            /* how many cursors may work at once */
-  function queue(el) { el._lvQ = performance.now(); pinQ.push(el); pinNext(); }
+  var HERO_MS = 1500;                                      /* hero comments come after the hero has built (home.css: the hero sequence ends at about 1.5s) */
+  function queue(el) {
+    var wait = el.closest('.hero') ? HERO_MS - performance.now() : 0;
+    if (wait > 0) return setTimeout(function () { queue(el); }, wait);
+    el._lvQ = performance.now(); pinQ.push(el); pinNext();
+  }
   function runPin(el) {
-    if (!el._lvPin || reduced || calm) { ready(el); return el.classList.add('in'); }
+    if (!el._lvPin || reduced) { ready(el); return el.classList.add('in'); }
+    if (calm) {                                            /* no cursor on tablet and phone: the bubble pops out of its corner */
+      var wait = el.closest('.hero') ? HERO_MS - performance.now() : 0;
+      return setTimeout(function () { el.classList.add('in', 'pin-pop', 'lit'); }, Math.max(wait, 0) + 180);
+    }
     queue(el);
   }
   function pinNext() {
@@ -401,13 +412,13 @@
     $$('[data-tabs]', root).forEach(prepTabs);
     $$('details[data-acc]', root).forEach(prepAcc);
     $$('.pin', root).forEach(function (el) { if (!el._lvPin) prepPin(el); });
-    var vh = w.innerHeight;
+    var vh = w.innerHeight, top = w.scrollY < 10 && !location.hash && !!d.querySelector('.hero');
     $$('[data-reveal],[data-stagger],[data-count],[data-draw],[data-inview],.pin', root).forEach(function (el) {
       if (el._lvSeen || el.closest('[data-scrollstory]')) return;          /* scroll-story sections run their own motion */
       el._lvSeen = 1;
       if (el.hasAttribute('data-stagger')) Array.prototype.forEach.call(el.children, function (c, i) { c.style.setProperty('--i', i); });
-      var later = el.classList.contains('pin') ? !!el._lvPin && !calm && !!el.offsetParent   /* desktop pins wait for their cursor */
-        : el.getBoundingClientRect().top >= vh;                             /* everything else: only what is still below the fold */
+      var later = el.classList.contains('pin') ? !!el._lvPin && !!el.offsetParent   /* pins wait for their cursor (desktop) or their pop (tablet, phone) */
+        : el.getBoundingClientRect().top >= vh || (top && !el.closest('.hero'));  /* everything else: what is below the fold, or past the hero on a fresh load */
       if (reduced || !io || !later) return el.classList.add('in');
       if (el.getAttribute('data-reveal') === 'words') splitWords(el);
       if (el.hasAttribute('data-count')) prepCount(el);

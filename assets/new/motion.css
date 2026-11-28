@@ -104,6 +104,8 @@ a.card:focus-visible{border-radius:var(--r)}
 .pin:hover::after,.pin:focus-visible::after{opacity:1;transform:translate(-50%,0)}
 .pin.lv-p:not(.in){opacity:0}
 .pin.pop{animation:lv-pin-pop .22s var(--spring) both}
+.pin.pin-pop{animation:lv-pin-in .6s var(--spring) both}   /* tablet and phone: no cursor, the bubble grows out of its sharp corner */
+@keyframes lv-pin-in{from{opacity:0;transform:scale(.3)}40%{opacity:1}}
 .pin img{transition:width .32s var(--spring),margin .32s var(--out),transform .42s var(--spring),opacity .2s}
 .pin.typing{padding:0 13px 0 15px}
 .pin.typing img{width:0;margin-right:-9px;opacity:0;transform:scale(0)}   /* the logo pops in last, once the words are typed */

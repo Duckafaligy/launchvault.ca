@@ -23,6 +23,11 @@
   }
   /* charts draw and the phone row slides in through motion.js's fail-safe reveal (pending only below the fold, .in once near) */
   $$('.ch,.how-row').forEach(function (el) { el.setAttribute('data-inview', ''); });
+  /* stacked phones: a grid is taller than the screen, so one stagger would play its lower cards out of sight; each card reveals itself */
+  if (w.innerWidth < 720) $$('.plans,.bd,.posts').forEach(function (g) {
+    g.removeAttribute('data-stagger');
+    Array.prototype.forEach.call(g.children, function (c) { c.setAttribute('data-reveal', ''); });
+  });
   var inStory = function (el) { return !!el.closest('[data-scrollstory]'); };
   if (!reduced) watch($$('[data-demo]'), function (el, on) { el.classList.toggle('play', on); });
 
