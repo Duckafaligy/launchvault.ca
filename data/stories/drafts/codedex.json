@@ -1,0 +1,532 @@
+{
+  "slug": "codedex",
+  "name": "Codédex",
+  "category": "Digital products / info products",
+  "type_label": "Digital product",
+  "what": "A game-style website that teaches beginners to code, free to start, with a paid Club for the full course set.",
+  "logo": "/assets/logos/codedex.png",
+  "site": "https://www.codedex.io/",
+  "status": "draft",
+  "published": "2026-12-05",
+  "read_min": 7,
+  "title": "Codédex: a coding game that reached $79K a month from a $9.99 plan",
+  "title_em": "$79K a month",
+  "dek": "Codédex teaches Python, HTML and more as a game with XP and badges. The basics are free and the Club costs $9.99 a month. MRR (monthly recurring revenue) means the money that subscriptions add up to each month.",
+  "pattern": "Make the boring thing feel like a game, charge for the full version",
+  "hero": {
+    "title": "A free coding game grew into a $79K-a-month subscription",
+    "tags": [
+      "Make the boring thing feel like a game, charge for the full version",
+      "Education",
+      "Subscription"
+    ]
+  },
+  "numbers": [
+    {
+      "k": "MRR",
+      "v": "$79,024",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/codedex",
+      "long": "Monthly recurring revenue"
+    },
+    {
+      "k": "Revenue, all-time",
+      "v": "$1,564,522",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/codedex"
+    },
+    {
+      "k": "Active subscriptions",
+      "v": "6,310",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/codedex"
+    },
+    {
+      "k": "Revenue, last 12 months",
+      "v": "$885,474",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/codedex.md"
+    },
+    {
+      "k": "Revenue in Oct 2026",
+      "v": "$65,681",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/codedex.md"
+    },
+    {
+      "k": "Club price",
+      "v": "$9.99 / month",
+      "label": "Live",
+      "date": "Nov 28 2026",
+      "source": "https://www.codedex.io/pricing"
+    },
+    {
+      "k": "Learners (site claim)",
+      "v": "2m+",
+      "label": "Claimed",
+      "date": "Nov 28 2026",
+      "source": "https://www.codedex.io/pricing"
+    }
+  ],
+  "series": {
+    "what": "Revenue each month (Nov 2026 is the month so far)",
+    "label": "Verified",
+    "source": "https://trustmrr.com/startup/codedex.md",
+    "points": [
+      [
+        "2025-12",
+        65068,
+        "Verified",
+        "TrustMRR, read from Stripe"
+      ],
+      [
+        "2026-01",
+        70201,
+        "Verified",
+        "TrustMRR, read from Stripe"
+      ],
+      [
+        "2026-02",
+        67626,
+        "Verified",
+        "TrustMRR, read from Stripe"
+      ],
+      [
+        "2026-03",
+        76010,
+        "Verified",
+        "TrustMRR, read from Stripe"
+      ],
+      [
+        "2026-04",
+        76454,
+        "Verified",
+        "TrustMRR, read from Stripe"
+      ],
+      [
+        "2026-05",
+        80178,
+        "Verified",
+        "TrustMRR, read from Stripe"
+      ],
+      [
+        "2026-06",
+        77826,
+        "Verified",
+        "TrustMRR, read from Stripe"
+      ],
+      [
+        "2026-07",
+        80384,
+        "Verified",
+        "TrustMRR, read from Stripe"
+      ],
+      [
+        "2026-08",
+        80284,
+        "Verified",
+        "TrustMRR, read from Stripe"
+      ],
+      [
+        "2026-09",
+        75597,
+        "Verified",
+        "TrustMRR, read from Stripe"
+      ],
+      [
+        "2026-10",
+        65681,
+        "Verified",
+        "TrustMRR, read from Stripe"
+      ],
+      [
+        "2026-11",
+        61472,
+        "Verified",
+        "TrustMRR, read from Stripe"
+      ]
+    ],
+    "point_dates": {
+      "2026-11": "Nov 28 2026"
+    },
+    "alt": "Monthly revenue rises from $65K in Dec 2025 to a peak of $80K in Jul 2026, then slips to $61K in Nov 2026 so far.",
+    "empty_note": "TrustMRR only shows the months since the payment account was connected."
+  },
+  "phases": [
+    {
+      "name": "Idea",
+      "when": "2022",
+      "moves": [
+        0
+      ],
+      "title": "Codédex: start from what keeps beginners from quitting",
+      "dek": "The founder came from years of teaching and ed-tech work. The bet was that games and real projects keep new coders going.",
+      "story": "In July 2022 the founder wrote that after about seven years working where education meets technology, project-based learning and gamification looked like the best ways to keep young students engaged. The first audience was high schoolers and college students.\n\nThe same post said the team had just launched version 1.0 of a new learn-to-code platform, and planned an 8-bit look to make it feel magical.\n\nThe name is a play on Pokédex, the Pokémon encyclopedia. The idea is that learning to code should feel like a game you play with friends.",
+      "lesson": "Start with the exact reason people give up, then design the product around it.",
+      "why": "Many people quit online coding courses early. A product that answers that one problem is easier to explain than 'a better course'. All of this is what the founder said about the project, so it is a claim and not a proven result.",
+      "receipts": [
+        {
+          "kind": "note",
+          "src": "",
+          "platform": "Codédex blog (dev.to)",
+          "text": "The founder says seven years in education technology led to a bet on projects and game-style learning, and announces version 1.0.",
+          "caption": "Founder's launch post for v1.0",
+          "label": "Claimed",
+          "date": "Jul 28 2022",
+          "source": "Codédex post on dev.to: 8-Bit Learn to Code Platform (Jul 28 2022)"
+        }
+      ],
+      "source_ids": [
+        5
+      ]
+    },
+    {
+      "name": "Launch",
+      "when": "Nov 2022 to Apr 2023",
+      "moves": [
+        1,
+        2
+      ],
+      "title": "Codédex: launch on Product Hunt, then the first thousands of learners",
+      "dek": "A few months after launch the team said tens of thousands had signed up, from 174 countries.",
+      "story": "Codédex launched on Product Hunt (a site where people share new products) in November 2022, according to a Q&A the team gave in April 2023.\n\nIn that Q&A the founder said the platform had tens of thousands of registered users and over a million page views a few months in, with people in 174 countries using it.\n\nThe team also told of meeting students at a university hackathon who said they had learned Python on the platform. The stated goal: make learning to code as fun and collaborative as playing a Pokémon game with friends.",
+      "number": [
+        {
+          "v": "Tens of thousands of registered users, people in 174 countries",
+          "label": "Claimed",
+          "date": "Apr 19 2023",
+          "source": "Glitch Q&A with the founder"
+        }
+      ],
+      "lesson": "A launch on a community site can give you your first real users and real stories.",
+      "why": "These counts are the team's own words, not payment data. Later sources give different user numbers, see the fact checks below.",
+      "receipts": [
+        {
+          "kind": "note",
+          "src": "",
+          "platform": "Glitch",
+          "text": "The team says it launched on Product Hunt in Nov 2022 and, months later, had tens of thousands of registered users in 174 countries.",
+          "caption": "Glitch blog Q&A",
+          "label": "Claimed",
+          "date": "Apr 19 2023",
+          "source": "https://blog.glitch.com/post/making-learning-to-code-fun-a-qa-with-sonny-li-codedex"
+        }
+      ],
+      "source_ids": [
+        4,
+        6
+      ]
+    },
+    {
+      "name": "Pricing",
+      "when": "Today",
+      "moves": [],
+      "title": "Codédex: free to start, pay for the full version",
+      "dek": "The free plan covers the basics. The Club plan adds the full course set and costs $9.99 a month.",
+      "story": "The pricing page today has two plans. Explorer is free forever and gives access to early chapters, creating and sharing projects, and the community.\n\nClub is $9.99 a month on the plan the page shows, with a 'SAVE 60%' tag. It adds full access, including Club courses, project reviews, certificates and priority help.\n\nThe homepage also runs a Black Friday offer of 30% off Club plans. The page does not say how many people use each plan.",
+      "number": [
+        {
+          "v": "Club: $9.99 / month. Explorer: free forever.",
+          "label": "Live",
+          "date": "Nov 28 2026",
+          "source": "https://www.codedex.io/pricing"
+        }
+      ],
+      "lesson": "A free plan that is genuinely useful earns trust. The paid plan sells the next step, not the basics.",
+      "receipts": [
+        {
+          "kind": "image",
+          "src": "/assets/receipts/codedex/pricing.png",
+          "caption": "codedex.io/pricing today",
+          "label": "Live",
+          "date": "Nov 28 2026",
+          "url": "https://www.codedex.io/pricing"
+        }
+      ],
+      "steal": {
+        "title": "Steal this: free plan, paid plan",
+        "items": [
+          "Give the first chapters away so a beginner can try it with no card.",
+          "Put the extras that save time (reviews, certificates, help) behind the paid plan.",
+          "Show the monthly price big and the saving next to it."
+        ]
+      },
+      "source_ids": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "Growth",
+      "when": "Dec 2025 to Jul 2026",
+      "moves": [
+        3,
+        4
+      ],
+      "title": "Codédex: from $65K to $80K a month in eight months",
+      "dek": "Stripe data read by TrustMRR shows steady growth through the first half of 2026.",
+      "story": "TrustMRR reads revenue straight from the payment account (Stripe). Its timeline starts in December 2025, when the account was connected.\n\nRevenue was $65,068 that month. It rose to $80,178 in May 2026 and peaked at $80,384 in July 2026. August stayed about the same at $80,284.\n\nEarlier months are not public. We cannot say what caused the climb.",
+      "number": [
+        {
+          "v": "$65,068 in Dec 2025 to $80,384 in Jul 2026",
+          "label": "Verified",
+          "date": "Nov 28 2026",
+          "source": "https://trustmrr.com/startup/codedex.md"
+        }
+      ],
+      "results": [
+        {
+          "v": "$65K → $80K",
+          "sub": "revenue a month, Dec 2025 to Jul 2026",
+          "label": "Verified",
+          "date": "Nov 28 2026",
+          "source": "https://trustmrr.com/startup/codedex.md"
+        }
+      ],
+      "lesson": "Small steady gains in a subscription add up. Eight months of 3% growth is a 27% jump.",
+      "source_ids": [
+        1,
+        0
+      ]
+    },
+    {
+      "name": "Today",
+      "when": "Nov 2026",
+      "moves": [
+        5
+      ],
+      "title": "Codédex: $79K MRR, but monthly revenue has slipped",
+      "dek": "MRR is $79,024, yet revenue each month has fallen since August. We could not find out why.",
+      "story": "On Nov 28 2026 TrustMRR shows $79,024 MRR, 6,310 active subscriptions and $1,564,522 in all-time revenue since the account was connected.\n\nRevenue collected each month has fallen from $80,284 in August to $65,681 in October, and $61,472 so far in November. MRR and monthly revenue measure different things, so they can differ. We did not find a public explanation for the dip.\n\nThe homepage says the community has over 2 million learners. That is the company's own claim.",
+      "number": [
+        {
+          "v": "$79,024 MRR, 6,310 active subscriptions",
+          "label": "Verified",
+          "date": "Nov 28 2026",
+          "source": "https://trustmrr.com/startup/codedex"
+        }
+      ],
+      "lesson": "Look at more than one number. A high MRR and falling monthly revenue tell a more careful story than either alone.",
+      "why": "When you study a company, check whether the headline number and the trend agree. If they don't, say so and keep both.",
+      "receipts": [
+        {
+          "kind": "image",
+          "src": "/assets/receipts/codedex/trustmrr.png",
+          "caption": "TrustMRR page for Codédex",
+          "label": "Verified",
+          "date": "Nov 28 2026",
+          "url": "https://trustmrr.com/startup/codedex"
+        },
+        {
+          "kind": "image",
+          "src": "/assets/receipts/codedex/codedex-now.png",
+          "caption": "codedex.io homepage today",
+          "label": "Live",
+          "date": "Nov 28 2026",
+          "url": "https://www.codedex.io/"
+        }
+      ],
+      "videos": [
+        "wKOhez33D1Y"
+      ],
+      "source_ids": [
+        0,
+        2,
+        8
+      ]
+    }
+  ],
+  "moves": [
+    {
+      "at": "2022-07",
+      "when": "Jul 28 2022",
+      "text": "Announced version 1.0 of the learn-to-code platform",
+      "label": "Claimed",
+      "source": "Codédex post on dev.to: 8-Bit Learn to Code Platform (Jul 28 2022)"
+    },
+    {
+      "at": "2022-11",
+      "when": "Nov 2022",
+      "text": "Launched on Product Hunt",
+      "label": "Claimed",
+      "source": "https://blog.glitch.com/post/making-learning-to-code-fun-a-qa-with-sonny-li-codedex"
+    },
+    {
+      "at": "2023-04",
+      "when": "Apr 19 2023",
+      "text": "Said tens of thousands had signed up, from 174 countries",
+      "label": "Claimed",
+      "source": "https://blog.glitch.com/post/making-learning-to-code-fun-a-qa-with-sonny-li-codedex"
+    },
+    {
+      "at": "2025-12",
+      "when": "Dec 2025",
+      "text": "First month in the verified timeline: $65,068",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/codedex.md"
+    },
+    {
+      "at": "2026-07",
+      "when": "Jul 2026",
+      "text": "Best verified month so far: $80,384",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/codedex.md"
+    },
+    {
+      "at": "2026-11",
+      "when": "Nov 28 2026",
+      "text": "$79,024 MRR and 6,310 active subscriptions",
+      "detail": "Read from Stripe by TrustMRR.",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/codedex"
+    }
+  ],
+  "fact_checks": [
+    {
+      "claim": "How many learners it has",
+      "found": "Built In lists over 100,000 registered users in 192 countries. The company's pricing page says a community of 2m+ learners, and TrustMRR lists an estimated 2,000,000 users (founder-provided). A Product Hunt post also claims 1M+. We could not verify any of them.",
+      "label": "Sources differ",
+      "who": "Built In; Codédex pricing page; TrustMRR profile",
+      "date": "Nov 28 2026",
+      "source": "https://builtin.com/company/codedex"
+    },
+    {
+      "claim": "MRR vs monthly revenue",
+      "found": "TrustMRR shows $79,024 MRR but only $65,681 collected in Oct 2026 and $61,472 so far in Nov. MRR counts current subscriptions each month, while revenue counts money collected. We could not verify why they differ.",
+      "label": "Couldn't verify",
+      "who": "TrustMRR",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/codedex"
+    },
+    {
+      "claim": "Founded in November 2022",
+      "found": "TrustMRR lists the founded date as Nov 2022, and the team says it launched on Product Hunt that month. The founder's own post announced v1.0 in July 2022. Dates may mean different things (first launch vs. relaunch).",
+      "label": "Sources differ",
+      "who": "TrustMRR; Codédex blog",
+      "date": "Nov 28 2026",
+      "source": "Codédex post on dev.to: 8-Bit Learn to Code Platform (Jul 28 2022)"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "c1",
+      "text": "Write down the one reason people quit learning the thing you teach.",
+      "from": "Idea"
+    },
+    {
+      "id": "c2",
+      "text": "List three game features (points, badges, levels) that could fit your project.",
+      "from": "Idea"
+    },
+    {
+      "id": "c3",
+      "text": "Post your project on a community site where new products are shared.",
+      "from": "Launch"
+    },
+    {
+      "id": "c4",
+      "text": "Draw a free plan and a paid plan on one page. What goes in each?",
+      "from": "Pricing"
+    },
+    {
+      "id": "c5",
+      "text": "Find a TrustMRR page for a company you like and read its monthly revenue table.",
+      "from": "Growth"
+    },
+    {
+      "id": "c6",
+      "text": "Compare two numbers for one company (like MRR and monthly revenue) and note if they disagree.",
+      "from": "Today"
+    }
+  ],
+  "sources": [
+    {
+      "name": "TrustMRR: Codédex",
+      "url": "https://trustmrr.com/startup/codedex",
+      "what": "MRR, all-time revenue, subscriptions",
+      "date": "Nov 28 2026",
+      "label": "Verified",
+      "logo": "/assets/logos/trustmrr.png"
+    },
+    {
+      "name": "TrustMRR: Codédex (Markdown profile)",
+      "url": "https://trustmrr.com/startup/codedex.md",
+      "what": "Monthly revenue timeline, last-12-month revenue",
+      "date": "Nov 28 2026",
+      "label": "Verified",
+      "logo": "/assets/logos/trustmrr.png"
+    },
+    {
+      "name": "Codédex homepage",
+      "url": "https://www.codedex.io/",
+      "what": "What the product is today",
+      "date": "Nov 28 2026",
+      "label": "Live",
+      "logo": "/assets/logos/codedex.png"
+    },
+    {
+      "name": "Codédex pricing",
+      "url": "https://www.codedex.io/pricing",
+      "what": "Plans and prices, 2m+ learners claim",
+      "date": "Nov 28 2026",
+      "label": "Live",
+      "logo": "/assets/logos/codedex.png"
+    },
+    {
+      "name": "Glitch: Q&A with the founder",
+      "url": "https://blog.glitch.com/post/making-learning-to-code-fun-a-qa-with-sonny-li-codedex",
+      "what": "Launch, early users, goal",
+      "date": "Apr 19 2023",
+      "label": "Claimed"
+    },
+    {
+      "name": "Codédex on dev.to: 8-bit learn to code platform",
+      "url": null,
+      "what": "Why it was built, v1.0 launch",
+      "date": "Jul 28 2022",
+      "label": "Claimed",
+      "logo": "/assets/logos/devto.png"
+    },
+    {
+      "name": "Built In: Codédex",
+      "url": "https://builtin.com/company/codedex",
+      "what": "Registered users and countries",
+      "date": "Nov 28 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "Product Hunt: Codédex v1.0",
+      "url": "https://www.producthunt.com/p/codedex/codedex-v1-0?page=2",
+      "what": "Maker's 1M+ users claim",
+      "date": "Nov 28 2026",
+      "label": "Claimed",
+      "logo": "/assets/logos/producthunt.png"
+    },
+    {
+      "name": "YouTube: a16z SPEEDRUN Application Video (Oct 2024)",
+      "url": "https://www.youtube.com/watch?v=wKOhez33D1Y",
+      "what": "Company video",
+      "date": "Nov 28 2026",
+      "label": "Live"
+    }
+  ],
+  "videos": [
+    {
+      "id": "wKOhez33D1Y",
+      "title": "a16z SPEEDRUN Application Video (Oct 2024)",
+      "channel": "Codédex and Sonny Li",
+      "duration": "2:05",
+      "kind": "own"
+    }
+  ],
+  "fit": [
+    "Could you turn a boring job into something that feels like a game?",
+    "Would a free plan bring you users who later pay?",
+    "Can you teach or explain something clearly to beginners?"
+  ]
+}

@@ -37,3 +37,8 @@ Each file is the company's own site icon or logo, fetched from its official site
 | discord.svg | Simple Icons v16.38.0 `discord` (CC0), Discord blurple #5865F2 | Nov 19 2026 |
 | rezi.png | https://www.rezi.ai/ site favicon (48px R mark) | Nov 19 2026 |
 | aeoengine.png | https://aeoengine.ai/icon.png (site icon, resized to 72px) | Nov 19 2026 |
+| capgo.png | https://d21oz30g4w22sz.cloudfront.net/logos/capgo-33c3cd5d-0939-4875-b2e1-3b15a11688a9.png (the logo TrustMRR shows for Capgo, resized to 96px) | Nov 28 2026 |
+| habitkit.png | https://habitkit.app/apple-touch-icon.png (resized to 96px) | Nov 28 2026 |
+| apiframe.png | https://apiframe.ai/apiframe-logo.png (resized to 96px) | Nov 28 2026 |
+| cartboss.png | https://www.cartboss.io/favicon.ico (largest frame, resized to 96px) | Nov 28 2026 |
+| codedex.png | https://www.codedex.io/images/apple-touch-icon.png (resized to 96px) | Nov 28 2026 |

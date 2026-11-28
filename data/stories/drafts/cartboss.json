@@ -1,0 +1,373 @@
+{
+  "slug": "cartboss",
+  "name": "CartBoss",
+  "category": "SaaS",
+  "status": "draft",
+  "what": "A pay-as-you-go tool that sends text-message reminders to shoppers who left items in their cart on Shopify and WooCommerce stores.",
+  "logo": "/assets/logos/cartboss.png",
+  "site": "https://www.cartboss.io/",
+  "published": "2026-12-05",
+  "read_min": 6,
+  "title": "CartBoss: $73K in 30 days from texting people who forgot their cart",
+  "title_em": "$73K in 30 days",
+  "dek": "A small Slovenian team charges stores per text message instead of a monthly fee. Revenue has swung from $27K to $72K a month in 2026. Note: TrustMRR shows MRR (monthly recurring revenue, money from subscriptions) as $0 because nobody pays a subscription.",
+  "hero": {
+    "title": "A no-subscription SMS tool collected $1.8M since it connected to Stripe",
+    "tags": [
+      "Charge for use, not for a seat",
+      "Pay-as-you-go",
+      "SaaS"
+    ]
+  },
+  "pattern": "Charge per use instead of a monthly plan",
+  "numbers": [
+    {
+      "v": "$73,359",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/cartboss",
+      "k": "Revenue, last 30 days"
+    },
+    {
+      "v": "$1,840,190",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/cartboss",
+      "k": "Revenue, all-time"
+    },
+    {
+      "v": "$71,533",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/cartboss",
+      "k": "Revenue in Nov 2026 so far",
+      "note": "The month is not over."
+    },
+    {
+      "v": "$0 MRR",
+      "label": "Verified",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/cartboss",
+      "k": "MRR (monthly subscriptions)",
+      "note": "Pay-as-you-go, so TrustMRR counts no subscriptions."
+    },
+    {
+      "v": "Over 500 customers, 4,000 shops",
+      "label": "Claimed",
+      "date": "Sep 16 2022",
+      "source": "https://ecommercenews.eu/?p=29021",
+      "k": "Size in 2022"
+    },
+    {
+      "v": "Over 7 million carts recovered",
+      "label": "Claimed",
+      "date": "Nov 28 2026",
+      "source": "https://www.cartboss.io/",
+      "k": "Carts recovered, company homepage"
+    }
+  ],
+  "series": {
+    "what": "Revenue each month",
+    "label": "Verified",
+    "source": "https://trustmrr.com/startup/cartboss",
+    "points": [
+      [
+        "2025-12",
+        43079
+      ],
+      [
+        "2026-01",
+        39356
+      ],
+      [
+        "2026-02",
+        35464
+      ],
+      [
+        "2026-03",
+        39367
+      ],
+      [
+        "2026-04",
+        36234
+      ],
+      [
+        "2026-05",
+        35007
+      ],
+      [
+        "2026-06",
+        49676
+      ],
+      [
+        "2026-07",
+        52761
+      ],
+      [
+        "2026-08",
+        50936
+      ],
+      [
+        "2026-09",
+        26824
+      ],
+      [
+        "2026-10",
+        28597
+      ],
+      [
+        "2026-11",
+        71533
+      ]
+    ],
+    "point_dates": {
+      "2026-11": "Nov 28 2026"
+    },
+    "alt": "Monthly revenue falls from $43K to $35K, climbs to $53K by July, drops to $27K in September, then jumps to $72K in November (month not finished)."
+  },
+  "phases": [
+    {
+      "name": "The problem",
+      "when": "2021",
+      "title": "CartBoss: most people leave without paying",
+      "dek": "The team saw that shoppers often fill a cart and leave. They built a text message that brings them back.",
+      "story": "Online stores lose a lot of sales at checkout. Someone adds shoes to their cart, gets distracted and closes the tab. That is called an abandoned cart.\n\nThe team behind CartBoss, a Slovenian company, says they spotted this as a big problem for stores and built a text-message (SMS) reminder for it. TrustMRR lists the company as founded in March 2021.\n\nTexts get read faster than email, so a reminder can land while the shopper still remembers the cart. The company says it only sends texts, no email.",
+      "number": {
+        "v": "Founded March 2021",
+        "label": "Claimed",
+        "date": "Sep 16 2022",
+        "source": "https://ecommercenews.eu/?p=29021"
+      },
+      "lesson": "Pick one leak in a business, like checkout, and fix only that.",
+      "source_ids": [
+        4,
+        3
+      ]
+    },
+    {
+      "name": "Launch",
+      "when": "Dec 2021 to 2022",
+      "title": "CartBoss: no monthly fee, pay for each text",
+      "dek": "The Shopify app launched in December 2021 with a simple price: free to install, pay for each message.",
+      "story": "The Shopify listing says the app launched on December 22, 2021. Its pricing line reads: pay per text message, $0 monthly fees.\n\nThat makes it easy to try. A tiny store pays a little and a big store pays more, with no plan to pick. The homepage also offers a free trial with no credit card and says the first recovered cart is free.\n\nBy September 2022 a news site reported the tool was in over 4,000 online shops and had over 500 customers, with message templates in 30 languages.",
+      "number": {
+        "v": "Over 4,000 shops, over 500 customers",
+        "label": "Claimed",
+        "date": "Sep 16 2022",
+        "source": "https://ecommercenews.eu/?p=29021"
+      },
+      "receipts": [
+        {
+          "kind": "note",
+          "src": "",
+          "platform": "Shopify App Store",
+          "text": "The Shopify listing says the app launched on Dec 22 2021 and is priced per text message with no monthly fee.",
+          "caption": "Shopify App Store listing",
+          "label": "Live",
+          "date": "Nov 28 2026",
+          "source": "https://apps.shopify.com/sms-abandoned-cart-cartboss"
+        }
+      ],
+      "lesson": "If a customer can start for nearly nothing, you remove the biggest reason to say no.",
+      "why": "The trade-off is that revenue moves with how many texts stores send, which is not as steady as subscriptions.",
+      "source_ids": [
+        3,
+        5,
+        4
+      ]
+    },
+    {
+      "name": "Proof",
+      "when": "Interviews and claims",
+      "title": "CartBoss: the results people quote",
+      "dek": "The company shares big numbers. They come from the company and its users, not from the payment data.",
+      "story": "In a podcast interview a co-founder said the tool sets up with two default abandoned-cart messages once installed and has around 15 ready-made messages in different languages.\n\nThe interview page also quotes users with an ROI (money earned compared with money spent) as high as 7,400% and click rates of 55%. It says the unsubscribe rate is typically under 1%. No method is given for how these were measured, so treat them as marketing claims.\n\nThe homepage says over 7 million carts have been recovered. The same page's heading says 7 million lost sales, so the two do not match exactly.\n\nA May 2022 podcast page quotes lower figures: at least 2,400% ROI and about 40% click rate on the first text.",
+      "number": {
+        "v": "ROI up to 7,400%, click rate 55%",
+        "label": "Claimed",
+        "date": "2026 (undated page)",
+        "source": "E-commerce Fastlane podcast, episode 334 (page opens in a browser; it blocks automatic link checks)"
+      },
+      "lesson": "A company's own results are a starting point. Look for numbers someone else can check.",
+      "source_ids": [
+        2,
+        6,
+        5
+      ]
+    },
+    {
+      "name": "Today",
+      "when": "Dec 2025 to Nov 2026",
+      "title": "CartBoss: a dip, then the biggest month",
+      "dek": "Stripe data shows revenue between $35K and $53K a month, a drop in autumn, then a jump in November.",
+      "story": "TrustMRR reads CartBoss's payments straight from Stripe. From December 2025 it shows $35K to $43K a month through spring, then $50K to $53K in summer.\n\nSeptember and October fell to $27K and $29K. November is already $72K with days left, and the last 30 days total $73K. TrustMRR also shows 30-day growth of +163%.\n\nWe couldn't verify why. A pay-as-you-go tool can swing with how many texts stores send, for example around holiday sales, but no source says that is the cause here.\n\nAll-time, TrustMRR shows $1.84M since the account connected, and a 45% profit margin for the last 30 days as entered on the profile.",
+      "number": {
+        "v": "$73,359 in the last 30 days",
+        "label": "Verified",
+        "date": "Nov 28 2026",
+        "source": "https://trustmrr.com/startup/cartboss"
+      },
+      "results": [
+        {
+          "v": "$26,824 → $71,533",
+          "sub": "monthly revenue, Sep to Nov 2026",
+          "label": "Verified",
+          "date": "Nov 28 2026",
+          "source": "https://trustmrr.com/startup/cartboss"
+        }
+      ],
+      "lesson": "With pay-as-you-go, one month can look great or bad. Compare many months.",
+      "steal": {
+        "title": "Steal this: price by use",
+        "items": [
+          "Ask if your customers would prefer to pay only when they use it.",
+          "Offer the first result free, like the first recovered cart.",
+          "Track revenue by month, not by single days."
+        ]
+      },
+      "source_ids": [
+        0,
+        1
+      ]
+    }
+  ],
+  "moves": [
+    {
+      "at": "2021-03",
+      "when": "Mar 2021",
+      "text": "Company founded",
+      "label": "Claimed",
+      "source": "https://trustmrr.com/startup/cartboss.md"
+    },
+    {
+      "at": "2021-12",
+      "when": "Dec 22 2021",
+      "text": "Shopify app launched, pay per text with no monthly fee",
+      "label": "Live",
+      "source": "https://apps.shopify.com/sms-abandoned-cart-cartboss"
+    },
+    {
+      "at": "2022-09",
+      "when": "Sep 2022",
+      "text": "Reported in over 4,000 shops with over 500 customers",
+      "label": "Claimed",
+      "source": "https://ecommercenews.eu/?p=29021"
+    },
+    {
+      "at": "2026-06",
+      "when": "Jun 2026",
+      "text": "Revenue rose from $35K to $50K a month",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/cartboss"
+    },
+    {
+      "at": "2026-09",
+      "when": "Sep 2026",
+      "text": "Revenue fell to $27K",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/cartboss"
+    },
+    {
+      "at": "2026-11",
+      "when": "Nov 2026",
+      "text": "Revenue reached $72K with the month unfinished",
+      "label": "Verified",
+      "source": "https://trustmrr.com/startup/cartboss"
+    }
+  ],
+  "fact_checks": [
+    {
+      "claim": "Over 7 Million Lost Sales Recovered",
+      "found": "The homepage heading says sales, but the stat under it says 7 million carts recovered. They are not the same thing, and no method is shown.",
+      "label": "Sources differ",
+      "who": "CartBoss homepage",
+      "date": "Nov 28 2026",
+      "source": "https://www.cartboss.io/"
+    },
+    {
+      "claim": "How good is the return on the texts?",
+      "found": "The 2026-dated Fastlane page says ROI as high as 7,400% and a 55% click rate. A May 2022 podcast page says at least 2,400% ROI and about 40% on the first text. Neither explains how it was measured.",
+      "label": "Sources differ",
+      "who": "Two podcast pages",
+      "date": "May 17 2022",
+      "source": "https://player.captivate.fm/episode/afde2ce3-05d6-4387-9e11-f1f822ec3267"
+    },
+    {
+      "claim": "MRR is $0",
+      "found": "TrustMRR shows 0 active subscriptions and $0 MRR, yet $73K revenue in the last 30 days. That fits pay-as-you-go pricing where stores buy texts instead of subscribing.",
+      "label": "Verified",
+      "who": "TrustMRR",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/cartboss"
+    }
+  ],
+  "checklist": [
+    "Find an online store you like and add something to the cart. Don't buy. See which emails or texts arrive.",
+    "Write down three reasons you've left a cart before.",
+    "Sketch a price that charges per use for something you could sell.",
+    "Work out what one free first result could be in your own idea.",
+    "Look up TrustMRR and read one company's monthly revenue table.",
+    "Note one number from a company homepage and list how you could check it."
+  ],
+  "sources": [
+    {
+      "name": "TrustMRR: CartBoss",
+      "url": "https://trustmrr.com/startup/cartboss",
+      "what": "Revenue, monthly series, MRR and subscriptions",
+      "date": "Nov 28 2026",
+      "label": "Verified",
+      "logo": "/assets/logos/trustmrr.png"
+    },
+    {
+      "name": "TrustMRR: CartBoss (Markdown profile)",
+      "url": "https://trustmrr.com/startup/cartboss.md",
+      "what": "Founded date, description, pricing model",
+      "date": "Nov 28 2026",
+      "label": "Claimed",
+      "logo": "/assets/logos/trustmrr.png"
+    },
+    {
+      "name": "E-commerce Fastlane podcast, episode 334 (page opens in a browser; it blocks automatic link checks)",
+      "url": null,
+      "what": "Co-founder interview page, performance claims",
+      "date": "2026 (undated page)",
+      "label": "Claimed"
+    },
+    {
+      "name": "Shopify App Store: CartBoss",
+      "url": "https://apps.shopify.com/sms-abandoned-cart-cartboss",
+      "what": "Launch date, pay per message pricing",
+      "date": "Nov 28 2026",
+      "label": "Live"
+    },
+    {
+      "name": "Ecommerce News Europe",
+      "url": "https://ecommercenews.eu/?p=29021",
+      "what": "Shops, customers, founding month",
+      "date": "Sep 16 2022",
+      "label": "Claimed"
+    },
+    {
+      "name": "CartBoss homepage",
+      "url": "https://www.cartboss.io/",
+      "what": "Headline, trial offer, carts-recovered claim",
+      "date": "Nov 28 2026",
+      "label": "Claimed"
+    },
+    {
+      "name": "Futureproof Founder Podcast, episode 004",
+      "url": "https://player.captivate.fm/episode/afde2ce3-05d6-4387-9e11-f1f822ec3267",
+      "what": "Co-founder interview page with ROI and click-rate claims",
+      "date": "May 17 2022",
+      "label": "Claimed"
+    }
+  ],
+  "fit": [
+    "Could you charge per use instead of a monthly plan?",
+    "Do you already know a type of store with the checkout problem?",
+    "Could you run a small business that earns less in some months?"
+  ],
+  "links": {
+    "site": "https://www.cartboss.io/"
+  }
+}

@@ -1,0 +1,458 @@
+{
+  "slug": "habitkit",
+  "name": "HabitKit",
+  "category": "Mobile apps",
+  "what": "A free-to-start habit tracker for iPhone and Android that turns each day into a tile on a GitHub-style grid.",
+  "logo": "/assets/logos/habitkit.png",
+  "site": "https://habitkit.app/",
+  "status": "draft",
+  "published": "2026-12-05",
+  "read_min": 7,
+  "title": "HabitKit: a $100 flop, then a habit grid that reached $28K MRR in three years",
+  "title_em": "reached $28K MRR",
+  "dek": "One developer's first app made about $100 in six months. His second, a habit tracker built in two months, ended 2025 at $28,000 MRR (monthly recurring revenue: money that comes in every month from subscriptions). All numbers here come from the founder's own posts, not from the payment provider.",
+  "pattern": "Copy a visual idea people already love, then win the search box",
+  "hero": {
+    "title": "His first app made $100. His second reached $28K a month",
+    "tags": [
+      "Copy a visual idea people already love, then win the search box",
+      "Solo",
+      "Mobile app"
+    ]
+  },
+  "numbers": [
+    {
+      "k": "MRR",
+      "long": "Monthly recurring revenue",
+      "v": "$28,000",
+      "label": "Claimed",
+      "date": "Dec 31 2025",
+      "source": "https://sebastianroehl.substack.com/p/2025-the-year-that-changed-everything"
+    },
+    {
+      "k": "Total revenue in 2025",
+      "v": "$602,000",
+      "label": "Claimed",
+      "date": "Dec 31 2025",
+      "source": "https://sebastianroehl.substack.com/p/2025-the-year-that-changed-everything"
+    },
+    {
+      "k": "Active subscribers",
+      "v": "25,100",
+      "label": "Claimed",
+      "date": "Dec 31 2025",
+      "source": "https://sebastianroehl.substack.com/p/2025-the-year-that-changed-everything"
+    },
+    {
+      "k": "Revenue in Jan 2025",
+      "v": "$112,000",
+      "label": "Claimed",
+      "date": "Dec 31 2025",
+      "source": "https://sebastianroehl.substack.com/p/2025-the-year-that-changed-everything"
+    },
+    {
+      "k": "App Store rating (US)",
+      "v": "4.8 from 2,639 ratings",
+      "label": "Live",
+      "date": "Nov 28 2026",
+      "source": "https://apps.apple.com/us/app/habit-tracker-habitkit/id6443918070"
+    },
+    {
+      "k": "People using it, per the app's own site",
+      "v": "500,000+",
+      "label": "Claimed",
+      "date": "Nov 28 2026",
+      "source": "https://habitkit.app/"
+    }
+  ],
+  "headline": {
+    "k": "MRR",
+    "value": "$28,000",
+    "label": "Claimed",
+    "date": "Dec 31 2025",
+    "source": "https://sebastianroehl.substack.com/p/2025-the-year-that-changed-everything"
+  },
+  "series": {
+    "what": "Monthly recurring revenue (MRR)",
+    "label": "Claimed",
+    "source": "The founder's 2024 year in review and The founder's 2025 year in review",
+    "points": [
+      [
+        "2024-12",
+        10000,
+        "Claimed",
+        "The founder's 2024 year in review (reached during 2024)"
+      ],
+      [
+        "2025-12",
+        28000,
+        "Claimed",
+        "The founder's 2025 year in review"
+      ]
+    ],
+    "point_dates": {
+      "2024-12": "Dec 31 2024",
+      "2025-12": "Dec 31 2025"
+    },
+    "alt": "Two points only: $10,000 MRR reached during 2024 and $28,000 MRR at the end of 2025, both stated by the founder.",
+    "empty_note": "TrustMRR shows no revenue for this app, so there is no Verified monthly series."
+  },
+  "phases": [
+    {
+      "name": "The flop",
+      "when": "2022",
+      "moves": [
+        0
+      ],
+      "title": "HabitKit: the first app flopped, so the second got a deadline",
+      "dek": "The founder quit a software job to build apps for 12 months. The first app barely moved.",
+      "story": "The founder quit a developer job in 2022 and gave himself 12 months to build a profitable app business.\n\nHis first app, a workout log, made about $100 in six months. It got around 10 downloads a week. He added features, worked on its store page and tried Instagram. Nothing changed.\n\nSo he set a new rule: build the next app in two months and see what happens.",
+      "number": [
+        {
+          "v": "About $100 in six months, around 10 downloads a week",
+          "label": "Claimed",
+          "date": "Jun 26 2024",
+          "source": "RevenueCat blog (Sub Club podcast summary)"
+        }
+      ],
+      "lesson": "A flat launch is information. If nobody shows up, change the idea instead of polishing it.",
+      "why": "The first app taught him that features can't fix an idea nobody asks for. That made the second one faster to judge.",
+      "source_ids": [
+        2
+      ]
+    },
+    {
+      "name": "Launch",
+      "when": "Nov 2022 to Apr 2023",
+      "moves": [
+        1
+      ],
+      "title": "HabitKit: a screenshot post tells him the idea works",
+      "dek": "Before launch he posted the app's main screen on X. The reaction told him this one was different.",
+      "story": "The second app was a habit tracker where each day is a small tile, like the contribution grid on GitHub (a site where developers share code). It was built with Flutter (a tool for making iPhone and Android apps from one codebase) and took about two months.\n\nWhile building in public, he posted a picture of the main screen on X. By his account it got 800 likes. That was the moment he thought this could beat his first app.\n\nThe app launched in November 2022 and earned about $1.5K in its first month. That was more than the first app made in six months, but not enough to live on. He went back to a day job in April 2023 and kept building HabitKit on the side.",
+      "number": [
+        {
+          "v": "$1.5K in the first month",
+          "label": "Claimed",
+          "date": "Jun 26 2024",
+          "source": "RevenueCat blog (Sub Club podcast summary)"
+        }
+      ],
+      "lesson": "Show the product before you finish it. A simple screen that people react to is a cheap test.",
+      "why": "The post cost nothing. It told him more than weeks of guessing would have.",
+      "receipts": [
+        {
+          "kind": "note",
+          "src": "",
+          "platform": "X",
+          "text": "Before launch, the founder posted the app's main screen and says it got about 800 likes.",
+          "caption": "The founder on the Sub Club podcast, summarised by RevenueCat",
+          "label": "Claimed",
+          "date": "Jun 26 2024",
+          "source": "RevenueCat blog (Sub Club podcast summary)"
+        }
+      ],
+      "videos": [
+        "gpn1jEoWT4A"
+      ],
+      "source_ids": [
+        2,
+        3
+      ]
+    },
+    {
+      "name": "Search ranking",
+      "when": "Jun to Dec 2023",
+      "moves": [
+        2
+      ],
+      "title": "HabitKit: winning one search term changes everything",
+      "dek": "In June 2023 the app started showing up near the top for a big search term. Downloads jumped.",
+      "story": "Two months after going back to his job, HabitKit began ranking in the top five results for a major search term in the app stores. Downloads and revenue climbed.\n\nBy September the app was making thousands of dollars. He had to choose: keep the job or go all in. He said the numbers left him no real choice.\n\nBy the end of 2023 the app had about 120,000 downloads and about $51K in revenue for the year. In February 2024 he quit for good.",
+      "number": [
+        {
+          "v": "About 120K downloads and $51K revenue in 2023",
+          "label": "Claimed",
+          "date": "Jun 26 2024",
+          "source": "RevenueCat blog (Sub Club podcast summary)"
+        }
+      ],
+      "lesson": "In app stores, the search box is the shop window. Picking words people actually type can matter more than ads.",
+      "why": "He later wrote a whole article on his store search strategy. The ranking, not a launch spike, is what built the business.",
+      "source_ids": [
+        2,
+        1
+      ]
+    },
+    {
+      "name": "Going full time",
+      "when": "2024",
+      "moves": [
+        3,
+        4
+      ],
+      "title": "HabitKit: $110K in five months and a viral video",
+      "dek": "Full time, 2024 brought a Times Square billboard, a big tech-video mention and $10K MRR.",
+      "story": "From January to May 2024, HabitKit brought in about $110K. During the year the founder reached $10,000 MRR, a goal he had set for himself.\n\nIn June, HabitKit won a contest run by RevenueCat (a company that handles in-app payments) and was shown on a billboard in New York's Times Square. He says it did not bring many downloads or much revenue.\n\nIn December, a tech YouTube channel featured the app in a video. He had not contacted them. He says December became his best month so far.\n\nThen he stopped sharing revenue numbers, because he feared copycats.",
+      "number": [
+        {
+          "v": "$10,000 MRR reached during 2024",
+          "label": "Claimed",
+          "date": "Dec 31 2024",
+          "source": "The founder's 2024 year in review"
+        }
+      ],
+      "lesson": "Some attention fizzles and some compounds. He measured both and kept the one that paid.",
+      "why": "The billboard looked huge and did little. A single video mention did more. You can't always tell which will work, so try several.",
+      "videos": [
+        "9QeyK49Hecg"
+      ],
+      "source_ids": [
+        1,
+        2
+      ]
+    },
+    {
+      "name": "2025",
+      "when": "2025",
+      "moves": [
+        5,
+        6
+      ],
+      "title": "HabitKit: $602K in a year, and the risk of renting space on app stores",
+      "dek": "2025 was his first full year on his own. Revenue passed $600K, and Apple briefly removed the app.",
+      "story": "January 2025 alone brought in about $112K, helped by New Year's resolutions and the video mention. In 2025 the app reached the top five for the \"habit tracker\" search in the US App Store. He says monthly revenue then stayed above $40K.\n\nHis year-end figures: $602,000 total revenue, $28,000 MRR and 25,100 active subscribers.\n\nIn August Apple removed the app from the App Store for a few stressful hours after an address change could not be verified. Google also threatened to remove it from Google Play over links in the app. He wrote that you are always building on someone else's land.\n\nHe launched a second app in November 2025 to spread the risk. It was about a month old at year end, with $52 MRR.",
+      "number": [
+        {
+          "v": "$602,000 total revenue in 2025",
+          "label": "Claimed",
+          "date": "Dec 31 2025",
+          "source": "The founder's 2025 year in review"
+        }
+      ],
+      "lesson": "Your whole business can sit on one store's goodwill. Build a second leg before you need it.",
+      "why": "The numbers are impressive, and they are all self-reported. Read them as a founder's account, not an audit.",
+      "receipts": [
+        {
+          "kind": "image",
+          "src": "/assets/receipts/habitkit/habitkit-now.png",
+          "caption": "habitkit.app today: the home page says it is used by 500,000+ people",
+          "label": "Live",
+          "date": "Nov 28 2026",
+          "url": "https://habitkit.app/"
+        }
+      ],
+      "steal": {
+        "title": "Steal this: his playbook",
+        "items": [
+          "Build the first version in about two months and show it early.",
+          "Pick the one search phrase people type and write your store page for it.",
+          "Post your progress in public, even small wins.",
+          "Plan for a store removing your app: keep a second product and your own contact list."
+        ]
+      },
+      "source_ids": [
+        0,
+        4,
+        5
+      ]
+    }
+  ],
+  "moves": [
+    {
+      "at": "2022-11",
+      "when": "Nov 2022",
+      "text": "HabitKit launches after about two months of building",
+      "detail": "About $1.5K in the first month, by the founder's account.",
+      "label": "Claimed",
+      "source": "RevenueCat blog (Sub Club podcast summary)"
+    },
+    {
+      "at": "2023-04",
+      "when": "Apr 2023",
+      "text": "He goes back to a day job and keeps building on the side",
+      "label": "Claimed",
+      "source": "The founder's 2024 year in review"
+    },
+    {
+      "at": "2023-06",
+      "when": "Jun 2023",
+      "text": "The app reaches the top five for a major search term",
+      "detail": "Downloads and revenue climb.",
+      "label": "Claimed",
+      "source": "RevenueCat blog (Sub Club podcast summary)"
+    },
+    {
+      "at": "2024-02",
+      "when": "Feb 2024",
+      "text": "He quits his job to work on his apps full time",
+      "label": "Claimed",
+      "source": "The founder's 2024 year in review"
+    },
+    {
+      "at": "2024-12",
+      "when": "Dec 2024",
+      "text": "A tech YouTube channel features the app, and it has its best month yet",
+      "label": "Claimed",
+      "source": "The founder's 2024 year in review"
+    },
+    {
+      "at": "2025-01",
+      "when": "Jan 2025",
+      "text": "$112,000 in revenue in one month",
+      "label": "Claimed",
+      "source": "The founder's 2025 year in review"
+    },
+    {
+      "at": "2025-12",
+      "when": "Dec 2025",
+      "text": "$28,000 MRR and 25,100 active subscribers",
+      "label": "Claimed",
+      "source": "The founder's 2025 year in review"
+    }
+  ],
+  "fact_checks": [
+    {
+      "claim": "HabitKit's revenue can be checked on TrustMRR",
+      "found": "The TrustMRR page for HabitKit shows $0.00 all-time and was last synced on Sep 9 2026. Every revenue number in this story is therefore the founder's own word.",
+      "label": "Couldn't verify",
+      "who": "TrustMRR",
+      "date": "Nov 28 2026",
+      "source": "https://trustmrr.com/startup/habitkit"
+    },
+    {
+      "claim": "$15K a month (Starter Story, Nov 2024) vs $10,000 MRR (founder, Dec 2024)",
+      "found": "Starter Story lists $15K monthly revenue and says its numbers are estimated from public sources. The founder's year in review, written two months later, says he reached $10,000 MRR during 2024. They may measure different things (revenue vs MRR).",
+      "label": "Sources differ",
+      "who": "Starter Story and the founder",
+      "date": "Nov 2 2024",
+      "source": "https://www.starterstory.com/habit-kit-breakdown"
+    },
+    {
+      "claim": "Monthly revenue \"stabilized above $40k\" in 2025, but MRR was $28,000",
+      "found": "Both come from the same year-end post. MRR only counts subscriptions, so the gap is probably other income such as one-off purchases. The post does not say, and we couldn't verify it.",
+      "label": "Couldn't verify",
+      "who": "The founder",
+      "date": "Dec 31 2025",
+      "source": "https://sebastianroehl.substack.com/p/2025-the-year-that-changed-everything"
+    },
+    {
+      "claim": "4.8 stars from 6,630 App Store ratings",
+      "found": "The founder's post says 6,630 App Store ratings. Apple's US page shows 2,639 today. The post likely counts all countries; we only checked the US page.",
+      "label": "Sources differ",
+      "who": "The founder; Apple",
+      "date": "Nov 28 2026",
+      "source": "https://apps.apple.com/us/app/habit-tracker-habitkit/id6443918070"
+    }
+  ],
+  "checklist": [
+    {
+      "id": "c1",
+      "text": "Write down one app idea a friend asked for, and sketch its main screen.",
+      "from": "Phase 2"
+    },
+    {
+      "id": "c2",
+      "text": "Post the sketch somewhere public and count the reactions.",
+      "from": "Phase 2"
+    },
+    {
+      "id": "c3",
+      "text": "Search the App Store for your idea's keyword and list the top five apps.",
+      "from": "Phase 3"
+    },
+    {
+      "id": "c4",
+      "text": "Set a deadline for the first version, like two months.",
+      "from": "Phase 1"
+    },
+    {
+      "id": "c5",
+      "text": "Decide what you'd do if the store pulled your app tomorrow.",
+      "from": "Phase 5"
+    },
+    {
+      "id": "c6",
+      "text": "Keep a simple log of every thing you try and what it brought in.",
+      "from": "Phase 4"
+    }
+  ],
+  "videos": [
+    {
+      "id": "gpn1jEoWT4A",
+      "title": "How I Built It: $15K/month Mobile App",
+      "channel": "Starter Story",
+      "duration": "13:26",
+      "kind": "interview",
+      "thumb": "/assets/receipts/habitkit/yt-gpn1jEoWT4A.jpg"
+    },
+    {
+      "id": "9QeyK49Hecg",
+      "title": "Von 5.000 auf 30.000 Dollar MRR - Sebastian von HabitKit zurück nach 2 Jahren (#143)",
+      "channel": "Happy Bootstrapping Podcast",
+      "duration": "1:14:25",
+      "kind": "interview",
+      "thumb": "/assets/receipts/habitkit/yt-9QeyK49Hecg.jpg"
+    }
+  ],
+  "fit": [
+    "Could you build a first version of an app in about two months?",
+    "Are you building mostly on your own?",
+    "Could you live with an app store being your only way to reach customers?"
+  ],
+  "links": {
+    "site": "https://habitkit.app/"
+  },
+  "sources": [
+    {
+      "name": "The founder's 2025 year in review",
+      "url": "https://sebastianroehl.substack.com/p/2025-the-year-that-changed-everything",
+      "what": "MRR, 2025 revenue, subscribers, store problems",
+      "date": "Dec 31 2025",
+      "label": "Claimed"
+    },
+    {
+      "name": "The founder's 2024 year in review",
+      "url": "https://sebastianroehl.substack.com/p/2024-my-indie-app-business-year-in",
+      "what": "$10,000 MRR, Times Square, video mention, job timeline",
+      "date": "Dec 31 2024",
+      "label": "Claimed"
+    },
+    {
+      "name": "RevenueCat blog (Sub Club podcast summary)",
+      "url": "https://www.revenuecat.com/blog/growth/sebastian-rohl-habitkit-sub-club-podcast",
+      "what": "Flop, launch, 2023 numbers, Jan to May 2024 revenue",
+      "date": "Jun 26 2024",
+      "label": "Claimed"
+    },
+    {
+      "name": "Starter Story case study",
+      "url": "https://www.starterstory.com/habit-kit-breakdown",
+      "what": "$15K monthly revenue estimate, build story",
+      "date": "Nov 2 2024",
+      "label": "Claimed"
+    },
+    {
+      "name": "HabitKit on the App Store",
+      "url": "https://apps.apple.com/us/app/habit-tracker-habitkit/id6443918070",
+      "what": "Rating and rating count",
+      "date": "Nov 28 2026",
+      "label": "Live"
+    },
+    {
+      "name": "habitkit.app",
+      "url": "https://habitkit.app/",
+      "what": "Home page: 500,000+ users claim",
+      "date": "Nov 28 2026",
+      "label": "Live"
+    },
+    {
+      "name": "TrustMRR: HabitKit",
+      "url": "https://trustmrr.com/startup/habitkit",
+      "what": "Shows $0.00 revenue, last synced Sep 9 2026",
+      "date": "Nov 28 2026",
+      "label": "Couldn't verify",
+      "logo": "/assets/logos/trustmrr.png"
+    }
+  ]
+}
