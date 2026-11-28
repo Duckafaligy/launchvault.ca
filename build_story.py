@@ -259,20 +259,27 @@ def chapter_body(S, i, cover, pi):
     head = (f'<header class="lhd"><span class="lck">Chapter {k} · {esc(p["when"])}</span><h1>{esc(p.get("title") or p["name"])}</h1>'
             + (f'<p class="ldek">{esc(p["dek"])}</p>' if p.get("dek") else "")
             + (f'<div class="llab">{pill(main_l)}<span>{"Sources are numbered on the right." if csrc else ""}</span></div>' if main_l else "") + '</header>')
-    tease = f'<div class="ltease" data-tease hidden><h2>What happened</h2><p>{esc(paras[0] if paras else "")}</p></div>'
+    # the static page is a shell: the chapter's text never ships in public HTML. /api/lesson returns {html} (or {tease} when out of lessons) after the check
+    tease = '<div class="ltease" data-tease hidden><h2>What happened</h2><p data-teaset></p></div>'
+    retry = ('<div class="lretry" data-retry hidden><p>We couldn&#39;t load this chapter. Check your connection and try again.</p>'
+             '<button type="button" class="bw" data-retrybtn>Try again</button></div>')
     gate = ('<section class="lgate" data-gate hidden><div class="lgh"><h2 data-gh>You\'ve read your free lessons this month</h2><p data-gs></p></div>'
             '<div class="lgopts"><a class="lgpro" href="/app/account/#plan" data-gpro><span><b data-gpt>Keep reading with Pro</b><small data-gpd>Every lesson in every story, and more assistant chats</small></span><span class="lgbtn" data-gpb>See Pro</span></a>'
             f'<a class="lgstu" href="/app/account/#student" data-gstu><span class="lgi">{CAP}</span><span><b>Student? Get 10 lessons a month, free</b><small>Verify a .edu email or a Canadian school, college or university email. Plus 50 chats a week.</small></span><span class="lgv">Verify email</span></a>'
             '<div class="lgw" data-gwait><span data-gwt>Happy to wait? We\'ll email you when your lessons reset.</span><button type="button" data-remind>Remind me</button></div></div></section>')
-    body = f'<div class="lbody" data-lbody><section class="lsec lwhat" data-reveal><h2>What happened</h2>{what}</section>{proof}{why}{mob}{watch}{steal}{pnav}</div>'
-    return (f'<div class="sty les" data-lesson data-slug="{slug}" data-ch="{k}" data-n="{n}" data-state="{"open" if k == 1 else "wait"}">{bar}'
-            f'<div class="lgrid">{lrail}<article class="lart">{head}{body}{tease}{gate}</article>{rail}</div></div>')
+    content = f'<section class="lsec lwhat" data-reveal><h2>What happened</h2>{what}</section>{proof}{why}{mob}{watch}{steal}{pnav}'
+    shell_html = (f'<div class="sty les" data-lesson data-slug="{slug}" data-ch="{k}" data-n="{n}" data-state="wait">{bar}'
+                  f'<div class="lgrid">{lrail}<article class="lart">{head}<div class="lbody" data-lbody aria-live="polite"></div>{tease}{retry}{gate}</article>{rail}</div></div>')
+    return shell_html, content, (paras[0] if paras else "")
 
 
 def pages(E, S, shell, cover, pi):
-    """(story home html, [chapter 1 html, ...]) in the Vault shell."""
+    """(story home html, [chapter shell html, ...], [{html, tease} per chapter for api/_lessons.js]) in the Vault shell."""
     name = S["name"]; base = f"/app/story/{S['slug']}/"; js = '\n<script src="/assets/newapp/story.js" defer></script>'
     home = shell(E, name, S["dek"], "story-" + S["slug"], home_body(S, cover, pi), crumbs=[("/app/library/", "Library"), ("", name)], scripts=js, og_slug=S["slug"])
-    chs = [shell(E, f'{p["name"]} · {name}', p.get("dek") or p["lesson"], "story-" + S["slug"], chapter_body(S, i, cover, pi),
-                 crumbs=[(base, name), ("", p["name"])], scripts=js, og_slug=S["slug"]) for i, p in enumerate(S["phases"])]
-    return home, chs
+    chs, private = [], []
+    for i, p in enumerate(S["phases"]):
+        body, content, tease = chapter_body(S, i, cover, pi)
+        chs.append(shell(E, f'{p["name"]} · {name}', p.get("dek") or S["dek"], "story-" + S["slug"], body, crumbs=[(base, name), ("", p["name"])], scripts=js, og_slug=S["slug"]))
+        private.append({"html": content, "tease": tease})
+    return home, chs, private

@@ -194,7 +194,8 @@ def norm_ready(S, legacy):
     fcu = (S.get("facts") or {}).get("first_customers") or {}; first = fcu.get("short") or ""
     return {"first": first, "firstl": (fcu.get("label") or "") if first and first.lower() != "not public" else "", "hm": hm, "hs": src_name({"source": hsrc}),
             "slug": S["slug"], "name": S["name"], "tab": tab, "type": S.get("type_label") or S["category"], "what": S["what"], "logo": S["logo"],
-            "pattern": S["pattern"], "lessons": [p["lesson"] for p in S["phases"]], "hv": hv, "hu": hu, "hl": hl, "sub": sub,
+            "pattern": S["pattern"], "lessons": [],   # chapter text stays behind /api/lesson (lessons are the chapters' pull quotes)
+             "hv": hv, "hu": hu, "hl": hl, "sub": sub,
             "hd": hd, "hsrc": hsrc, "status": "ready", "stale": stale,
             "href": f"/app/story/{S['slug']}/", "read": S["read_min"], "published": S["published"],
             "mrr": mrr, "series": [[p[0], p[1]] for p in S["series"]["points"]], "title": S["title"], "S": S}
@@ -884,7 +885,7 @@ def main():
     pz = next(S for S in ready if S["slug"] == "postiz")
     pz_ck = [c for c in pz["checklist"]]
     def phase_of(S, frm): return next(((i + 1, p["lesson"]) for i, p in enumerate(S["phases"]) if p["name"] == frm), (0, ""))
-    steps = [{"id": c["id"], "text": c["text"], "from": c["from"], "n": int(c["id"][1:]), "task": TASKS.get(c["id"], ""), "ph": phase_of(pz, c["from"])[0], "why": phase_of(pz, c["from"])[1]} for c in [pz_ck[i] for i in (0, 1, 5, 3, 2)]]
+    steps = [{"id": c["id"], "text": c["text"], "from": c["from"], "n": int(c["id"][1:]), "task": TASKS.get(c["id"], ""), "ph": phase_of(pz, c["from"])[0]} for c in [pz_ck[i] for i in (0, 1, 5, 3, 2)]]
     APPDATA = {
         "stories": [{k: e[k] for k in ("slug", "name", "title", "tab", "type", "what", "logo", "pattern", "lessons", "hv", "hu", "hl", "hd", "hm", "hs", "first", "firstl", "sub", "status", "stale", "href", "read", "published", "mrr", "growth")}
                     | {"spark": spark(e["series"]), "phases": len(e["S"]["phases"]), "nt": [[re.sub(r"\s*\(.*?\)", "", x["k"]), x["v"], x["date"]] for x in e["S"]["numbers"][:3]], "ns": len(e["S"]["sources"]), "nsd": latest_date(x["date"] for x in e["S"]["sources"]), "site": (e["S"].get("links") or {}).get("site") or e["S"].get("site", "")} for e in E if e["status"] == "ready"],
@@ -900,7 +901,7 @@ def main():
                  "extra": {"id": "x1", "text": "Ask for money early: offer the easy paid version to your 5 most active users.", "from": "Pattern from Gojiberry", "href": "/app/story/gojiberry/" if "gojiberry" in rslugs else ""}},
         "quiz": [{"q": t[0], "t": tp, "o": t[1], "w": w, **({"h": t[2]} if len(t) > 2 else {})} for t, w, tp in zip(QUIZ, quiz_weights(ready), QTOPIC)],
         "search_extra": [x for S in ready for x in (
-                            [{"t": f"{S['name']} · phase {i + 1}: {ph['name']}", "k": " ".join([ph["name"], ph["story"], ph["lesson"]]), "h": f"/app/story/{S['slug']}/#ph{i + 1}", "g": "Phases"} for i, ph in enumerate(S["phases"])]
+                            [{"t": f"{S['name']} · phase {i + 1}: {ph['name']}", "k": ph["name"], "h": f"/app/story/{S['slug']}/{i + 1}/", "g": "Phases"} for i, ph in enumerate(S["phases"])]
                             + [{"t": f"{S['name']} move {i + 1}: {m['text']} · {m['when']}", "h": f"/app/story/{S['slug']}/#chart", "g": "Moves"} for i, m in enumerate(S["moves"])]
                             + [{"t": f"{S['name']} · checklist: {(c['text'] if isinstance(c, dict) else c)[:70]}", "k": (c["text"] if isinstance(c, dict) else c), "h": f"/app/story/{S['slug']}/#todo", "g": "Checklists"} for c in S["checklist"]]
                             + [{"t": f"{S['name']} · fact check: {f['claim'][:70]}", "k": f["claim"] + " " + f["found"], "h": f"/app/story/{S['slug']}/#facts", "g": "Fact checks"} for f in S["fact_checks"]]

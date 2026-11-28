@@ -450,3 +450,7 @@
   .sty-js .nv .sty [data-reveal],.sty-js .nv .sty [data-rise]{opacity:1!important;transform:none!important;animation:none!important}
   .nv .sty *{transition:none!important;animation:none!important}
 }
+.nv .lretry{display:flex;flex-direction:column;align-items:flex-start;gap:16px;margin-top:36px;padding:24px;background:var(--c1);border:1px solid var(--h2);border-radius:16px;color:var(--t2);font-size:16px;line-height:25px}
+.nv .lretry[hidden]{display:none}
+.nv .les[data-state="out"] .lgate{margin-top:36px}
+.nv .les[data-state="wait"] .lbody:empty{min-height:60vh}

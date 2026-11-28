@@ -88,7 +88,9 @@ window.LVAuth = (() => {
   const signOut = async () => { if (!live) return; try { localStorage.removeItem("lv-plan"); } catch {} const c = await load(); await c.signOut({redirectUrl: "/sign-in/"}); };
   // app pages: show who is signed in (email only); only redirect when the wall is on
   const app = async () => {
-    const bar = document.getElementById("prevbar"), guest = lvGuest(), wall = LV_GATE && live && !guest;
+    // story homes and chapter shells are public pages (no text inside a chapter shell; /api/lesson decides who reads it)
+    const pub = /^\/app\/story\/[a-z0-9-]+\/(\d+\/)?$/.test(location.pathname);
+    const bar = document.getElementById("prevbar"), guest = lvGuest(), wall = LV_GATE && live && !guest && !pub;
     // hide the page until Clerk says who this is, so signed-out visitors never see a flash of the app before the redirect
     // ...but only when this browser has no sign-in on record. Clerk keeps __client_uat on our domain (0 = signed out, a timestamp =
     // signed in); for members it's set, so pages show at once and page-to-page fades aren't blank while Clerk loads.
@@ -114,7 +116,7 @@ window.LVAuth = (() => {
     paint(); addEventListener("lv:plan", paint);   // repaint once the account's plan arrives from Supabase
     document.querySelectorAll("[data-auth-only]").forEach(n => { n.hidden = !LV_AUTH; });
     document.querySelectorAll("[data-noauth-only]").forEach(n => { n.hidden = LV_AUTH; });
-    const ageQ = () => { if (window.LVGate && !LVGate.ok && LVGate.start) LVGate.start(); };   // age question only after the wall
+    const ageQ = () => { if (pub && !(clerk && clerk.user)) return; if (window.LVGate && !LVGate.ok && LVGate.start) LVGate.start(); };   // public story pages: no birthday question for visitors without an account   // age question only after the wall
     if (!live) { ageQ(); return; }
     try { await load(); paint();
       if (clerk.user && !(await lvAny(clerk.user))) { try { localStorage.removeItem("lv-plan"); } catch {} await clerk.signOut({redirectUrl: "/sign-in/?closed=1"}); return; }

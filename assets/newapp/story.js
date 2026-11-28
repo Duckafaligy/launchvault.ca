@@ -1,7 +1,8 @@
 /* Story course pages (build_story.py): motion, the pinned numbers, the fit check, chapter ticks and the lesson quota.
    Quota rules (Supabase RPCs lesson_status / lesson_open / lesson_remind; the database is the judge, this only shows it):
-   chapter 1 and every story home are free; other chapters call lesson_open; judge pass and paid plans read everything.
-   Fails open: if the RPC can't be reached the chapter shows, so a backend hiccup never locks a reader out. */
+   story homes are public; chapter 1 is free for any account; other chapters go through lesson_open; Pro and the judge pass read everything.
+   The chapter text is not in the page: /api/lesson returns it after the same check (signed-out visitors get the header and the sign-up gate).
+   A backend outage shows a retry message, never the text. */
 (() => {
   "use strict";
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -27,10 +28,9 @@
   });
 
   // ---------- reveal on scroll ----------
-  const rv = $$("[data-reveal]");
-  if (reduce || !("IntersectionObserver" in window)) rv.forEach(el => el.classList.add("in"));
-  else { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.unobserve(e.target); e.target.classList.add("in"); } }), {threshold: .12, rootMargin: "0px 0px -8% 0px"});
-    rv.forEach(el => io.observe(el)); }
+  const io = reduce || !("IntersectionObserver" in window) ? null : new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.unobserve(e.target); e.target.classList.add("in"); } }), {threshold: .12, rootMargin: "0px 0px -8% 0px"});
+  const reveal = root => $$("[data-reveal]", root).forEach(el => io ? io.observe(el) : el.classList.add("in"));
+  reveal(document);
 
   // ---------- The numbers: pinned while the stats count up and the line draws (scroll-driven, reversible) ----------
   const pin = $("[data-pin]");
@@ -91,7 +91,7 @@
   }
 
   // ---------- Steal this: ticks (story checklist steps share the Checklists page's key) + Copy all ----------
-  $$("[data-steal]").forEach(box => {
+  const steal = root => $$("[data-steal]", root).forEach(box => {
     const key = box.dataset.steal, rows = $$(".stk", box);
     const paint = () => { const v = get(key, []); rows.forEach(r => r.setAttribute("aria-checked", !!(Array.isArray(v) && v[+r.dataset.i]))); };
     box.addEventListener("click", e => { const r = e.target.closest(".stk");
@@ -100,6 +100,7 @@
         (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast("Copied the checklist."), () => toast("Couldn't copy. Select the steps instead.")); } });
     paint(); addEventListener("storage", paint);
   });
+  steal(document);
 
   // ---------- lesson page: the quota ----------
   const L = $("[data-lesson]");
@@ -124,16 +125,21 @@
     mt.innerHTML = `<b>${left} of ${st.limit}</b> ${st.plan === "student" ? "student" : "free"} lessons left · resets ${day(st.resets_at)}`;
     put("lv-lessons", {plan: st.plan, used: st.used, limit: st.limit, resets_at: st.resets_at || nextReset()}); dispatchEvent(new Event("lv:lessons"));
   };
-  const show = () => { L.dataset.state = "open"; $("[data-lbody]").hidden = false; $("[data-tease]").hidden = true; $("[data-gate]").hidden = true;
+  const body = $("[data-lbody]"), retryBox = $("[data-retry]");
+  let lastSt = null;
+  const show = html => { L.dataset.state = "open"; body.innerHTML = html; body.hidden = false; $("[data-tease]").hidden = true; $("[data-gate]").hidden = true; retryBox.hidden = true;
+    reveal(body); steal(body); nextHint(lastSt);
     const s = seen(); if (!s.includes(ch)) put("lv-seen-" + slug, [...s, ch].sort((a, b) => a - b));
     put("lv-last", {slug, ph: ch, t: Date.now()}); };
+  const retry = () => { L.dataset.state = "retry"; body.hidden = true; $("[data-gate]").hidden = true; retryBox.hidden = false; };
   const gate = (kind, st = {}) => {
-    L.dataset.state = "gate"; $("[data-lbody]").hidden = true; $("[data-tease]").hidden = false; const g = $("[data-gate]"); g.hidden = false;
+    L.dataset.state = kind === "out" ? "out" : "gate"; body.hidden = true; retryBox.hidden = true; const g = $("[data-gate]"); g.hidden = false;
+    $("[data-teaset]").textContent = st.tease || ""; $("[data-tease]").hidden = kind === "out" || !st.tease;   // signed-out visitors see the header and the gate only
     const lim = st.limit || 5, when = day(st.resets_at, true), here = encodeURIComponent(location.pathname);
     const T = (sel, v, html) => { const el = $(sel, g); if (el) el[html ? "innerHTML" : "textContent"] = v; };
     if (kind === "out") {
-      T("[data-gh]", "Sign in to keep reading");
-      T("[data-gs]", "Chapter 1 of every story is free to read. A free account opens 5 more lessons a month, and students get 10.");
+      T("[data-gh]", "Sign up to start reading");
+      T("[data-gs]", "Chapters are for members. A free account opens Chapter 1 of every story plus 5 more lessons a month, and students get 10.");
       $("[data-gpro]", g).href = "/sign-up/?next=" + here; T("[data-gpt]", "Create a free account"); T("[data-gpd]", "5 lessons a month, free"); T("[data-gpb]", "Sign up");
       $("[data-gstu]", g).href = "/sign-up/?next=" + encodeURIComponent("/app/account/#student");
       T("[data-gwt]", "Already have an account?"); const r = $("[data-remind]", g); r.textContent = "Sign in"; r.onclick = () => { location.href = "/sign-in/?next=" + here; };
@@ -156,19 +162,27 @@
     return LVSync.make(c); })());
   const one = d => Array.isArray(d) ? d[0] : d;
   const timeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]);
-  const paid = () => { const p = get("lv-plan"); return !!p && (p.plan === "pro" || p.plan === "builder") && (p.status === "active" || p.status === "trialing"); };
-  (async () => {
-    if (get("lv-judge") === "SPARK2026" || paid()) { paintMeter({plan: get("lv-judge") === "SPARK2026" ? "judge" : "pro", limit: null}); nextHint(null); return show(); }
+  const likelyIn = () => /(?:^|;\s*)__client_uat(?:_[^=]*)?=(?!0(?:;|$))\d+/.test(document.cookie);   // Clerk's own signed-in marker (same test as auth.js)
+  const load = async () => {
+    const judge = get("lv-judge") === "SPARK2026";
     let c = null;
-    try { c = window.LVAuth && LVAuth.live ? await timeout(LVAuth.load(), 8000) : null; } catch { return show(); }
-    if (!c || !c.user) { nextHint(null); return ch === 1 ? show() : gate("out"); }
-    try {
-      const sb = await timeout(client(), 8000);
-      if (ch > 1) { const {data, error} = await timeout(sb.rpc("lesson_open", {p_story: slug, p_chapter: ch}), 8000); if (error) throw error;
-        const o = one(data) || {}; if (o.allowed === false) { gate("limit", o); paintMeter(o); return; } }
-      show();
-      const {data, error} = await timeout(sb.rpc("lesson_status"), 8000); if (error) throw error;
-      const st = one(data); if (st) { paintMeter(st); marks((st.opened || []).filter(o => o.story === slug).map(o => +o.chapter)); nextHint(st); }
-    } catch { if (L.dataset.state === "wait") show(); }
-  })();
+    try { c = window.LVAuth && LVAuth.live ? await timeout(LVAuth.load(), 8000) : null; } catch { if (!judge) return likelyIn() ? retry() : gate("out"); }
+    const user = !!(c && c.user);
+    if (!user && !judge) return gate("out");
+    const h = {}; if (judge) h["x-lv-judge"] = "SPARK2026";
+    try { if (user) h.Authorization = "Bearer " + await timeout(c.session.getToken(), 8000); } catch { if (!judge) return retry(); }
+    let r, d;
+    try { r = await timeout(fetch(`/api/lesson?story=${encodeURIComponent(slug)}&ch=${ch}`, {headers: h, cache: "no-store", credentials: "same-origin"}), 12000); d = await r.json(); }
+    catch { return retry(); }   // outage: a retry message, never the text (it only comes from the server now)
+    if (r.status === 402) { gate("limit", d); paintMeter(d); return; }
+    if (r.status === 401) return gate("out");
+    if (!r.ok || typeof d.html !== "string") return retry();
+    if (d.status && d.status.plan === "judge") paintMeter({plan: "judge", limit: null});
+    show(d.html);
+    if (!user) return;
+    try { const sb = await timeout(client(), 8000), {data, error} = await timeout(sb.rpc("lesson_status"), 8000); if (error) throw error;
+      const st = one(data); if (st) { lastSt = st; paintMeter(st); marks((st.opened || []).filter(o => o.story === slug).map(o => +o.chapter)); nextHint(st); } } catch {}
+  };
+  $("[data-retrybtn]").addEventListener("click", () => { L.dataset.state = "wait"; retryBox.hidden = true; load(); });
+  load();
 })();

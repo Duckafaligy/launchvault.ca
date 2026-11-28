@@ -10,3 +10,5 @@ docs
 data/stories/drafts
 _gen
 _covers_tmp
+data/stories/
+old/app/
